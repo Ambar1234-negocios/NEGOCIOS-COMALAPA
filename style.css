@@ -60,6 +60,7 @@ body {
 
 .destacados,
 .categorias,
+.resultado,
 .registro {
   padding: 35px 20px;
   text-align: center;
@@ -126,11 +127,18 @@ h2 {
   box-shadow: 0 5px 12px rgba(0,0,0,0.12);
   transition: 0.3s;
   text-align: center;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .categoria:hover {
   background: #ffb300;
   transform: scale(1.05);
+}
+
+.resultado {
+  background: #fff7e6;
 }
 
 .registro {

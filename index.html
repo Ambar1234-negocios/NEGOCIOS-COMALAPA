@@ -8,68 +8,71 @@
 </head>
 <body>
 
-  <header class="hero">
-    <div class="overlay">
-      <h1>Ámbar Negocios Comalapa</h1>
-      <p>Encuentra negocios y servicios de confianza en un solo lugar</p>
-      <a href="#categorias" class="btn-principal">Ver categorías</a>
+<header class="hero">
+  <div class="overlay">
+    <h1>Ámbar Negocios Comalapa</h1>
+    <p>Encuentra negocios y servicios de confianza en un solo lugar</p>
+    <a href="#categorias" class="btn-principal">Ver categorías</a>
+  </div>
+</header>
+
+<section class="destacados">
+  <h2>⭐ Negocios destacados</h2>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Materiales Díaz</h3>
+      <p>🏗️ Cemento, varilla, block y más.</p>
+      <a class="btn-whatsapp" href="https://wa.me/529631181819?text=Hola,%20vi%20Materiales%20Díaz%20en%20Ámbar%20Negocios%20Comalapa%20y%20quiero%20información">WhatsApp</a>
     </div>
-  </header>
 
-  <section class="destacados">
-    <h2>⭐ Negocios destacados</h2>
-
-    <div class="cards">
-      <div class="card">
-        <h3>Materiales Díaz</h3>
-        <p>🏗️ Cemento, varilla, block y más.</p>
-        <a href="#" class="btn-whatsapp">Cotizar por WhatsApp</a>
-      </div>
-
-      <div class="card">
-        <h3>Restaurante El Buen Sabor</h3>
-        <p>🍔 Comida local y pedidos especiales.</p>
-        <a href="#" class="btn-whatsapp">Pedir por WhatsApp</a>
-      </div>
-
-      <div class="card">
-        <h3>Clínica Dental M</h3>
-        <p>🦷 Consultas, limpiezas y citas dentales.</p>
-        <a href="#" class="btn-whatsapp">Agendar cita</a>
-      </div>
+    <div class="card">
+      <h3>Restaurante El Buen Sabor</h3>
+      <p>🍔 Comida local y pedidos especiales.</p>
+      <a class="btn-whatsapp" href="https://wa.me/529631181819?text=Hola,%20vi%20Restaurante%20El%20Buen%20Sabor%20en%20Ámbar%20Negocios%20Comalapa">WhatsApp</a>
     </div>
-  </section>
 
-  <section id="categorias" class="categorias">
-    <h2>📍 Categorías</h2>
-
-    <div class="grid-categorias">
-      <div class="categoria">🏗️ Construcción</div>
-      <div class="categoria">🍔 Comida</div>
-      <div class="categoria">🦷 Salud</div>
-      <div class="categoria">🏨 Hoteles</div>
-      <div class="categoria">🚗 Automotriz</div>
-      <div class="categoria">🛠️ Servicios</div>
-      <div class="categoria">💇 Peluquerías</div>
-      <div class="categoria">🛵 Mandaditos</div>
+    <div class="card">
+      <h3>Clínica Dental M</h3>
+      <p>🦷 Consultas, limpiezas y citas dentales.</p>
+      <a class="btn-whatsapp" href="https://wa.me/529631181819?text=Hola,%20vi%20Clínica%20Dental%20M%20en%20Ámbar%20Negocios%20Comalapa">WhatsApp</a>
     </div>
-  </section>
-
-  <section class="registro">
-    <h2>¿Tienes un negocio?</h2>
-
-    <p>
-        Regístralo en Ámbar Negocios Comalapa y llega a más clientes.
-    </p>
-
-    <a href="https://wa.me/529631181819?text=Hola,%20quiero%20registrar%20mi%20negocio%20en%20Ámbar%20Negocios%20Comalapa" class="btn-registro">
-        Registrar mi negocio
-    </a>
+  </div>
 </section>
 
-  <footer>
-    <p>© 2026 Ámbar Negocios Comalapa</p>
-  </footer>
+<section id="categorias" class="categorias">
+  <h2>📍 Categorías</h2>
 
+  <div class="grid-categorias">
+    <button class="categoria" onclick="mostrarCategoria('construccion')">🏗️ Construcción</button>
+    <button class="categoria" onclick="mostrarCategoria('comida')">🍔 Comida</button>
+    <button class="categoria" onclick="mostrarCategoria('salud')">🦷 Salud</button>
+    <button class="categoria" onclick="mostrarCategoria('hoteles')">🏨 Hoteles</button>
+    <button class="categoria" onclick="mostrarCategoria('automotriz')">🚗 Automotriz</button>
+    <button class="categoria" onclick="mostrarCategoria('servicios')">🛠️ Servicios</button>
+    <button class="categoria" onclick="mostrarCategoria('peluquerias')">💇 Peluquerías</button>
+    <button class="categoria" onclick="mostrarCategoria('mandaditos')">🛵 Mandaditos</button>
+    <button class="categoria" onclick="mostrarCategoria('tiendas')">🛒 Tiendas</button>
+  </div>
+</section>
+
+<section class="resultado">
+  <h2 id="titulo-categoria">Selecciona una categoría</h2>
+  <div id="lista-negocios" class="cards"></div>
+</section>
+
+<section class="registro">
+  <h2>¿Tienes un negocio?</h2>
+  <p>Regístralo en Ámbar Negocios Comalapa y llega a más clientes.</p>
+  <a href="https://wa.me/529631181819?text=Hola,%20quiero%20registrar%20mi%20negocio%20en%20Ámbar%20Negocios%20Comalapa" class="btn-registro">
+    Registrar mi negocio
+  </a>
+</section>
+
+<footer>
+  <p>© 2026 Ámbar Negocios Comalapa</p>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
