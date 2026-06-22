@@ -4,71 +4,103 @@
 // =========================
 
 const negocios = {
+  streaming: [
+    ["📺 Ámbar Streaming", "Netflix, Disney+, Max, Prime Video, VIX y más.", "Ámbar Streaming", "99"],
+    ["🎵 Spotify Premium", "Música sin anuncios.", "Spotify Premium", "95"],
+    ["🎬 VIX Premium", "Series, películas y deportes.", "VIX Premium", "70"],
+    ["🎥 Netflix Premium", "Películas y series en alta calidad.", "Netflix Premium", "99"],
+    ["🏰 Disney Premium", "Películas, series y contenido familiar.", "Disney Premium", "80"],
+    ["🎞️ Max HBO", "Películas, series y estrenos.", "Max HBO", "80"],
+    ["📦 Prime Video", "Películas, series y beneficios Prime.", "Prime Video", "70"],
+    ["🎭 Paramount Plus", "Series, películas y entretenimiento.", "Paramount Plus", "70"],
+    ["🍥 Crunchyroll", "Anime y estrenos japoneses.", "Crunchyroll", "70"],
+    ["▶️ YouTube Premium", "Videos sin anuncios y música.", "YouTube Premium", "95"]
+  ],
+
   construccion: [
-    ["Materiales Díaz", "Cemento, block, varilla y agregados."],
-    ["Ferretería Central", "Herramientas, pinturas y accesorios."],
-    ["Aceros del Sur", "Lámina, perfiles y estructuras metálicas."]
+    ["🏗️ Materiales Díaz", "Cemento, block, varilla y agregados."],
+    ["🔧 Ferretería Central", "Herramientas, pinturas y accesorios."],
+    ["🏢 Aceros del Sur", "Lámina, perfiles y estructuras metálicas."],
+    ["👷 Albañil de confianza", "Construcción, remodelación y reparaciones."],
+    ["🧱 Venta de block", "Block, grava, arena y material para obra."]
   ],
 
   comida: [
-    ["Restaurante El Buen Sabor", "Comida local y antojitos."],
-    ["Tacos Don Pepe", "Tacos, gringas y quesadillas."],
-    ["Pollería Dos Hermanos", "Pollo fresco y pedidos por WhatsApp."]
+    ["🍔 Restaurante El Buen Sabor", "Comida local y pedidos especiales."],
+    ["🌮 Tacos Don Pepe", "Tacos, gringas y quesadillas."],
+    ["🍗 Pollería Dos Hermanos", "Pollo fresco y pedidos por WhatsApp."],
+    ["🍕 Pizzería Comalapa", "Pizzas, alitas y promociones."],
+    ["☕ Cafetería La Plaza", "Café, postres y desayunos."]
   ],
 
   salud: [
-    ["Clínica Dental M", "Consultas, limpiezas y ortodoncia."],
-    ["Consultorio Médico San José", "Consulta general y control médico."],
-    ["Farmacia La Esperanza", "Medicamentos y productos de salud."]
+    ["🦷 Clínica Dental M", "Consultas, limpiezas y citas dentales."],
+    ["👨‍⚕️ Consultorio Médico San José", "Consulta general y control médico."],
+    ["💊 Farmacia La Esperanza", "Medicamentos y productos de salud."],
+    ["🧪 Laboratorio Clínico Comalapa", "Análisis clínicos y estudios."],
+    ["🐶 Veterinaria San Francisco", "Atención médica para mascotas."]
   ],
 
   hoteles: [
-    ["Hotel Central", "Habitaciones cómodas en Comalapa."],
-    ["Hotel La Plaza", "Hospedaje familiar y céntrico."],
-    ["Posada El Descanso", "Habitaciones económicas."]
+    ["🏨 Hotel Central", "Habitaciones cómodas en Comalapa."],
+    ["🛏️ Hotel La Plaza", "Hospedaje familiar y céntrico."],
+    ["🏡 Posada El Descanso", "Habitaciones económicas."],
+    ["🌙 Hotel Camino Real", "Hospedaje cómodo y seguro."]
   ],
 
   automotriz: [
-    ["Taller García", "Mecánica general y diagnóstico."],
-    ["Refacciones El Motor", "Refacciones para autos y motos."],
-    ["Lavado El Rápido", "Lavado, aspirado y encerado."]
+    ["🚗 Taller García", "Mecánica general y diagnóstico."],
+    ["🏍️ Taller de Motos El Rápido", "Reparación y mantenimiento de motocicletas."],
+    ["🔩 Refacciones El Motor", "Refacciones para autos y motos."],
+    ["🧽 Lavado El Rápido", "Lavado, aspirado y encerado."],
+    ["🛞 Llantera Comalapa", "Venta y reparación de llantas."]
   ],
 
   servicios: [
-    ["Herrería López", "Portones, puertas y estructuras."],
-    ["Vidriería Comalapa", "Cristales, ventanas y aluminio."],
-    ["Electricista Ramos", "Instalaciones y reparaciones."]
+    ["🔨 Herrería López", "Portones, puertas y estructuras."],
+    ["🪟 Vidriería Comalapa", "Cristales, ventanas y aluminio."],
+    ["⚡ Electricista Ramos", "Instalaciones y reparaciones eléctricas."],
+    ["🚿 Plomería El Güero", "Reparación de fugas e instalaciones."],
+    ["❄️ Climas Comalapa", "Instalación, venta y mantenimiento de aires acondicionados."],
+    ["📹 Cámaras de Seguridad MX", "Instalación de cámaras y sistemas de seguridad."]
   ],
 
   peluquerias: [
-    ["Barbería El Estilo", "Cortes modernos y arreglo de barba."],
-    ["Estética Bella", "Peinados, tintes y tratamientos."],
-    ["Cortes a Domicilio Luis", "Servicio a domicilio."]
+    ["💈 Barbería El Estilo", "Cortes modernos y arreglo de barba."],
+    ["💇‍♀️ Estética Bella", "Peinados, tintes y tratamientos."],
+    ["✂️ Cortes a Domicilio Luis", "Servicio a domicilio."],
+    ["💅 Uñas y Belleza", "Uñas, maquillaje y estética."]
   ],
 
   mandaditos: [
-    ["Mandaditos Express", "Compras, entregas y mandados."],
-    ["Moto Envíos Comalapa", "Entrega rápida local."],
-    ["Auxilio Mandaditos", "Servicio urgente en la ciudad."]
+    ["🛵 Mandaditos Express", "Compras, entregas y mandados."],
+    ["🏍️ Moto Envíos Comalapa", "Entrega rápida local."],
+    ["🚨 Auxilio Mandaditos", "Servicio urgente en la ciudad."]
   ],
 
- tiendas: [
-  ["Abarrotes Lupita", "Despensa, bebidas y productos básicos."],
-  ["Tienda El Centro", "Abarrotes y artículos para el hogar."],
-  ["Mini Súper Comalapa", "Productos variados y servicio rápido."]
-],
+  tiendas: [
+    ["🛒 Abarrotes Lupita", "Despensa, bebidas y productos básicos."],
+    ["🏪 Tienda El Centro", "Abarrotes y artículos para el hogar."],
+    ["🛍️ Mini Súper Comalapa", "Productos variados y servicio rápido."],
+    ["👕 Boutique La Moda", "Ropa, accesorios y novedades."],
+    ["👟 Zapatería Comalapa", "Calzado para dama, caballero y niños."]
+  ],
 
-streaming: [
-  ["🎬 Netflix Premium", "Mensualidad: $99 MXN", "Netflix Premium", "99"],
-  ["🏰 Disney+ Premium", "Mensualidad: $80 MXN", "Disney+ Premium", "80"],
-  ["🎥 Max / HBO Max", "Mensualidad: $80 MXN", "Max / HBO Max", "80"],
-  ["📦 Prime Video", "Mensualidad: $70 MXN", "Prime Video", "70"],
-  ["⚽ VIX Premium", "Mensualidad: $70 MXN", "VIX Premium", "70"],
-  ["🎞️ Paramount+", "Mensualidad: $70 MXN", "Paramount+", "70"],
-  ["🍥 Crunchyroll", "Mensualidad: $70 MXN", "Crunchyroll", "70"],
-  ["🎵 Spotify Premium", "Mensualidad: $95 MXN", "Spotify Premium", "95"],
-  ["▶️ YouTube Premium", "Mensualidad: $95 MXN", "YouTube Premium", "95"]
-]   
+  profesionales: [
+    ["💼 Contador Público Hernández", "Contabilidad, declaraciones y asesoría fiscal."],
+    ["⚖️ Abogado Martínez", "Asesoría legal y trámites jurídicos."],
+    ["🏛️ Arquitecto López", "Diseño, planos y proyectos de construcción."],
+    ["👷 Ingeniero Civil Pérez", "Supervisión de obra y presupuestos."],
+    ["📄 Gestoría Comalapa", "Trámites, documentos y asesorías."]
+  ],
+
+  bienesraices: [
+    ["🏡 Terreno en Venta", "Lote con buena ubicación en Comalapa."],
+    ["🏠 Casa Familiar", "Casa amplia con varias habitaciones."],
+    ["🏢 Local Comercial", "Renta de local para negocio."],
+    ["🌄 Terrenos Comalapa", "Venta de terrenos urbanos y rurales."],
+    ["🔑 Inmobiliaria Ámbar", "Compra, venta y renta de propiedades."]
+  ]
 };
 
 
