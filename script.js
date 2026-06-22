@@ -38,8 +38,13 @@ const negocios = {
     ["👨‍⚕️ Consultorio Médico San José", "Consulta general y control médico."],
     ["💊 Farmacia La Esperanza", "Medicamentos y productos de salud."],
     ["🧪 Laboratorio Clínico Comalapa", "Análisis clínicos y estudios."],
-    ["🐶 Veterinaria San Francisco", "Atención médica para mascotas."]
   ],
+
+  veterinarias: [
+  ["🐶 Veterinaria San Francisco", "Atención médica para mascotas."],
+  ["🐾 Clínica Veterinaria Comalapa", "Consultas, vacunas y estética canina."],
+  ["🦴 Pet Shop Comalapa", "Alimento, accesorios y productos para mascotas."]
+],
 
   hoteles: [
     ["🏨 Hotel Central", "Habitaciones cómodas en Comalapa."],
@@ -93,6 +98,18 @@ const negocios = {
     ["👷 Ingeniero Civil Pérez", "Supervisión de obra y presupuestos."],
     ["📄 Gestoría Comalapa", "Trámites, documentos y asesorías."]
   ],
+
+  belleza: [
+  ["💇 Estética Lupita", "Cortes, tintes y peinados."],
+  ["💅 Uñas Glamour", "Aplicación de uñas y manicure."],
+  ["💄 Makeup Comalapa", "Maquillaje profesional para eventos."]
+],
+
+comercios: [
+  ["🛒 Abarrotes Lupita", "Despensa y productos básicos."],
+  ["🏪 Mini Súper Comalapa", "Bebidas, botanas y abarrotes."],
+  ["👕 Boutique La Moda", "Ropa y accesorios."]
+],
 
   bienesraices: [
     ["🏡 Terreno en Venta", "Lote con buena ubicación en Comalapa."],
