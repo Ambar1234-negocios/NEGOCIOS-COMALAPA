@@ -62,12 +62,7 @@ const negocios = {
   ],
 
   servicios: [
-    ["🔨 Herrería López", "Portones, puertas y estructuras."],
-    ["🪟 Balconería, Vidrios y Aluminios El Perico", "Ventanas, puertas, vitrinas, espejos, barandales, escaleras, portones, herrería y aluminio."],
-    ["⚡ Electricista Ramos", "Instalaciones y reparaciones eléctricas."],
-    ["🚿 Plomería El Güero", "Reparación de fugas e instalaciones."],
-    ["❄️ Climas Comalapa", "Instalación, venta y mantenimiento de aires acondicionados."],
-    ["📹 Cámaras de Seguridad MX", "Instalación de cámaras y sistemas de seguridad."]
+    ["🪟 Balconería, Vidrios y Aluminios El Perico", "Ventanas, puertas, vitrinas, espejos, barandales, escaleras, portones, herrería y aluminio."]
   ],
 
   peluquerias: [
