@@ -63,7 +63,7 @@ const negocios = {
 
   servicios: [
     ["🔨 Herrería López", "Portones, puertas y estructuras."],
-    ["🪟 Vidriería Comalapa", "Cristales, ventanas y aluminio."],
+    ["🪟 Balconería, Vidrios y Aluminios El Perico", "Ventanas, puertas, vitrinas, espejos, barandales, escaleras, portones, herrería y aluminio."],
     ["⚡ Electricista Ramos", "Instalaciones y reparaciones eléctricas."],
     ["🚿 Plomería El Güero", "Reparación de fugas e instalaciones."],
     ["❄️ Climas Comalapa", "Instalación, venta y mantenimiento de aires acondicionados."],
@@ -112,12 +112,19 @@ comercios: [
 ],
 
   bienesraices: [
-    ["🏡 Terreno en Venta", "Lote con buena ubicación en Comalapa."],
-    ["🏠 Casa Familiar", "Casa amplia con varias habitaciones."],
-    ["🏢 Local Comercial", "Renta de local para negocio."],
-    ["🌄 Terrenos Comalapa", "Venta de terrenos urbanos y rurales."],
-    ["🔑 Inmobiliaria Ámbar", "Compra, venta y renta de propiedades."]
-  ]
+  ["🏡 Terreno en Venta", "Lote con buena ubicación en Comalapa."],
+  ["🏠 Casa Familiar", "Casa amplia con varias habitaciones."],
+  ["🏢 Local Comercial", "Renta de local para negocio."],
+  ["🌄 Terrenos Comalapa", "Venta de terrenos urbanos y rurales."],
+  ["🔑 Inmobiliaria Ámbar", "Compra, venta y renta de propiedades."]
+],
+
+agua: [
+  ["💧 Purificadora Agua Cristal", "Venta de agua purificada para hogar y negocio."],
+
+  ["💧 Purificadora El Manantial", "Garrafones, recargas y servicio a domicilio."]
+]
+
 };
 
 
@@ -138,12 +145,9 @@ function mostrarCategoria(categoria) {
       <div class="card">
         <h3>${negocio[0]}</h3>
         <p>${negocio[1]}</p>
-        <a class="btn-whatsapp" href="https://wa.me/529631181819?text=${categoria === 'streaming'
-  ? encodeURIComponent('Hola, quiero comprar ' + negocio[2] + ' por $' + negocio[3] + ' pesos.')
-  : encodeURIComponent('Hola, vi ' + negocio[0] + ' en Ámbar Negocios Comalapa y quiero información.')
-}">
-  ${categoria === 'streaming' ? 'Comprar' : 'WhatsApp'}
-</a>
+        <button class="btn-whatsapp" onclick="verPerfil('${categoria}', '${negocio[0]}')">
+  ${categoria === 'streaming' ? 'Comprar' : 'Ver información'}
+</button>
       </div>
     `;
   });
@@ -207,4 +211,68 @@ function buscarNegocios() {
             return;
         }
     }
+}
+// =========================
+// PERFIL DE NEGOCIO
+// =========================
+
+function verPerfil(categoria, nombreNegocio) {
+  const titulo = document.getElementById("titulo-categoria");
+  const lista = document.getElementById("lista-negocios");
+
+  let negocioEncontrado = null;
+
+  negocios[categoria].forEach(function(negocio) {
+    if (negocio[0] === nombreNegocio) {
+      negocioEncontrado = negocio;
+    }
+  });
+
+  if (!negocioEncontrado) {
+    alert("No se encontró la información del negocio.");
+    return;
+  }
+
+  const nombre = negocioEncontrado[0];
+  const descripcion = negocioEncontrado[1];
+
+  titulo.style.display = "none";
+
+  lista.innerHTML = `
+    <div class="perfil-negocio">
+      
+      <div class="perfil-galeria">
+  <img src="imagenes/perico.webp" class="foto-perfil-banner">
+</div>
+
+      <div class="perfil-info">
+        <h3>${nombre}</h3>
+        <p class="descripcion-perfil">${descripcion}</p>
+
+        <div class="perfil-detalles">
+          <div>
+            
+
+          <p><strong>📍 Dirección:</strong> Barrio Agua Zarca y Barrio La Alborada, Frontera Comalapa</p>
+
+<p><strong>📞 Teléfono:</strong> 963 635 0461</p>
+
+<p><strong>🕒 Horario:</strong> Lunes a sábado de 8:00 a.m. a 5:00 p.m.</p>
+<a class="btn-whatsapp"
+href="https://wa.me/529636350461?text=${encodeURIComponent('Hola, vi ' + nombre + ' en Ámbar Negocios Comalapa y me gustaría recibir información.')}">
+Contactar por WhatsApp
+</a>
+        <button class="btn-volver" onclick="mostrarCategoria('${categoria}')">
+          Volver a la categoría
+        </button>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => {
+  document.querySelector(".perfil-galeria").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}, 100);
 }

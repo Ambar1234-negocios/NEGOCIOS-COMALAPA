@@ -256,7 +256,136 @@ h2 {
   background: #ffb300;
   color: #111;
 }
+/* =========================
+   PERFIL DE NEGOCIO
+========================= */
 
+.perfil-negocio {
+    background: white;
+    width: 95%;
+    max-width: 1250px;
+    margin: auto;
+    border-radius: 22px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.14);
+    overflow: hidden;
+    text-align: left;
+}
+
+.perfil-imagen {
+  height: 240px;
+  background: linear-gradient(135deg, #ffb300, #ff8c00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 70px;
+}
+
+.perfil-contenido {
+  padding: 25px;
+}
+
+.perfil-contenido h3 {
+  color: #ff8c00;
+  margin-bottom: 10px;
+}
+
+.perfil-contenido h4 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #3a2500;
+}
+
+.perfil-contenido ul {
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+.perfil-contenido p {
+  margin-bottom: 12px;
+}
+/* =========================
+   PERFIL DE NEGOCIO
+========================= */
+
+.perfil-negocio {
+  background: white;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: 24px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.14);
+  overflow: hidden;
+  text-align: left;
+}
+
+.perfil-galeria {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 18px;
+    background: #f1f1f1;
+}
+
+.foto-perfil {
+  height: 170px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ffb300, #ff8c00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 54px;
+}
+
+.perfil-info {
+  padding: 25px;
+}
+
+.perfil-info h3 {
+  color: #ff8c00;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.descripcion-perfil {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.perfil-detalles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-bottom: 22px;
+}
+
+.perfil-detalles h4 {
+  color: #3a2500;
+  margin-bottom: 10px;
+}
+
+.perfil-detalles ul {
+  margin-left: 20px;
+}
+
+.perfil-detalles p,
+.perfil-detalles li {
+  margin-bottom: 8px;
+}
+
+.btn-volver {
+  margin-left: 10px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 30px;
+  background: #111;
+  color: #ffb300;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-volver:hover {
+  background: #ffb300;
+  color: #111;
+}
 /* =========================
    REGISTRO
 ========================= */
@@ -283,6 +412,13 @@ footer {
   color: white;
   text-align: center;
   padding: 18px;
+}
+.foto-perfil-banner{
+    width:100%;
+    height:190px;
+    object-fit:contain;
+    object-position:center;
+    background:white;
 }
 
 /* =========================
@@ -318,15 +454,18 @@ footer {
   }
 
   .hero p {
-    font-size: 12px;
-    line-height: 1.3;
-    max-width: 100%;
-    margin-top: 60px;
-    white-space: normal;
+  font-size: 12px;
+  line-height: 1.3;
+  width: 100%;
+  max-width: 100%;
+  margin: 35px 0 0 0;
+  padding: 0 15px;
+  white-space: normal;
+  text-align: center;
+  display: block;
+  margin-left: -225px;
+}
 
-    text-align: center;
-    margin-left: -200px;
-  }
 
   .buscador-contenedor {
     margin: 30px auto 3px;
@@ -380,4 +519,50 @@ footer {
     padding: 16px 8px;
     font-size: 14px;
   }
+  .perfil-galeria {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 10px;
+}
+
+  .foto-perfil {
+    height: 90px;
+    font-size: 32px;
+    border-radius: 12px;
+  }
+
+  .perfil-info {
+    padding: 18px;
+  }
+
+  .perfil-info h3 {
+    font-size: 22px;
+  }
+
+  .descripcion-perfil {
+    font-size: 15px;
+  }
+
+  .perfil-detalles {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .btn-volver {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .perfil-info .btn-whatsapp {
+    width: 100%;
+    text-align: center;
+  }
+  .foto-perfil-banner {
+    width: 100%;
+    height: 100px;
+    object-fit: contain;
+    object-position: center;
+}
+  
 }
