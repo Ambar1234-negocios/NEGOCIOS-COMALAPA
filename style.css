@@ -1,7 +1,3 @@
-/* =========================
-   CONFIGURACIÓN GENERAL
-========================= */
-
 * {
   margin: 0;
   padding: 0;
@@ -14,55 +10,45 @@ body {
   color: #222;
 }
 
-/* =========================
-   PORTADA PRINCIPAL / HERO
-========================= */
+/* PORTADA */
 
 .hero {
   min-height: 260px;
-
   background-image:
-    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
     url("imagenes/comalapa.webp");
-
   background-size: cover;
-  background-position: 65% center;
+  background-position: center;
   background-repeat: no-repeat;
-
+  color: white;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   text-align: left;
-
-  color: white;
-  padding: 30px 15px;
-  padding-left: 5px;
+  padding: 30px 40px;
   margin-bottom: 5px;
 }
 
 .overlay {
-  padding: 5px 40px 25px 40px;
+  width: 100%;
+  text-align: left;
 }
 
 .hero h1 {
   font-size: 38px;
   line-height: 1.05;
-  margin-bottom: 35px;
+  margin-bottom: 45px;
 }
 
 .hero p {
   font-size: 18px;
   line-height: 1.4;
-  max-width: 100%;
-  white-space: nowrap;
-  position: relative;
-  left: 220px;
-  top: 60px;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-/* =========================
-   BUSCADOR
-========================= */
+/* BUSCADOR */
 
 .buscador-contenedor {
   max-width: 700px;
@@ -84,19 +70,20 @@ body {
   box-shadow: 0 5px 18px rgba(255,179,0,0.4);
 }
 
-/* =========================
-   BOTONES
-========================= */
+/* BOTONES */
 
 .btn-principal,
 .btn-registro,
-.btn-whatsapp {
+.btn-whatsapp,
+.btn-volver {
   display: inline-block;
   text-decoration: none;
   padding: 12px 22px;
   border-radius: 30px;
   font-weight: bold;
   transition: 0.3s;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-principal,
@@ -105,24 +92,24 @@ body {
   color: #111;
 }
 
-.btn-principal:hover,
-.btn-registro:hover {
-  background: white;
-  transform: scale(1.06);
-}
-
 .btn-whatsapp {
   background: #25d366;
   color: white;
 }
 
-.btn-whatsapp:hover {
-  background: #128c7e;
+.btn-volver {
+  background: #111;
+  color: #ffb300;
 }
 
-/* =========================
-   SECCIONES
-========================= */
+.btn-principal:hover,
+.btn-registro:hover,
+.btn-whatsapp:hover,
+.btn-volver:hover {
+  transform: scale(1.05);
+}
+
+/* SECCIONES */
 
 .destacados,
 .categorias,
@@ -137,9 +124,7 @@ h2 {
   color: #3a2500;
 }
 
-/* =========================
-   TARJETAS
-========================= */
+/* TARJETAS */
 
 .cards {
   display: flex;
@@ -170,11 +155,8 @@ h2 {
 
 .card p {
   margin-bottom: 18px;
+  line-height: 1.4;
 }
-
-/* =========================
-   TARJETA PREMIUM
-========================= */
 
 .card-premium {
   border: 3px solid #ffb300;
@@ -194,9 +176,7 @@ h2 {
   font-weight: bold;
 }
 
-/* =========================
-   CARRUSEL DESTACADOS
-========================= */
+/* CARRUSEL */
 
 .carrusel-destacados {
   display: flex;
@@ -216,9 +196,7 @@ h2 {
   flex-shrink: 0;
 }
 
-/* =========================
-   CATEGORÍAS
-========================= */
+/* CATEGORÍAS */
 
 .grid-categorias {
   display: grid;
@@ -256,83 +234,33 @@ h2 {
   background: #ffb300;
   color: #111;
 }
-/* =========================
-   PERFIL DE NEGOCIO
-========================= */
 
-.perfil-negocio {
-    background: white;
-    width: 95%;
-    max-width: 1250px;
-    margin: auto;
-    border-radius: 22px;
-    box-shadow: 0 8px 22px rgba(0,0,0,0.14);
-    overflow: hidden;
-    text-align: left;
-}
-
-.perfil-imagen {
-  height: 240px;
-  background: linear-gradient(135deg, #ffb300, #ff8c00);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 70px;
-}
-
-.perfil-contenido {
-  padding: 25px;
-}
-
-.perfil-contenido h3 {
-  color: #ff8c00;
-  margin-bottom: 10px;
-}
-
-.perfil-contenido h4 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  color: #3a2500;
-}
-
-.perfil-contenido ul {
-  margin-left: 20px;
-  margin-bottom: 15px;
-}
-
-.perfil-contenido p {
-  margin-bottom: 12px;
-}
-/* =========================
-   PERFIL DE NEGOCIO
-========================= */
+/* PERFIL DE NEGOCIO */
 
 .perfil-negocio {
   background: white;
-  max-width: 1000px;
-  margin: 0 auto;
-  border-radius: 24px;
+  width: 95%;
+  max-width: 1100px;
+  margin: auto;
+  border-radius: 22px;
   box-shadow: 0 8px 22px rgba(0,0,0,0.14);
   overflow: hidden;
   text-align: left;
 }
 
 .perfil-galeria {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 18px;
-    background: #f1f1f1;
+  padding: 18px;
+  background: #f1f1f1;
 }
 
-.foto-perfil {
-  height: 170px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #ffb300, #ff8c00);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 54px;
+.foto-perfil-banner {
+  width: 100%;
+  height: 190px;
+  object-fit: contain;
+  object-position: center;
+  background: white;
+  display: block;
+  border-radius: 5px;
 }
 
 .perfil-info {
@@ -348,47 +276,28 @@ h2 {
 .descripcion-perfil {
   font-size: 18px;
   margin-bottom: 20px;
+  line-height: 1.4;
 }
 
 .perfil-detalles {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 22px;
+  gap: 14px 22px;
   margin-bottom: 22px;
 }
 
-.perfil-detalles h4 {
-  color: #3a2500;
-  margin-bottom: 10px;
-}
-
-.perfil-detalles ul {
-  margin-left: 20px;
-}
-
-.perfil-detalles p,
-.perfil-detalles li {
+.perfil-detalles p {
   margin-bottom: 8px;
+  line-height: 1.4;
 }
 
-.btn-volver {
-  margin-left: 10px;
-  padding: 12px 22px;
-  border: none;
-  border-radius: 30px;
-  background: #111;
-  color: #ffb300;
-  font-weight: bold;
-  cursor: pointer;
+.perfil-botones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.btn-volver:hover {
-  background: #ffb300;
-  color: #111;
-}
-/* =========================
-   REGISTRO
-========================= */
+/* REGISTRO */
 
 .registro {
   background: #111;
@@ -403,9 +312,7 @@ h2 {
   margin-bottom: 20px;
 }
 
-/* =========================
-   FOOTER
-========================= */
+/* FOOTER */
 
 footer {
   background: #000;
@@ -413,62 +320,37 @@ footer {
   text-align: center;
   padding: 18px;
 }
-.foto-perfil-banner{
-    width:100%;
-    height:190px;
-    object-fit:contain;
-    object-position:center;
-    background:white;
-}
 
-/* =========================
-   VERSIÓN MÓVIL
-========================= */
+/* MÓVIL */
 
 @media (max-width: 600px) {
 
   .hero {
-    min-height: 200px;
-    height: 200px;
-    padding: 12px 18px;
-    background-size: 140%;
-    background-position: 10% 40%;
-    background-repeat: no-repeat;
-
-    display: flex;
+    min-height: 180px;
+    height: 100px;
+    padding: 25px 40px;
+    background-size: 125%;
+    background-position: 10% 45%;
     align-items: flex-start;
-    justify-content: flex-start;
-    text-align: left;
-  }
-
-  .overlay {
-    width: 100%;
-    max-width: 100%;
-    padding: 0;
   }
 
   .hero h1 {
     font-size: 22px;
     line-height: 1.05;
-    margin-bottom: 45px;
-  }
-
-  .hero p {
-  font-size: 12px;
-  line-height: 1.3;
-  width: 100%;
-  max-width: 100%;
-  margin: 35px 0 0 0;
-  padding: 0 15px;
-  white-space: normal;
-  text-align: center;
-  display: block;
-  margin-left: -225px;
+    margin-bottom: 85px;
+    margin-left: -25px;
 }
 
+  .hero p {
+    font-size: 12px;
+    line-height: 1.2;
+    max-width: 330px;
+    margin: 0 auto;
+    text-align: center;
+  }
 
   .buscador-contenedor {
-    margin: 30px auto 3px;
+    margin: 5px auto 3px;
     padding: 0 15px;
   }
 
@@ -485,7 +367,6 @@ footer {
   }
 
   .cards {
-    justify-content: center;
     gap: 12px;
   }
 
@@ -494,21 +375,13 @@ footer {
   }
 
   .carrusel-destacados {
-    display: flex;
-    overflow-x: auto;
     gap: 15px;
     padding: 10px;
-    scrollbar-width: none;
-  }
-
-  .carrusel-destacados::-webkit-scrollbar {
-    display: none;
   }
 
   .carrusel-destacados .card {
     min-width: 260px;
     max-width: 260px;
-    flex-shrink: 0;
   }
 
   .grid-categorias {
@@ -519,16 +392,17 @@ footer {
     padding: 16px 8px;
     font-size: 14px;
   }
-  .perfil-galeria {
-    grid-template-columns: 1fr;
-    gap: 6px;
-    padding: 10px;
-}
 
-  .foto-perfil {
-    height: 90px;
-    font-size: 32px;
-    border-radius: 12px;
+  .perfil-negocio {
+    width: 95%;
+  }
+
+  .perfil-galeria {
+    padding: 10px;
+  }
+
+  .foto-perfil-banner {
+    height: 100px;
   }
 
   .perfil-info {
@@ -545,24 +419,16 @@ footer {
 
   .perfil-detalles {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
 
-  .btn-volver {
-    margin-left: 0;
-    margin-top: 10px;
-    width: 100%;
+  .perfil-botones {
+    flex-direction: column;
   }
 
-  .perfil-info .btn-whatsapp {
+  .perfil-botones .btn-whatsapp,
+  .perfil-botones .btn-volver {
     width: 100%;
     text-align: center;
   }
-  .foto-perfil-banner {
-    width: 100%;
-    height: 100px;
-    object-fit: contain;
-    object-position: center;
-}
-  
 }

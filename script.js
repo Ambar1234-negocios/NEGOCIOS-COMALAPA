@@ -1,273 +1,280 @@
-// =========================
-// DATOS DE NEGOCIOS POR CATEGORÍA
-// Aquí agregas o quitas negocios de cada categoría.
-// =========================
+const WHATSAPP_GENERAL = "529631181819";
+
+const categoriasNombres = {
+  streaming: "STREAMING Y TECNOLOGÍA",
+  construccion: "CONSTRUCCIÓN Y MATERIALES",
+  comida: "COMIDA Y RESTAURANTES",
+  salud: "SALUD Y FARMACIAS",
+  hoteles: "HOTELES Y HOSPEDAJE",
+  automotriz: "TALLERES Y REFACCIONES",
+  servicios: "SERVICIOS PARA EL HOGAR",
+  belleza: "BELLEZA Y ESTÉTICA",
+  mandaditos: "MANDADITOS",
+  comercios: "COMERCIOS",
+  profesionales: "PROFESIONISTAS",
+  bienesraices: "CASAS Y TERRENOS",
+  veterinarias: "VETERINARIAS",
+  agua: "PURIFICADORAS DE AGUA"
+};
 
 const negocios = {
   streaming: [
-    ["📺 Ámbar Streaming", "Netflix, Disney+, Max, Prime Video, VIX y más.", "Ámbar Streaming", "99"],
-    ["🎵 Spotify Premium", "Música sin anuncios.", "Spotify Premium", "95"],
-    ["🎬 VIX Premium", "Series, películas y deportes.", "VIX Premium", "70"],
-    ["🎥 Netflix Premium", "Películas y series en alta calidad.", "Netflix Premium", "99"],
-    ["🏰 Disney Premium", "Películas, series y contenido familiar.", "Disney Premium", "80"],
-    ["🎞️ Max HBO", "Películas, series y estrenos.", "Max HBO", "80"],
-    ["📦 Prime Video", "Películas, series y beneficios Prime.", "Prime Video", "70"],
-    ["🎭 Paramount Plus", "Series, películas y entretenimiento.", "Paramount Plus", "70"],
-    ["🍥 Crunchyroll", "Anime y estrenos japoneses.", "Crunchyroll", "70"],
-    ["▶️ YouTube Premium", "Videos sin anuncios y música.", "YouTube Premium", "95"]
+    { nombre: "📺 Ámbar Streaming", descripcion: "Netflix, Disney+, Max, Prime Video, VIX y más.", precio: "99" },
+    { nombre: "🎵 Spotify Premium", descripcion: "Música sin anuncios.", precio: "95" },
+    { nombre: "🎬 VIX Premium", descripcion: "Series, películas y deportes.", precio: "70" },
+    { nombre: "🎥 Netflix Premium", descripcion: "Películas y series en alta calidad.", precio: "99" },
+    { nombre: "🏰 Disney Premium", descripcion: "Películas, series y contenido familiar.", precio: "80" },
+    { nombre: "🎞️ Max HBO", descripcion: "Películas, series y estrenos.", precio: "80" },
+    { nombre: "📦 Prime Video", descripcion: "Películas, series y beneficios Prime.", precio: "70" },
+    { nombre: "🎭 Paramount Plus", descripcion: "Series, películas y entretenimiento.", precio: "70" },
+    { nombre: "🍥 Crunchyroll", descripcion: "Anime y estrenos japoneses.", precio: "70" },
+    { nombre: "▶️ YouTube Premium", descripcion: "Videos sin anuncios y música.", precio: "95" }
   ],
 
   construccion: [
-    ["🏗️ Materiales Díaz", "Cemento, block, varilla y agregados."],
-    ["🔧 Ferretería Central", "Herramientas, pinturas y accesorios."],
-    ["🏢 Aceros del Sur", "Lámina, perfiles y estructuras metálicas."],
-    ["👷 Albañil de confianza", "Construcción, remodelación y reparaciones."],
-    ["🧱 Venta de block", "Block, grava, arena y material para obra."]
+    { nombre: "🏗️ Materiales Díaz", descripcion: "Cemento, block, varilla y agregados." },
+    { nombre: "🔧 Ferretería Central", descripcion: "Herramientas, pinturas y accesorios." },
+    { nombre: "🏢 Aceros del Sur", descripcion: "Lámina, perfiles y estructuras metálicas." },
+    { nombre: "👷 Albañil de confianza", descripcion: "Construcción, remodelación y reparaciones." },
+    { nombre: "🧱 Venta de block", descripcion: "Block, grava, arena y material para obra." }
   ],
 
   comida: [
-    ["🍔 Restaurante El Buen Sabor", "Comida local y pedidos especiales."],
-    ["🌮 Tacos Don Pepe", "Tacos, gringas y quesadillas."],
-    ["🍗 Pollería Dos Hermanos", "Pollo fresco y pedidos por WhatsApp."],
-    ["🍕 Pizzería Comalapa", "Pizzas, alitas y promociones."],
-    ["☕ Cafetería La Plaza", "Café, postres y desayunos."]
+    { nombre: "🍔 Restaurante El Buen Sabor", descripcion: "Comida local y pedidos especiales." },
+    { nombre: "🌮 Tacos Don Pepe", descripcion: "Tacos, gringas y quesadillas." },
+    { nombre: "🍗 Pollería Dos Hermanos", descripcion: "Pollo fresco y pedidos por WhatsApp." },
+    { nombre: "🍕 Pizzería Comalapa", descripcion: "Pizzas, alitas y promociones." },
+    { nombre: "☕ Cafetería La Plaza", descripcion: "Café, postres y desayunos." }
   ],
 
   salud: [
-    ["🦷 Clínica Dental M", "Consultas, limpiezas y citas dentales."],
-    ["👨‍⚕️ Consultorio Médico San José", "Consulta general y control médico."],
-    ["💊 Farmacia La Esperanza", "Medicamentos y productos de salud."],
-    ["🧪 Laboratorio Clínico Comalapa", "Análisis clínicos y estudios."],
+    { nombre: "🦷 Clínica Dental M", descripcion: "Consultas, limpiezas y citas dentales." },
+    { nombre: "👨‍⚕️ Consultorio Médico San José", descripcion: "Consulta general y control médico." },
+    { nombre: "💊 Farmacia La Esperanza", descripcion: "Medicamentos y productos de salud." },
+    { nombre: "🧪 Laboratorio Clínico Comalapa", descripcion: "Análisis clínicos y estudios." }
   ],
 
   veterinarias: [
-  ["🐶 Veterinaria San Francisco", "Atención médica para mascotas."],
-  ["🐾 Clínica Veterinaria Comalapa", "Consultas, vacunas y estética canina."],
-  ["🦴 Pet Shop Comalapa", "Alimento, accesorios y productos para mascotas."]
-],
+    { nombre: "🐶 Veterinaria San Francisco", descripcion: "Atención médica para mascotas." },
+    { nombre: "🐾 Clínica Veterinaria Comalapa", descripcion: "Consultas, vacunas y estética canina." },
+    { nombre: "🦴 Pet Shop Comalapa", descripcion: "Alimento, accesorios y productos para mascotas." }
+  ],
 
   hoteles: [
-    ["🏨 Hotel Central", "Habitaciones cómodas en Comalapa."],
-    ["🛏️ Hotel La Plaza", "Hospedaje familiar y céntrico."],
-    ["🏡 Posada El Descanso", "Habitaciones económicas."],
-    ["🌙 Hotel Camino Real", "Hospedaje cómodo y seguro."]
+    { nombre: "🏨 Hotel Central", descripcion: "Habitaciones cómodas en Comalapa." },
+    { nombre: "🛏️ Hotel La Plaza", descripcion: "Hospedaje familiar y céntrico." },
+    { nombre: "🏡 Posada El Descanso", descripcion: "Habitaciones económicas." },
+    { nombre: "🌙 Hotel Camino Real", descripcion: "Hospedaje cómodo y seguro." }
   ],
 
   automotriz: [
-    ["🚗 Taller García", "Mecánica general y diagnóstico."],
-    ["🏍️ Taller de Motos El Rápido", "Reparación y mantenimiento de motocicletas."],
-    ["🔩 Refacciones El Motor", "Refacciones para autos y motos."],
-    ["🧽 Lavado El Rápido", "Lavado, aspirado y encerado."],
-    ["🛞 Llantera Comalapa", "Venta y reparación de llantas."]
+    { nombre: "🚗 Taller García", descripcion: "Mecánica general y diagnóstico." },
+    { nombre: "🏍️ Taller de Motos El Rápido", descripcion: "Reparación y mantenimiento de motocicletas." },
+    { nombre: "🔩 Refacciones El Motor", descripcion: "Refacciones para autos y motos." },
+    { nombre: "🧽 Lavado El Rápido", descripcion: "Lavado, aspirado y encerado." },
+    { nombre: "🛞 Llantera Comalapa", descripcion: "Venta y reparación de llantas." }
   ],
 
   servicios: [
-    ["🪟 Balconería, Vidrios y Aluminios El Perico", "Ventanas, puertas, vitrinas, espejos, barandales, escaleras, portones, herrería y aluminio."]
-  ],
-
-  peluquerias: [
-    ["💈 Barbería El Estilo", "Cortes modernos y arreglo de barba."],
-    ["💇‍♀️ Estética Bella", "Peinados, tintes y tratamientos."],
-    ["✂️ Cortes a Domicilio Luis", "Servicio a domicilio."],
-    ["💅 Uñas y Belleza", "Uñas, maquillaje y estética."]
-  ],
-
-  mandaditos: [
-    ["🛵 Mandaditos Express", "Compras, entregas y mandados."],
-    ["🏍️ Moto Envíos Comalapa", "Entrega rápida local."],
-    ["🚨 Auxilio Mandaditos", "Servicio urgente en la ciudad."]
-  ],
-
-  tiendas: [
-    ["🛒 Abarrotes Lupita", "Despensa, bebidas y productos básicos."],
-    ["🏪 Tienda El Centro", "Abarrotes y artículos para el hogar."],
-    ["🛍️ Mini Súper Comalapa", "Productos variados y servicio rápido."],
-    ["👕 Boutique La Moda", "Ropa, accesorios y novedades."],
-    ["👟 Zapatería Comalapa", "Calzado para dama, caballero y niños."]
-  ],
-
-  profesionales: [
-    ["💼 Contador Público Hernández", "Contabilidad, declaraciones y asesoría fiscal."],
-    ["⚖️ Abogado Martínez", "Asesoría legal y trámites jurídicos."],
-    ["🏛️ Arquitecto López", "Diseño, planos y proyectos de construcción."],
-    ["👷 Ingeniero Civil Pérez", "Supervisión de obra y presupuestos."],
-    ["📄 Gestoría Comalapa", "Trámites, documentos y asesorías."]
+    {
+      nombre: "🪟 Balconería, Vidrios y Aluminios El Perico",
+      descripcion: "Ventanas, puertas, vitrinas, espejos, barandales, escaleras, portones, herrería y aluminio.",
+      perfil: true,
+      imagen: "imagenes/perico.webp",
+      direccion: "Barrio Agua Zarca y Barrio La Alborada, Frontera Comalapa",
+      telefono: "963 635 0461",
+      whatsapp: "529636350461",
+      horario: "Lunes a sábado de 8:00 a.m. a 5:00 p.m."
+    }
   ],
 
   belleza: [
-  ["💇 Estética Lupita", "Cortes, tintes y peinados."],
-  ["💅 Uñas Glamour", "Aplicación de uñas y manicure."],
-  ["💄 Makeup Comalapa", "Maquillaje profesional para eventos."]
-],
+    { nombre: "💇 Estética Lupita", descripcion: "Cortes, tintes y peinados." },
+    { nombre: "💅 Uñas Glamour", descripcion: "Aplicación de uñas y manicure." },
+    { nombre: "💄 Makeup Comalapa", descripcion: "Maquillaje profesional para eventos." }
+  ],
 
-comercios: [
-  ["🛒 Abarrotes Lupita", "Despensa y productos básicos."],
-  ["🏪 Mini Súper Comalapa", "Bebidas, botanas y abarrotes."],
-  ["👕 Boutique La Moda", "Ropa y accesorios."]
-],
+  mandaditos: [
+    { nombre: "🛵 Mandaditos Express", descripcion: "Compras, entregas y mandados." },
+    { nombre: "🏍️ Moto Envíos Comalapa", descripcion: "Entrega rápida local." },
+    { nombre: "🚨 Auxilio Mandaditos", descripcion: "Servicio urgente en la ciudad." }
+  ],
+
+  comercios: [
+    { nombre: "🛒 Abarrotes Lupita", descripcion: "Despensa y productos básicos." },
+    { nombre: "🏪 Mini Súper Comalapa", descripcion: "Bebidas, botanas y abarrotes." },
+    { nombre: "👕 Boutique La Moda", descripcion: "Ropa y accesorios." }
+  ],
+
+  profesionales: [
+    { nombre: "💼 Contador Público Hernández", descripcion: "Contabilidad, declaraciones y asesoría fiscal." },
+    { nombre: "⚖️ Abogado Martínez", descripcion: "Asesoría legal y trámites jurídicos." },
+    { nombre: "🏛️ Arquitecto López", descripcion: "Diseño, planos y proyectos de construcción." },
+    { nombre: "👷 Ingeniero Civil Pérez", descripcion: "Supervisión de obra y presupuestos." },
+    { nombre: "📄 Gestoría Comalapa", descripcion: "Trámites, documentos y asesorías." }
+  ],
 
   bienesraices: [
-  ["🏡 Terreno en Venta", "Lote con buena ubicación en Comalapa."],
-  ["🏠 Casa Familiar", "Casa amplia con varias habitaciones."],
-  ["🏢 Local Comercial", "Renta de local para negocio."],
-  ["🌄 Terrenos Comalapa", "Venta de terrenos urbanos y rurales."],
-  ["🔑 Inmobiliaria Ámbar", "Compra, venta y renta de propiedades."]
-],
+    { nombre: "🏡 Terreno en Venta", descripcion: "Lote con buena ubicación en Comalapa." },
+    { nombre: "🏠 Casa Familiar", descripcion: "Casa amplia con varias habitaciones." },
+    { nombre: "🏢 Local Comercial", descripcion: "Renta de local para negocio." },
+    { nombre: "🌄 Terrenos Comalapa", descripcion: "Venta de terrenos urbanos y rurales." },
+    { nombre: "🔑 Inmobiliaria Ámbar", descripcion: "Compra, venta y renta de propiedades." }
+  ],
 
-agua: [
-  ["💧 Purificadora Agua Cristal", "Venta de agua purificada para hogar y negocio."],
-
-  ["💧 Purificadora El Manantial", "Garrafones, recargas y servicio a domicilio."]
-]
-
+  agua: [
+    { nombre: "💧 Purificadora Agua Cristal", descripcion: "Venta de agua purificada para hogar y negocio." },
+    { nombre: "💧 Purificadora El Manantial", descripcion: "Garrafones, recargas y servicio a domicilio." }
+  ]
 };
 
-
-// =========================
-// FUNCIÓN PARA MOSTRAR NEGOCIOS POR CATEGORÍA
-// Se activa cuando das clic en una categoría.
-// =========================
+function crearLinkWhatsapp(negocio) {
+  const numero = negocio.whatsapp || WHATSAPP_GENERAL;
+  const mensaje = `Hola, vi ${negocio.nombre} en Ámbar Negocios Comalapa y quiero información.`;
+  return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+}
 
 function mostrarCategoria(categoria) {
   const titulo = document.getElementById("titulo-categoria");
   const lista = document.getElementById("lista-negocios");
 
-  titulo.textContent = "Negocios de " + categoria.toUpperCase();
+  if (!negocios[categoria]) return;
+
+  titulo.style.display = "block";
+  titulo.textContent = "Negocios de " + (categoriasNombres[categoria] || categoria.toUpperCase());
   lista.innerHTML = "";
 
-  negocios[categoria].forEach(function(negocio) {
+  negocios[categoria].forEach(function(negocio, index) {
+    const boton = negocio.perfil
+      ? `<button class="btn-whatsapp" onclick="verPerfil('${categoria}', ${index})">Ver información</button>`
+      : `<a class="btn-whatsapp" href="${crearLinkWhatsapp(negocio)}">WhatsApp</a>`;
+
     lista.innerHTML += `
       <div class="card">
-        <h3>${negocio[0]}</h3>
-        <p>${negocio[1]}</p>
-        <button class="btn-whatsapp" onclick="verPerfil('${categoria}', '${negocio[0]}')">
-  ${categoria === 'streaming' ? 'Comprar' : 'Ver información'}
-</button>
+        <h3>${negocio.nombre}</h3>
+        <p>${negocio.descripcion}</p>
+        ${boton}
       </div>
     `;
   });
 
-  document.querySelector(".resultado").scrollIntoView({ behavior: "smooth" });
+  document.querySelector(".resultado").scrollIntoView({ behavior: "smooth", block: "start" });
 }
-
-
-// =========================
-// CARRUSEL AUTOMÁTICO INFINITO DE NEGOCIOS DESTACADOS
-// =========================
-
-const carruselDestacados = document.querySelector(".carrusel-destacados");
-
-if (carruselDestacados) {
-  const tarjetas = Array.from(carruselDestacados.children);
-
-  tarjetas.forEach((tarjeta) => {
-    const copia = tarjeta.cloneNode(true);
-    carruselDestacados.appendChild(copia);
-  });
-
-  let velocidad = 1;
-
-  setInterval(() => {
-    carruselDestacados.scrollLeft += velocidad;
-
-    if (carruselDestacados.scrollLeft >= carruselDestacados.scrollWidth / 2) {
-      carruselDestacados.scrollLeft = 0;
-    }
-  }, 30);
-}
-
-// =========================
-// DETENER CARRUSEL SI EL USUARIO TOCA EN MÓVIL
-// =========================
-
-if (carruselDestacados) {
-  carruselDestacados.addEventListener("touchstart", () => {
-    clearInterval(movimientoCarrusel);
-  });
-}
-// =========================
-// BUSCADOR INTELIGENTE
-// =========================
 
 function buscarNegocios() {
-    const texto = document
-        .getElementById("buscador")
-        .value
-        .toLowerCase();
+  const texto = document.getElementById("buscador").value.toLowerCase().trim();
 
-    for (const categoria in negocios) {
+  if (texto === "") return;
 
-        const encontrados = negocios[categoria].some(negocio =>
-            negocio.join(" ").toLowerCase().includes(texto)
-        );
+  for (const categoria in negocios) {
+    const encontrados = negocios[categoria].some(negocio => {
+      return `${negocio.nombre} ${negocio.descripcion}`.toLowerCase().includes(texto);
+    });
 
-        if (encontrados) {
-            mostrarCategoria(categoria);
-            return;
-        }
+    if (encontrados) {
+      mostrarCategoria(categoria);
+      return;
     }
-}
-// =========================
-// PERFIL DE NEGOCIO
-// =========================
+  }
 
-function verPerfil(categoria, nombreNegocio) {
+  alert("No se encontró ningún negocio con esa búsqueda.");
+}
+
+function verPerfil(categoria, index) {
   const titulo = document.getElementById("titulo-categoria");
   const lista = document.getElementById("lista-negocios");
+  const negocio = negocios[categoria][index];
 
-  let negocioEncontrado = null;
-
-  negocios[categoria].forEach(function(negocio) {
-    if (negocio[0] === nombreNegocio) {
-      negocioEncontrado = negocio;
-    }
-  });
-
-  if (!negocioEncontrado) {
+  if (!negocio) {
     alert("No se encontró la información del negocio.");
     return;
   }
-
-  const nombre = negocioEncontrado[0];
-  const descripcion = negocioEncontrado[1];
 
   titulo.style.display = "none";
 
   lista.innerHTML = `
     <div class="perfil-negocio">
-      
       <div class="perfil-galeria">
-  <img src="imagenes/perico.webp" class="foto-perfil-banner">
-</div>
+        <img src="${negocio.imagen}" class="foto-perfil-banner" alt="${negocio.nombre}">
+      </div>
 
       <div class="perfil-info">
-        <h3>${nombre}</h3>
-        <p class="descripcion-perfil">${descripcion}</p>
+        <h3>${negocio.nombre}</h3>
+        <p class="descripcion-perfil">${negocio.descripcion}</p>
 
         <div class="perfil-detalles">
-          <div>
-            
+          <p><strong>📍 Dirección:</strong> ${negocio.direccion}</p>
+          <p><strong>📞 Teléfono:</strong> ${negocio.telefono}</p>
+          <p><strong>🕒 Horario:</strong> ${negocio.horario}</p>
+        </div>
 
-          <p><strong>📍 Dirección:</strong> Barrio Agua Zarca y Barrio La Alborada, Frontera Comalapa</p>
+        <div class="perfil-botones">
+          <a class="btn-whatsapp" href="${crearLinkWhatsapp(negocio)}">
+            Contactar por WhatsApp
+          </a>
 
-<p><strong>📞 Teléfono:</strong> 963 635 0461</p>
-
-<p><strong>🕒 Horario:</strong> Lunes a sábado de 8:00 a.m. a 5:00 p.m.</p>
-<a class="btn-whatsapp"
-href="https://wa.me/529636350461?text=${encodeURIComponent('Hola, vi ' + nombre + ' en Ámbar Negocios Comalapa y me gustaría recibir información.')}">
-Contactar por WhatsApp
-</a>
-        <button class="btn-volver" onclick="mostrarCategoria('${categoria}')">
-          Volver a la categoría
-        </button>
+          <button class="btn-volver" onclick="mostrarCategoria('${categoria}')">
+            Volver a la categoría
+          </button>
+        </div>
       </div>
     </div>
   `;
 
   setTimeout(() => {
-  document.querySelector(".perfil-galeria").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-}, 100);
+    document.querySelector(".perfil-negocio").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }, 100);
+}
+
+// ======================================
+// CARRUSEL AUTOMÁTICO DE DESTACADOS
+// ======================================
+
+const carrusel = document.querySelector(".carrusel-destacados");
+
+if (carrusel) {
+
+    let velocidad = 1;
+
+    function moverCarrusel() {
+
+        carrusel.scrollLeft += velocidad;
+
+        if (
+            carrusel.scrollLeft >=
+            carrusel.scrollWidth - carrusel.clientWidth
+        ) {
+            carrusel.scrollLeft = 0;
+        }
+
+    }
+
+    let movimiento = setInterval(moverCarrusel, 20);
+
+    let reinicio;
+
+function pausarCarrusel() {
+    clearInterval(movimiento);
+    clearTimeout(reinicio);
+}
+
+function reanudarCarrusel() {
+    clearTimeout(reinicio);
+
+    reinicio = setTimeout(() => {
+        movimiento = setInterval(moverCarrusel, 20);
+    }, 2000); // Espera 2 segundos antes de volver a moverse
+}
+
+// Para PC
+carrusel.addEventListener("mousedown", pausarCarrusel);
+carrusel.addEventListener("mouseup", reanudarCarrusel);
+
+// Para celulares
+carrusel.addEventListener("touchstart", pausarCarrusel);
+carrusel.addEventListener("touchend", reanudarCarrusel);
+
 }
