@@ -1,3 +1,8 @@
+/* ============================================================
+   CONFIGURACIÓN GENERAL
+   Ajustes base para toda la página
+============================================================ */
+
 * {
   margin: 0;
   padding: 0;
@@ -10,7 +15,11 @@ body {
   color: #222;
 }
 
-/* PORTADA */
+
+/* ============================================================
+   PORTADA PRINCIPAL / HERO
+   Imagen principal de Comalapa, título y frase
+============================================================ */
 
 .hero {
   min-height: 260px;
@@ -48,7 +57,11 @@ body {
   text-align: center;
 }
 
-/* BUSCADOR */
+
+/* ============================================================
+   BUSCADOR
+   Barra donde el usuario busca negocios o servicios
+============================================================ */
 
 .buscador-contenedor {
   max-width: 700px;
@@ -70,7 +83,11 @@ body {
   box-shadow: 0 5px 18px rgba(255,179,0,0.4);
 }
 
-/* BOTONES */
+
+/* ============================================================
+   BOTONES
+   Botones generales, WhatsApp, registro y volver
+============================================================ */
 
 .btn-principal,
 .btn-registro,
@@ -109,7 +126,11 @@ body {
   transform: scale(1.05);
 }
 
-/* SECCIONES */
+
+/* ============================================================
+   SECCIONES GENERALES
+   Espaciado de destacados, categorías, resultados y registro
+============================================================ */
 
 .destacados,
 .categorias,
@@ -124,7 +145,11 @@ h2 {
   color: #3a2500;
 }
 
-/* TARJETAS */
+
+/* ============================================================
+   TARJETAS
+   Diseño de las tarjetas de negocios
+============================================================ */
 
 .cards {
   display: flex;
@@ -176,7 +201,11 @@ h2 {
   font-weight: bold;
 }
 
-/* CARRUSEL */
+
+/* ============================================================
+   CARRUSEL DE NEGOCIOS DESTACADOS
+   Movimiento horizontal de las tarjetas destacadas
+============================================================ */
 
 .carrusel-destacados {
   display: flex;
@@ -196,7 +225,11 @@ h2 {
   flex-shrink: 0;
 }
 
-/* CATEGORÍAS */
+
+/* ============================================================
+   CATEGORÍAS
+   Botones de categorías principales
+============================================================ */
 
 .grid-categorias {
   display: grid;
@@ -235,69 +268,331 @@ h2 {
   color: #111;
 }
 
-/* PERFIL DE NEGOCIO */
+
+/* ============================================================
+   PERFIL DE NEGOCIO
+   PLANTILLA OFICIAL ÁMBAR v1.0
+============================================================ */
 
 .perfil-negocio {
   background: white;
   width: 95%;
   max-width: 1100px;
-  margin: auto;
-  border-radius: 22px;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.14);
+  margin: 25px auto;
+  border-radius: 24px;
+  box-shadow: 0 16px 45px rgba(0,0,0,0.14);
   overflow: hidden;
   text-align: left;
 }
 
-.perfil-galeria {
-  padding: 18px;
-  background: #f1f1f1;
+.perfil-oficial {
+  position: relative;
 }
 
-.foto-perfil-banner {
-  width: 100%;
-  height: 190px;
-  object-fit: contain;
-  object-position: center;
+.btn-regresar-perfil {
+  margin: 18px 18px 10px;
   background: white;
+  color: #111;
+  border: none;
+  border-radius: 15px;
+  padding: 12px 18px;
+  font-weight: bold;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  cursor: pointer;
+}
+
+.perfil-hero-oficial {
+  position: relative;
+  height: 220px;
+  margin: 0 18px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #eee;
+}
+
+.perfil-hero-oficial img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  border-radius: 5px;
 }
 
-.perfil-info {
-  padding: 25px;
+.badge-verificado {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  background: #16b66a;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 13px;
+  font-weight: bold;
+  font-size: 14px;
 }
 
-.perfil-info h3 {
-  color: #ff8c00;
-  font-size: 28px;
-  margin-bottom: 8px;
+.perfil-cabecera-oficial {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 32px;
+  margin-top: 0px;
+  position: relative;
+  z-index: 2;
 }
 
-.descripcion-perfil {
+.perfil-logo-oficial {
+  width: 130px;
+  height: 130px;
+  background: #fff;
+  border-radius: 50%;
+  padding: 8px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.20);
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 5px solid #fff;
+  margin-top: -75px;
+  position: relative;
+  z-index: 5;
+}
+
+.perfil-logo-oficial img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+
+.perfil-titulo-oficial h3 {
+  color: #111827;
+  font-size: 36px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.perfil-subtitulo {
+  color: #666;
+  font-size: 16px;
+}
+
+.perfil-contenido-oficial {
+  padding: 28px 32px 34px;
+}
+
+.perfil-descripcion-oficial {
+  margin-bottom: 24px;
+}
+
+.perfil-descripcion-oficial p {
   font-size: 18px;
-  margin-bottom: 20px;
-  line-height: 1.4;
+  line-height: 1.6;
+  color: #222;
 }
 
-.perfil-detalles {
+.perfil-acciones-oficial {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px 22px;
-  margin-bottom: 22px;
+  gap: 10px;
 }
 
-.perfil-detalles p {
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.perfil-botones {
+.perfil-acciones-oficial .accion {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 56px;
+  padding: 9px 10px;
+  gap: 8px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: white;
 }
 
-/* REGISTRO */
+.perfil-acciones-oficial .accion span {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.perfil-acciones-oficial .accion strong {
+  display: block;
+  font-size: 12px;
+  line-height: 1.1;
+}
+
+.perfil-acciones-oficial .accion small {
+  display: block;
+  font-size: 9px;
+  line-height: 1.1;
+}
+
+.accion-whatsapp,
+.accion-delivery {
+  background: linear-gradient(135deg, #17c964, #00a854);
+}
+
+.accion-maps {
+  background: linear-gradient(135deg, #3b82f6, #0756c8);
+}
+
+.accion-video {
+  background: linear-gradient(135deg, #ff3131, #c90000);
+}
+
+.perfil-detalles-oficial {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+  margin: 28px 0;
+}
+
+.detalle-card {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.detalle-card h4 {
+  color: #087f45;
+  margin-bottom: 10px;
+  font-size: 17px;
+}
+
+.detalle-card p {
+  color: #222;
+  line-height: 1.5;
+}
+
+.perfil-seccion {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 18px;
+  padding: 20px;
+  margin-top: 22px;
+}
+
+.perfil-seccion h4 {
+  color: #087f45;
+  margin-bottom: 18px;
+  font-size: 20px;
+}
+
+.servicios-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.servicios-pills span {
+  background: #f1f1f1;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 15px;
+}
+.perfil-galeria-fotos {
+  margin: 25px 0;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.perfil-galeria-fotos h4 {
+  color: #087f45;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.galeria-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.galeria-grid img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+/* ============================================================
+   PERFIL OFICIAL - MÓVIL
+============================================================ */
+
+@media (max-width: 768px) {
+  .perfil-negocio {
+    width: 96%;
+    border-radius: 20px;
+    margin: 18px auto;
+  }
+
+  .btn-regresar-perfil {
+    margin: 12px;
+    width: calc(100% - 24px);
+  }
+
+  .perfil-hero-oficial {
+    height: 185px;
+    margin: 0 12px;
+    border-radius: 16px;
+  }
+
+  .badge-verificado {
+    top: 12px;
+    left: 12px;
+    font-size: 12px;
+    padding: 8px 11px;
+  }
+
+  .perfil-cabecera-oficial {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+    padding: 0 18px;
+    margin-top: -45px;
+  }
+
+  .perfil-logo-oficial {
+    width: 105px;
+    height: 105px;
+  }
+
+  .perfil-titulo-oficial {
+    padding-top: 0;
+  }
+
+  .perfil-titulo-oficial h3 {
+    font-size: 25px;
+  }
+
+  .perfil-contenido-oficial {
+    padding: 20px 18px 26px;
+  }
+
+  .perfil-descripcion-oficial p {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .perfil-acciones-oficial {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+  .accion {
+    min-height: 58px;
+}
+
+  .perfil-detalles-oficial {
+    grid-template-columns: 1fr;
+  }
+
+  .servicios-pills {
+    justify-content: center;
+  }
+}
+
+/* ============================================================
+   REGISTRO
+============================================================ */
 
 .registro {
   background: #111;
@@ -312,7 +607,10 @@ h2 {
   margin-bottom: 20px;
 }
 
-/* FOOTER */
+
+/* ============================================================
+   FOOTER
+============================================================ */
 
 footer {
   background: #000;
@@ -321,9 +619,14 @@ footer {
   padding: 18px;
 }
 
-/* MÓVIL */
+
+/* ============================================================
+   VERSIÓN MÓVIL
+============================================================ */
 
 @media (max-width: 600px) {
+
+  /* ---------- MÓVIL - PORTADA / HERO ---------- */
 
   .hero {
     min-height: 180px;
@@ -339,15 +642,34 @@ footer {
     line-height: 1.05;
     margin-bottom: 85px;
     margin-left: -25px;
-}
+  }
 
   .hero p {
     font-size: 12px;
     line-height: 1.2;
     max-width: 330px;
-    margin: 0 auto;
+    margin: -10px auto 0;
     text-align: center;
   }
+.perfil-cabecera-oficial {
+  margin-top: 0;
+  padding-top: 15px;
+}
+
+.perfil-titulo-oficial h3 {
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+.perfil-hero-oficial {
+  height: 150px;
+}
+
+.perfil-hero-oficial img {
+  object-fit: contain;
+  background: white;
+}
+  /* ---------- MÓVIL - BUSCADOR ---------- */
 
   .buscador-contenedor {
     margin: 5px auto 3px;
@@ -359,12 +681,16 @@ footer {
     font-size: 15px;
   }
 
+  /* ---------- MÓVIL - SECCIONES ---------- */
+
   .destacados,
   .categorias,
   .resultado,
   .registro {
     padding: 25px 15px;
   }
+
+  /* ---------- MÓVIL - TARJETAS ---------- */
 
   .cards {
     gap: 12px;
@@ -373,6 +699,8 @@ footer {
   .card {
     width: 100%;
   }
+
+  /* ---------- MÓVIL - CARRUSEL ---------- */
 
   .carrusel-destacados {
     gap: 15px;
@@ -384,6 +712,8 @@ footer {
     max-width: 260px;
   }
 
+  /* ---------- MÓVIL - CATEGORÍAS ---------- */
+
   .grid-categorias {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -393,8 +723,11 @@ footer {
     font-size: 14px;
   }
 
+  /* ---------- MÓVIL - PERFIL ---------- */
+
   .perfil-negocio {
-    width: 95%;
+    width: 96%;
+    border-radius: 20px;
   }
 
   .perfil-galeria {
@@ -402,28 +735,37 @@ footer {
   }
 
   .foto-perfil-banner {
-    height: 100px;
+    height: 120px;
+    border-radius: 12px;
   }
 
   .perfil-info {
-    padding: 18px;
+    padding: 20px;
   }
 
   .perfil-info h3 {
-    font-size: 22px;
+    font-size: 24px;
+  }
+
+  .perfil-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .descripcion-perfil {
-    font-size: 15px;
+    font-size: 16px;
+  }
+
+  .lista-servicios {
+    columns: 1;
   }
 
   .perfil-detalles {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    padding: 15px;
   }
 
   .perfil-botones {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 
   .perfil-botones .btn-whatsapp,
@@ -431,4 +773,106 @@ footer {
     width: 100%;
     text-align: center;
   }
+  .galeria-grid {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+}
+
+.galeria-grid img {
+  min-width: 220px;
+  width: 220px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 14px;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+.galeria-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.galeria-grid {
+  scrollbar-width: none;
+}
+.galeria-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.galeria-grid {
+    scrollbar-width: none;
+}
+}
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.9);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.lightbox img {
+  max-width: 95%;
+  max-height: 85vh;
+  border-radius: 16px;
+}
+
+.lightbox-cerrar {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  background: white;
+  border: none;
+  font-size: 32px;
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+}
+.lightbox-anterior,
+.lightbox-siguiente {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,.9);
+  color: #111;
+  font-size: 32px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+.lightbox-anterior {
+  left: 22px;
+}
+
+.lightbox-siguiente {
+  right: 22px;
+}
+.lightbox-contador {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.65);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 15px;
+  font-weight: bold;
+  z-index: 10000;
+}
+.lightbox img,
+.galeria-grid img {
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: pan-y;
 }

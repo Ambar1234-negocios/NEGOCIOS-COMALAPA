@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+
+<!-- ============================================================
+   HEAD / CONFIGURACIÓN DEL DOCUMENTO
+============================================================ -->
+
 <head>
+
+  <!-- ============================================================
+     GOOGLE ANALYTICS
+  ============================================================ -->
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NSLXHCBFQ3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -9,13 +19,22 @@
     gtag('config', 'G-NSLXHCBFQ3');
   </script>
 
+  <!-- ============================================================
+     META DATOS Y ARCHIVOS
+  ============================================================ -->
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ámbar Negocios Comalapa</title>
   <link rel="stylesheet" href="style.css?v=4">
+
 </head>
 
 <body>
+
+  <!-- ============================================================
+     PORTADA PRINCIPAL / HERO
+  ============================================================ -->
 
   <header class="hero">
     <div class="overlay">
@@ -23,6 +42,11 @@
       <p>Encuentra negocios y servicios de confianza en un solo lugar</p>
     </div>
   </header>
+
+
+  <!-- ============================================================
+     BUSCADOR
+  ============================================================ -->
 
   <div class="buscador-contenedor">
     <input
@@ -33,10 +57,16 @@
     >
   </div>
 
+
+  <!-- ============================================================
+     NEGOCIOS DESTACADOS / CARRUSEL
+  ============================================================ -->
+
   <section class="destacados">
     <h2>⭐ Negocios destacados</h2>
 
     <div class="carrusel-destacados">
+
       <div class="card card-premium">
         <h3>📺 Ámbar Streaming</h3>
         <p>Netflix, Disney+, Max, Prime Video, VIX y más.</p>
@@ -68,8 +98,14 @@
           WhatsApp
         </a>
       </div>
+
     </div>
   </section>
+
+
+  <!-- ============================================================
+     CATEGORÍAS
+  ============================================================ -->
 
   <section id="categorias" class="categorias">
     <h2>📍 Categorías</h2>
@@ -92,10 +128,20 @@
     </div>
   </section>
 
+
+  <!-- ============================================================
+     RESULTADOS / LISTA DE NEGOCIOS
+  ============================================================ -->
+
   <section class="resultado">
     <h2 id="titulo-categoria">Selecciona una categoría</h2>
     <div id="lista-negocios" class="cards"></div>
   </section>
+
+
+  <!-- ============================================================
+     REGISTRO DE NEGOCIO
+  ============================================================ -->
 
   <section class="registro">
     <h2>¿Tienes un negocio?</h2>
@@ -106,10 +152,21 @@
     </a>
   </section>
 
+
+  <!-- ============================================================
+     FOOTER / PIE DE PÁGINA
+  ============================================================ -->
+
   <footer>
     <p>© 2026 Ámbar Negocios Comalapa</p>
   </footer>
 
+
+  <!-- ============================================================
+     ARCHIVO JAVASCRIPT
+  ============================================================ -->
+
   <script src="script.js?v=4"></script>
+
 </body>
 </html>

@@ -94,20 +94,12 @@ const negocios = {
 
   servicios: [
     {
-      nombre: " Balconería, Vidrios y Aluminios El Perico",
-slug: "el-perico",
-slogan: "Calidad y garantía en aluminio, vidrio y herrería.",
-descripcion: "Especialistas en fabricación e instalación de aluminio, vidrio y herrería.",
-perfil: true,
-banner: "imagenes/el-perico/banner.webp",
-logo: "imagenes/el-perico/logo.webp",
-galeria: [
-  "imagenes/el-perico/foto-1.webp",
-  "imagenes/el-perico/foto-2.webp",
-  "imagenes/el-perico/foto-3.webp",
-  "imagenes/el-perico/foto-4.webp",
-  "imagenes/el-perico/foto-5.webp"
-],
+      nombre: "🪟 Balconería, Vidrios y Aluminios El Perico",
+      descripcion: "Especialistas en fabricación e instalación de aluminio, vidrio y herrería.",
+      perfil: true,
+      plan: "basico",
+      destacado: false,
+
       imagen: "imagenes/perico.webp",
 
       servicios: [
@@ -282,145 +274,88 @@ function verPerfil(categoria, index) {
 
   titulo.style.display = "none";
 
-  const banner = negocio.banner || negocio.imagen || "";
-  const logo = negocio.logo || "";
+  const imagenHTML = tieneDato(negocio.imagen)
+    ? `
+      <div class="perfil-galeria">
+        <img src="${negocio.imagen}" class="foto-perfil-banner" alt="${negocio.nombre}">
+      </div>
+    `
+    : "";
 
   const serviciosHTML = negocio.servicios && negocio.servicios.length > 0
     ? `
-      <section class="perfil-seccion">
-        <h4>🛠️ Servicios</h4>
-        <div class="servicios-pills">
-          ${negocio.servicios.map(servicio => `<span>✔ ${servicio}</span>`).join("")}
-        </div>
-      </section>
+      <h4>🛠️ Servicios</h4>
+      <ul class="lista-servicios">
+        ${negocio.servicios.map(servicio => `<li>✔ ${servicio}</li>`).join("")}
+      </ul>
     `
     : "";
 
   const detallesHTML = `
-    <section class="perfil-detalles-oficial">
-      ${negocio.direccion ? `
-        <div class="detalle-card">
-          <h4>📍 Dirección</h4>
-          <p>${negocio.direccion}</p>
-        </div>
-      ` : ""}
-
-      ${negocio.telefono ? `
-        <div class="detalle-card">
-          <h4>📞 Teléfono / WhatsApp</h4>
-          <p>${negocio.telefono}</p>
-        </div>
-      ` : ""}
-
-      ${negocio.horario ? `
-        <div class="detalle-card">
-          <h4>🕒 Horario</h4>
-          <p>${negocio.horario}</p>
-        </div>
-      ` : ""}
-    </section>
+    <div class="perfil-detalles">
+      ${tieneDato(negocio.direccion) ? `<p><strong>📍 Dirección:</strong> ${negocio.direccion}</p>` : ""}
+      ${tieneDato(negocio.telefono) ? `<p><strong>📞 Teléfono:</strong> ${negocio.telefono}</p>` : ""}
+      ${tieneDato(negocio.horario) ? `<p><strong>🕒 Horario:</strong> ${negocio.horario}</p>` : ""}
+    </div>
   `;
 
   const botonesHTML = `
-    <section class="perfil-acciones-oficial">
+    <div class="perfil-botones">
 
-      <a class="accion accion-whatsapp" href="${crearLinkWhatsapp(negocio)}" target="_blank">
-        <span>💬</span>
-        <div>
-          <strong>WhatsApp</strong>
-          <small>Enviar mensaje</small>
-        </div>
+      <a class="btn-whatsapp" href="${crearLinkWhatsapp(negocio)}" target="_blank">
+        WhatsApp
       </a>
 
+      ${tieneDato(negocio.maps) ? `
+        <a class="btn-volver" href="${negocio.maps}" target="_blank">
+          Cómo llegar
+        </a>
+      ` : ""}
+
+      ${tieneDato(negocio.video) ? `
+        <a class="btn-volver" href="${negocio.video}" target="_blank">
+          Ver video informativo
+        </a>
+      ` : ""}
+
       ${negocio.delivery === true ? `
-        <a class="accion accion-delivery" href="${crearLinkPedido(negocio)}" target="_blank">
-          <span>🛵</span>
-          <div>
-            <strong>Pedir a domicilio</strong>
-            <small>Coordinar entrega</small>
-          </div>
+        <a class="btn-whatsapp" href="${crearLinkPedido(negocio)}" target="_blank">
+          Pedir a domicilio
         </a>
       ` : ""}
 
-      ${negocio.maps ? `
-        <a class="accion accion-maps" href="${negocio.maps}" target="_blank">
-          <span>📍</span>
-          <div>
-            <strong>Cómo llegar</strong>
-            <small>Ver en mapa</small>
-          </div>
-        </a>
-      ` : ""}
-
-      ${negocio.video ? `
-        <a class="accion accion-video" href="${negocio.video}" target="_blank">
-          <span>▶️</span>
-          <div>
-            <strong>Ver video</strong>
-            <small>Facebook Ámbar</small>
-          </div>
-        </a>
-      ` : ""}
-
-    </section>
-  `;
-const galeriaHTML = negocio.galeria && negocio.galeria.length > 0 ? `
-  <section class="perfil-galeria-fotos">
-    <h4>📷 Galería</h4>
-    <div class="galeria-grid">
-      ${negocio.galeria.map((foto, i) => `
-        <img src="${foto}" alt="${negocio.nombre}" onclick="abrirLightbox('${categoria}', ${index}, ${i})">
-      `).join("")}
-    </div>
-  </section>
-` : "";
-  lista.innerHTML = `
-    <article class="perfil-negocio perfil-oficial">
-
-      <button class="btn-regresar-perfil" onclick="mostrarCategoria('${categoria}')">
-        ← Volver a la categoría
+      <button class="btn-volver" onclick="mostrarCategoria('${categoria}')">
+        Volver a la categoría
       </button>
 
-      ${banner ? `
-        <div class="perfil-hero-oficial">
-          <img src="${banner}" alt="${negocio.nombre}">
-          <span class="badge-verificado">✓ Negocio verificado</span>
-        </div>
-      ` : ""}
+    </div>
+  `;
 
-      <div class="perfil-cabecera-oficial">
+  lista.innerHTML = `
+    <div class="perfil-negocio">
 
-        ${logo ? `
-          <div class="perfil-logo-oficial">
-            <img src="${logo}" alt="Logo de ${negocio.nombre}">
+      ${imagenHTML}
+
+      <div class="perfil-info">
+        <h3>${negocio.nombre}</h3>
+
+        <div class="perfil-grid">
+
+          <div class="perfil-columna">
+            ${tieneDato(negocio.descripcion) ? `<p class="descripcion-perfil">${negocio.descripcion}</p>` : ""}
+            ${serviciosHTML}
           </div>
-        ` : ""}
 
-        <div class="perfil-titulo-oficial">
-          <h3>${negocio.nombre}</h3>
-          <p class="perfil-subtitulo">Servicio local en Frontera Comalapa</p>
+          <div class="perfil-columna">
+            ${detallesHTML}
+          </div>
+
         </div>
-
-      </div>
-
-      <div class="perfil-contenido-oficial">
-
-        ${negocio.descripcion ? `
-          <section class="perfil-descripcion-oficial">
-            <p>${negocio.descripcion}</p>
-          </section>
-        ` : ""}
-        ${galeriaHTML}
 
         ${botonesHTML}
-
-        ${detallesHTML}
-
-        ${serviciosHTML}
-
       </div>
 
-    </article>
+    </div>
   `;
 
   setTimeout(() => {
@@ -479,108 +414,3 @@ if (carrusel) {
   carrusel.addEventListener("touchstart", detener);
   carrusel.addEventListener("touchend", continuar);
 }
-function abrirLightbox(categoria, index, fotoIndex) {
-
-    const negocio = negocios[categoria][index];
-    const foto = negocio.galeria[fotoIndex];
-
-    document.body.insertAdjacentHTML("beforeend", `
-        <div class="lightbox">
-
-            <button class="lightbox-anterior" onclick="cambiarFoto(-1)">❮</button>
-
-            <img id="lightbox-img"
-                 src="${foto}"
-                 draggable="false"
-                 data-categoria="${categoria}"
-                 data-index="${index}"
-                 data-foto="${fotoIndex}">
-                 
-
-            <button class="lightbox-siguiente" onclick="cambiarFoto(1)">❯</button>
-
-            <button class="lightbox-cerrar" onclick="cerrarLightbox()">✕</button>
-            <div class="lightbox-contador">
-    ${fotoIndex + 1} / ${negocio.galeria.length}
-</div>
-
-        </div>
-    `);
-
-}
-
-function cerrarLightbox() {
-  const lightbox = document.querySelector(".lightbox");
-  if (lightbox) lightbox.remove();
-}
-function cambiarFoto(direccion) {
-  const img = document.getElementById("lightbox-img");
-
-  if (!img) return;
-
-  const categoria = img.dataset.categoria;
-  const index = Number(img.dataset.index);
-  let fotoIndex = Number(img.dataset.foto);
-
-  const negocio = negocios[categoria][index];
-  const totalFotos = negocio.galeria.length;
-
-  fotoIndex = fotoIndex + direccion;
-
-  if (fotoIndex < 0) {
-    fotoIndex = totalFotos - 1;
-  }
-
-  if (fotoIndex >= totalFotos) {
-    fotoIndex = 0;
-  }
-
-  img.src = negocio.galeria[fotoIndex];
-  img.dataset.foto = fotoIndex;
-  const contador = document.querySelector(".lightbox-contador");
-if (contador) {
-  contador.textContent = `${fotoIndex + 1} / ${totalFotos}`;
-}
-}
-
-document.addEventListener("keydown", function(event) {
-  const lightbox = document.querySelector(".lightbox");
-
-  if (!lightbox) return;
-
-  if (event.key === "ArrowRight") {
-    cambiarFoto(1);
-  }
-
-  if (event.key === "ArrowLeft") {
-    cambiarFoto(-1);
-  }
-
-  if (event.key === "Escape") {
-    cerrarLightbox();
-  }
-});
-let touchInicioX = 0;
-
-document.addEventListener("touchstart", function(event) {
-  const lightbox = document.querySelector(".lightbox");
-  if (!lightbox) return;
-
-  touchInicioX = event.touches[0].clientX;
-});
-
-document.addEventListener("touchend", function(event) {
-  const lightbox = document.querySelector(".lightbox");
-  if (!lightbox) return;
-
-  const touchFinalX = event.changedTouches[0].clientX;
-  const diferencia = touchInicioX - touchFinalX;
-
-  if (diferencia > 50) {
-    cambiarFoto(1);
-  }
-
-  if (diferencia < -50) {
-    cambiarFoto(-1);
-  }
-});
