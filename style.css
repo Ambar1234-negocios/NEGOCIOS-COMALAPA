@@ -874,5 +874,9 @@ footer {
 .galeria-grid img {
   user-select: none;
   -webkit-user-drag: none;
-  touch-action: pan-y;
+}
+
+.galeria-grid {
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
 }
