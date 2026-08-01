@@ -877,6 +877,6 @@ footer {
 }
 
 .galeria-grid {
-  touch-action: pan-x;
+  touch-action: pan-y pan-x;
   -webkit-overflow-scrolling: touch;
 }
