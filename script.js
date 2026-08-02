@@ -67,8 +67,54 @@ const negocios = {
     { nombre: "🌮 Tacos Don Pepe", descripcion: "Tacos, gringas y quesadillas.", delivery: true },
     { nombre: "🍗 Pollería Dos Hermanos", descripcion: "Pollo fresco y pedidos por WhatsApp.", delivery: true },
     { nombre: "🍕 Pizzería Comalapa", descripcion: "Pizzas, alitas y promociones.", delivery: true },
-    { nombre: "☕ Cafetería La Plaza", descripcion: "Café, postres y desayunos.", delivery: true }
+{
+  nombre: "☕ La Casa del Cofi",
+  slug: "la-casa-del-cofi",
+  slogan: "Café, buenos momentos y sabor casero",
+  descripcion: "Cafetería y desayunos para disfrutar en el lugar o pedir para llevar.",
+  perfil: true,
+
+  banner: "imagenes/la-casa-del-cofi/banner.png",
+  logo: "imagenes/la-casa-del-cofi/banner.png",
+
+  galeria: [
+    "imagenes/la-casa-del-cofi/foto-1.jpeg",
+    "imagenes/la-casa-del-cofi/foto-2.jpeg",
+    "imagenes/la-casa-del-cofi/foto-3.jpeg",
+    "imagenes/la-casa-del-cofi/foto-4.jpeg",
+    "imagenes/la-casa-del-cofi/foto-5.jpeg",
+    "imagenes/la-casa-del-cofi/foto-6.jpeg",
+    "imagenes/la-casa-del-cofi/foto-7.jpeg",
+    "imagenes/la-casa-del-cofi/foto-8.jpeg",
+    "imagenes/la-casa-del-cofi/foto-9.jpeg"
   ],
+
+  imagen: "imagenes/la-casa-del-cofi/banner.png",
+
+  servicios: [
+    "Café",
+    "Chocomilk",
+    "Jugos",
+    "Aguas",
+    "Chilaquiles",
+    "Enchiladas suizas",
+    "Huevos al gusto",
+    "Milanesa",
+    "Chuleta",
+    "Sándwiches",
+    "Sincronizadas",
+    "Pedidos para llevar"
+  ],
+
+  direccion: "Frontera Comalapa, Chiapas",
+  telefono: "963 140 0619",
+  whatsapp: "529631400619",
+  horario: "Todos los días de 7:00 a.m. a 1:00 p.m.",
+
+  maps: "https://maps.app.goo.gl/NsHDxHUzzbumt58BA",
+video: "https://www.facebook.com/",
+delivery: true
+}  ],
 
   salud: [
     { nombre: "🦷 Clínica Dental M", descripcion: "Consultas, limpiezas y citas dentales." },
