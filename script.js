@@ -75,7 +75,7 @@ const negocios = {
   perfil: true,
 
   banner: "imagenes/la-casa-del-cofi/banner.png",
-  logo: "imagenes/la-casa-del-cofi/banner.png",
+  logo: "imagenes/la-casa-del-cofi/logo.png",
 
   galeria: [
     "imagenes/la-casa-del-cofi/foto-1.jpeg",

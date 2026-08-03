@@ -303,7 +303,9 @@ h2 {
 
 .perfil-hero-oficial {
   position: relative;
-  height: 220px;
+  width: calc(100% - 36px);
+  aspect-ratio: 16 / 5;
+  height: auto;
   margin: 0 18px;
   border-radius: 18px;
   overflow: hidden;
@@ -661,8 +663,9 @@ footer {
   line-height: 1.15;
 }
 
-.perfil-hero-oficial {
-  height: 150px;
+.perfil-titulo-oficial h3 {
+    font-size: 22px;
+    line-height: 1.15;
 }
 
 .perfil-hero-oficial img {
