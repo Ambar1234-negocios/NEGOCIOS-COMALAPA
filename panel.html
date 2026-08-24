@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrativo | Ámbar Negocios</title>
+  <link rel="stylesheet" href="panel.css">
+</head>
+
+<body>
+
+  <!-- ============================================================
+       BARRA LATERAL / MENÚ PRINCIPAL
+       ============================================================ -->
+  <aside class="sidebar">
+
+    <div class="sidebar-marca">
+      <h1>Ámbar</h1>
+      <p>Panel administrativo</p>
+    </div>
+
+    <nav class="sidebar-menu">
+      <button type="button" class="menu-item activo">🏠 Dashboard</button>
+      <button type="button" class="menu-item">➕ Nuevo negocio</button>
+      <button type="button" class="menu-item">🏪 Negocios</button>
+      <button type="button" class="menu-item">📂 Categorías</button>
+      <button type="button" class="menu-item">⚙ Configuración</button>
+    </nav>
+
+  </aside>
+  <!-- ============================================================
+       FIN BARRA LATERAL / MENÚ PRINCIPAL
+       ============================================================ -->
+
+
+  <!-- ============================================================
+       CONTENIDO PRINCIPAL DEL PANEL
+       ============================================================ -->
+  <main class="contenido-principal">
+
+    <!-- ============================================================
+         CABECERA DEL PANEL
+         ============================================================ -->
+    <header class="cabecera-panel">
+
+      <div>
+        <p class="cabecera-etiqueta">Ámbar Negocios Comalapa</p>
+        <h2>Agregar nuevo negocio</h2>
+      </div>
+
+      <span class="estado-panel">Panel local</span>
+
+    </header>
+    <!-- ============================================================
+         FIN CABECERA DEL PANEL
+         ============================================================ -->
+
+
+    <!-- ============================================================
+         FORMULARIO: NUEVO / EDITAR NEGOCIO
+         ============================================================ -->
+    <section class="tarjeta-formulario">
+
+      <form id="form-negocio">
+
+        <!-- ============================================================
+             INFORMACIÓN GENERAL
+             ============================================================ -->
+        <h3>🏪 Información general</h3>
+
+        <label for="nombre">Nombre del negocio</label>
+        <input type="text" id="nombre" required>
+
+        <label for="slug">Nombre de la carpeta</label>
+        <input
+          type="text"
+          id="slug"
+          placeholder="Ejemplo: la-casa-del-cofi"
+          required
+        >
+
+        <label for="slogan">Eslogan</label>
+        <input
+          type="text"
+          id="slogan"
+          placeholder="Ejemplo: Café, buenos momentos y sabor casero"
+        >
+
+        <label for="categoria">Categoría</label>
+        <select id="categoria" required>
+  <option value="">Selecciona una categoría</option>
+
+  <option value="streaming">Streaming y tecnología</option>
+  <option value="construccion">Construcción y materiales</option>
+  <option value="comida">Comida y restaurantes</option>
+  <option value="salud">Salud y farmacias</option>
+  <option value="hoteles">Hoteles y hospedaje</option>
+  <option value="automotriz">Talleres y refacciones</option>
+  <option value="servicios">Servicios para el hogar</option>
+  <option value="belleza">Belleza y estética</option>
+  <option value="mandaditos">Mandaditos</option>
+  <option value="comercios">Comercios</option>
+  <option value="profesionales">Profesionistas</option>
+  <option value="bienesraices">Casas y terrenos</option>
+  <option value="veterinarias">Veterinarias</option>
+  <option value="agua">Purificadoras de agua</option>
+</select>
+
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" rows="4"></textarea>
+
+        <label for="servicios">Servicios</label>
+        <textarea
+          id="servicios"
+          rows="5"
+          placeholder="Escribe un servicio por línea"
+        ></textarea>
+        <!-- ============================================================
+             FIN INFORMACIÓN GENERAL
+             ============================================================ -->
+
+
+        <!-- ============================================================
+             CONTACTO
+             ============================================================ -->
+        <h3>📞 Contacto</h3>
+
+        <label for="telefono">Teléfono</label>
+        <input
+  type="tel"
+  id="telefono"
+  inputmode="numeric"
+  maxlength="10"
+  pattern="[0-9]{10}"
+  placeholder="10 dígitos"
+>
+
+        <label for="whatsapp">WhatsApp</label>
+        <input
+  type="tel"
+  id="whatsapp"
+  inputmode="numeric"
+  maxlength="10"
+  pattern="[0-9]{10}"
+  placeholder="10 dígitos"
+>
+
+        <label for="direccion">Dirección</label>
+        <input type="text" id="direccion">
+
+        <!-- ============================================================
+             HORARIOS DEL NEGOCIO
+             ============================================================ -->
+        <div class="horarios-encabezado">
+          <div>
+            <h3>🕒 Horarios</h3>
+            <p>Configura cada día. Puedes usar hasta 2 turnos por día.</p>
+          </div>
+
+          <div class="horarios-acciones">
+            <button type="button" id="copiar-lunes-semana" class="btn-horario-secundario">
+              Copiar lunes a martes-sábado
+            </button>
+            <button type="button" id="copiar-lunes-todos" class="btn-horario-secundario">
+              Copiar lunes a todos
+            </button>
+          </div>
+        </div>
+
+        <div id="horarios-semana" class="horarios-semana"></div>
+        <!-- ============================================================
+             FIN HORARIOS DEL NEGOCIO
+             ============================================================ -->
+        <!-- ============================================================
+             FIN CONTACTO
+             ============================================================ -->
+
+
+        <!-- ============================================================
+             ENLACES
+             ============================================================ -->
+        <h3>🌐 Enlaces</h3>
+
+        <label for="maps">Google Maps</label>
+        <input type="url" id="maps">
+
+        <label for="video">Video</label>
+        <input type="url" id="video">
+        <!-- ============================================================
+             FIN ENLACES
+             ============================================================ -->
+
+
+        <!-- ============================================================
+             IMÁGENES
+             ============================================================ -->
+        <h3>🖼 Imágenes</h3>
+
+        <div class="ayuda-imagenes">
+  <p><strong>Carpeta del negocio:</strong></p>
+  <code id="ruta-imagenes">imagenes/nombre-del-negocio/</code>
+
+  <p class="nota-imagenes">
+    Usa archivos WebP con estos nombres:
+    banner.webp, logo.webp, foto-1.webp, foto-2.webp...
+  </p>
+</div>
+
+        <label for="banner">Banner WebP</label>
+        <input type="file" id="banner" accept=".webp">
+
+        <p id="nombre-banner">Ningún banner seleccionado</p>
+
+        <div class="preview-imagen">
+  <p>Vista previa del banner:</p>
+  <img id="preview-banner" alt="Vista previa del banner">
+</div>
+
+        <label for="logo">Logo WebP</label>
+        <input type="file" id="logo" accept=".webp">
+        <p id="nombre-logo">Ningún logo seleccionado</p>
+
+        <div class="preview-imagen">
+  <p>Vista previa del logo:</p>
+  <img id="preview-logo" alt="Vista previa del logo">
+</div>
+
+        <label for="galeria">Galería WebP</label>
+        <input type="file" id="galeria" accept=".webp" multiple>
+        <p id="cantidad-galeria">0 fotos seleccionadas</p>
+
+        <div class="preview-galeria">
+  <p>Vista previa de la galería:</p>
+  <div id="preview-galeria"></div>
+</div>
+
+        <!-- ============================================================
+             FIN IMÁGENES
+             ============================================================ -->
+
+
+        <!-- ============================================================
+             OPCIONES DEL NEGOCIO
+             ============================================================ -->
+        <h3>⚙ Opciones</h3>
+
+        <label>
+          <input type="checkbox" id="delivery">
+          Tiene entrega a domicilio
+        </label>
+
+        <label>
+          <input type="checkbox" id="verificado">
+          Negocio verificado
+        </label>
+
+        <label>
+          <input type="checkbox" id="activo" checked>
+          Negocio activo
+        </label>
+        <!-- ============================================================
+             FIN OPCIONES DEL NEGOCIO
+             ============================================================ -->
+
+
+        <!-- ============================================================
+             BOTÓN GUARDAR / ACTUALIZAR
+             ============================================================ -->
+        <button type="submit">Guardar negocio</button>
+
+      </form>
+
+    </section>
+    <!-- ============================================================
+         FIN FORMULARIO: NUEVO / EDITAR NEGOCIO
+         ============================================================ -->
+
+
+    <!-- ============================================================
+         PUBLICAR NEGOCIOS EN LA WEB
+         ============================================================ -->
+    <section class="tarjeta-listado">
+      <div class="encabezado-listado">
+        <div>
+          <p class="cabecera-etiqueta">Publicación</p>
+          <h2>Publicar cambios</h2>
+        </div>
+      </div>
+
+      <p>
+        Cuando termines de agregar o editar negocios, genera el archivo
+        <strong>negocios.json</strong>. Después reemplázalo en la carpeta principal
+        del proyecto y súbelo a tu hosting/GitHub.
+      </p>
+
+      <button
+        type="button"
+        id="exportar-negocios-json"
+        class="btn-horario-secundario"
+      >
+        📤 Generar negocios.json
+      </button>
+
+      <p id="estado-publicacion" class="nota-imagenes">
+        Los negocios siguen guardándose localmente hasta que publiques el archivo.
+      </p>
+    </section>
+    <!-- ============================================================
+         FIN PUBLICAR NEGOCIOS EN LA WEB
+         ============================================================ -->
+
+
+    <!-- ============================================================
+         LISTADO DE NEGOCIOS GUARDADOS
+         ============================================================ -->
+    <section class="tarjeta-listado">
+
+      <div class="encabezado-listado">
+
+        <div>
+          <p class="cabecera-etiqueta">Directorio</p>
+          <h2>Negocios guardados</h2>
+        </div>
+
+        <span id="total-negocios">0 negocios</span>
+
+      </div>
+      
+      <div class="filtros-panel">
+
+  <input
+    type="search"
+    id="buscar-negocio"
+    placeholder="Buscar negocio..."
+  >
+
+  <select id="filtro-categoria">
+    <option value="">Todas las categorías</option>
+  </select>
+
+  <select id="filtro-estado">
+    <option value="">Todos</option>
+    <option value="activo">Activos</option>
+    <option value="inactivo">Inactivos</option>
+  </select>
+
+</div>
+
+      <div id="lista-panel-negocios">
+        <p>Todavía no hay negocios guardados.</p>
+      </div>
+
+    </section>
+    <!-- ============================================================
+         FIN LISTADO DE NEGOCIOS GUARDADOS
+         ============================================================ -->
+
+  </main>
+  <!-- ============================================================
+       FIN CONTENIDO PRINCIPAL DEL PANEL
+       ============================================================ -->
+
+
+  <!-- ============================================================
+       JAVASCRIPT DEL PANEL
+       ============================================================ -->
+  <script src="panel.js"></script>
+
+</body>
+</html>

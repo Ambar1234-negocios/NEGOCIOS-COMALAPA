@@ -74,22 +74,21 @@ const negocios = {
   descripcion: "Cafetería y desayunos para disfrutar en el lugar o pedir para llevar.",
   perfil: true,
 
-  banner: "imagenes/la-casa-del-cofi/banner.png",
-  logo: "imagenes/la-casa-del-cofi/logo.png",
+  banner: "imagenes/la-casa-del-cofi/banner.webp",
+logo: "imagenes/la-casa-del-cofi/logo.webp",
 
-  galeria: [
-    "imagenes/la-casa-del-cofi/foto-1.jpeg",
-    "imagenes/la-casa-del-cofi/foto-2.jpeg",
-    "imagenes/la-casa-del-cofi/foto-3.jpeg",
-    "imagenes/la-casa-del-cofi/foto-4.jpeg",
-    "imagenes/la-casa-del-cofi/foto-5.jpeg",
-    "imagenes/la-casa-del-cofi/foto-6.jpeg",
-    "imagenes/la-casa-del-cofi/foto-7.jpeg",
-    "imagenes/la-casa-del-cofi/foto-8.jpeg",
-    "imagenes/la-casa-del-cofi/foto-9.jpeg"
-  ],
+galeria: [
+  "imagenes/la-casa-del-cofi/foto-1.webp",
+  "imagenes/la-casa-del-cofi/foto-2.webp",
+  "imagenes/la-casa-del-cofi/foto-3.webp",
+  "imagenes/la-casa-del-cofi/foto-4.webp",
+  "imagenes/la-casa-del-cofi/foto-5.webp",
+  "imagenes/la-casa-del-cofi/foto-6.webp",
+  "imagenes/la-casa-del-cofi/foto-7.webp",
+  "imagenes/la-casa-del-cofi/foto-8.webp"
+],
 
-  imagen: "imagenes/la-casa-del-cofi/banner.png",
+imagen: "imagenes/la-casa-del-cofi/banner.webp",
 
   servicios: [
     "Café",
@@ -112,7 +111,7 @@ const negocios = {
   horario: "Todos los días de 7:00 a.m. a 1:00 p.m.",
 
   maps: "https://maps.app.goo.gl/NsHDxHUzzbumt58BA",
-video: "https://www.facebook.com/",
+video: "https://www.facebook.com/share/v/1Fcjjwh4DM/",
 delivery: true
 }  ],
 
@@ -224,7 +223,85 @@ galeria: [
     { nombre: "💧 Purificadora El Manantial", descripcion: "Garrafones, recargas y servicio a domicilio.", delivery: true }
   ]
 };
+// ============================================================
+// CARGAR NEGOCIOS DEL PANEL Y NEGOCIOS PUBLICADOS
+// ============================================================
 
+function agregarNegociosDinamicos(listaNegocios) {
+  if (!Array.isArray(listaNegocios)) return;
+
+  listaNegocios.forEach(function (nuevoNegocio) {
+    if (!nuevoNegocio || nuevoNegocio.activo === false) return;
+
+    const categoria = nuevoNegocio.categoria;
+    if (!categoria) return;
+    if (!negocios[categoria]) negocios[categoria] = [];
+
+    const yaExiste = negocios[categoria].some((negocio) => {
+      if (nuevoNegocio.slug && negocio.slug) {
+        return negocio.slug === nuevoNegocio.slug;
+      }
+
+      if (nuevoNegocio.id !== undefined && negocio.id !== undefined) {
+        return negocio.id === nuevoNegocio.id;
+      }
+
+      return negocio.nombre === nuevoNegocio.nombre;
+    });
+
+    if (!yaExiste) {
+      negocios[categoria].push({
+        ...nuevoNegocio,
+        perfil: true,
+        banner: nuevoNegocio.banner || "",
+        logo: nuevoNegocio.logo || "",
+        galeria: Array.isArray(nuevoNegocio.galeria)
+          ? nuevoNegocio.galeria
+          : []
+      });
+    }
+  });
+}
+
+function cargarNegociosLocales() {
+  try {
+    const negociosLocales =
+      JSON.parse(localStorage.getItem("ambarNegocios")) || [];
+
+    agregarNegociosDinamicos(negociosLocales);
+  } catch (error) {
+    console.error("No se pudieron cargar los negocios locales:", error);
+  }
+}
+
+async function cargarNegociosPublicados() {
+  try {
+    const respuesta = await fetch(`negocios.json?v=${Date.now()}`, {
+      cache: "no-store"
+    });
+
+    if (!respuesta.ok) {
+      throw new Error(`HTTP ${respuesta.status}`);
+    }
+
+    const negociosPublicados = await respuesta.json();
+    agregarNegociosDinamicos(negociosPublicados);
+
+    console.log(
+      `Negocios publicados cargados: ${Array.isArray(negociosPublicados) ? negociosPublicados.length : 0}`
+    );
+  } catch (error) {
+    console.warn(
+      "No se pudo cargar negocios.json. Se usarán los negocios integrados y los guardados localmente.",
+      error
+    );
+  }
+}
+
+// El localStorage se mantiene para que el administrador pueda previsualizar
+// cambios antes de publicarlos. Los visitantes normales recibirán negocios.json.
+cargarNegociosLocales();
+const cargaNegociosPublicados = cargarNegociosPublicados();
 
 // ============================================================
 // FUNCIONES AUXILIARES
@@ -249,6 +326,232 @@ Forma de pago:`;
 
 function tieneDato(valor) {
   return valor !== undefined && valor !== null && valor !== "";
+}
+
+
+// ============================================================
+// HORARIOS INTELIGENTES / ABIERTO O CERRADO
+// ============================================================
+
+const ZONA_HORARIA_AMBAR = "America/Mexico_City";
+const DIAS_HORARIO_PUBLICO = [
+  "domingo",
+  "lunes",
+  "martes",
+  "miercoles",
+  "jueves",
+  "viernes",
+  "sabado"
+];
+
+function horaAMinutos(hora) {
+  if (!hora || !/^\d{2}:\d{2}$/.test(hora)) return null;
+  const [h, m] = hora.split(":").map(Number);
+  return (h * 60) + m;
+}
+
+function formatearHora(hora) {
+  const minutos = horaAMinutos(hora);
+  if (minutos === null) return hora || "";
+
+  const h24 = Math.floor(minutos / 60) % 24;
+  const m = minutos % 60;
+  const periodo = h24 >= 12 ? "p.m." : "a.m.";
+  const h12 = h24 % 12 || 12;
+
+  return `${h12}:${String(m).padStart(2, "0")} ${periodo}`;
+}
+
+function obtenerFechaLocalAmbar() {
+  const partes = new Intl.DateTimeFormat("en-CA", {
+    timeZone: ZONA_HORARIA_AMBAR,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(new Date());
+
+  const datos = {};
+  partes.forEach((parte) => {
+    if (parte.type !== "literal") datos[parte.type] = parte.value;
+  });
+
+  const anio = Number(datos.year);
+  const mes = Number(datos.month);
+  const diaMes = Number(datos.day);
+  const hora = Number(datos.hour);
+  const minuto = Number(datos.minute);
+  const indiceDia = new Date(Date.UTC(anio, mes - 1, diaMes)).getUTCDay();
+
+  return {
+    indiceDia,
+    minutosActuales: (hora * 60) + minuto
+  };
+}
+
+function formatearHorarioDia(horarioDia) {
+  if (!horarioDia || horarioDia.modo === "cerrado") return "Cerrado";
+  if (horarioDia.modo === "24h") return "Abierto 24 horas";
+
+  const turnos = Array.isArray(horarioDia.turnos) ? horarioDia.turnos : [];
+  if (turnos.length === 0) return "Horario no disponible";
+
+  return turnos
+    .map((turno) => `${formatearHora(turno.inicio)} – ${formatearHora(turno.fin)}`)
+    .join(" · ");
+}
+
+function buscarProximaApertura(horarios, indiceDia, minutosActuales) {
+  for (let desplazamiento = 0; desplazamiento <= 7; desplazamiento++) {
+    const indice = (indiceDia + desplazamiento) % 7;
+    const clave = DIAS_HORARIO_PUBLICO[indice];
+    const dia = horarios[clave];
+
+    if (!dia || dia.modo === "cerrado") continue;
+
+    if (dia.modo === "24h") {
+      if (desplazamiento === 0) return null;
+      return {
+        desplazamiento,
+        hora: "00:00"
+      };
+    }
+
+    const turnos = Array.isArray(dia.turnos) ? dia.turnos : [];
+
+    for (const turno of turnos) {
+      const inicio = horaAMinutos(turno.inicio);
+      if (inicio === null) continue;
+
+      if (desplazamiento === 0 && inicio <= minutosActuales) continue;
+
+      return {
+        desplazamiento,
+        hora: turno.inicio
+      };
+    }
+  }
+
+  return null;
+}
+
+function textoProximaApertura(proxima) {
+  if (!proxima) return "";
+
+  if (proxima.desplazamiento === 0) {
+    return `Abre hoy a las ${formatearHora(proxima.hora)}`;
+  }
+
+  if (proxima.desplazamiento === 1) {
+    return `Abre mañana a las ${formatearHora(proxima.hora)}`;
+  }
+
+  const nombres = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+  const { indiceDia } = obtenerFechaLocalAmbar();
+  const indice = (indiceDia + proxima.desplazamiento) % 7;
+
+  return `Abre el ${nombres[indice]} a las ${formatearHora(proxima.hora)}`;
+}
+
+function obtenerEstadoHorario(negocio) {
+  const horarios = negocio.horarios;
+
+  if (!horarios || typeof horarios !== "object") {
+    return {
+      automatico: false,
+      estado: "sin-datos",
+      texto: negocio.horario || "Horario no disponible",
+      horarioHoy: ""
+    };
+  }
+
+  const { indiceDia, minutosActuales } = obtenerFechaLocalAmbar();
+  const claveHoy = DIAS_HORARIO_PUBLICO[indiceDia];
+  const diaHoy = horarios[claveHoy] || { modo: "cerrado", turnos: [] };
+
+  if (diaHoy.modo === "24h") {
+    return {
+      automatico: true,
+      estado: "abierto",
+      texto: "🟢 Abierto ahora",
+      horarioHoy: "Abierto 24 horas"
+    };
+  }
+
+  // Revisar un turno nocturno iniciado el día anterior.
+  const indiceAnterior = (indiceDia + 6) % 7;
+  const claveAnterior = DIAS_HORARIO_PUBLICO[indiceAnterior];
+  const diaAnterior = horarios[claveAnterior];
+
+  if (diaAnterior?.modo === "abierto" && Array.isArray(diaAnterior.turnos)) {
+    for (const turno of diaAnterior.turnos) {
+      const inicio = horaAMinutos(turno.inicio);
+      const fin = horaAMinutos(turno.fin);
+
+      if (inicio !== null && fin !== null && fin <= inicio && minutosActuales < fin) {
+        return {
+          automatico: true,
+          estado: "abierto",
+          texto: `🟢 Abierto ahora · Cierra a las ${formatearHora(turno.fin)}`,
+          horarioHoy: formatearHorarioDia(diaHoy)
+        };
+      }
+    }
+  }
+
+  if (diaHoy.modo === "abierto" && Array.isArray(diaHoy.turnos)) {
+    const turnos = diaHoy.turnos
+      .map((turno) => ({
+        ...turno,
+        inicioMin: horaAMinutos(turno.inicio),
+        finMin: horaAMinutos(turno.fin)
+      }))
+      .filter((turno) => turno.inicioMin !== null && turno.finMin !== null)
+      .sort((a, b) => a.inicioMin - b.inicioMin);
+
+    for (const turno of turnos) {
+      const esNocturno = turno.finMin <= turno.inicioMin;
+      const abiertoAhora = esNocturno
+        ? minutosActuales >= turno.inicioMin
+        : minutosActuales >= turno.inicioMin && minutosActuales < turno.finMin;
+
+      if (abiertoAhora) {
+        return {
+          automatico: true,
+          estado: "abierto",
+          texto: `🟢 Abierto ahora · Cierra a las ${formatearHora(turno.fin)}`,
+          horarioHoy: formatearHorarioDia(diaHoy)
+        };
+      }
+    }
+
+    const siguienteTurnoHoy = turnos.find((turno) => turno.inicioMin > minutosActuales);
+
+    if (siguienteTurnoHoy) {
+      const yaHuboTurno = turnos.some((turno) => {
+        if (turno.finMin <= turno.inicioMin) return false;
+        return turno.finMin <= minutosActuales;
+      });
+
+      return {
+        automatico: true,
+        estado: yaHuboTurno ? "descanso" : "cerrado",
+        texto: `${yaHuboTurno ? "🟠 Cerrado temporalmente" : "🔴 Cerrado"} · Abre a las ${formatearHora(siguienteTurnoHoy.inicio)}`,
+        horarioHoy: formatearHorarioDia(diaHoy)
+      };
+    }
+  }
+
+  const proxima = buscarProximaApertura(horarios, indiceDia, minutosActuales);
+
+  return {
+    automatico: true,
+    estado: "cerrado",
+    texto: `🔴 Cerrado${proxima ? ` · ${textoProximaApertura(proxima)}` : ""}`,
+    horarioHoy: formatearHorarioDia(diaHoy)
+  };
 }
 
 
@@ -330,6 +633,7 @@ function verPerfil(categoria, index) {
 
   const banner = negocio.banner || negocio.imagen || "";
   const logo = negocio.logo || "";
+  const estadoHorario = obtenerEstadoHorario(negocio);
 
   const serviciosHTML = negocio.servicios && negocio.servicios.length > 0
     ? `
@@ -358,10 +662,13 @@ function verPerfil(categoria, index) {
         </div>
       ` : ""}
 
-      ${negocio.horario ? `
+      ${(negocio.horarios || negocio.horario) ? `
         <div class="detalle-card">
           <h4>🕒 Horario</h4>
-          <p>${negocio.horario}</p>
+          <p><strong>${estadoHorario.texto}</strong></p>
+          ${estadoHorario.automatico && estadoHorario.horarioHoy
+            ? `<small>Hoy: ${estadoHorario.horarioHoy}</small>`
+            : ""}
         </div>
       ` : ""}
     </section>
@@ -428,11 +735,15 @@ const galeriaHTML = negocio.galeria && negocio.galeria.length > 0 ? `
       </button>
 
       ${banner ? `
-        <div class="perfil-hero-oficial">
-          <img src="${banner}" alt="${negocio.nombre}">
-          <span class="badge-verificado">✓ Negocio verificado</span>
-        </div>
-      ` : ""}
+  <div class="perfil-hero-oficial">
+    <img src="${banner}" alt="${negocio.nombre}">
+
+    ${negocio.verificado === true
+      ? '<span class="badge-verificado">✓ Negocio verificado</span>'
+      : ''
+    }
+  </div>
+` : ""}
 
       <div class="perfil-cabecera-oficial">
 
@@ -443,10 +754,14 @@ const galeriaHTML = negocio.galeria && negocio.galeria.length > 0 ? `
         ` : ""}
 
         <div class="perfil-titulo-oficial">
-          <h3>${negocio.nombre}</h3>
-          <p class="perfil-subtitulo">Servicio local en Frontera Comalapa</p>
+          <div class="perfil-titulo-linea">
+            <h3>${negocio.nombre}</h3>
+            
+          </div>
+          <p class="perfil-subtitulo">
+            ${negocio.slogan || "Servicio local en Frontera Comalapa"}
+          </p>
         </div>
-
       </div>
 
       <div class="perfil-contenido-oficial">
@@ -630,3 +945,30 @@ document.addEventListener("touchend", function(event) {
     cambiarFoto(-1);
   }
 });
+
+// ============================================================
+// ABRIR PERFIL DESDE EL PANEL
+// ============================================================
+
+function abrirNegocioDesdeURL() {
+  const parametros = new URLSearchParams(window.location.search);
+  const slugBuscado = parametros.get("negocio");
+
+  if (!slugBuscado) return;
+
+  for (const categoria in negocios) {
+    const index = negocios[categoria].findIndex(
+      (negocio) => negocio.slug === slugBuscado
+    );
+
+    if (index !== -1) {
+      setTimeout(() => {
+        verPerfil(categoria, index);
+      }, 200);
+
+      return;
+    }
+  }
+}
+
+abrirNegocioDesdeURL();
