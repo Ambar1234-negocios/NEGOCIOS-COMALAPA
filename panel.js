@@ -1,5 +1,5 @@
 // ============================================================
-// ÁMBAR NEGOCIOS COMALAPA
+// EXHIBICIÓN FRONTERA COMALAPA
 // panel.js - Panel administrativo
 // ============================================================
 
@@ -417,7 +417,7 @@ formulario.addEventListener("submit", function (evento) {
   // ============================================================
 
   const negociosGuardados =
-    JSON.parse(localStorage.getItem("ambarNegocios")) || [];
+    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
 
   const idEditando = Number(formulario.dataset.editandoId);
 
@@ -457,7 +457,7 @@ formulario.addEventListener("submit", function (evento) {
   // ============================================================
 
   localStorage.setItem(
-    "ambarNegocios",
+    "exhibicionNegocios",
     JSON.stringify(negociosGuardados)
   );
 
@@ -484,7 +484,7 @@ function mostrarNegociosPanel() {
   if (!lista || !total) return;
 
   const negocios =
-    JSON.parse(localStorage.getItem("ambarNegocios")) || [];
+    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
     const textoBusqueda =
   document.getElementById("buscar-negocio")?.value.toLowerCase().trim() || "";
 
@@ -630,13 +630,13 @@ function eliminarNegocio(id) {
   if (!confirmar) return;
 
   const negocios =
-    JSON.parse(localStorage.getItem("ambarNegocios")) || [];
+    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
 
   const negociosActualizados =
     negocios.filter((negocio) => negocio.id !== id);
 
   localStorage.setItem(
-    "ambarNegocios",
+    "exhibicionNegocios",
     JSON.stringify(negociosActualizados)
   );
 
@@ -649,7 +649,7 @@ function eliminarNegocio(id) {
 
 function cambiarEstadoNegocio(id) {
   const negocios =
-    JSON.parse(localStorage.getItem("ambarNegocios")) || [];
+    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
 
   const negocio = negocios.find((item) => item.id === id);
 
@@ -658,7 +658,7 @@ function cambiarEstadoNegocio(id) {
   negocio.activo = negocio.activo === false;
 
   localStorage.setItem(
-    "ambarNegocios",
+    "exhibicionNegocios",
     JSON.stringify(negocios)
   );
 
@@ -688,7 +688,7 @@ function verNegocio(slug) {
 
 function editarNegocio(id) {
   const negocios =
-    JSON.parse(localStorage.getItem("ambarNegocios")) || [];
+    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
 
     
 
@@ -751,7 +751,7 @@ function editarNegocio(id) {
 
 function exportarNegociosJSON() {
   const negociosGuardados =
-    JSON.parse(localStorage.getItem("ambarNegocios")) || [];
+    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
 
   const contenido = JSON.stringify(negociosGuardados, null, 2);
   const archivo = new Blob([contenido], { type: "application/json;charset=utf-8" });
