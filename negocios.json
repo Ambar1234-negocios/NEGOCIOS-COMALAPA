@@ -1,1 +1,99 @@
-[]
+[
+  {
+    "id": 1787767235096,
+    "nombre": "Balconería, Vidrios y Aluminios El Perico",
+    "slug": "el-perico",
+    "slogan": "Calidad y garantía en aluminio, vidrio y herrería.",
+    "categoria": "servicios",
+    "descripcion": "Especialistas en fabricación e instalación de aluminio, vidrio y herrería para hogares y negocios.",
+    "servicios": [
+      "Ventanas",
+      "Puertas",
+      "Vitrinas",
+      "Espejos",
+      "Barandales",
+      "Escaleras",
+      "Portones",
+      "Herrería",
+      "Aluminio"
+    ],
+    "telefono": "9636350461",
+    "whatsapp": "9636350461",
+    "direccion": "Barrio Agua Zarca y Barrio La Alborada, Frontera Comalapa",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
+    "maps": "https://www.google.com/maps/search/?api=1&query=Balconeria+Vidrios+Aluminios+El+Perico+Frontera+Comalapa",
+    "video": "",
+    "banner": "imagenes/el-perico/banner.webp",
+    "logo": "imagenes/el-perico/logo.webp",
+    "galeria": [
+      "imagenes/el-perico/foto-1.webp",
+      "imagenes/el-perico/foto-2.webp",
+      "imagenes/el-perico/foto-3.webp",
+      "imagenes/el-perico/foto-4.webp",
+      "imagenes/el-perico/foto-5.webp"
+    ],
+    "delivery": false,
+    "verificado": true,
+    "activo": true,
+    "fechaRegistro": "26/8/2026, 12:00:35 p.m."
+  }
+]

@@ -388,10 +388,85 @@ function obtenerEstadoHorario(negocio) {
 
 
 // ============================================================
+// NAVEGACIÓN / HISTORIAL DEL NAVEGADOR
+// Inicio → Categoría → Perfil
+// Compatible con botón Atrás del celular y flecha del navegador
+// ============================================================
+
+function construirURL(parametros = {}) {
+  const url = new URL(window.location.href);
+  url.search = "";
+
+  Object.entries(parametros).forEach(([clave, valor]) => {
+    if (valor !== undefined && valor !== null && valor !== "") {
+      url.searchParams.set(clave, valor);
+    }
+  });
+
+  return `${url.pathname}${url.search}`;
+}
+
+function mostrarInicio(opciones = {}) {
+  const { actualizarHistorial = true, desplazar = true } = opciones;
+  const titulo = document.getElementById("titulo-categoria");
+  const lista = document.getElementById("lista-negocios");
+
+  if (titulo) {
+    titulo.style.display = "block";
+    titulo.textContent = "Selecciona una categoría";
+  }
+
+  if (lista) {
+    lista.innerHTML = "";
+  }
+
+  if (actualizarHistorial) {
+    history.pushState({ vista: "inicio" }, "", construirURL());
+  }
+
+  if (desplazar) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+function encontrarNegocioPorSlug(slug) {
+  if (!slug) return null;
+
+  for (const categoria in negocios) {
+    const index = negocios[categoria].findIndex(
+      (negocio) => negocio.slug === slug
+    );
+
+    if (index !== -1) {
+      return {
+        categoria,
+        index,
+        negocio: negocios[categoria][index]
+      };
+    }
+  }
+
+  return null;
+}
+
+function volverCategoriaDesdePerfil(categoria) {
+  const estado = history.state;
+
+  if (estado?.vista === "perfil" && estado?.categoria === categoria) {
+    history.back();
+    return;
+  }
+
+  mostrarCategoria(categoria);
+}
+
+
+// ============================================================
 // MOSTRAR CATEGORÍA
 // ============================================================
 
-function mostrarCategoria(categoria) {
+function mostrarCategoria(categoria, opciones = {}) {
+  const { actualizarHistorial = true, desplazar = true } = opciones;
   const titulo = document.getElementById("titulo-categoria");
   const lista = document.getElementById("lista-negocios");
 
@@ -401,23 +476,42 @@ function mostrarCategoria(categoria) {
   titulo.textContent = "Negocios de " + (categoriasNombres[categoria] || categoria.toUpperCase());
   lista.innerHTML = "";
 
-  negocios[categoria].forEach(function(negocio, index) {
-    lista.innerHTML += `
-      <div class="card ${negocio.destacado ? "card-premium" : ""}">
-        <h3>${negocio.nombre}</h3>
-        <p>${negocio.descripcion}</p>
-
-        <button class="btn-whatsapp" onclick="verPerfil('${categoria}', ${index})">
-          Ver información
-        </button>
+  if (negocios[categoria].length === 0) {
+    lista.innerHTML = `
+      <div class="card">
+        <h3>Próximamente</h3>
+        <p>Aún no hay negocios registrados en esta categoría.</p>
       </div>
     `;
-  });
+  } else {
+    negocios[categoria].forEach(function(negocio, index) {
+      lista.innerHTML += `
+        <div class="card ${negocio.destacado ? "card-premium" : ""}">
+          <h3>${negocio.nombre}</h3>
+          <p>${negocio.descripcion}</p>
 
-  document.querySelector(".resultado").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
+          <button class="btn-whatsapp" onclick="verPerfil('${categoria}', ${index})">
+            Ver información
+          </button>
+        </div>
+      `;
+    });
+  }
+
+  if (actualizarHistorial) {
+    history.pushState(
+      { vista: "categoria", categoria },
+      "",
+      construirURL({ categoria })
+    );
+  }
+
+  if (desplazar) {
+    document.querySelector(".resultado").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
 }
 
 
@@ -451,7 +545,8 @@ function buscarNegocios() {
 // PERFIL INTELIGENTE DEL NEGOCIO
 // ============================================================
 
-function verPerfil(categoria, index) {
+function verPerfil(categoria, index, opciones = {}) {
+  const { actualizarHistorial = true } = opciones;
   const titulo = document.getElementById("titulo-categoria");
   const lista = document.getElementById("lista-negocios");
   const negocio = negocios[categoria][index];
@@ -459,6 +554,14 @@ function verPerfil(categoria, index) {
   if (!negocio) {
     alert("No se encontró la información del negocio.");
     return;
+  }
+
+  if (actualizarHistorial && negocio.slug) {
+    history.pushState(
+      { vista: "perfil", categoria, slug: negocio.slug },
+      "",
+      construirURL({ negocio: negocio.slug })
+    );
   }
 
   titulo.style.display = "none";
@@ -562,7 +665,7 @@ const galeriaHTML = negocio.galeria && negocio.galeria.length > 0 ? `
   lista.innerHTML = `
     <article class="perfil-negocio perfil-oficial">
 
-      <button class="btn-regresar-perfil" onclick="mostrarCategoria('${categoria}')">
+      <button class="btn-regresar-perfil" onclick="volverCategoriaDesdePerfil('${categoria}')">
         ← Volver a la categoría
       </button>
 
@@ -779,28 +882,113 @@ document.addEventListener("touchend", function(event) {
 });
 
 // ============================================================
-// ABRIR PERFIL DESDE EL PANEL
+// ABRIR VISTA DESDE URL / INICIALIZAR HISTORIAL
 // ============================================================
 
-function abrirNegocioDesdeURL() {
+function renderizarEstadoNavegacion(estado) {
+  if (!estado || estado.vista === "inicio") {
+    mostrarInicio({
+      actualizarHistorial: false,
+      desplazar: false
+    });
+    return;
+  }
+
+  if (estado.vista === "categoria" && estado.categoria) {
+    mostrarCategoria(estado.categoria, {
+      actualizarHistorial: false
+    });
+    return;
+  }
+
+  if (estado.vista === "perfil" && estado.slug) {
+    const encontrado = encontrarNegocioPorSlug(estado.slug);
+
+    if (encontrado) {
+      verPerfil(encontrado.categoria, encontrado.index, {
+        actualizarHistorial: false
+      });
+      return;
+    }
+  }
+
+  mostrarInicio({
+    actualizarHistorial: false,
+    desplazar: false
+  });
+}
+
+function prepararNavegacionInicial() {
   const parametros = new URLSearchParams(window.location.search);
   const slugBuscado = parametros.get("negocio");
+  const categoriaBuscada = parametros.get("categoria");
 
-  if (!slugBuscado) return;
+  if (slugBuscado) {
+    const encontrado = encontrarNegocioPorSlug(slugBuscado);
 
-  for (const categoria in negocios) {
-    const index = negocios[categoria].findIndex(
-      (negocio) => negocio.slug === slugBuscado
-    );
+    if (encontrado) {
+      history.replaceState(
+        { vista: "inicio" },
+        "",
+        construirURL()
+      );
 
-    if (index !== -1) {
-      setTimeout(() => {
-        verPerfil(categoria, index);
-      }, 200);
+      history.pushState(
+        { vista: "categoria", categoria: encontrado.categoria },
+        "",
+        construirURL({ categoria: encontrado.categoria })
+      );
+
+      history.pushState(
+        { vista: "perfil", categoria: encontrado.categoria, slug: slugBuscado },
+        "",
+        construirURL({ negocio: slugBuscado })
+      );
+
+      verPerfil(encontrado.categoria, encontrado.index, {
+        actualizarHistorial: false
+      });
 
       return;
     }
   }
+
+  if (categoriaBuscada && negocios[categoriaBuscada]) {
+    history.replaceState(
+      { vista: "inicio" },
+      "",
+      construirURL()
+    );
+
+    history.pushState(
+      { vista: "categoria", categoria: categoriaBuscada },
+      "",
+      construirURL({ categoria: categoriaBuscada })
+    );
+
+    mostrarCategoria(categoriaBuscada, {
+      actualizarHistorial: false
+    });
+
+    return;
+  }
+
+  history.replaceState(
+    { vista: "inicio" },
+    "",
+    construirURL()
+  );
+
+  mostrarInicio({
+    actualizarHistorial: false,
+    desplazar: false
+  });
 }
 
-cargaNegociosPublicados.finally(() => abrirNegocioDesdeURL());
+window.addEventListener("popstate", function(event) {
+  renderizarEstadoNavegacion(event.state);
+});
+
+cargaNegociosPublicados.finally(() => {
+  prepararNavegacionInicial();
+});
