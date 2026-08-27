@@ -186,7 +186,39 @@
         <input type="url" id="maps">
 
         <label for="video">Video</label>
-        <input type="url" id="video">
+        <input
+          type="url"
+          id="video"
+          placeholder="Enlace del video de Facebook u otra plataforma"
+        >
+
+        <label for="facebook">Facebook</label>
+        <input
+          type="url"
+          id="facebook"
+          placeholder="https://www.facebook.com/..."
+        >
+
+        <label for="instagram">Instagram</label>
+        <input
+          type="url"
+          id="instagram"
+          placeholder="https://www.instagram.com/..."
+        >
+
+        <label for="tiktok">TikTok</label>
+        <input
+          type="url"
+          id="tiktok"
+          placeholder="https://www.tiktok.com/@..."
+        >
+
+        <label for="sitioWeb">Sitio web / página del negocio</label>
+        <input
+          type="url"
+          id="sitioWeb"
+          placeholder="https://..."
+        >
         <!-- ============================================================
              FIN ENLACES
              ============================================================ -->
@@ -249,6 +281,12 @@
           <input type="checkbox" id="delivery">
           Tiene entrega a domicilio
         </label>
+
+        <label for="tipo-delivery">Tipo de entrega</label>
+        <select id="tipo-delivery" disabled>
+          <option value="gratis">Envío gratis del negocio</option>
+          <option value="mandaditos">Con costo · Mandaditos</option>
+        </select>
 
         <label>
           <input type="checkbox" id="verificado">

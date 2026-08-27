@@ -10,6 +10,22 @@
 
 const formulario = document.getElementById("form-negocio");
 
+const campoDelivery = document.getElementById("delivery");
+const campoTipoDelivery = document.getElementById("tipo-delivery");
+
+function actualizarControlDelivery() {
+  if (!campoDelivery || !campoTipoDelivery) return;
+
+  campoTipoDelivery.disabled = !campoDelivery.checked;
+
+  if (!campoDelivery.checked) {
+    campoTipoDelivery.value = "gratis";
+  }
+}
+
+campoDelivery?.addEventListener("change", actualizarControlDelivery);
+
+
 const campoSlug = document.getElementById("slug");
 const rutaImagenes = document.getElementById("ruta-imagenes");
 
@@ -384,6 +400,10 @@ formulario.addEventListener("submit", function (evento) {
     horarios: horariosNegocio,
     maps: document.getElementById("maps").value.trim(),
     video: document.getElementById("video").value.trim(),
+    facebook: document.getElementById("facebook").value.trim(),
+    instagram: document.getElementById("instagram").value.trim(),
+    tiktok: document.getElementById("tiktok").value.trim(),
+    sitioWeb: document.getElementById("sitioWeb").value.trim(),
 
     banner: bannerSeleccionado
       ? `imagenes/${slug}/banner.webp`
@@ -406,6 +426,9 @@ formulario.addEventListener("submit", function (evento) {
         })(),
 
     delivery: document.getElementById("delivery").checked,
+    tipoDelivery: document.getElementById("delivery").checked
+      ? document.getElementById("tipo-delivery").value
+      : "",
     verificado: document.getElementById("verificado").checked,
     activo: document.getElementById("activo").checked,
     fechaRegistro: new Date().toLocaleString()
@@ -469,6 +492,7 @@ formulario.addEventListener("submit", function (evento) {
   delete formulario.dataset.bannerActual;
   delete formulario.dataset.logoActual;
   delete formulario.dataset.galeriaActual;
+  actualizarControlDelivery();
   renderizarHorarios();
 });
 
@@ -718,9 +742,18 @@ function editarNegocio(id) {
   );
   document.getElementById("maps").value = negocio.maps || "";
   document.getElementById("video").value = negocio.video || "";
+  document.getElementById("facebook").value = negocio.facebook || "";
+  document.getElementById("instagram").value = negocio.instagram || "";
+  document.getElementById("tiktok").value = negocio.tiktok || "";
+  document.getElementById("sitioWeb").value = negocio.sitioWeb || "";
 
   document.getElementById("delivery").checked =
     negocio.delivery === true;
+
+  document.getElementById("tipo-delivery").value =
+    negocio.tipoDelivery === "gratis" ? "gratis" : "mandaditos";
+
+  actualizarControlDelivery();
 
   document.getElementById("verificado").checked =
     negocio.verificado === true;
@@ -780,5 +813,6 @@ document.getElementById("exportar-negocios-json")
 // INICIALIZAR PANEL
 // ============================================================
 
+actualizarControlDelivery();
 cargarCategoriasFiltro();
 mostrarNegociosPanel();

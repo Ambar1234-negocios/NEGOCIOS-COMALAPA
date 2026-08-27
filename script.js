@@ -146,14 +146,29 @@ function crearLinkWhatsapp(negocio) {
 }
 
 function crearLinkPedido(negocio) {
-  const mensaje = `Hola, quiero pedir a domicilio de ${negocio.nombre}.
+  const usaMandaditos = negocio.tipoDelivery !== "gratis";
+
+  const mensaje = usaMandaditos
+    ? `Hola, vi ${negocio.nombre} en Exhibición Frontera Comalapa y quiero solicitar entrega por Mandaditos.
+
+Mi pedido es:
+Cantidad:
+Dirección de entrega:
+Referencia:
+Forma de pago:`
+    : `Hola, vi ${negocio.nombre} en Exhibición Frontera Comalapa y quiero pedir a domicilio.
 
 Mi pedido es:
 Cantidad:
 Dirección:
 Referencia:
 Forma de pago:`;
-  return `https://wa.me/${WHATSAPP_GENERAL}?text=${encodeURIComponent(mensaje)}`;
+
+  const numero = usaMandaditos
+    ? WHATSAPP_GENERAL
+    : (negocio.whatsapp || WHATSAPP_GENERAL);
+
+  return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
 }
 
 function tieneDato(valor) {
@@ -612,26 +627,40 @@ function verPerfil(categoria, index, opciones = {}) {
   const botonesHTML = `
     <section class="perfil-acciones-oficial">
 
-      <a class="accion accion-whatsapp" href="${crearLinkWhatsapp(negocio)}" target="_blank">
-        <span>💬</span>
-        <div>
-          <strong>WhatsApp</strong>
-          <small>Enviar mensaje</small>
-        </div>
-      </a>
+      ${negocio.telefono ? `
+        <a class="accion accion-telefono" href="tel:${negocio.telefono}">
+          <span>📞</span>
+          <div>
+            <strong>Llamar</strong>
+            <small>${negocio.telefono}</small>
+          </div>
+        </a>
+      ` : ""}
+
+      ${negocio.whatsapp ? `
+        <a class="accion accion-whatsapp" href="${crearLinkWhatsapp(negocio)}" target="_blank" rel="noopener noreferrer">
+          <span>💬</span>
+          <div>
+            <strong>WhatsApp</strong>
+            <small>Enviar mensaje</small>
+          </div>
+        </a>
+      ` : ""}
 
       ${negocio.delivery === true ? `
-        <a class="accion accion-delivery" href="${crearLinkPedido(negocio)}" target="_blank">
+        <a class="accion accion-delivery" href="${crearLinkPedido(negocio)}" target="_blank" rel="noopener noreferrer">
           <span>🛵</span>
           <div>
             <strong>Pedir a domicilio</strong>
-            <small>Coordinar entrega</small>
+            <small>${negocio.tipoDelivery === "gratis"
+              ? "Envío gratis"
+              : "Con costo · Mandaditos"}</small>
           </div>
         </a>
       ` : ""}
 
       ${negocio.maps ? `
-        <a class="accion accion-maps" href="${negocio.maps}" target="_blank">
+        <a class="accion accion-maps" href="${negocio.maps}" target="_blank" rel="noopener noreferrer">
           <span>📍</span>
           <div>
             <strong>Cómo llegar</strong>
@@ -641,11 +670,51 @@ function verPerfil(categoria, index, opciones = {}) {
       ` : ""}
 
       ${negocio.video ? `
-        <a class="accion accion-video" href="${negocio.video}" target="_blank">
+        <a class="accion accion-video" href="${negocio.video}" target="_blank" rel="noopener noreferrer">
           <span>▶️</span>
           <div>
             <strong>Ver video</strong>
-            <small>Facebook Exhibición</small>
+            <small>Video del negocio</small>
+          </div>
+        </a>
+      ` : ""}
+
+      ${negocio.facebook ? `
+        <a class="accion accion-facebook" href="${negocio.facebook}" target="_blank" rel="noopener noreferrer">
+          <span>f</span>
+          <div>
+            <strong>Facebook</strong>
+            <small>Visitar página</small>
+          </div>
+        </a>
+      ` : ""}
+
+      ${negocio.instagram ? `
+        <a class="accion accion-instagram" href="${negocio.instagram}" target="_blank" rel="noopener noreferrer">
+          <span>◎</span>
+          <div>
+            <strong>Instagram</strong>
+            <small>Ver perfil</small>
+          </div>
+        </a>
+      ` : ""}
+
+      ${negocio.tiktok ? `
+        <a class="accion accion-tiktok" href="${negocio.tiktok}" target="_blank" rel="noopener noreferrer">
+          <span>♪</span>
+          <div>
+            <strong>TikTok</strong>
+            <small>Ver perfil</small>
+          </div>
+        </a>
+      ` : ""}
+
+      ${negocio.sitioWeb ? `
+        <a class="accion accion-web" href="${negocio.sitioWeb}" target="_blank" rel="noopener noreferrer">
+          <span>🌐</span>
+          <div>
+            <strong>Sitio web</strong>
+            <small>Visitar página</small>
           </div>
         </a>
       ` : ""}

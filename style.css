@@ -1461,3 +1461,519 @@ h2 {
     background-repeat: no-repeat;
   }
 }
+
+/* ============================================================
+   CATEGORÍAS - DISEÑO MODERNO EXHIBICIÓN
+   NO MODIFICA LA PORTADA
+============================================================ */
+
+.grid-categorias {
+  gap: 16px;
+}
+
+.categoria {
+  position: relative;
+  overflow: hidden;
+
+  min-height: 90px;
+  padding: 20px 18px;
+
+  border-radius: 18px;
+
+  background: linear-gradient(
+    145deg,
+    #1c2430,
+    #111820
+  );
+
+  color: #ffffff;
+
+  border: 1px solid rgba(255, 179, 0, 0.28);
+
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.13);
+
+  font-size: 15px;
+  font-weight: 800;
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease;
+}
+
+
+/* Detalle dorado lateral */
+.categoria::before {
+  content: "";
+  position: absolute;
+
+  left: 0;
+  top: 16px;
+  bottom: 16px;
+
+  width: 4px;
+
+  border-radius: 0 8px 8px 0;
+
+  background: linear-gradient(
+    #ffc247,
+    #ff9500
+  );
+}
+
+
+/* Luz decorativa */
+.categoria::after {
+  content: "";
+  position: absolute;
+
+  width: 85px;
+  height: 85px;
+
+  right: -35px;
+  top: -35px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 179, 0, 0.09);
+
+  pointer-events: none;
+}
+
+
+/* Variación sutil de colores */
+
+.categoria:nth-child(3n + 1) {
+  background: linear-gradient(
+    145deg,
+    #222a36,
+    #151b24
+  );
+}
+
+.categoria:nth-child(3n + 2) {
+  background: linear-gradient(
+    145deg,
+    #24252c,
+    #17181d
+  );
+}
+
+.categoria:nth-child(3n + 3) {
+  background: linear-gradient(
+    145deg,
+    #202b2c,
+    #131c1d
+  );
+}
+
+
+/* Al pasar el mouse */
+
+.categoria:hover {
+  transform: translateY(-5px);
+
+  border-color: rgba(255, 179, 0, 0.75);
+
+  box-shadow:
+    0 15px 30px rgba(0, 0, 0, 0.20);
+}
+
+
+/* Streaming / categoría premium */
+
+.categoria-premium {
+  background: linear-gradient(
+    145deg,
+    #33260a,
+    #19140c
+  ) !important;
+
+  color: #ffc247;
+
+  border-color: rgba(255, 179, 0, 0.55);
+}
+
+.categoria-premium:hover {
+  border-color: #ffb300;
+}
+
+
+/* ============================================================
+   CATEGORÍAS - MÓVIL
+============================================================ */
+
+@media (max-width: 600px) {
+
+  .grid-categorias {
+    gap: 11px;
+  }
+
+  .categoria {
+    min-height: 78px;
+    padding: 15px 12px;
+
+    border-radius: 15px;
+
+    font-size: 13px;
+  }
+
+  .categoria::before {
+    top: 12px;
+    bottom: 12px;
+    width: 3px;
+  }
+}
+
+/* ============================================================
+   CATEGORÍAS V4 - ELEGANTE / MODERNO / EXHIBICIÓN
+   NO MODIFICA LA PORTADA
+============================================================ */
+
+body {
+  background:
+    radial-gradient(circle at 15% 25%, rgba(104, 153, 193, .10), transparent 28%),
+    radial-gradient(circle at 85% 70%, rgba(135, 149, 0, .07), transparent 30%),
+    #f2f3f2;
+}
+
+.grid-categorias {
+  gap: 16px;
+}
+
+.categoria {
+  position: relative;
+  overflow: hidden;
+  min-height: 92px;
+  padding: 19px 18px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(135deg, #6f91aa 0%, #58758c 100%) !important;
+
+  color: #ffffff !important;
+
+  border: 2px solid rgba(255,255,255,.32);
+
+  box-shadow:
+    0 8px 18px rgba(46, 61, 73, .13),
+    inset 0 1px 0 rgba(255,255,255,.18);
+
+  font-weight: 800;
+
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease,
+    filter .22s ease;
+}
+
+/* Detalle dorado lateral */
+.categoria::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 5px;
+
+  border-radius: 0 8px 8px 0;
+
+  background: linear-gradient(
+    180deg,
+    #b49552,
+    #7e8c20
+  );
+}
+
+/* Reflejo decorativo */
+.categoria::after {
+  content: "";
+  position: absolute;
+  width: 105px;
+  height: 105px;
+  right: -42px;
+  bottom: -48px;
+
+  border-radius: 50%;
+
+  background: rgba(255,255,255,.09);
+}
+
+/* EFECTO QUE TE GUSTÓ */
+.categoria:hover {
+  transform: translateY(-6px) scale(1.015);
+
+  color: #ffffff !important;
+
+  border-color: #b89a55;
+
+  filter: brightness(1.07);
+
+  box-shadow:
+    0 16px 28px rgba(46, 61, 73, .23),
+    0 0 0 3px rgba(180, 149, 82, .12);
+}
+
+/* Evita que las letras cambien de color */
+.categoria *,
+.categoria:hover * {
+  color: inherit !important;
+}
+
+/* Streaming conserva un toque especial, sin salirse del estilo */
+.categoria-premium {
+  background:
+    linear-gradient(135deg, #52687a, #394d5e) !important;
+
+  border-color: rgba(180,149,82,.65);
+}
+
+
+/* =========================
+   MÓVIL
+========================= */
+
+@media (max-width: 600px) {
+
+  .grid-categorias {
+    gap: 12px;
+  }
+
+  .categoria {
+    min-height: 78px;
+    padding: 14px 11px;
+    border-radius: 15px;
+    font-size: 13px;
+  }
+
+  .categoria:hover {
+    transform: translateY(-3px) scale(1.01);
+  }
+}
+
+/* ============================================================
+   DESTACADOS V2 - FRANJA PROMOCIONAL PREMIUM
+   NO TOCA PORTADA NI CATEGORÍAS
+============================================================ */
+
+.destacados {
+  padding: 34px 0 40px;
+}
+
+.destacados h2 {
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 900;
+  color: #243447;
+  margin-bottom: 22px;
+}
+
+.carrusel {
+  gap: 18px;
+}
+
+/* TARJETA DESTACADA */
+.destacado {
+  position: relative;
+  overflow: hidden;
+
+  min-width: 350px;
+  min-height: 200px;
+
+  padding: 30px 26px;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #5f7f99 0%,
+      #48667f 50%,
+      #354f67 100%
+    ) !important;
+
+  color: #ffffff;
+
+  border: 1px solid rgba(255,255,255,.22);
+
+  box-shadow:
+    0 14px 30px rgba(37, 52, 68, .18);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+/* detalle dorado superior */
+.destacado::before {
+  content: "";
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 5px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #a98c4d,
+      #c2a867,
+      #8a932d
+    );
+}
+
+/* círculo decorativo grande */
+.destacado::after {
+  content: "";
+  position: absolute;
+
+  width: 170px;
+  height: 170px;
+
+  right: -60px;
+  bottom: -65px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,255,255,.07);
+
+  border:
+    1px solid rgba(255,255,255,.08);
+
+  pointer-events: none;
+}
+
+/* título */
+.destacado h3 {
+  position: relative;
+  z-index: 2;
+
+  margin: 0 0 12px;
+
+  color: #ffffff;
+
+  font-size: 24px;
+  font-weight: 900;
+}
+
+/* descripción */
+.destacado p {
+  position: relative;
+  z-index: 2;
+
+  margin: 0;
+
+  color: rgba(255,255,255,.88);
+
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* hover */
+.destacado:hover {
+  transform: translateY(-7px) scale(1.015);
+
+  box-shadow:
+    0 22px 40px rgba(37, 52, 68, .27);
+}
+
+/* ============================================================
+   MÓVIL
+============================================================ */
+
+@media (max-width: 600px) {
+
+  .destacados {
+    padding-top: 26px;
+  }
+
+  .destacado {
+    min-width: 260px;
+    min-height: 175px;
+
+    padding: 25px 20px;
+
+    border-radius: 20px;
+  }
+
+  .destacado h3 {
+    font-size: 20px;
+  }
+
+  .destacado p {
+    font-size: 13px;
+  }
+
+  .destacado:hover {
+    transform: translateY(-3px);
+  }
+}
+/* ============================================================
+   PERFIL - BOTONES DE CONTACTO, REDES Y ENLACES
+   Se muestran únicamente cuando el negocio tiene el dato.
+============================================================ */
+
+.perfil-acciones-oficial .accion {
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    filter .22s ease;
+}
+
+.perfil-acciones-oficial .accion:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.05);
+  box-shadow: 0 10px 20px rgba(17, 24, 39, .16);
+}
+
+.accion-telefono {
+  background: linear-gradient(135deg, #64748b, #40556f);
+}
+
+.accion-facebook {
+  background: linear-gradient(135deg, #1877f2, #0f5ec8);
+}
+
+.accion-instagram {
+  background: linear-gradient(135deg, #c13584, #833ab4 55%, #e1306c);
+}
+
+.accion-tiktok {
+  background: linear-gradient(135deg, #222831, #050505);
+}
+
+.accion-web {
+  background: linear-gradient(135deg, #6f91aa, #4c6f89);
+}
+
+/* Los símbolos de redes se ven como iconos compactos */
+.accion-facebook > span,
+.accion-instagram > span,
+.accion-tiktok > span {
+  width: 25px;
+  height: 25px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255,255,255,.16);
+  font-weight: 900;
+  font-family: Arial, sans-serif;
+}
+
+/* Móvil: mantiene dos columnas y evita textos amontonados */
+@media (max-width: 600px) {
+  .perfil-acciones-oficial .accion {
+    min-width: 0;
+  }
+
+  .perfil-acciones-oficial .accion strong,
+  .perfil-acciones-oficial .accion small {
+    overflow-wrap: anywhere;
+  }
+}

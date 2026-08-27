@@ -81,7 +81,11 @@
       }
     },
     "maps": "https://www.google.com/maps/search/?api=1&query=Balconeria+Vidrios+Aluminios+El+Perico+Frontera+Comalapa",
-    "video": "",
+    "video": "https://www.facebook.com/share/p/18SYX4JTBH/",
+    "facebook": "https://www.facebook.com/share/p/18SYX4JTBH/",
+    "instagram": "",
+    "tiktok": "https://www.facebook.com/share/p/18SYX4JTBH/",
+    "sitioWeb": "",
     "banner": "imagenes/el-perico/banner.webp",
     "logo": "imagenes/el-perico/logo.webp",
     "galeria": [
@@ -91,7 +95,8 @@
       "imagenes/el-perico/foto-4.webp",
       "imagenes/el-perico/foto-5.webp"
     ],
-    "delivery": false,
+    "delivery": true,
+    "tipoDelivery": "mandaditos",
     "verificado": true,
     "activo": true,
     "fechaRegistro": "26/8/2026, 12:00:35 p.m."
