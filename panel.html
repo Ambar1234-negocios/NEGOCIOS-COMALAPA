@@ -21,11 +21,12 @@
     </div>
 
     <nav class="sidebar-menu">
-      <button type="button" class="menu-item activo">🏠 Dashboard</button>
-      <button type="button" class="menu-item">➕ Nuevo negocio</button>
-      <button type="button" class="menu-item">🏪 Negocios</button>
-      <button type="button" class="menu-item">📂 Categorías</button>
-      <button type="button" class="menu-item">⚙ Configuración</button>
+      <button type="button" class="menu-item activo" data-seccion="dashboard">🏠 Dashboard</button>
+      <button type="button" class="menu-item" data-seccion="nuevo-negocio">➕ Nuevo negocio</button>
+      <button type="button" class="menu-item" data-seccion="negocios">🏪 Negocios</button>
+      <button type="button" class="menu-item" data-seccion="categorias">📂 Categorías</button>
+      <button type="button" class="menu-item" data-seccion="destacados">⭐ Destacados / Promociones</button>
+      <button type="button" class="menu-item" data-seccion="configuracion">⚙ Configuración</button>
     </nav>
 
   </aside>
@@ -39,25 +40,67 @@
        ============================================================ -->
   <main class="contenido-principal">
 
-    <!-- ============================================================
-         CABECERA DEL PANEL
-         ============================================================ -->
     <header class="cabecera-panel">
-
       <div>
         <p class="cabecera-etiqueta">Exhibición Frontera Comalapa</p>
-        <h2>Agregar nuevo negocio</h2>
+        <h2 id="titulo-seccion-panel">Dashboard</h2>
+      </div>
+      <span class="estado-panel">Panel local</span>
+    </header>
+
+    <!-- ============================================================
+         DASHBOARD
+         ============================================================ -->
+    <section class="seccion-panel activa" data-panel-seccion="dashboard">
+      <div class="dashboard-grid">
+        <article class="dashboard-card">
+          <span>🏪</span>
+          <div>
+            <strong id="dashboard-total-negocios">0</strong>
+            <small>Negocios guardados</small>
+          </div>
+        </article>
+
+        <article class="dashboard-card">
+          <span>🟢</span>
+          <div>
+            <strong id="dashboard-negocios-activos">0</strong>
+            <small>Negocios activos</small>
+          </div>
+        </article>
+
+        <article class="dashboard-card">
+          <span>⭐</span>
+          <div>
+            <strong id="dashboard-total-destacados">0</strong>
+            <small>Promociones activas</small>
+          </div>
+        </article>
+
+        <article class="dashboard-card">
+          <span>📂</span>
+          <div>
+            <strong id="dashboard-total-categorias">14</strong>
+            <small>Categorías disponibles</small>
+          </div>
+        </article>
       </div>
 
-      <span class="estado-panel">Panel local</span>
+      <section class="tarjeta-listado">
+        <p class="cabecera-etiqueta">Resumen</p>
+        <h2>Panel de control</h2>
+        <p>
+          Desde este panel puedes registrar negocios, editar información,
+          administrar promociones y generar los archivos para publicar los cambios.
+        </p>
+      </section>
+    </section>
 
-    </header>
     <!-- ============================================================
-         FIN CABECERA DEL PANEL
+         NUEVO NEGOCIO
          ============================================================ -->
-
-
-    <!-- ============================================================
+    <section class="seccion-panel" data-panel-seccion="nuevo-negocio">
+      <!-- ============================================================
          FORMULARIO: NUEVO / EDITAR NEGOCIO
          ============================================================ -->
     <section class="tarjeta-formulario">
@@ -313,9 +356,13 @@
     <!-- ============================================================
          FIN FORMULARIO: NUEVO / EDITAR NEGOCIO
          ============================================================ -->
-
+    </section>
 
     <!-- ============================================================
+         NEGOCIOS
+         ============================================================ -->
+    <section class="seccion-panel" data-panel-seccion="negocios">
+      <!-- ============================================================
          PUBLICAR NEGOCIOS EN LA WEB
          ============================================================ -->
     <section class="tarjeta-listado">
@@ -347,9 +394,7 @@
     <!-- ============================================================
          FIN PUBLICAR NEGOCIOS EN LA WEB
          ============================================================ -->
-
-
-    <!-- ============================================================
+      <!-- ============================================================
          LISTADO DE NEGOCIOS GUARDADOS
          ============================================================ -->
     <section class="tarjeta-listado">
@@ -393,6 +438,127 @@
     <!-- ============================================================
          FIN LISTADO DE NEGOCIOS GUARDADOS
          ============================================================ -->
+    </section>
+
+    <!-- ============================================================
+         CATEGORÍAS
+         ============================================================ -->
+    <section class="seccion-panel" data-panel-seccion="categorias">
+      <section class="tarjeta-listado">
+        <p class="cabecera-etiqueta">Directorio</p>
+        <h2>Categorías</h2>
+        <p>Resumen de negocios registrados por categoría.</p>
+        <div id="resumen-categorias" class="resumen-categorias"></div>
+      </section>
+    </section>
+
+    <!-- ============================================================
+         DESTACADOS / PROMOCIONES
+         ============================================================ -->
+    <section class="seccion-panel" data-panel-seccion="destacados">
+
+      <section class="tarjeta-formulario">
+        <form id="form-destacado">
+          <h3>⭐ Nueva promoción / destacado</h3>
+
+          <label for="destacado-negocio">Negocio</label>
+          <select id="destacado-negocio" required>
+            <option value="">Selecciona un negocio</option>
+          </select>
+
+          <label for="destacado-etiqueta">Etiqueta</label>
+          <input
+            type="text"
+            id="destacado-etiqueta"
+            placeholder="Ejemplo: 🔥 Promoción de la semana"
+          >
+
+          <label for="destacado-titulo">Título de la promoción</label>
+          <input
+            type="text"
+            id="destacado-titulo"
+            placeholder="Ejemplo: Desayuno especial"
+            required
+          >
+
+          <label for="destacado-texto">Descripción</label>
+          <textarea
+            id="destacado-texto"
+            rows="3"
+            placeholder="Ejemplo: Chilaquiles + café"
+          ></textarea>
+
+          <label for="destacado-precio">Precio / texto corto</label>
+          <input
+            type="text"
+            id="destacado-precio"
+            placeholder="Ejemplo: $149 o 20% de descuento"
+          >
+
+          <div class="grid-dos-columnas">
+            <div>
+              <label for="destacado-inicio">Fecha de inicio</label>
+              <input type="date" id="destacado-inicio">
+            </div>
+            <div>
+              <label for="destacado-fin">Fecha de término</label>
+              <input type="date" id="destacado-fin">
+            </div>
+          </div>
+
+          <label>
+            <input type="checkbox" id="destacado-activo" checked>
+            Promoción activa
+          </label>
+
+          <button type="submit">Guardar promoción</button>
+        </form>
+      </section>
+
+      <section class="tarjeta-listado">
+        <div class="encabezado-listado">
+          <div>
+            <p class="cabecera-etiqueta">Promociones</p>
+            <h2>Destacados guardados</h2>
+          </div>
+          <span id="total-destacados">0 promociones</span>
+        </div>
+
+        <div id="lista-destacados">
+          <p>Todavía no hay promociones guardadas.</p>
+        </div>
+      </section>
+
+      <section class="tarjeta-listado">
+        <p class="cabecera-etiqueta">Publicación</p>
+        <h2>Publicar destacados</h2>
+        <p>
+          Genera <strong>destacados.json</strong> cuando quieras actualizar
+          las promociones visibles en la página.
+        </p>
+        <button type="button" id="exportar-destacados-json" class="btn-horario-secundario">
+          📤 Generar destacados.json
+        </button>
+        <p id="estado-publicacion-destacados" class="nota-imagenes">
+          Las promociones se guardan localmente hasta que publiques el archivo.
+        </p>
+      </section>
+
+    </section>
+
+    <!-- ============================================================
+         CONFIGURACIÓN
+         ============================================================ -->
+    <section class="seccion-panel" data-panel-seccion="configuracion">
+      <section class="tarjeta-listado">
+        <p class="cabecera-etiqueta">Sistema</p>
+        <h2>Configuración</h2>
+        <p>
+          Aquí iremos agregando las opciones generales de Exhibición Frontera Comalapa,
+          como temas de temporada, datos generales y futuras herramientas de publicación.
+        </p>
+      </section>
+    </section>
 
   </main>
   <!-- ============================================================

@@ -519,3 +519,150 @@ button[type="submit"]:hover {
     display: none;
   }
 }
+
+/* ============================================================
+   SECCIONES DEL PANEL / NAVEGACIÓN
+   ============================================================ */
+
+.seccion-panel {
+  display: none;
+}
+
+.seccion-panel.activa {
+  display: block;
+}
+
+.dashboard-grid {
+  max-width: 850px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.07);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.dashboard-card > span {
+  font-size: 27px;
+}
+
+.dashboard-card strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1;
+  color: #111827;
+}
+
+.dashboard-card small {
+  display: block;
+  margin-top: 6px;
+  color: #6b7280;
+}
+
+.resumen-categorias {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.categoria-resumen-card {
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 13px;
+  padding: 15px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.categoria-resumen-card span {
+  min-width: 36px;
+  text-align: center;
+  background: #dcfce7;
+  color: #166534;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-weight: bold;
+}
+
+.grid-dos-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.promocion-panel {
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-top: 12px;
+}
+
+.promocion-panel small {
+  color: #a16207;
+  font-weight: 800;
+}
+
+.promocion-panel h3 {
+  margin: 5px 0 4px;
+}
+
+.promocion-panel strong {
+  display: block;
+  color: #1f2937;
+}
+
+.promocion-panel p {
+  margin: 5px 0;
+  color: #6b7280;
+}
+
+.promocion-panel span {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: 800;
+}
+
+.promocion-panel em {
+  display: block;
+  margin-top: 8px;
+  font-style: normal;
+  font-size: 13px;
+}
+
+@media (max-width: 1000px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard-grid,
+  .resumen-categorias,
+  .grid-dos-columnas {
+    grid-template-columns: 1fr;
+  }
+
+  .promocion-panel {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

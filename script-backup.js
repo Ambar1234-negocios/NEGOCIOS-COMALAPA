@@ -853,62 +853,42 @@ function abrirDestacado(slug) {
 }
 
 function crearTarjetaDestacado(destacado) {
-  const etiqueta = destacado.etiqueta || "PROMOCIÓN";
+  const etiqueta = destacado.etiqueta || "⭐ Destacado";
   const titulo = destacado.titulo || destacado.negocioNombre || "Promoción";
   const texto = destacado.texto || "";
   const precio = destacado.precio || "";
-  const slug = destacado.negocioSlug || "";
 
   return `
-    <article
-      class="card card-premium destacado-publicado"
-      role="link"
-      tabindex="0"
-      aria-label="Abrir promoción de ${destacado.negocioNombre || titulo}"
-      onclick="abrirDestacado('${slug}')"
-      onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); abrirDestacado('${slug}'); }"
-    >
-      <div class="destacado-contenido">
-        <span class="destacado-etiqueta">${etiqueta}</span>
+    <article class="card card-premium destacado-publicado">
+      <span class="destacado-etiqueta">${etiqueta}</span>
 
-        <h3>${titulo}</h3>
+      <h3>${destacado.negocioNombre || titulo}</h3>
 
-        ${texto ? `<p>${texto}</p>` : ""}
+      ${titulo && titulo !== destacado.negocioNombre
+        ? `<strong class="destacado-titulo">${titulo}</strong>`
+        : ""
+      }
 
-        ${precio
-          ? `<div class="destacado-precio">${precio}</div>`
-          : ""
-        }
+      ${texto ? `<p>${texto}</p>` : ""}
 
-        ${destacado.negocioNombre && titulo !== destacado.negocioNombre
-          ? `<small class="destacado-negocio">${destacado.negocioNombre}</small>`
-          : ""
-        }
-      </div>
+      ${precio
+        ? `<div class="destacado-precio">${precio}</div>`
+        : ""
+      }
 
-      <div class="destacado-decoracion" aria-hidden="true"></div>
-    </article>
-  `;
-}
-
-function crearDestacadoProximamente(numero) {
-  return `
-    <article class="card card-premium destacado-publicado destacado-placeholder destacado-demo-${numero}" aria-hidden="true">
-      <div class="destacado-contenido">
-        <span class="destacado-etiqueta">PRÓXIMAMENTE</span>
-        <h3>Nueva promoción</h3>
-        <p>Muy pronto encontrarás otra oferta de un negocio de Frontera Comalapa.</p>
-        <small class="destacado-negocio">Exhibición Frontera Comalapa</small>
-      </div>
-      <div class="destacado-decoracion" aria-hidden="true"></div>
+      <button
+        type="button"
+        class="btn-whatsapp"
+        onclick="abrirDestacado('${destacado.negocioSlug}')"
+      >
+        Ver promoción
+      </button>
     </article>
   `;
 }
 
 let intervaloCarruselDestacados = null;
 let timeoutCarruselDestacados = null;
-let indiceCarruselDestacados = 1;
-let ajusteInfinitoDestacados = null;
 
 function detenerCarruselDestacados() {
   if (intervaloCarruselDestacados) {
@@ -920,218 +900,46 @@ function detenerCarruselDestacados() {
     clearTimeout(timeoutCarruselDestacados);
     timeoutCarruselDestacados = null;
   }
-
-  if (ajusteInfinitoDestacados) {
-    clearTimeout(ajusteInfinitoDestacados);
-    ajusteInfinitoDestacados = null;
-  }
-}
-
-function obtenerTarjetaVisibleDestacados(carrusel) {
-  const tarjetas = [...carrusel.querySelectorAll(".destacado-publicado")];
-  if (!tarjetas.length) return 0;
-
-  const centro = carrusel.scrollLeft + (carrusel.clientWidth / 2);
-  let mejorIndice = 0;
-  let mejorDistancia = Infinity;
-
-  tarjetas.forEach((tarjeta, indice) => {
-    const centroTarjeta = tarjeta.offsetLeft + (tarjeta.offsetWidth / 2);
-    const distancia = Math.abs(centro - centroTarjeta);
-
-    if (distancia < mejorDistancia) {
-      mejorDistancia = distancia;
-      mejorIndice = indice;
-    }
-  });
-
-  return mejorIndice;
-}
-
-function irATarjetaDestacada(carrusel, indice, suave = true) {
-  const tarjetas = [...carrusel.querySelectorAll(".destacado-publicado")];
-  if (!tarjetas[indice]) return;
-
-  carrusel.scrollTo({
-    left: tarjetas[indice].offsetLeft - carrusel.offsetLeft,
-    behavior: suave ? "smooth" : "auto"
-  });
-
-  indiceCarruselDestacados = indice;
-}
-
-function normalizarCarruselInfinito(carrusel) {
-  const tarjetas = [...carrusel.querySelectorAll(".destacado-publicado")];
-  if (tarjetas.length <= 2) return;
-
-  // Estructura: [clon último] [originales...] [clon primero]
-  const ultimoIndice = tarjetas.length - 1;
-
-  if (indiceCarruselDestacados === 0) {
-    // Si llegamos al clon del último por la izquierda,
-    // saltamos sin animación al último original.
-    indiceCarruselDestacados = ultimoIndice - 1;
-    irATarjetaDestacada(carrusel, indiceCarruselDestacados, false);
-  } else if (indiceCarruselDestacados === ultimoIndice) {
-    // Si llegamos al clon del primero por la derecha,
-    // saltamos sin animación al primer original.
-    indiceCarruselDestacados = 1;
-    irATarjetaDestacada(carrusel, 1, false);
-  }
 }
 
 function iniciarCarruselDestacados() {
   const carrusel = document.querySelector(".carrusel-destacados");
 
   detenerCarruselDestacados();
+
   if (!carrusel) return;
 
-  // Limpiar clones anteriores por si se reinicia el carrusel.
-  carrusel.querySelectorAll(".destacado-clon-infinito").forEach((clon) => clon.remove());
+  const tarjetas = carrusel.querySelectorAll(".destacado-publicado");
 
-  const originales = [...carrusel.querySelectorAll(".destacado-publicado")];
+  if (tarjetas.length <= 1) return;
 
-  // Sin puntos/contadores debajo.
-  const indicadores = carrusel.parentElement?.querySelector(".destacados-indicadores");
-  if (indicadores) indicadores.remove();
+  carrusel.innerHTML += carrusel.innerHTML;
 
-  if (originales.length <= 1) return;
+  intervaloCarruselDestacados = setInterval(() => {
+    carrusel.scrollLeft += 1;
 
-  // Clonamos último y primero para lograr el efecto infinito.
-  const clonUltimo = originales[originales.length - 1].cloneNode(true);
-  clonUltimo.classList.add("destacado-clon-infinito");
-  clonUltimo.setAttribute("aria-hidden", "true");
+    if (carrusel.scrollLeft >= carrusel.scrollWidth / 2) {
+      carrusel.scrollLeft -= carrusel.scrollWidth / 2;
+    }
+  }, 20);
 
-  const clonPrimero = originales[0].cloneNode(true);
-  clonPrimero.classList.add("destacado-clon-infinito");
-  clonPrimero.setAttribute("aria-hidden", "true");
+  const detener = () => detenerCarruselDestacados();
 
-  carrusel.prepend(clonUltimo);
-  carrusel.append(clonPrimero);
-
-  // Empezamos en el primer anuncio real.
-  requestAnimationFrame(() => {
-    indiceCarruselDestacados = 1;
-    irATarjetaDestacada(carrusel, 1, false);
-  });
-
-  const programarRotacion = () => {
-    if (intervaloCarruselDestacados) clearInterval(intervaloCarruselDestacados);
-
-    intervaloCarruselDestacados = setInterval(() => {
-      const tarjetas = [...carrusel.querySelectorAll(".destacado-publicado")];
-      const siguiente = indiceCarruselDestacados + 1;
-
-      irATarjetaDestacada(carrusel, siguiente, true);
-
-      // Después de llegar suavemente al clon, reposicionamos sin que se note.
-      if (siguiente === tarjetas.length - 1) {
-        if (ajusteInfinitoDestacados) clearTimeout(ajusteInfinitoDestacados);
-
-        ajusteInfinitoDestacados = setTimeout(() => {
-          indiceCarruselDestacados = 1;
-          irATarjetaDestacada(carrusel, 1, false);
-        }, 650);
-      }
-    }, 4000);
-  };
-
-  const reanudarDespuesDeInteraccion = () => {
-    detenerCarruselDestacados();
+  const continuar = () => {
+    if (timeoutCarruselDestacados) {
+      clearTimeout(timeoutCarruselDestacados);
+    }
 
     timeoutCarruselDestacados = setTimeout(() => {
-      indiceCarruselDestacados = obtenerTarjetaVisibleDestacados(carrusel);
-      normalizarCarruselInfinito(carrusel);
-      programarRotacion();
-    }, 1200);
+      iniciarCarruselDestacados();
+    }, 2000);
   };
 
-  // Detectar en qué tarjeta quedó el usuario al deslizar.
-  let rafScroll = null;
-  let timeoutFinScroll = null;
-
-  carrusel.onscroll = () => {
-    if (rafScroll) cancelAnimationFrame(rafScroll);
-
-    rafScroll = requestAnimationFrame(() => {
-      indiceCarruselDestacados = obtenerTarjetaVisibleDestacados(carrusel);
-    });
-
-    if (timeoutFinScroll) clearTimeout(timeoutFinScroll);
-    timeoutFinScroll = setTimeout(() => {
-      indiceCarruselDestacados = obtenerTarjetaVisibleDestacados(carrusel);
-      normalizarCarruselInfinito(carrusel);
-    }, 180);
-  };
-
-  // Móvil / puntero: solo pausa si realmente presiona.
-  carrusel.onpointerdown = () => detenerCarruselDestacados();
-  carrusel.onpointerup = reanudarDespuesDeInteraccion;
-  carrusel.onpointercancel = reanudarDespuesDeInteraccion;
-
-  // Arrastre real con mouse en PC sin seleccionar texto.
-  let arrastrandoMouse = false;
-  let movioMouse = false;
-  let inicioMouseX = 0;
-  let scrollInicioMouse = 0;
-
-  carrusel.onmousedown = (e) => {
-    if (e.button !== 0) return;
-
-    arrastrandoMouse = true;
-    movioMouse = false;
-    inicioMouseX = e.pageX;
-    scrollInicioMouse = carrusel.scrollLeft;
-
-    detenerCarruselDestacados();
-    carrusel.classList.add("arrastrando");
-    e.preventDefault();
-  };
-
-  carrusel.onmousemove = (e) => {
-    if (!arrastrandoMouse) return;
-
-    const distancia = e.pageX - inicioMouseX;
-
-    if (Math.abs(distancia) > 5) movioMouse = true;
-
-    carrusel.scrollLeft = scrollInicioMouse - distancia;
-    e.preventDefault();
-  };
-
-  const terminarArrastreMouse = () => {
-    if (!arrastrandoMouse) return;
-
-    arrastrandoMouse = false;
-    carrusel.classList.remove("arrastrando");
-
-    indiceCarruselDestacados = obtenerTarjetaVisibleDestacados(carrusel);
-    normalizarCarruselInfinito(carrusel);
-    reanudarDespuesDeInteraccion();
-  };
-
-  carrusel.onmouseup = terminarArrastreMouse;
-
-  carrusel.onmouseleave = () => {
-    if (arrastrandoMouse) terminarArrastreMouse();
-  };
-
-  // Evita abrir un anuncio por accidente después de arrastrarlo con mouse.
-  if (!carrusel.dataset.bloqueoClickArrastre) {
-    carrusel.dataset.bloqueoClickArrastre = "1";
-
-    carrusel.addEventListener("click", (e) => {
-      if (movioMouse) {
-        e.preventDefault();
-        e.stopPropagation();
-        movioMouse = false;
-      }
-    }, true);
-  }
-
-  programarRotacion();
+  carrusel.onmousedown = detener;
+  carrusel.onmouseup = continuar;
+  carrusel.ontouchstart = detener;
+  carrusel.ontouchend = continuar;
 }
-
 
 async function cargarDestacadosPublicados() {
   const carrusel = document.querySelector(".carrusel-destacados");
@@ -1159,23 +967,18 @@ async function cargarDestacadosPublicados() {
     detenerCarruselDestacados();
 
     if (visibles.length === 0) {
-      carrusel.innerHTML = [1, 2, 3, 4]
-        .map(crearDestacadoProximamente)
-        .join("");
-      iniciarCarruselDestacados();
+      carrusel.innerHTML = `
+        <div class="card">
+          <h3>⭐ Próximamente</h3>
+          <p>Muy pronto encontrarás aquí promociones destacadas de Frontera Comalapa.</p>
+        </div>
+      `;
       return;
     }
 
-    const tarjetasReales = visibles.map(crearTarjetaDestacado);
-    const tarjetasDemo = [];
-
-    // SOLO PARA ESTA PRUEBA VISUAL: completamos hasta 4 tarjetas
-    // con "Próximamente" para poder probar el carrusel y la rotación.
-    for (let i = tarjetasReales.length; i < 4; i++) {
-      tarjetasDemo.push(crearDestacadoProximamente(i + 1));
-    }
-
-    carrusel.innerHTML = [...tarjetasReales, ...tarjetasDemo].join("");
+    carrusel.innerHTML = visibles
+      .map(crearTarjetaDestacado)
+      .join("");
 
     iniciarCarruselDestacados();
 

@@ -816,3 +816,366 @@ document.getElementById("exportar-negocios-json")
 actualizarControlDelivery();
 cargarCategoriasFiltro();
 mostrarNegociosPanel();
+
+// ============================================================
+// NAVEGACIÓN DEL PANEL
+// ============================================================
+
+const TITULOS_SECCIONES_PANEL = {
+  dashboard: "Dashboard",
+  "nuevo-negocio": "Agregar nuevo negocio",
+  negocios: "Negocios",
+  categorias: "Categorías",
+  destacados: "Destacados / Promociones",
+  configuracion: "Configuración"
+};
+
+function abrirSeccionPanel(seccion) {
+  document.querySelectorAll(".seccion-panel").forEach((elemento) => {
+    elemento.classList.toggle("activa", elemento.dataset.panelSeccion === seccion);
+  });
+
+  document.querySelectorAll(".menu-item").forEach((boton) => {
+    boton.classList.toggle("activo", boton.dataset.seccion === seccion);
+  });
+
+  const titulo = document.getElementById("titulo-seccion-panel");
+  if (titulo) {
+    titulo.textContent = TITULOS_SECCIONES_PANEL[seccion] || "Panel";
+  }
+
+  if (seccion === "dashboard") actualizarDashboard();
+  if (seccion === "categorias") renderizarResumenCategorias();
+  if (seccion === "destacados") {
+    cargarNegociosEnDestacados();
+    mostrarDestacadosPanel();
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.querySelectorAll(".menu-item[data-seccion]").forEach((boton) => {
+  boton.addEventListener("click", function () {
+    abrirSeccionPanel(this.dataset.seccion);
+  });
+});
+
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+
+function actualizarDashboard() {
+  const negocios =
+    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
+
+  const destacados =
+    JSON.parse(localStorage.getItem("exhibicionDestacados")) || [];
+
+  const activos = negocios.filter((negocio) => negocio.activo !== false).length;
+  const destacadosActivos = destacados.filter((item) => item.activo !== false).length;
+
+  const total = document.getElementById("dashboard-total-negocios");
+  const activosElemento = document.getElementById("dashboard-negocios-activos");
+  const destacadosElemento = document.getElementById("dashboard-total-destacados");
+
+  if (total) total.textContent = negocios.length;
+  if (activosElemento) activosElemento.textContent = activos;
+  if (destacadosElemento) destacadosElemento.textContent = destacadosActivos;
+}
+
+
+// ============================================================
+// RESUMEN DE CATEGORÍAS
+// ============================================================
+
+function renderizarResumenCategorias() {
+  const contenedor = document.getElementById("resumen-categorias");
+  if (!contenedor) return;
+
+  const negocios =
+    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
+
+  const categorias = [
+    ["streaming", "Streaming y tecnología"],
+    ["construccion", "Construcción y materiales"],
+    ["comida", "Comida y restaurantes"],
+    ["salud", "Salud y farmacias"],
+    ["hoteles", "Hoteles y hospedaje"],
+    ["automotriz", "Talleres y refacciones"],
+    ["servicios", "Servicios para el hogar"],
+    ["belleza", "Belleza y estética"],
+    ["mandaditos", "Mandaditos"],
+    ["comercios", "Comercios"],
+    ["profesionales", "Profesionistas"],
+    ["bienesraices", "Casas y terrenos"],
+    ["veterinarias", "Veterinarias"],
+    ["agua", "Purificadoras de agua"]
+  ];
+
+  contenedor.innerHTML = categorias.map(([valor, nombre]) => {
+    const cantidad = negocios.filter((negocio) => negocio.categoria === valor).length;
+
+    return `
+      <article class="categoria-resumen-card">
+        <strong>${nombre}</strong>
+        <span>${cantidad}</span>
+      </article>
+    `;
+  }).join("");
+}
+
+
+// ============================================================
+// DESTACADOS / PROMOCIONES
+// ============================================================
+
+const formularioDestacado = document.getElementById("form-destacado");
+
+function obtenerDestacadosGuardados() {
+  try {
+    return JSON.parse(localStorage.getItem("exhibicionDestacados")) || [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function cargarNegociosEnDestacados() {
+  const selector = document.getElementById("destacado-negocio");
+  if (!selector) return;
+
+  const valorActual = selector.value;
+  const negocios =
+    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
+
+  selector.innerHTML = `
+    <option value="">Selecciona un negocio</option>
+    ${negocios
+      .filter((negocio) => negocio.activo !== false)
+      .map((negocio) => `
+        <option value="${negocio.slug}">${negocio.nombre}</option>
+      `)
+      .join("")}
+  `;
+
+  if ([...selector.options].some((opcion) => opcion.value === valorActual)) {
+    selector.value = valorActual;
+  }
+}
+
+formularioDestacado?.addEventListener("submit", function (evento) {
+  evento.preventDefault();
+
+  const slug = document.getElementById("destacado-negocio").value;
+  const titulo = document.getElementById("destacado-titulo").value.trim();
+
+  if (!slug || !titulo) {
+    alert("Selecciona un negocio y escribe el título de la promoción.");
+    return;
+  }
+
+  const negocios =
+    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
+
+  const negocio = negocios.find((item) => item.slug === slug);
+
+  if (!negocio) {
+    alert("No se encontró el negocio seleccionado.");
+    return;
+  }
+
+  const promociones = obtenerDestacadosGuardados();
+  const idEditando = Number(formularioDestacado.dataset.editandoId);
+
+  const promocion = {
+    id: idEditando || Date.now(),
+    negocioSlug: negocio.slug,
+    negocioNombre: negocio.nombre,
+    categoria: negocio.categoria,
+    etiqueta: document.getElementById("destacado-etiqueta").value.trim(),
+    titulo,
+    texto: document.getElementById("destacado-texto").value.trim(),
+    precio: document.getElementById("destacado-precio").value.trim(),
+    fechaInicio: document.getElementById("destacado-inicio").value,
+    fechaFin: document.getElementById("destacado-fin").value,
+    activo: document.getElementById("destacado-activo").checked
+  };
+
+  if (idEditando) {
+    const indice = promociones.findIndex((item) => item.id === idEditando);
+
+    if (indice !== -1) {
+      promociones[indice] = promocion;
+    }
+
+    delete formularioDestacado.dataset.editandoId;
+    formularioDestacado.querySelector('button[type="submit"]').textContent =
+      "Guardar promoción";
+
+    alert("✅ Promoción actualizada correctamente");
+  } else {
+    promociones.push(promocion);
+    alert("✅ Promoción guardada correctamente");
+  }
+
+  localStorage.setItem(
+    "exhibicionDestacados",
+    JSON.stringify(promociones)
+  );
+
+  formularioDestacado.reset();
+  document.getElementById("destacado-activo").checked = true;
+
+  mostrarDestacadosPanel();
+  actualizarDashboard();
+});
+
+function mostrarDestacadosPanel() {
+  const lista = document.getElementById("lista-destacados");
+  const total = document.getElementById("total-destacados");
+
+  if (!lista || !total) return;
+
+  const promociones = obtenerDestacadosGuardados();
+
+  total.textContent =
+    promociones.length === 1
+      ? "1 promoción"
+      : `${promociones.length} promociones`;
+
+  if (promociones.length === 0) {
+    lista.innerHTML = "<p>Todavía no hay promociones guardadas.</p>";
+    return;
+  }
+
+  lista.innerHTML = promociones.map((item) => `
+    <article class="promocion-panel">
+      <div>
+        <small>${item.etiqueta || "⭐ Destacado"}</small>
+        <h3>${item.negocioNombre}</h3>
+        <strong>${item.titulo}</strong>
+        ${item.texto ? `<p>${item.texto}</p>` : ""}
+        ${item.precio ? `<span>${item.precio}</span>` : ""}
+        <em>${item.activo !== false ? "🟢 Activa" : "🔴 Inactiva"}</em>
+      </div>
+
+      <div class="acciones-negocio">
+        <button type="button" class="btn-editar" onclick="editarDestacado(${item.id})">
+          Editar
+        </button>
+        <button type="button" class="btn-estado" onclick="cambiarEstadoDestacado(${item.id})">
+          ${item.activo !== false ? "🟢 Activa" : "🔴 Inactiva"}
+        </button>
+        <button type="button" class="btn-eliminar" onclick="eliminarDestacado(${item.id})">
+          Eliminar
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function editarDestacado(id) {
+  const promociones = obtenerDestacadosGuardados();
+  const item = promociones.find((promocion) => promocion.id === id);
+
+  if (!item) return;
+
+  abrirSeccionPanel("destacados");
+  cargarNegociosEnDestacados();
+
+  document.getElementById("destacado-negocio").value = item.negocioSlug || "";
+  document.getElementById("destacado-etiqueta").value = item.etiqueta || "";
+  document.getElementById("destacado-titulo").value = item.titulo || "";
+  document.getElementById("destacado-texto").value = item.texto || "";
+  document.getElementById("destacado-precio").value = item.precio || "";
+  document.getElementById("destacado-inicio").value = item.fechaInicio || "";
+  document.getElementById("destacado-fin").value = item.fechaFin || "";
+  document.getElementById("destacado-activo").checked = item.activo !== false;
+
+  formularioDestacado.dataset.editandoId = id;
+  formularioDestacado.querySelector('button[type="submit"]').textContent =
+    "Actualizar promoción";
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function cambiarEstadoDestacado(id) {
+  const promociones = obtenerDestacadosGuardados();
+  const item = promociones.find((promocion) => promocion.id === id);
+
+  if (!item) return;
+
+  item.activo = item.activo === false;
+
+  localStorage.setItem(
+    "exhibicionDestacados",
+    JSON.stringify(promociones)
+  );
+
+  mostrarDestacadosPanel();
+  actualizarDashboard();
+}
+
+function eliminarDestacado(id) {
+  if (!confirm("¿Seguro que deseas eliminar esta promoción?")) return;
+
+  const promociones = obtenerDestacadosGuardados()
+    .filter((item) => item.id !== id);
+
+  localStorage.setItem(
+    "exhibicionDestacados",
+    JSON.stringify(promociones)
+  );
+
+  mostrarDestacadosPanel();
+  actualizarDashboard();
+}
+
+function exportarDestacadosJSON() {
+  const promociones = obtenerDestacadosGuardados();
+  const contenido = JSON.stringify(promociones, null, 2);
+  const archivo = new Blob(
+    [contenido],
+    { type: "application/json;charset=utf-8" }
+  );
+
+  const url = URL.createObjectURL(archivo);
+  const enlace = document.createElement("a");
+
+  enlace.href = url;
+  enlace.download = "destacados.json";
+
+  document.body.appendChild(enlace);
+  enlace.click();
+  enlace.remove();
+  URL.revokeObjectURL(url);
+
+  const estado = document.getElementById("estado-publicacion-destacados");
+
+  if (estado) {
+    estado.textContent =
+      `✅ destacados.json generado con ${promociones.length} promoción${promociones.length === 1 ? "" : "es"}.`;
+  }
+}
+
+document.getElementById("exportar-destacados-json")
+  ?.addEventListener("click", exportarDestacadosJSON);
+
+
+// ============================================================
+// ACTUALIZAR SECCIONES DESPUÉS DE CAMBIOS DE NEGOCIOS
+// ============================================================
+
+const mostrarNegociosPanelOriginal = mostrarNegociosPanel;
+
+mostrarNegociosPanel = function () {
+  mostrarNegociosPanelOriginal();
+  actualizarDashboard();
+  renderizarResumenCategorias();
+  cargarNegociosEnDestacados();
+};
+
+actualizarDashboard();
+renderizarResumenCategorias();
+cargarNegociosEnDestacados();
+mostrarDestacadosPanel();
