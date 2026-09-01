@@ -135,6 +135,8 @@ async function cargarNegociosPublicados() {
 cargarNegociosLocales();
 const cargaNegociosPublicados = cargarNegociosPublicados();
 
+let destacadosPublicados = [];
+
 // ============================================================
 // FUNCIONES AUXILIARES
 // ============================================================
@@ -171,9 +173,6 @@ Forma de pago:`;
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
 }
 
-function tieneDato(valor) {
-  return valor !== undefined && valor !== null && valor !== "";
-}
 
 
 // ============================================================
@@ -716,8 +715,59 @@ function verPerfil(categoria, index, opciones = {}) {
 
     </section>
   `;
+
+  const promocionesActivas = obtenerPromocionesActivasNegocio(negocio);
+
+  const promocionesHTML = promocionesActivas.length > 0 ? `
+  <section class="perfil-promociones">
+    <div class="perfil-promociones-carrusel">
+
+      ${promocionesActivas.map((promocion) => `
+        <a
+          class="perfil-promocion-card"
+          href="https://wa.me/${negocio.whatsapp || WHATSAPP_GENERAL}?text=${encodeURIComponent(
+            `Hola, vi la promoción "${promocion.titulo || promocion.etiqueta || "Promoción"}" de ${negocio.nombre} en Exhibición Frontera Comalapa y quiero aprovecharla.`
+          )}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <span class="perfil-promocion-etiqueta">
+            ${promocion.etiqueta || "PROMOCIÓN"}
+          </span>
+
+          <h4>
+            ${promocion.titulo || "Promoción especial"}
+          </h4>
+
+          ${promocion.texto ? `
+            <p>${promocion.texto}</p>
+          ` : ""}
+
+          ${promocion.precio ? `
+            <strong class="perfil-promocion-precio">
+              ${promocion.precio}
+            </strong>
+          ` : ""}
+
+          ${promocion.imagen ? `
+            <img
+              class="perfil-promocion-imagen"
+              src="${promocion.imagen}"
+              alt="${promocion.titulo || negocio.nombre}"
+              loading="lazy"
+              draggable="false"
+            >
+          ` : ""}
+
+        </a>
+      `).join("")}
+
+    </div>
+  </section>
+` : "";
   
-const galeriaHTML = negocio.galeria && negocio.galeria.length > 0 ? `
+  const galeriaHTML = negocio.galeria && negocio.galeria.length > 0 ? `
   <section class="perfil-galeria-fotos">
     <h4>📷 Galería</h4>
     <div class="galeria-grid">
@@ -771,6 +821,9 @@ const galeriaHTML = negocio.galeria && negocio.galeria.length > 0 ? `
             <p>${negocio.descripcion}</p>
           </section>
         ` : ""}
+
+        ${promocionesHTML}
+        
         ${galeriaHTML}
 
         ${botonesHTML}
@@ -831,6 +884,16 @@ function destacadoVigente(destacado, fechaActual) {
   return true;
 }
 
+function obtenerPromocionesActivasNegocio(negocio) {
+  if (!negocio || !negocio.slug) return [];
+
+  const fechaActual = obtenerFechaISOExhibicion();
+
+  return destacadosPublicados
+    .filter((promocion) => promocion.negocioSlug === negocio.slug)
+    .filter((promocion) => destacadoVigente(promocion, fechaActual));
+}
+
 function mezclarLista(lista) {
   const copia = [...lista];
 
@@ -858,6 +921,7 @@ function crearTarjetaDestacado(destacado) {
   const titulo = destacado.titulo || destacado.negocioNombre || "Promoción";
   const texto = destacado.texto || "";
   const precio = destacado.precio || "";
+  const imagen = destacado.imagen || "";
   const slug = destacado.negocioSlug || "";
 
   return `
@@ -887,7 +951,17 @@ function crearTarjetaDestacado(destacado) {
         }
       </div>
 
-      <div class="destacado-decoracion" aria-hidden="true"></div>
+      ${imagen ? `
+        <div class="destacado-producto-wrap" aria-hidden="true">
+          <img
+            class="destacado-producto-imagen"
+            src="${imagen}"
+            alt=""
+            loading="lazy"
+            draggable="false"
+          >
+        </div>
+      ` : `<div class="destacado-decoracion" aria-hidden="true"></div>`}
     </article>
   `;
 }
@@ -1149,6 +1223,7 @@ async function cargarDestacadosPublicados() {
     }
 
     const destacados = await respuesta.json();
+    destacadosPublicados = Array.isArray(destacados) ? destacados : [];
     const fechaActual = obtenerFechaISOExhibicion();
 
     const visibles = mezclarLista(

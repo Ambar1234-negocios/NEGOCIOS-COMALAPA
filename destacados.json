@@ -7,9 +7,14 @@
     "etiqueta": "🔥 Promoción de la semana",
     "titulo": "Promoción especial El Perico",
     "texto": "Cotiza tus trabajos de aluminio, vidrio y herrería.Solicita cotización",
-    "precio": "",
-    "fechaInicio": "2026-08-28",
-    "fechaFin": "2026-09-02",
+    "precio": "3400",
+    "precioAnterior": "3999",
+    "precioActual": "3400",
+    "descuento": "",
+    "imagen": "imagenes/el-perico/promo-1.webp",
+    "estilo": "azul-verde",
+    "fechaInicio": "2026-09-01",
+    "fechaFin": "2026-09-30",
     "activo": true
   }
 ]

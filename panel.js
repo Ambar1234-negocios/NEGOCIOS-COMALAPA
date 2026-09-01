@@ -961,16 +961,227 @@ function cargarNegociosEnDestacados() {
   if ([...selector.options].some((opcion) => opcion.value === valorActual)) {
     selector.value = valorActual;
   }
+
+  actualizarPreviewPromocion();
+}
+
+function valorPromocion(id) {
+  return document.getElementById(id)?.value.trim() || "";
+}
+
+function obtenerNombreNegocioPromocion() {
+  const selector = document.getElementById("destacado-negocio");
+  const opcion = selector?.options[selector.selectedIndex];
+  return opcion?.textContent?.trim() || "Selecciona un negocio";
+}
+
+function obtenerSlugPromocionSeleccionado() {
+  return document.getElementById("destacado-negocio")?.value || "";
+}
+
+function obtenerRutaImagenPromocion() {
+  const input = document.getElementById("destacado-imagen-archivo");
+  const archivo = input?.files?.[0];
+
+  if (archivo) {
+    const slug = obtenerSlugPromocionSeleccionado();
+    if (!slug) return "";
+
+    return `imagenes/${slug}/${archivo.name}`;
+  }
+
+  return formularioDestacado?.dataset.imagenActual || "";
+}
+
+function actualizarSelectorImagenPromocion() {
+  const input = document.getElementById("destacado-imagen-archivo");
+  const archivo = input?.files?.[0];
+  const ruta = document.getElementById("destacado-imagen-ruta");
+  const preview = document.getElementById("preview-promocion-imagen");
+  const sinImagen = document.getElementById("preview-promocion-sin-imagen");
+
+  if (!ruta || !preview || !sinImagen) return;
+
+  const slug = obtenerSlugPromocionSeleccionado();
+
+  if (archivo) {
+    const extensionValida = /\.(png|webp)$/i.test(archivo.name);
+
+    if (!extensionValida) {
+      alert("La imagen de promoción debe ser PNG o WebP.");
+      input.value = "";
+      preview.removeAttribute("src");
+      preview.classList.remove("visible");
+      sinImagen.style.display = "inline";
+      ruta.textContent = "Sin imagen seleccionada";
+      return;
+    }
+
+    ruta.textContent = slug
+      ? `imagenes/${slug}/${archivo.name}`
+      : "Primero selecciona un negocio";
+
+    preview.src = URL.createObjectURL(archivo);
+    preview.classList.add("visible");
+    sinImagen.style.display = "none";
+    return;
+  }
+
+  const imagenActual = formularioDestacado?.dataset.imagenActual || "";
+
+  if (imagenActual) {
+    ruta.textContent = imagenActual;
+    preview.src = imagenActual;
+    preview.classList.add("visible");
+    sinImagen.style.display = "none";
+  } else {
+    ruta.textContent = "Sin imagen seleccionada";
+    preview.removeAttribute("src");
+    preview.classList.remove("visible");
+    sinImagen.style.display = "inline";
+  }
+}
+
+function obtenerPrecioRespaldoPromocion() {
+  const precioManual = valorPromocion("destacado-precio");
+  if (precioManual) return precioManual;
+
+  const precioActual = valorPromocion("destacado-precio-actual");
+  const descuento = valorPromocion("destacado-descuento");
+
+  if (precioActual && descuento) return `${precioActual} · ${descuento}`;
+  if (precioActual) return precioActual;
+  if (descuento) return descuento;
+
+  return "";
+}
+
+function actualizarPreviewPromocion() {
+  const card = document.getElementById("preview-promocion-card");
+  if (!card) return;
+
+  const etiqueta = valorPromocion("destacado-etiqueta") || "PROMOCIÓN";
+  const titulo = valorPromocion("destacado-titulo") || "Título de la promoción";
+  const texto = valorPromocion("destacado-texto") || "Descripción breve de la promoción.";
+  const precioAnterior = valorPromocion("destacado-precio-anterior");
+  const precioActual = valorPromocion("destacado-precio-actual");
+  const descuento = valorPromocion("destacado-descuento");
+  const estilo = document.getElementById("destacado-estilo")?.value || "azul-verde";
+
+  document.getElementById("preview-promocion-etiqueta").textContent = etiqueta;
+  document.getElementById("preview-promocion-titulo").textContent = titulo;
+  document.getElementById("preview-promocion-texto").textContent = texto;
+  document.getElementById("preview-promocion-negocio").textContent =
+    obtenerNombreNegocioPromocion();
+
+  const anterior = document.getElementById("preview-promocion-precio-anterior");
+  const actual = document.getElementById("preview-promocion-precio-actual");
+  const desc = document.getElementById("preview-promocion-descuento");
+
+  anterior.textContent = precioAnterior;
+  anterior.style.display = precioAnterior ? "inline" : "none";
+
+  actual.textContent = precioActual;
+  actual.style.display = precioActual ? "inline" : "none";
+
+  desc.textContent = descuento;
+  desc.style.display = descuento ? "inline" : "none";
+
+  card.classList.remove(
+    "estilo-azul-verde",
+    "estilo-dorado",
+    "estilo-verde",
+    "estilo-morado"
+  );
+  card.classList.add(`estilo-${estilo}`);
+
+  card.querySelector(".preview-promocion-producto")?.remove();
+
+  const inputImagen = document.getElementById("destacado-imagen-archivo");
+  const archivoImagen = inputImagen?.files?.[0];
+  const imagenActual = formularioDestacado?.dataset.imagenActual || "";
+
+  if (archivoImagen || imagenActual) {
+    const img = document.createElement("img");
+    img.className = "preview-promocion-producto";
+    img.alt = "Imagen de la promoción";
+    img.src = archivoImagen ? URL.createObjectURL(archivoImagen) : imagenActual;
+    card.appendChild(img);
+  }
+}
+
+[
+  "destacado-negocio",
+  "destacado-etiqueta",
+  "destacado-titulo",
+  "destacado-texto",
+  "destacado-precio-anterior",
+  "destacado-precio-actual",
+  "destacado-descuento",
+  "destacado-precio",
+  "destacado-estilo",
+  "destacado-inicio",
+  "destacado-fin"
+].forEach((id) => {
+  const campo = document.getElementById(id);
+  campo?.addEventListener("input", actualizarPreviewPromocion);
+  campo?.addEventListener("change", actualizarPreviewPromocion);
+});
+
+document.getElementById("destacado-imagen-archivo")
+  ?.addEventListener("change", function () {
+    actualizarSelectorImagenPromocion();
+    actualizarPreviewPromocion();
+  });
+
+document.getElementById("destacado-negocio")
+  ?.addEventListener("change", function () {
+    actualizarSelectorImagenPromocion();
+    actualizarPreviewPromocion();
+  });
+
+function limpiarFormularioPromocion() {
+  if (!formularioDestacado) return;
+
+  formularioDestacado.reset();
+  delete formularioDestacado.dataset.editandoId;
+
+  const activo = document.getElementById("destacado-activo");
+  if (activo) activo.checked = true;
+
+  const estilo = document.getElementById("destacado-estilo");
+  if (estilo) estilo.value = "azul-verde";
+
+  const botonGuardar = document.getElementById("guardar-promocion");
+  if (botonGuardar) botonGuardar.textContent = "Guardar promoción";
+
+  const botonCancelar = document.getElementById("cancelar-edicion-promocion");
+  botonCancelar?.classList.add("oculto");
+
+  const estado = document.getElementById("estado-promocion-form");
+  if (estado) estado.textContent = "Nueva";
+
+  delete formularioDestacado.dataset.imagenActual;
+  actualizarSelectorImagenPromocion();
+  actualizarPreviewPromocion();
 }
 
 formularioDestacado?.addEventListener("submit", function (evento) {
   evento.preventDefault();
 
   const slug = document.getElementById("destacado-negocio").value;
-  const titulo = document.getElementById("destacado-titulo").value.trim();
+  const titulo = valorPromocion("destacado-titulo");
 
   if (!slug || !titulo) {
     alert("Selecciona un negocio y escribe el título de la promoción.");
+    return;
+  }
+
+  const fechaInicio = document.getElementById("destacado-inicio").value;
+  const fechaFin = document.getElementById("destacado-fin").value;
+
+  if (fechaInicio && fechaFin && fechaFin < fechaInicio) {
+    alert("La fecha de término no puede ser anterior a la fecha de inicio.");
     return;
   }
 
@@ -992,12 +1203,23 @@ formularioDestacado?.addEventListener("submit", function (evento) {
     negocioSlug: negocio.slug,
     negocioNombre: negocio.nombre,
     categoria: negocio.categoria,
-    etiqueta: document.getElementById("destacado-etiqueta").value.trim(),
+
+    etiqueta: valorPromocion("destacado-etiqueta"),
     titulo,
-    texto: document.getElementById("destacado-texto").value.trim(),
-    precio: document.getElementById("destacado-precio").value.trim(),
-    fechaInicio: document.getElementById("destacado-inicio").value,
-    fechaFin: document.getElementById("destacado-fin").value,
+    texto: valorPromocion("destacado-texto"),
+
+    // Compatibilidad con la web pública actual:
+    precio: obtenerPrecioRespaldoPromocion(),
+
+    // Datos nuevos para el diseño profesional:
+    precioAnterior: valorPromocion("destacado-precio-anterior"),
+    precioActual: valorPromocion("destacado-precio-actual"),
+    descuento: valorPromocion("destacado-descuento"),
+    imagen: obtenerRutaImagenPromocion(),
+    estilo: document.getElementById("destacado-estilo")?.value || "azul-verde",
+
+    fechaInicio,
+    fechaFin,
     activo: document.getElementById("destacado-activo").checked
   };
 
@@ -1007,10 +1229,6 @@ formularioDestacado?.addEventListener("submit", function (evento) {
     if (indice !== -1) {
       promociones[indice] = promocion;
     }
-
-    delete formularioDestacado.dataset.editandoId;
-    formularioDestacado.querySelector('button[type="submit"]').textContent =
-      "Guardar promoción";
 
     alert("✅ Promoción actualizada correctamente");
   } else {
@@ -1023,12 +1241,13 @@ formularioDestacado?.addEventListener("submit", function (evento) {
     JSON.stringify(promociones)
   );
 
-  formularioDestacado.reset();
-  document.getElementById("destacado-activo").checked = true;
-
+  limpiarFormularioPromocion();
   mostrarDestacadosPanel();
   actualizarDashboard();
 });
+
+document.getElementById("cancelar-edicion-promocion")
+  ?.addEventListener("click", limpiarFormularioPromocion);
 
 function mostrarDestacadosPanel() {
   const lista = document.getElementById("lista-destacados");
@@ -1048,30 +1267,54 @@ function mostrarDestacadosPanel() {
     return;
   }
 
-  lista.innerHTML = promociones.map((item) => `
-    <article class="promocion-panel">
-      <div>
-        <small>${item.etiqueta || "⭐ Destacado"}</small>
-        <h3>${item.negocioNombre}</h3>
-        <strong>${item.titulo}</strong>
-        ${item.texto ? `<p>${item.texto}</p>` : ""}
-        ${item.precio ? `<span>${item.precio}</span>` : ""}
-        <em>${item.activo !== false ? "🟢 Activa" : "🔴 Inactiva"}</em>
-      </div>
+  lista.innerHTML = promociones.map((item) => {
+    const precioAnterior = item.precioAnterior || "";
+    const precioActual = item.precioActual || "";
+    const descuento = item.descuento || "";
+    const precioRespaldo = item.precio || "";
 
-      <div class="acciones-negocio">
-        <button type="button" class="btn-editar" onclick="editarDestacado(${item.id})">
-          Editar
-        </button>
-        <button type="button" class="btn-estado" onclick="cambiarEstadoDestacado(${item.id})">
-          ${item.activo !== false ? "🟢 Activa" : "🔴 Inactiva"}
-        </button>
-        <button type="button" class="btn-eliminar" onclick="eliminarDestacado(${item.id})">
-          Eliminar
-        </button>
-      </div>
-    </article>
-  `).join("");
+    return `
+      <article class="promocion-panel">
+        <div>
+          <small>${item.etiqueta || "⭐ Destacado"}</small>
+          <h3>${item.negocioNombre}</h3>
+          <strong>${item.titulo}</strong>
+
+          ${item.texto ? `<p>${item.texto}</p>` : ""}
+
+          ${(precioAnterior || precioActual || descuento || precioRespaldo) ? `
+            <div class="promocion-precios-listado">
+              ${precioAnterior ? `<del>${precioAnterior}</del>` : ""}
+              ${precioActual ? `<span>${precioActual}</span>` : ""}
+              ${descuento ? `<span class="promocion-descuento-listado">${descuento}</span>` : ""}
+              ${(!precioActual && !descuento && precioRespaldo) ? `<span>${precioRespaldo}</span>` : ""}
+            </div>
+          ` : ""}
+
+          <em>
+            ${item.activo !== false ? "🟢 Activa" : "🔴 Inactiva"}
+            ${item.fechaInicio || item.fechaFin
+              ? ` · ${item.fechaInicio || "Sin inicio"} → ${item.fechaFin || "Sin término"}`
+              : ""}
+          </em>
+        </div>
+
+        <div class="acciones-negocio">
+          <button type="button" class="btn-editar" onclick="editarDestacado(${item.id})">
+            Editar
+          </button>
+
+          <button type="button" class="btn-estado" onclick="cambiarEstadoDestacado(${item.id})">
+            ${item.activo !== false ? "🟢 Activa" : "🔴 Inactiva"}
+          </button>
+
+          <button type="button" class="btn-eliminar" onclick="eliminarDestacado(${item.id})">
+            Eliminar
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
 }
 
 function editarDestacado(id) {
@@ -1087,14 +1330,51 @@ function editarDestacado(id) {
   document.getElementById("destacado-etiqueta").value = item.etiqueta || "";
   document.getElementById("destacado-titulo").value = item.titulo || "";
   document.getElementById("destacado-texto").value = item.texto || "";
-  document.getElementById("destacado-precio").value = item.precio || "";
-  document.getElementById("destacado-inicio").value = item.fechaInicio || "";
-  document.getElementById("destacado-fin").value = item.fechaFin || "";
-  document.getElementById("destacado-activo").checked = item.activo !== false;
+
+  document.getElementById("destacado-precio-anterior").value =
+    item.precioAnterior || "";
+
+  document.getElementById("destacado-precio-actual").value =
+    item.precioActual || "";
+
+  document.getElementById("destacado-descuento").value =
+    item.descuento || "";
+
+  // Las promociones antiguas siguen pudiendo editarse.
+  document.getElementById("destacado-precio").value =
+    item.precio || "";
+
+  formularioDestacado.dataset.imagenActual = item.imagen || "";
+
+  const inputImagenPromocion = document.getElementById("destacado-imagen-archivo");
+  if (inputImagenPromocion) inputImagenPromocion.value = "";
+
+  actualizarSelectorImagenPromocion();
+
+  document.getElementById("destacado-estilo").value =
+    item.estilo || "azul-verde";
+
+  document.getElementById("destacado-inicio").value =
+    item.fechaInicio || "";
+
+  document.getElementById("destacado-fin").value =
+    item.fechaFin || "";
+
+  document.getElementById("destacado-activo").checked =
+    item.activo !== false;
 
   formularioDestacado.dataset.editandoId = id;
-  formularioDestacado.querySelector('button[type="submit"]').textContent =
-    "Actualizar promoción";
+
+  const botonGuardar = document.getElementById("guardar-promocion");
+  if (botonGuardar) botonGuardar.textContent = "Actualizar promoción";
+
+  document.getElementById("cancelar-edicion-promocion")
+    ?.classList.remove("oculto");
+
+  const estado = document.getElementById("estado-promocion-form");
+  if (estado) estado.textContent = "Editando";
+
+  actualizarPreviewPromocion();
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -1129,11 +1409,16 @@ function eliminarDestacado(id) {
 
   mostrarDestacadosPanel();
   actualizarDashboard();
+
+  if (Number(formularioDestacado?.dataset.editandoId) === id) {
+    limpiarFormularioPromocion();
+  }
 }
 
 function exportarDestacadosJSON() {
   const promociones = obtenerDestacadosGuardados();
   const contenido = JSON.stringify(promociones, null, 2);
+
   const archivo = new Blob(
     [contenido],
     { type: "application/json;charset=utf-8" }
@@ -1160,6 +1445,9 @@ function exportarDestacadosJSON() {
 
 document.getElementById("exportar-destacados-json")
   ?.addEventListener("click", exportarDestacadosJSON);
+
+actualizarSelectorImagenPromocion();
+actualizarPreviewPromocion();
 
 
 // ============================================================

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Administrativo | Exhibición Frontera Comalapa</title>
-  <link rel="stylesheet" href="panel.css">
+  <link rel="stylesheet" href="panel.css?v=3">
 </head>
 
 <body>
@@ -459,19 +459,42 @@
 
       <section class="tarjeta-formulario">
         <form id="form-destacado">
-          <h3>⭐ Nueva promoción / destacado</h3>
+          <div class="promocion-form-cabecera">
+            <div>
+              <p class="cabecera-etiqueta">Editor de promoción</p>
+              <h3>⭐ Nueva promoción / destacado</h3>
+              <p class="texto-ayuda-promocion">
+                Crea promociones para el inicio y para el perfil del negocio.
+              </p>
+            </div>
+            <span class="estado-promocion-form" id="estado-promocion-form">Nueva</span>
+          </div>
 
           <label for="destacado-negocio">Negocio</label>
           <select id="destacado-negocio" required>
             <option value="">Selecciona un negocio</option>
           </select>
 
-          <label for="destacado-etiqueta">Etiqueta</label>
-          <input
-            type="text"
-            id="destacado-etiqueta"
-            placeholder="Ejemplo: 🔥 Promoción de la semana"
-          >
+          <div class="grid-dos-columnas">
+            <div>
+              <label for="destacado-etiqueta">Etiqueta</label>
+              <input
+                type="text"
+                id="destacado-etiqueta"
+                placeholder="Ejemplo: 🔥 Promoción de la semana"
+              >
+            </div>
+
+            <div>
+              <label for="destacado-estilo">Estilo visual</label>
+              <select id="destacado-estilo">
+                <option value="azul-verde">Azul / verde</option>
+                <option value="dorado">Dorado</option>
+                <option value="verde">Verde</option>
+                <option value="morado">Morado</option>
+              </select>
+            </div>
+          </div>
 
           <label for="destacado-titulo">Título de la promoción</label>
           <input
@@ -488,12 +511,67 @@
             placeholder="Ejemplo: Chilaquiles + café"
           ></textarea>
 
-          <label for="destacado-precio">Precio / texto corto</label>
+          <div class="grid-tres-columnas">
+            <div>
+              <label for="destacado-precio-anterior">Precio anterior</label>
+              <input
+                type="text"
+                id="destacado-precio-anterior"
+                placeholder="Ejemplo: $199"
+              >
+            </div>
+
+            <div>
+              <label for="destacado-precio-actual">Precio actual</label>
+              <input
+                type="text"
+                id="destacado-precio-actual"
+                placeholder="Ejemplo: $149"
+              >
+            </div>
+
+            <div>
+              <label for="destacado-descuento">Descuento</label>
+              <input
+                type="text"
+                id="destacado-descuento"
+                placeholder="Ejemplo: 25% OFF"
+              >
+            </div>
+          </div>
+
+          <label for="destacado-precio">Precio / texto corto de respaldo</label>
           <input
             type="text"
             id="destacado-precio"
-            placeholder="Ejemplo: $149 o 20% de descuento"
+            placeholder="Opcional. Ejemplo: Desde $149"
           >
+
+          <label for="destacado-imagen-archivo">Imagen del producto / promoción</label>
+          <input
+            type="file"
+            id="destacado-imagen-archivo"
+            accept=".png,.webp,image/png,image/webp"
+          >
+
+          <div class="promocion-imagen-ayuda">
+            <div>
+              <strong>PNG o WebP</strong>
+              <p>
+                Elige la misma imagen que guardarás dentro de la carpeta del negocio en VS Code.
+              </p>
+            </div>
+
+            <code id="destacado-imagen-ruta">Sin imagen seleccionada</code>
+          </div>
+
+          <div class="preview-imagen-promocion-wrap">
+            <p>Vista previa de la imagen:</p>
+            <div class="preview-imagen-promocion">
+              <span id="preview-promocion-sin-imagen">Sin imagen</span>
+              <img id="preview-promocion-imagen" alt="Vista previa de la promoción">
+            </div>
+          </div>
 
           <div class="grid-dos-columnas">
             <div>
@@ -506,12 +584,43 @@
             </div>
           </div>
 
-          <label>
+          <label class="check-promocion">
             <input type="checkbox" id="destacado-activo" checked>
             Promoción activa
           </label>
 
-          <button type="submit">Guardar promoción</button>
+          <section class="preview-promocion-panel">
+            <div class="preview-promocion-cabecera">
+              <div>
+                <p class="cabecera-etiqueta">Vista previa</p>
+                <h3>Así se verá la información</h3>
+              </div>
+              <small>Se actualiza mientras escribes</small>
+            </div>
+
+            <article class="preview-promocion-card estilo-azul-verde" id="preview-promocion-card">
+              <div class="preview-promocion-contenido">
+                <span id="preview-promocion-etiqueta">PROMOCIÓN</span>
+                <h4 id="preview-promocion-titulo">Título de la promoción</h4>
+                <p id="preview-promocion-texto">Descripción breve de la promoción.</p>
+
+                <div class="preview-promocion-precios">
+                  <del id="preview-promocion-precio-anterior"></del>
+                  <strong id="preview-promocion-precio-actual"></strong>
+                  <b id="preview-promocion-descuento"></b>
+                </div>
+
+                <small id="preview-promocion-negocio">Selecciona un negocio</small>
+              </div>
+            </article>
+          </section>
+
+          <div class="acciones-form-promocion">
+            <button type="submit" id="guardar-promocion">Guardar promoción</button>
+            <button type="button" id="cancelar-edicion-promocion" class="btn-horario-secundario oculto">
+              Cancelar edición
+            </button>
+          </div>
         </form>
       </section>
 
@@ -569,7 +678,7 @@
   <!-- ============================================================
        JAVASCRIPT DEL PANEL
        ============================================================ -->
-  <script src="panel.js"></script>
+  <script src="panel.js?v=3"></script>
 
 </body>
 </html>
