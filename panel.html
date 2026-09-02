@@ -159,6 +159,16 @@
           rows="5"
           placeholder="Escribe un servicio por línea"
         ></textarea>
+
+        <label for="palabras-clave">🔎 Palabras clave para búsqueda</label>
+        <textarea
+          id="palabras-clave"
+          rows="3"
+          placeholder="Ejemplo: aluminio, vidrio, ventanas, puertas, portones, herrería"
+        ></textarea>
+        <p class="nota-imagenes">
+          Sepáralas con comas. Ayudan a que el negocio aparezca cuando alguien usa el buscador.
+        </p>
         <!-- ============================================================
              FIN INFORMACIÓN GENERAL
              ============================================================ -->
@@ -319,6 +329,17 @@
              OPCIONES DEL NEGOCIO
              ============================================================ -->
         <h3>⚙ Opciones</h3>
+
+        <label for="plan-negocio">Plan / visibilidad del negocio</label>
+        <select id="plan-negocio">
+          <option value="normal">Normal</option>
+          <option value="destacado">Destacado · Promocionado</option>
+          <option value="premium">Premium · Patrocinado</option>
+        </select>
+        <p class="nota-imagenes">
+          Los planes pagados reciben prioridad cuando sí coinciden con la búsqueda o categoría.
+          “Negocio verificado” se administra por separado.
+        </p>
 
         <label>
           <input type="checkbox" id="delivery">
@@ -678,7 +699,7 @@
   <!-- ============================================================
        JAVASCRIPT DEL PANEL
        ============================================================ -->
-  <script src="panel.js?v=3"></script>
+  <script src="panel.js?v=6"></script>
 
 </body>
 </html>

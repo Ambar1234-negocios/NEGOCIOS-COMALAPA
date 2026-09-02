@@ -147,6 +147,73 @@ function crearLinkWhatsapp(negocio) {
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
 }
 
+
+function obtenerPlanNegocio(negocio) {
+  const plan = negocio?.plan || "normal";
+  return ["normal", "destacado", "premium"].includes(plan) ? plan : "normal";
+}
+
+function prioridadPlanNegocio(negocio) {
+  const plan = obtenerPlanNegocio(negocio);
+  if (plan === "premium") return 3;
+  if (plan === "destacado") return 2;
+  return 1;
+}
+
+function ordenarNegociosPorPlan(lista) {
+  return [...lista]
+    .map((negocio, ordenOriginal) => ({ negocio, ordenOriginal }))
+    .sort((a, b) => {
+      const diferencia = prioridadPlanNegocio(b.negocio) - prioridadPlanNegocio(a.negocio);
+      return diferencia !== 0 ? diferencia : a.ordenOriginal - b.ordenOriginal;
+    })
+    .map((item) => item.negocio);
+}
+
+function etiquetaPromocionNegocio(negocio) {
+  const plan = obtenerPlanNegocio(negocio);
+
+  if (plan === "premium") {
+    return '<span class="etiqueta-plan etiqueta-plan-premium">📣 Patrocinado</span>';
+  }
+
+  if (plan === "destacado") {
+    return '<span class="etiqueta-plan etiqueta-plan-destacado">⭐ Promocionado</span>';
+  }
+
+  return "";
+}
+
+function contenidoBuscableNegocio(negocio) {
+  const servicios = Array.isArray(negocio.servicios) ? negocio.servicios.join(" ") : "";
+  const palabrasClave = Array.isArray(negocio.palabrasClave)
+    ? negocio.palabrasClave.join(" ")
+    : (negocio.palabrasClave || "");
+
+  return `${negocio.nombre || ""} ${negocio.descripcion || ""} ${servicios} ${palabrasClave}`.toLowerCase();
+}
+
+function coincideBusquedaNegocio(negocio, texto) {
+  return contenidoBuscableNegocio(negocio).includes(texto);
+}
+
+function crearTarjetaNegocioListado(negocio, categoria) {
+  const indexOriginal = negocios[categoria].indexOf(negocio);
+  const clasePlan = `resultado-plan-${obtenerPlanNegocio(negocio)}`;
+
+  return `
+    <div class="card resultado-negocio ${clasePlan}">
+      ${etiquetaPromocionNegocio(negocio)}
+      <h3>${negocio.nombre}</h3>
+      <p>${negocio.descripcion || ""}</p>
+
+      <button class="btn-whatsapp" onclick="verPerfil('${categoria}', ${indexOriginal})">
+        Ver información
+      </button>
+    </div>
+  `;
+}
+
 function crearLinkPedido(negocio) {
   const usaMandaditos = negocio.tipoDelivery !== "gratis";
 
@@ -488,9 +555,10 @@ function mostrarCategoria(categoria, opciones = {}) {
 
   titulo.style.display = "block";
   titulo.textContent = "Negocios de " + (categoriasNombres[categoria] || categoria.toUpperCase());
-  lista.innerHTML = "";
 
-  if (negocios[categoria].length === 0) {
+  const negociosCategoria = ordenarNegociosPorPlan(negocios[categoria]);
+
+  if (negociosCategoria.length === 0) {
     lista.innerHTML = `
       <div class="card">
         <h3>Próximamente</h3>
@@ -498,18 +566,9 @@ function mostrarCategoria(categoria, opciones = {}) {
       </div>
     `;
   } else {
-    negocios[categoria].forEach(function(negocio, index) {
-      lista.innerHTML += `
-        <div class="card ${negocio.destacado ? "card-premium" : ""}">
-          <h3>${negocio.nombre}</h3>
-          <p>${negocio.descripcion}</p>
-
-          <button class="btn-whatsapp" onclick="verPerfil('${categoria}', ${index})">
-            Ver información
-          </button>
-        </div>
-      `;
-    });
+    lista.innerHTML = negociosCategoria
+      .map((negocio) => crearTarjetaNegocioListado(negocio, categoria))
+      .join("");
   }
 
   if (actualizarHistorial) {
@@ -533,25 +592,65 @@ function mostrarCategoria(categoria, opciones = {}) {
 // BUSCADOR
 // ============================================================
 
-function buscarNegocios() {
-  const texto = document.getElementById("buscador").value.toLowerCase().trim();
+function buscarNegocios(opciones = {}) {
+  const { actualizarHistorial = true, desplazar = true } = opciones;
+  const campo = document.getElementById("buscador");
+  const texto = campo.value.toLowerCase().trim();
+  const titulo = document.getElementById("titulo-categoria");
+  const lista = document.getElementById("lista-negocios");
 
   if (texto === "") return;
 
-  for (const categoria in negocios) {
-    const encontrados = negocios[categoria].some(negocio => {
-      const servicios = negocio.servicios ? negocio.servicios.join(" ") : "";
-      const contenido = `${negocio.nombre} ${negocio.descripcion} ${servicios}`.toLowerCase();
-      return contenido.includes(texto);
-    });
+  const resultados = [];
 
-    if (encontrados) {
-      mostrarCategoria(categoria);
-      return;
-    }
+  for (const categoria in negocios) {
+    negocios[categoria].forEach((negocio) => {
+      if (coincideBusquedaNegocio(negocio, texto)) {
+        resultados.push({ categoria, negocio });
+      }
+    });
   }
 
-  alert("No se encontró ningún negocio con esa búsqueda.");
+  resultados.sort((a, b) => {
+    const diferencia = prioridadPlanNegocio(b.negocio) - prioridadPlanNegocio(a.negocio);
+    if (diferencia !== 0) return diferencia;
+
+    return (a.negocio.nombre || "").localeCompare(
+      b.negocio.nombre || "",
+      "es",
+      { sensitivity: "base" }
+    );
+  });
+
+  if (resultados.length === 0) {
+    alert("No se encontró ningún negocio con esa búsqueda.");
+    return;
+  }
+
+  titulo.style.display = "block";
+  titulo.textContent =
+    resultados.length === 1
+      ? `1 resultado para “${campo.value.trim()}”`
+      : `${resultados.length} resultados para “${campo.value.trim()}”`;
+
+  lista.innerHTML = resultados
+    .map(({ categoria, negocio }) => crearTarjetaNegocioListado(negocio, categoria))
+    .join("");
+
+  if (actualizarHistorial) {
+    history.pushState(
+      { vista: "busqueda", texto: campo.value.trim() },
+      "",
+      construirURL({ buscar: campo.value.trim() })
+    );
+  }
+
+  if (desplazar) {
+    document.querySelector(".resultado").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
 }
 
 
@@ -724,7 +823,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
       ${promocionesActivas.map((promocion) => `
         <a
-          class="perfil-promocion-card"
+          class="perfil-promocion-card estilo-${promocion.estilo || "azul-verde"}"
           href="https://wa.me/${negocio.whatsapp || WHATSAPP_GENERAL}?text=${encodeURIComponent(
             `Hola, vi la promoción "${promocion.titulo || promocion.etiqueta || "Promoción"}" de ${negocio.nombre} en Exhibición Frontera Comalapa y quiero aprovecharla.`
           )}"
@@ -744,10 +843,20 @@ function verPerfil(categoria, index, opciones = {}) {
             <p>${promocion.texto}</p>
           ` : ""}
 
-          ${promocion.precio ? `
-            <strong class="perfil-promocion-precio">
-              ${promocion.precio}
-            </strong>
+          ${(promocion.precioAnterior || promocion.precioActual || promocion.descuento || promocion.precio) ? `
+            <div class="perfil-promocion-precios">
+              ${promocion.precioAnterior
+                ? `<del class="perfil-promocion-precio-anterior">${promocion.precioAnterior}</del>`
+                : ""}
+              ${promocion.precioActual
+                ? `<strong class="perfil-promocion-precio-actual">${promocion.precioActual}</strong>`
+                : (!promocion.precioAnterior && promocion.precio
+                    ? `<strong class="perfil-promocion-precio-actual">${promocion.precio}</strong>`
+                    : "")}
+              ${promocion.descuento
+                ? `<span class="perfil-promocion-descuento">${promocion.descuento}</span>`
+                : ""}
+            </div>
           ` : ""}
 
           ${promocion.imagen ? `
@@ -921,12 +1030,16 @@ function crearTarjetaDestacado(destacado) {
   const titulo = destacado.titulo || destacado.negocioNombre || "Promoción";
   const texto = destacado.texto || "";
   const precio = destacado.precio || "";
+  const precioAnterior = destacado.precioAnterior || "";
+  const precioActual = destacado.precioActual || "";
+  const descuento = destacado.descuento || "";
+  const estilo = destacado.estilo || "azul-verde";
   const imagen = destacado.imagen || "";
   const slug = destacado.negocioSlug || "";
 
   return `
     <article
-      class="card card-premium destacado-publicado"
+      class="card card-premium destacado-publicado estilo-${estilo}"
       role="link"
       tabindex="0"
       aria-label="Abrir promoción de ${destacado.negocioNombre || titulo}"
@@ -940,10 +1053,21 @@ function crearTarjetaDestacado(destacado) {
 
         ${texto ? `<p>${texto}</p>` : ""}
 
-        ${precio
-          ? `<div class="destacado-precio">${precio}</div>`
-          : ""
-        }
+        ${(precioAnterior || precioActual || descuento || precio) ? `
+          <div class="destacado-precios">
+            ${precioAnterior
+              ? `<del class="destacado-precio-anterior">${precioAnterior}</del>`
+              : ""}
+            ${precioActual
+              ? `<strong class="destacado-precio-actual">${precioActual}</strong>`
+              : (!precioAnterior && precio
+                  ? `<strong class="destacado-precio-actual">${precio}</strong>`
+                  : "")}
+            ${descuento
+              ? `<span class="destacado-descuento">${descuento}</span>`
+              : ""}
+          </div>
+        ` : ""}
 
         ${destacado.negocioNombre && titulo !== destacado.negocioNombre
           ? `<small class="destacado-negocio">${destacado.negocioNombre}</small>`
@@ -1394,6 +1518,17 @@ function renderizarEstadoNavegacion(estado) {
     return;
   }
 
+  if (estado.vista === "busqueda" && estado.texto) {
+    const campo = document.getElementById("buscador");
+    if (campo) campo.value = estado.texto;
+
+    buscarNegocios({
+      actualizarHistorial: false,
+      desplazar: false
+    });
+    return;
+  }
+
   if (estado.vista === "perfil" && estado.slug) {
     const encontrado = encontrarNegocioPorSlug(estado.slug);
 
@@ -1415,6 +1550,7 @@ function prepararNavegacionInicial() {
   const parametros = new URLSearchParams(window.location.search);
   const slugBuscado = parametros.get("negocio");
   const categoriaBuscada = parametros.get("categoria");
+  const busquedaInicial = parametros.get("buscar");
 
   if (slugBuscado) {
     const encontrado = encontrarNegocioPorSlug(slugBuscado);
@@ -1444,6 +1580,29 @@ function prepararNavegacionInicial() {
 
       return;
     }
+  }
+
+  if (busquedaInicial) {
+    history.replaceState(
+      { vista: "inicio" },
+      "",
+      construirURL()
+    );
+
+    history.pushState(
+      { vista: "busqueda", texto: busquedaInicial },
+      "",
+      construirURL({ buscar: busquedaInicial })
+    );
+
+    const campo = document.getElementById("buscador");
+    if (campo) campo.value = busquedaInicial;
+
+    buscarNegocios({
+      actualizarHistorial: false
+    });
+
+    return;
   }
 
   if (categoriaBuscada && negocios[categoriaBuscada]) {

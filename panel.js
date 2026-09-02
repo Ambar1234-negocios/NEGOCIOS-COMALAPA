@@ -394,6 +394,15 @@ formulario.addEventListener("submit", function (evento) {
       .map((servicio) => servicio.trim())
       .filter((servicio) => servicio !== ""),
 
+    palabrasClave: document
+      .getElementById("palabras-clave")
+      .value
+      .split(/[,\n]/)
+      .map((palabra) => palabra.trim())
+      .filter((palabra) => palabra !== ""),
+
+    plan: document.getElementById("plan-negocio").value || "normal",
+
     telefono: document.getElementById("telefono").value.trim(),
     whatsapp: document.getElementById("whatsapp").value.trim(),
     direccion: document.getElementById("direccion").value.trim(),
@@ -492,6 +501,10 @@ formulario.addEventListener("submit", function (evento) {
   delete formulario.dataset.bannerActual;
   delete formulario.dataset.logoActual;
   delete formulario.dataset.galeriaActual;
+
+  const planNegocio = document.getElementById("plan-negocio");
+  if (planNegocio) planNegocio.value = "normal";
+
   actualizarControlDelivery();
   renderizarHorarios();
 });
@@ -556,6 +569,12 @@ const negociosFiltrados = negocios.filter((negocio) => {
   ${negocio.delivery ? "🛵 Con delivery" : "🏪 Sin delivery"}
   ·
   ${negocio.verificado ? "✅ Verificado" : "⚪ No verificado"}
+  ·
+  ${negocio.plan === "premium"
+    ? "📣 Premium / Patrocinado"
+    : negocio.plan === "destacado"
+      ? "⭐ Destacado / Promocionado"
+      : "⚪ Plan normal"}
   ·
   ${negocio.activo !== false ? "🟢 Activo" : "🔴 Inactivo"}
 </small>
@@ -723,6 +742,8 @@ function editarNegocio(id) {
     return;
   }
 
+  abrirSeccionPanel("nuevo-negocio");
+
   document.getElementById("nombre").value = negocio.nombre || "";
   document.getElementById("slug").value = negocio.slug || "";
   document.getElementById("slogan").value = negocio.slogan || "";
@@ -731,6 +752,16 @@ function editarNegocio(id) {
 
   document.getElementById("servicios").value =
     negocio.servicios?.join("\n") || "";
+
+  document.getElementById("palabras-clave").value =
+    Array.isArray(negocio.palabrasClave)
+      ? negocio.palabrasClave.join(", ")
+      : (negocio.palabrasClave || "");
+
+  document.getElementById("plan-negocio").value =
+    ["normal", "destacado", "premium"].includes(negocio.plan)
+      ? negocio.plan
+      : "normal";
 
   document.getElementById("telefono").value = negocio.telefono || "";
   document.getElementById("whatsapp").value = negocio.whatsapp || "";
@@ -771,10 +802,12 @@ function editarNegocio(id) {
   document.querySelector('button[type="submit"]').textContent =
     "Actualizar negocio";
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+  setTimeout(() => {
+    document.getElementById("form-negocio")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }, 80);
 }
 
 
@@ -1042,12 +1075,78 @@ function actualizarSelectorImagenPromocion() {
   }
 }
 
+
+function limpiarNumeroPromocion(valor) {
+  if (!valor) return "";
+
+  const limpio = String(valor)
+    .replace(/[^\d.,-]/g, "")
+    .replace(/,/g, "");
+
+  const numero = Number(limpio);
+  return Number.isFinite(numero) ? numero : null;
+}
+
+function formatearPrecioPromocion(valor) {
+  if (!valor) return "";
+
+  const numero = limpiarNumeroPromocion(valor);
+  if (numero === null) return String(valor).trim();
+
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  }).format(numero);
+}
+
+function formatearDescuentoPromocion(valor) {
+  if (!valor) return "";
+
+  const texto = String(valor).trim();
+
+  if (/^\d+(?:[.,]\d+)?$/.test(texto)) {
+    return `${texto.replace(",", ".")}% OFF`;
+  }
+
+  if (/^\d+(?:[.,]\d+)?\s*%$/i.test(texto)) {
+    return `${texto.replace(/\s+/g, "")} OFF`;
+  }
+
+  return texto.toUpperCase();
+}
+
+function aplicarFormatoCampoPromocion(id, tipo) {
+  const campo = document.getElementById(id);
+  if (!campo) return;
+
+  const aplicar = () => {
+    const valor = campo.value.trim();
+
+    campo.value = tipo === "precio"
+      ? formatearPrecioPromocion(valor)
+      : formatearDescuentoPromocion(valor);
+
+    actualizarPreviewPromocion();
+  };
+
+  campo.addEventListener("blur", aplicar);
+  campo.addEventListener("change", aplicar);
+}
+
 function obtenerPrecioRespaldoPromocion() {
-  const precioManual = valorPromocion("destacado-precio");
+  const precioManual = formatearPrecioPromocion(
+    valorPromocion("destacado-precio")
+  );
   if (precioManual) return precioManual;
 
-  const precioActual = valorPromocion("destacado-precio-actual");
-  const descuento = valorPromocion("destacado-descuento");
+  const precioActual = formatearPrecioPromocion(
+    valorPromocion("destacado-precio-actual")
+  );
+  const descuento = formatearDescuentoPromocion(
+    valorPromocion("destacado-descuento")
+  );
 
   if (precioActual && descuento) return `${precioActual} · ${descuento}`;
   if (precioActual) return precioActual;
@@ -1127,6 +1226,11 @@ function actualizarPreviewPromocion() {
   campo?.addEventListener("input", actualizarPreviewPromocion);
   campo?.addEventListener("change", actualizarPreviewPromocion);
 });
+
+aplicarFormatoCampoPromocion("destacado-precio-anterior", "precio");
+aplicarFormatoCampoPromocion("destacado-precio-actual", "precio");
+aplicarFormatoCampoPromocion("destacado-precio", "precio");
+aplicarFormatoCampoPromocion("destacado-descuento", "descuento");
 
 document.getElementById("destacado-imagen-archivo")
   ?.addEventListener("change", function () {
@@ -1212,9 +1316,15 @@ formularioDestacado?.addEventListener("submit", function (evento) {
     precio: obtenerPrecioRespaldoPromocion(),
 
     // Datos nuevos para el diseño profesional:
-    precioAnterior: valorPromocion("destacado-precio-anterior"),
-    precioActual: valorPromocion("destacado-precio-actual"),
-    descuento: valorPromocion("destacado-descuento"),
+    precioAnterior: formatearPrecioPromocion(
+      valorPromocion("destacado-precio-anterior")
+    ),
+    precioActual: formatearPrecioPromocion(
+      valorPromocion("destacado-precio-actual")
+    ),
+    descuento: formatearDescuentoPromocion(
+      valorPromocion("destacado-descuento")
+    ),
     imagen: obtenerRutaImagenPromocion(),
     estilo: document.getElementById("destacado-estilo")?.value || "azul-verde",
 

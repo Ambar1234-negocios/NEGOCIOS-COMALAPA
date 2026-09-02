@@ -1421,3 +1421,157 @@ footer {
     max-height: 72%;
   }
 }
+
+
+/* ============================================================
+   14. PLANES / PRIORIDAD DE RESULTADOS
+============================================================ */
+
+.resultado-negocio {
+  position: relative;
+  padding-top: 30px;
+}
+
+.etiqueta-plan {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin: 0 auto 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: .25px;
+}
+
+.etiqueta-plan-premium {
+  background: #111827;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(17,24,39,.18);
+}
+
+.etiqueta-plan-destacado {
+  background: #fff3c4;
+  color: #8a5b00;
+  border: 1px solid rgba(180,122,0,.20);
+}
+
+.resultado-plan-premium {
+  border-color: rgba(17,24,39,.18);
+  box-shadow:
+    0 14px 34px rgba(17,24,39,.13),
+    inset 0 3px 0 #111827;
+}
+
+.resultado-plan-destacado {
+  border-color: rgba(255,179,0,.42);
+  box-shadow:
+    0 13px 31px rgba(17,24,39,.11),
+    inset 0 3px 0 #ffb300;
+}
+
+.resultado-plan-normal {
+  padding-top: 26px;
+}
+
+@media (max-width: 600px) {
+  .etiqueta-plan {
+    font-size: 10px;
+    padding: 5px 9px;
+  }
+}
+
+
+/* ============================================================
+   15. PROMOCIONES V6 - PRECIOS Y FONDOS
+============================================================ */
+
+.carrusel-destacados .destacado-publicado.estilo-azul-verde,
+.perfil-promocion-card.estilo-azul-verde {
+  background:
+    radial-gradient(circle at 88% 24%, rgba(255,255,255,.22), transparent 25%),
+    linear-gradient(125deg, #143a5e 0%, #356d8d 52%, #a6a64a 100%) !important;
+}
+
+.carrusel-destacados .destacado-publicado.estilo-dorado,
+.perfil-promocion-card.estilo-dorado {
+  background:
+    radial-gradient(circle at 88% 22%, rgba(255,255,255,.22), transparent 24%),
+    linear-gradient(125deg, #69491f 0%, #a46e27 52%, #d1aa4c 100%) !important;
+}
+
+.carrusel-destacados .destacado-publicado.estilo-verde,
+.perfil-promocion-card.estilo-verde {
+  background:
+    radial-gradient(circle at 88% 22%, rgba(255,255,255,.20), transparent 24%),
+    linear-gradient(125deg, #174b3a 0%, #2f755b 52%, #839b50 100%) !important;
+}
+
+.carrusel-destacados .destacado-publicado.estilo-morado,
+.perfil-promocion-card.estilo-morado {
+  background:
+    radial-gradient(circle at 88% 22%, rgba(255,255,255,.20), transparent 24%),
+    linear-gradient(125deg, #4b3152 0%, #754f70 52%, #ad7c78 100%) !important;
+}
+
+.destacado-precios,
+.perfil-promocion-precios {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.destacado-precio-anterior,
+.perfil-promocion-precio-anterior {
+  color: rgba(255,255,255,.72);
+  font-size: 15px;
+  font-weight: 800;
+  text-decoration-thickness: 2px;
+}
+
+.destacado-precio-actual,
+.perfil-promocion-precio-actual {
+  color: #ffd84d;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 950;
+  text-shadow: 0 2px 8px rgba(0,0,0,.20);
+}
+
+.destacado-descuento,
+.perfil-promocion-descuento {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff5b3d, #e53935);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 950;
+  box-shadow: 0 5px 14px rgba(180,35,35,.25);
+}
+
+@media (max-width: 600px) {
+  .destacado-precio-anterior,
+  .perfil-promocion-precio-anterior {
+    font-size: 11px;
+  }
+
+  .destacado-precio-actual,
+  .perfil-promocion-precio-actual {
+    font-size: 21px;
+  }
+
+  .destacado-descuento,
+  .perfil-promocion-descuento {
+    padding: 4px 7px;
+    font-size: 8px;
+  }
+}
