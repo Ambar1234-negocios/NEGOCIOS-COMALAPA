@@ -17,6 +17,8 @@
       "Herrería",
       "Aluminio"
     ],
+    "palabrasClave": [],
+    "plan": "premium",
     "telefono": "9636350461",
     "whatsapp": "9636350461",
     "direccion": "Barrio Agua Zarca y Barrio La Alborada, Frontera Comalapa",
@@ -100,5 +102,114 @@
     "verificado": true,
     "activo": true,
     "fechaRegistro": "26/8/2026, 12:00:35 p.m."
+  },
+  {
+    "id": 1788497711030,
+    "nombre": "La Casa del Cofi",
+    "slug": "la-casa-del-cofi",
+    "slogan": "Café, desayunos y buenos momentos",
+    "categoria": "comida",
+    "descripcion": "Cafetería local con desayunos, bebidas y un ambiente agradable para disfrutar en Frontera Comalapa.",
+    "servicios": [
+      "Café, desayunos, paninis, bebidas, postres"
+    ],
+    "palabrasClave": [
+      "café",
+      "cafetería",
+      "desayuno",
+      "desayunos",
+      "panini",
+      "bebidas",
+      "postres",
+      "comida",
+      "Frontera Comalapa"
+    ],
+    "plan": "destacado",
+    "telefono": "9631400619",
+    "whatsapp": "",
+    "direccion": "barrio las limas",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
+    "maps": "",
+    "video": "",
+    "facebook": "https://www.facebook.com/reel/903572108859581",
+    "instagram": "",
+    "tiktok": "",
+    "sitioWeb": "",
+    "banner": "imagenes/la-casa-del-cofi/banner.webp",
+    "logo": "imagenes/la-casa-del-cofi/logo.webp",
+    "galeria": [
+      "imagenes/la-casa-del-cofi/foto-1.webp",
+      "imagenes/la-casa-del-cofi/foto-2.webp",
+      "imagenes/la-casa-del-cofi/foto-3.webp",
+      "imagenes/la-casa-del-cofi/foto-4.webp",
+      "imagenes/la-casa-del-cofi/foto-5.webp",
+      "imagenes/la-casa-del-cofi/foto-6.webp",
+      "imagenes/la-casa-del-cofi/foto-7.webp",
+      "imagenes/la-casa-del-cofi/foto-8.webp"
+    ],
+    "delivery": true,
+    "tipoDelivery": "mandaditos",
+    "verificado": true,
+    "activo": true,
+    "fechaRegistro": "3/9/2026, 10:55:11 p.m."
   }
 ]

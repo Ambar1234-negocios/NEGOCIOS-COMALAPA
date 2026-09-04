@@ -16,5 +16,23 @@
     "fechaInicio": "2026-09-01",
     "fechaFin": "2026-09-30",
     "activo": true
+  },
+  {
+    "id": 1788497803371,
+    "negocioSlug": "la-casa-del-cofi",
+    "negocioNombre": "La Casa del Cofi",
+    "categoria": "comida",
+    "etiqueta": "🔥 Promoción de la semana",
+    "titulo": "chilaquiles 2x1 la casa del cofi",
+    "texto": "",
+    "precio": "$100",
+    "precioAnterior": "$200",
+    "precioActual": "$100",
+    "descuento": "50% OFF",
+    "imagen": "imagenes/la-casa-del-cofi/foto-8.webp",
+    "estilo": "azul-verde",
+    "fechaInicio": "2026-09-01",
+    "fechaFin": "2026-09-30",
+    "activo": true
   }
 ]
