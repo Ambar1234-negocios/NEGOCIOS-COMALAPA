@@ -26,6 +26,7 @@
       <button type="button" class="menu-item" data-seccion="negocios">🏪 Negocios</button>
       <button type="button" class="menu-item" data-seccion="categorias">📂 Categorías</button>
       <button type="button" class="menu-item" data-seccion="destacados">⭐ Destacados / Promociones</button>
+      <button type="button" class="menu-item" data-seccion="principal">📢 Anuncio principal</button>
       <button type="button" class="menu-item" data-seccion="configuracion">⚙ Configuración</button>
     </nav>
 
@@ -677,6 +678,130 @@
     </section>
 
     <!-- ============================================================
+         ANUNCIO PRINCIPAL
+         ============================================================ -->
+    <section class="seccion-panel" data-panel-seccion="principal">
+
+      <section class="tarjeta-formulario">
+        <form id="form-principal">
+          <div class="promocion-form-cabecera">
+            <div>
+              <p class="cabecera-etiqueta">Espacio premium de inicio</p>
+              <h3>📢 Anuncio principal</h3>
+              <p class="texto-ayuda-promocion">
+                Publica un solo anuncio especial debajo del buscador y arriba de Destacados.
+              </p>
+            </div>
+            <span class="estado-promocion-form" id="estado-principal-form">Nuevo</span>
+          </div>
+
+          <label for="principal-etiqueta">Etiqueta</label>
+          <input type="text" id="principal-etiqueta" placeholder="Ejemplo: EVENTO ESPECIAL">
+
+          <label for="principal-titulo">Título</label>
+          <input type="text" id="principal-titulo" placeholder="Ejemplo: Compra tus boletos para Grupo X" required>
+
+          <label for="principal-texto">Descripción</label>
+          <textarea id="principal-texto" rows="3" placeholder="Texto breve del anuncio"></textarea>
+
+          <div class="grid-dos-columnas">
+            <div>
+              <label for="principal-boton">Texto del botón</label>
+              <input type="text" id="principal-boton" placeholder="Ejemplo: Comprar boletos">
+            </div>
+            <div>
+              <label for="principal-enlace">Enlace del botón</label>
+              <input type="url" id="principal-enlace" placeholder="https://...">
+            </div>
+          </div>
+
+          <label for="principal-mensaje-whatsapp">Mensaje personalizado de WhatsApp (opcional)</label>
+          <textarea id="principal-mensaje-whatsapp" rows="3" aria-describedby="principal-mensaje-ayuda" placeholder="Escribe un mensaje especial para este anuncio"></textarea>
+          <p id="principal-mensaje-ayuda" class="texto-ayuda-promocion">Si lo dejas vacío, se enviará: Hola, vi “{TÍTULO}” en Exhibición Frontera Comalapa y me gustaría recibir más información. Solo se aplica a enlaces de WhatsApp.</p>
+
+          <label for="principal-imagen-archivo">Imagen del anuncio</label>
+          <input type="file" id="principal-imagen-archivo" accept=".png,.webp,image/png,image/webp">
+
+          <div class="promocion-imagen-ayuda">
+            <div>
+              <strong>PNG o WebP</strong>
+              <p>Guarda la misma imagen dentro de <code>imagenes/principal/</code> en VS Code.</p>
+            </div>
+            <code id="principal-imagen-ruta">Sin imagen seleccionada</code>
+          </div>
+
+          <div class="preview-imagen-promocion-wrap">
+            <p>Vista previa de la imagen:</p>
+            <div class="preview-imagen-promocion">
+              <span id="preview-principal-sin-imagen">Sin imagen</span>
+              <img id="preview-principal-imagen" alt="Vista previa del anuncio principal">
+            </div>
+          </div>
+
+          <div class="grid-dos-columnas">
+            <div>
+              <label for="principal-inicio">Fecha de inicio</label>
+              <input type="date" id="principal-inicio">
+            </div>
+            <div>
+              <label for="principal-fin">Fecha de término</label>
+              <input type="date" id="principal-fin">
+            </div>
+          </div>
+
+          <label class="check-promocion">
+            <input type="checkbox" id="principal-activo" checked>
+            Anuncio activo
+          </label>
+
+          <section class="preview-promocion-panel">
+            <div class="preview-promocion-cabecera">
+              <div>
+                <p class="cabecera-etiqueta">Vista previa</p>
+                <h3>Así se verá la información</h3>
+              </div>
+            </div>
+            <article class="preview-promocion-card estilo-azul-verde" id="preview-principal-card">
+              <div class="preview-promocion-contenido">
+                <span id="preview-principal-etiqueta">ANUNCIO ESPECIAL</span>
+                <h4 id="preview-principal-titulo">Título del anuncio principal</h4>
+                <p id="preview-principal-texto">Descripción breve del anuncio.</p>
+                <strong id="preview-principal-boton">Ver más</strong>
+              </div>
+            </article>
+          </section>
+
+          <div class="acciones-form-promocion">
+            <button type="submit" id="guardar-principal">Guardar anuncio principal</button>
+            <button type="button" id="cancelar-edicion-principal" class="btn-horario-secundario oculto">Cancelar edición</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="tarjeta-listado">
+        <div class="encabezado-listado">
+          <div>
+            <p class="cabecera-etiqueta">Espacio principal</p>
+            <h2>Anuncio guardado</h2>
+          </div>
+          <span id="total-principal">0 anuncios</span>
+        </div>
+        <div id="lista-principal">
+          <p>Todavía no hay un anuncio principal guardado.</p>
+        </div>
+      </section>
+
+      <section class="tarjeta-listado">
+        <p class="cabecera-etiqueta">Publicación</p>
+        <h2>Publicar anuncio principal</h2>
+        <p>Genera <strong>principal.json</strong> y reemplázalo en la carpeta principal del proyecto.</p>
+        <button type="button" id="exportar-principal-json" class="btn-horario-secundario">📤 Generar principal.json</button>
+        <p id="estado-publicacion-principal" class="nota-imagenes">El anuncio se guarda localmente hasta que publiques el archivo.</p>
+      </section>
+
+    </section>
+
+    <!-- ============================================================
          CONFIGURACIÓN
          ============================================================ -->
     <section class="seccion-panel" data-panel-seccion="configuracion">
@@ -699,7 +824,7 @@
   <!-- ============================================================
        JAVASCRIPT DEL PANEL
        ============================================================ -->
-  <script src="panel.js?v=6"></script>
+  <script src="panel.js?v=7"></script>
 
 </body>
 </html>

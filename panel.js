@@ -860,6 +860,7 @@ const TITULOS_SECCIONES_PANEL = {
   negocios: "Negocios",
   categorias: "Categorías",
   destacados: "Destacados / Promociones",
+  principal: "Anuncio principal",
   configuracion: "Configuración"
 };
 
@@ -882,6 +883,10 @@ function abrirSeccionPanel(seccion) {
   if (seccion === "destacados") {
     cargarNegociosEnDestacados();
     mostrarDestacadosPanel();
+  }
+  if (seccion === "principal") {
+    mostrarPrincipalPanel();
+    actualizarPreviewPrincipal();
   }
 
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1560,6 +1565,314 @@ actualizarSelectorImagenPromocion();
 actualizarPreviewPromocion();
 
 
+
+// ============================================================
+// ANUNCIO PRINCIPAL
+// Un solo registro independiente de Destacados / Promociones.
+// ============================================================
+
+const formularioPrincipal = document.getElementById("form-principal");
+
+function obtenerPrincipalGuardado() {
+  try {
+    const datos = JSON.parse(localStorage.getItem("exhibicionPrincipal")) || [];
+    return Array.isArray(datos) ? datos : [datos];
+  } catch (error) {
+    return [];
+  }
+}
+
+function valorPrincipal(id) {
+  return document.getElementById(id)?.value.trim() || "";
+}
+
+function obtenerRutaImagenPrincipal() {
+  const input = document.getElementById("principal-imagen-archivo");
+  const archivo = input?.files?.[0];
+  if (archivo) return `imagenes/principal/${archivo.name}`;
+  return formularioPrincipal?.dataset.imagenActual || "";
+}
+
+function actualizarSelectorImagenPrincipal() {
+  const input = document.getElementById("principal-imagen-archivo");
+  const archivo = input?.files?.[0];
+  const ruta = document.getElementById("principal-imagen-ruta");
+  const preview = document.getElementById("preview-principal-imagen");
+  const sinImagen = document.getElementById("preview-principal-sin-imagen");
+  if (!ruta || !preview || !sinImagen) return;
+
+  if (archivo) {
+    if (!/\.(png|webp)$/i.test(archivo.name)) {
+      alert("La imagen del anuncio principal debe ser PNG o WebP.");
+      input.value = "";
+      ruta.textContent = "Sin imagen seleccionada";
+      preview.removeAttribute("src");
+      preview.classList.remove("visible");
+      sinImagen.style.display = "inline";
+      return;
+    }
+
+    ruta.textContent = `imagenes/principal/${archivo.name}`;
+    preview.src = URL.createObjectURL(archivo);
+    preview.classList.add("visible");
+    sinImagen.style.display = "none";
+    return;
+  }
+
+  const imagenActual = formularioPrincipal?.dataset.imagenActual || "";
+  if (imagenActual) {
+    ruta.textContent = imagenActual;
+    preview.src = imagenActual;
+    preview.classList.add("visible");
+    sinImagen.style.display = "none";
+  } else {
+    ruta.textContent = "Sin imagen seleccionada";
+    preview.removeAttribute("src");
+    preview.classList.remove("visible");
+    sinImagen.style.display = "inline";
+  }
+}
+
+function actualizarPreviewPrincipal() {
+  const card = document.getElementById("preview-principal-card");
+  if (!card) return;
+
+  const etiqueta = valorPrincipal("principal-etiqueta") || "ANUNCIO ESPECIAL";
+  const titulo = valorPrincipal("principal-titulo") || "Título del anuncio principal";
+  const texto = valorPrincipal("principal-texto") || "Descripción breve del anuncio.";
+  const boton = valorPrincipal("principal-boton") || "Ver más";
+
+  document.getElementById("preview-principal-etiqueta").textContent = etiqueta;
+  document.getElementById("preview-principal-titulo").textContent = titulo;
+  document.getElementById("preview-principal-texto").textContent = texto;
+  document.getElementById("preview-principal-boton").textContent = boton;
+
+  card.querySelector(".preview-promocion-producto")?.remove();
+
+  const input = document.getElementById("principal-imagen-archivo");
+  const archivo = input?.files?.[0];
+  const imagenActual = formularioPrincipal?.dataset.imagenActual || "";
+
+  if (archivo || imagenActual) {
+    const img = document.createElement("img");
+    img.className = "preview-promocion-producto";
+    img.alt = "Imagen del anuncio principal";
+    img.src = archivo ? URL.createObjectURL(archivo) : imagenActual;
+    card.appendChild(img);
+  }
+}
+
+[
+  "principal-etiqueta",
+  "principal-titulo",
+  "principal-texto",
+  "principal-boton",
+  "principal-enlace",
+  "principal-inicio",
+  "principal-fin"
+].forEach((id) => {
+  document.getElementById(id)?.addEventListener("input", actualizarPreviewPrincipal);
+  document.getElementById(id)?.addEventListener("change", actualizarPreviewPrincipal);
+});
+
+document.getElementById("principal-imagen-archivo")
+  ?.addEventListener("change", function () {
+    actualizarSelectorImagenPrincipal();
+    actualizarPreviewPrincipal();
+  });
+
+function limpiarFormularioPrincipal() {
+  if (!formularioPrincipal) return;
+
+  formularioPrincipal.reset();
+  delete formularioPrincipal.dataset.editandoId;
+  delete formularioPrincipal.dataset.imagenActual;
+
+  const activo = document.getElementById("principal-activo");
+  if (activo) activo.checked = true;
+
+  const boton = document.getElementById("guardar-principal");
+  if (boton) boton.textContent = "Guardar anuncio principal";
+
+  document.getElementById("cancelar-edicion-principal")?.classList.add("oculto");
+
+  const estado = document.getElementById("estado-principal-form");
+  if (estado) estado.textContent = "Nuevo";
+
+  const input = document.getElementById("principal-imagen-archivo");
+  if (input) input.value = "";
+
+  actualizarSelectorImagenPrincipal();
+  actualizarPreviewPrincipal();
+}
+
+formularioPrincipal?.addEventListener("submit", function (evento) {
+  evento.preventDefault();
+
+  const titulo = valorPrincipal("principal-titulo");
+  if (!titulo) {
+    alert("Escribe el título del anuncio principal.");
+    return;
+  }
+
+  const fechaInicio = document.getElementById("principal-inicio")?.value || "";
+  const fechaFin = document.getElementById("principal-fin")?.value || "";
+
+  if (fechaInicio && fechaFin && fechaFin < fechaInicio) {
+    alert("La fecha de término no puede ser anterior a la fecha de inicio.");
+    return;
+  }
+
+  const idEditando = Number(formularioPrincipal.dataset.editandoId);
+  const anuncio = {
+    id: idEditando || Date.now(),
+    etiqueta: valorPrincipal("principal-etiqueta"),
+    titulo,
+    texto: valorPrincipal("principal-texto"),
+    boton: valorPrincipal("principal-boton") || "Ver más",
+    enlace: valorPrincipal("principal-enlace"),
+    mensajeWhatsapp: valorPrincipal("principal-mensaje-whatsapp"),
+    imagen: obtenerRutaImagenPrincipal(),
+    fechaInicio,
+    fechaFin,
+    activo: document.getElementById("principal-activo")?.checked !== false
+  };
+
+  // Este módulo es exclusivo: guardar uno reemplaza al anterior.
+  localStorage.setItem("exhibicionPrincipal", JSON.stringify([anuncio]));
+
+  alert(idEditando
+    ? "✅ Anuncio principal actualizado correctamente"
+    : "✅ Anuncio principal guardado correctamente");
+
+  limpiarFormularioPrincipal();
+  mostrarPrincipalPanel();
+  actualizarDashboard();
+});
+
+document.getElementById("cancelar-edicion-principal")
+  ?.addEventListener("click", limpiarFormularioPrincipal);
+
+function mostrarPrincipalPanel() {
+  const lista = document.getElementById("lista-principal");
+  const total = document.getElementById("total-principal");
+  if (!lista || !total) return;
+
+  const anuncios = obtenerPrincipalGuardado();
+  const item = anuncios[0];
+  total.textContent = item ? "1 anuncio" : "0 anuncios";
+
+  if (!item) {
+    lista.innerHTML = "<p>Todavía no hay un anuncio principal guardado.</p>";
+    return;
+  }
+
+  lista.innerHTML = `
+    <article class="promocion-panel">
+      <div>
+        <small>${item.etiqueta || "📢 Anuncio principal"}</small>
+        <h3>${item.titulo}</h3>
+        ${item.texto ? `<p>${item.texto}</p>` : ""}
+        <em>
+          ${item.activo !== false ? "🟢 Activo" : "🔴 Inactivo"}
+          ${item.fechaInicio || item.fechaFin
+            ? ` · ${item.fechaInicio || "Sin inicio"} → ${item.fechaFin || "Sin término"}`
+            : ""}
+        </em>
+      </div>
+
+      <div class="acciones-negocio">
+        <button type="button" class="btn-editar" onclick="editarPrincipal()">Editar</button>
+        <button type="button" class="btn-estado" onclick="cambiarEstadoPrincipal()">
+          ${item.activo !== false ? "🟢 Activo" : "🔴 Inactivo"}
+        </button>
+        <button type="button" class="btn-eliminar" onclick="eliminarPrincipal()">Eliminar</button>
+      </div>
+    </article>
+  `;
+}
+
+function editarPrincipal() {
+  const item = obtenerPrincipalGuardado()[0];
+  if (!item) return;
+
+  abrirSeccionPanel("principal");
+
+  document.getElementById("principal-etiqueta").value = item.etiqueta || "";
+  document.getElementById("principal-titulo").value = item.titulo || "";
+  document.getElementById("principal-texto").value = item.texto || "";
+  document.getElementById("principal-boton").value = item.boton || "";
+  document.getElementById("principal-enlace").value = item.enlace || "";
+  document.getElementById("principal-mensaje-whatsapp").value = item.mensajeWhatsapp || "";
+  document.getElementById("principal-inicio").value = item.fechaInicio || "";
+  document.getElementById("principal-fin").value = item.fechaFin || "";
+  document.getElementById("principal-activo").checked = item.activo !== false;
+
+  formularioPrincipal.dataset.editandoId = item.id;
+  formularioPrincipal.dataset.imagenActual = item.imagen || "";
+
+  const input = document.getElementById("principal-imagen-archivo");
+  if (input) input.value = "";
+
+  const boton = document.getElementById("guardar-principal");
+  if (boton) boton.textContent = "Actualizar anuncio principal";
+  document.getElementById("cancelar-edicion-principal")?.classList.remove("oculto");
+
+  const estado = document.getElementById("estado-principal-form");
+  if (estado) estado.textContent = "Editando";
+
+  actualizarSelectorImagenPrincipal();
+  actualizarPreviewPrincipal();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function cambiarEstadoPrincipal() {
+  const item = obtenerPrincipalGuardado()[0];
+  if (!item) return;
+  item.activo = item.activo === false;
+  localStorage.setItem("exhibicionPrincipal", JSON.stringify([item]));
+  mostrarPrincipalPanel();
+  actualizarDashboard();
+}
+
+function eliminarPrincipal() {
+  if (!confirm("¿Seguro que deseas eliminar el anuncio principal?")) return;
+  localStorage.removeItem("exhibicionPrincipal");
+  limpiarFormularioPrincipal();
+  mostrarPrincipalPanel();
+  actualizarDashboard();
+}
+
+function exportarPrincipalJSON() {
+  const anuncios = obtenerPrincipalGuardado();
+  const contenido = JSON.stringify(anuncios, null, 2);
+  const archivo = new Blob([contenido], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(archivo);
+  const enlace = document.createElement("a");
+
+  enlace.href = url;
+  enlace.download = "principal.json";
+  document.body.appendChild(enlace);
+  enlace.click();
+  enlace.remove();
+  URL.revokeObjectURL(url);
+
+  const estado = document.getElementById("estado-publicacion-principal");
+  if (estado) {
+    estado.textContent = anuncios.length
+      ? "✅ principal.json generado con el anuncio principal. Reemplázalo en la carpeta principal y publícalo."
+      : "✅ principal.json generado vacío. No se mostrará ningún anuncio principal.";
+  }
+}
+
+document.getElementById("exportar-principal-json")
+  ?.addEventListener("click", exportarPrincipalJSON);
+
+actualizarSelectorImagenPrincipal();
+actualizarPreviewPrincipal();
+mostrarPrincipalPanel();
+
+
 // ============================================================
 // ACTUALIZAR SECCIONES DESPUÉS DE CAMBIOS DE NEGOCIOS
 // ============================================================
@@ -1577,3 +1890,4 @@ actualizarDashboard();
 renderizarResumenCategorias();
 cargarNegociosEnDestacados();
 mostrarDestacadosPanel();
+mostrarPrincipalPanel();

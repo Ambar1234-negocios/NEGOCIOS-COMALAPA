@@ -1000,3 +1000,25 @@ button[type="submit"]:hover {
     right: 3%;
   }
 }
+
+/* Acciones del anuncio principal: siempre en una sola fila. */
+#lista-principal .acciones-negocio {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+#lista-principal .acciones-negocio button {
+  width: auto;
+  flex: 0 0 auto;
+  margin: 0;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  #lista-principal .acciones-negocio { gap: 6px; }
+  #lista-principal .acciones-negocio button {
+    padding: 9px 8px;
+    font-size: 12px;
+  }
+}

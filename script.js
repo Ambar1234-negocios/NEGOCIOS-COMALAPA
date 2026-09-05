@@ -1392,6 +1392,100 @@ async function cargarDestacadosPublicados() {
 }
 
 
+
+// ============================================================
+// ANUNCIO PRINCIPAL
+// Lee principal.json y muestra como máximo un anuncio vigente.
+// ============================================================
+
+function anuncioPrincipalVigente(anuncio, fechaActual) {
+  if (!anuncio || anuncio.activo === false) return false;
+  if (anuncio.fechaInicio && fechaActual < anuncio.fechaInicio) return false;
+  if (anuncio.fechaFin && fechaActual > anuncio.fechaFin) return false;
+  return true;
+}
+
+function obtenerEnlacePrincipal(anuncio) {
+  const enlace = anuncio.enlace || "";
+  if (!enlace) return enlace;
+  try {
+    const url = new URL(enlace);
+    const host = url.hostname.toLowerCase();
+    const esWebWhatsApp = ["https:", "http:"].includes(url.protocol) &&
+      (host === "wa.me" || host === "whatsapp.com" || host.endsWith(".whatsapp.com"));
+    const esAppWhatsApp = url.protocol === "whatsapp:" && host === "send";
+    if (!esWebWhatsApp && !esAppWhatsApp) return enlace;
+    const personalizado = typeof anuncio.mensajeWhatsapp === "string"
+      ? anuncio.mensajeWhatsapp.trim() : "";
+    const titulo = anuncio.titulo || "Anuncio principal";
+    url.searchParams.set("text", personalizado ||
+      `Hola, vi “${titulo}” en Exhibición Frontera Comalapa y me gustaría recibir más información.`);
+    return url.href;
+  } catch {
+    return enlace;
+  }
+}
+
+function crearAnuncioPrincipal(anuncio) {
+  const etiqueta = anuncio.etiqueta || "ANUNCIO ESPECIAL";
+  const titulo = anuncio.titulo || "Anuncio principal";
+  const texto = anuncio.texto || "";
+  const boton = anuncio.boton || "Ver más";
+  const enlace = obtenerEnlacePrincipal(anuncio);
+  const imagen = anuncio.imagen || "";
+  const claseSinImagen = imagen ? "" : " anuncio-principal-card-sin-imagen";
+  const etiquetaApertura = enlace
+    ? `href="${enlace}" target="_blank" rel="noopener noreferrer"`
+    : 'href="#" onclick="event.preventDefault();"';
+
+  return `
+    <a class="anuncio-principal-card${claseSinImagen}" ${etiquetaApertura}>
+      <div class="anuncio-principal-texto-wrap">
+        <span class="anuncio-principal-etiqueta">${etiqueta}</span>
+        <h2>${titulo}</h2>
+        ${texto ? `<p>${texto}</p>` : ""}
+        ${enlace ? `<span class="anuncio-principal-boton">${boton} →</span>` : ""}
+      </div>
+
+      ${imagen ? `
+        <div class="anuncio-principal-imagen-wrap" aria-hidden="true">
+          <img class="anuncio-principal-imagen" src="${imagen}" alt="" loading="lazy">
+        </div>
+      ` : ""}
+    </a>
+  `;
+}
+
+async function cargarAnuncioPrincipalPublicado() {
+  const seccion = document.getElementById("anuncio-principal");
+  const contenedor = document.getElementById("anuncio-principal-contenido");
+  if (!seccion || !contenedor) return;
+
+  seccion.classList.add("oculto");
+  contenedor.innerHTML = "";
+
+  try {
+    const respuesta = await fetch(`principal.json?v=${Date.now()}`, {
+      cache: "no-store"
+    });
+
+    if (!respuesta.ok) throw new Error(`HTTP ${respuesta.status}`);
+
+    const datos = await respuesta.json();
+    const lista = Array.isArray(datos) ? datos : (datos ? [datos] : []);
+    const fechaActual = obtenerFechaISOExhibicion();
+    const anuncio = lista.find((item) => anuncioPrincipalVigente(item, fechaActual));
+
+    if (!anuncio) return;
+
+    contenedor.innerHTML = crearAnuncioPrincipal(anuncio);
+    seccion.classList.remove("oculto");
+  } catch (error) {
+    console.warn("No se pudo cargar principal.json:", error);
+  }
+}
+
+
 function abrirLightbox(categoria, index, fotoIndex) {
 
     const negocio = negocios[categoria][index];
@@ -1643,5 +1737,6 @@ window.addEventListener("popstate", function(event) {
 
 cargaNegociosPublicados.finally(async () => {
   prepararNavegacionInicial();
+  await cargarAnuncioPrincipalPublicado();
   await cargarDestacadosPublicados();
 });
