@@ -805,12 +805,13 @@
          CONFIGURACIÓN
          ============================================================ -->
     <section class="seccion-panel" data-panel-seccion="configuracion">
+      <section class="tarjeta-formulario"><h2>WhatsApp de pedidos</h2><p>Cada plataforma puede tener una persona diferente. Escribe exactamente 10 dígitos de México, sin +52. El código 52 se agrega automáticamente.</p><form id="form-contactos"><div id="campos-contactos"></div><button type="submit">Guardar números</button><button type="button" id="exportar-contactos" class="btn-horario-secundario">Generar contactos.json</button><p id="estado-contactos" role="status" aria-live="polite"></p><p>Después de generar contactos.json, reemplázalo en la carpeta del proyecto y publícalo para que los visitantes reciban los cambios.</p></form></section>
       <section class="tarjeta-listado">
         <p class="cabecera-etiqueta">Sistema</p>
         <h2>Configuración</h2>
         <p>
-          Aquí iremos agregando las opciones generales de Exhibición Frontera Comalapa,
-          como temas de temporada, datos generales y futuras herramientas de publicación.
+          Administra aquí quién recibe los pedidos de cada plataforma.
+          Guarda tus números y genera el archivo para publicar los cambios.
         </p>
       </section>
     </section>
@@ -824,6 +825,7 @@
   <!-- ============================================================
        JAVASCRIPT DEL PANEL
        ============================================================ -->
+  <script src="contactos.js?v=2"></script>
   <script src="panel.js?v=7"></script>
 
 </body>

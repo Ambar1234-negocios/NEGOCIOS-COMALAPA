@@ -234,7 +234,7 @@ Referencia:
 Forma de pago:`;
 
   const numero = usaMandaditos
-    ? WHATSAPP_GENERAL
+    ? window.ContactosExhibicion.actual.mandaditos.numero
     : (negocio.whatsapp || WHATSAPP_GENERAL);
 
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
@@ -686,7 +686,7 @@ function verPerfil(categoria, index, opciones = {}) {
   const serviciosHTML = negocio.servicios && negocio.servicios.length > 0
     ? `
       <section class="perfil-seccion">
-        <h4>🛠️ Servicios</h4>
+        <h4>Servicios</h4>
         <div class="servicios-pills">
           ${negocio.servicios.map(servicio => `<span>✔ ${servicio}</span>`).join("")}
         </div>
@@ -774,7 +774,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
       ${negocio.facebook ? `
         <a class="accion accion-facebook" href="${negocio.facebook}" target="_blank" rel="noopener noreferrer">
-          <span>f</span>
+          <span><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="currentColor"><path d="M14 22v-9h3l.5-4H14V7c0-1.2.4-2 2-2h2V1.4A24 24 0 0 0 15 1c-3 0-5 1.8-5 5v3H7v4h3v9z"/></svg></span>
           <div>
             <strong>Facebook</strong>
             <small>Visitar página</small>
@@ -784,7 +784,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
       ${negocio.instagram ? `
         <a class="accion accion-instagram" href="${negocio.instagram}" target="_blank" rel="noopener noreferrer">
-          <span>◎</span>
+          <span><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.2"/></svg></span>
           <div>
             <strong>Instagram</strong>
             <small>Ver perfil</small>
@@ -794,7 +794,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
       ${negocio.tiktok ? `
         <a class="accion accion-tiktok" href="${negocio.tiktok}" target="_blank" rel="noopener noreferrer">
-          <span>♪</span>
+          <span><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="currentColor"><path d="M14 2h4c0 3 2 5 5 5v4c-2 0-4-1-5-2v8a7 7 0 1 1-7-7v4a3 3 0 1 0 3 3z"/></svg></span>
           <div>
             <strong>TikTok</strong>
             <small>Ver perfil</small>
@@ -1232,7 +1232,7 @@ function iniciarCarruselDestacados() {
           irATarjetaDestacada(carrusel, 1, false);
         }, 650);
       }
-    }, 4000);
+    }, 2500);
   };
 
   const reanudarDespuesDeInteraccion = () => {
@@ -1736,6 +1736,7 @@ window.addEventListener("popstate", function(event) {
 });
 
 cargaNegociosPublicados.finally(async () => {
+  await window.ContactosExhibicion.lista;
   prepararNavegacionInicial();
   await cargarAnuncioPrincipalPublicado();
   await cargarDestacadosPublicados();

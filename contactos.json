@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "shein": {
+    "numero": "529631181815",
+    "activo": true
+  },
+  "tiktok": {
+    "numero": "529631181815",
+    "activo": true
+  },
+  "mercadolibre": {
+    "numero": "529631181815",
+    "activo": true
+  },
+  "amazon": {
+    "numero": "529631181815",
+    "activo": true
+  },
+  "mandaditos": {
+    "numero": "529633106862"
+  }
+}

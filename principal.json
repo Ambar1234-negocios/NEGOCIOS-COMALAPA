@@ -6,7 +6,8 @@
     "texto": "Una noche de música, jaripeo y mucha diversión. ¡No te lo puedes perder!",
     "boton": "Comprar boletos",
     "enlace": "https://wa.me/529633106862",
-    "imagen": "imagenes/principal/foto-4.webp",
+    "mensajeWhatsapp": "",
+    "imagen": "imagenes/principal/gorra.webp",
     "fechaInicio": "2026-09-04",
     "fechaFin": "2026-09-25",
     "activo": true

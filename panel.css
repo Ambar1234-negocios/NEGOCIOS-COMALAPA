@@ -1022,3 +1022,6 @@ button[type="submit"]:hover {
     font-size: 12px;
   }
 }
+
+/* Números de pedidos independientes */
+.contacto-campo{border:1px solid #dbe3ed;border-radius:14px;padding:18px;margin-bottom:14px;background:#fff}.contacto-campo legend{font-weight:800;padding:0 7px}.contacto-campo .contacto-activo{display:flex;gap:10px;align-items:center}.contacto-campo input[type=checkbox]{width:auto;margin:0}#form-contactos>button{margin:8px 8px 8px 0}#estado-contactos{color:#334155;font-weight:600}
