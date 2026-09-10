@@ -58,12 +58,13 @@
     "nombre": "Purificadoras de agua"
   }
 ];
+  const fondos=["automatico","sin-dibujo","rayas","moda","belleza","salud","comida","tecnologia","herramientas","hogar","mascotas","agua","envios","fiestas","comercios"];
   const clave = 'exhibicionCategorias';
   const normalizar = texto => String(texto).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/\s+/g, ' ');
   function validar(lista) {
     if (!Array.isArray(lista)) return [];
     return lista.filter(c => c && typeof c.id === 'string' && /^[a-z][a-z0-9-]{0,59}$/.test(c.id) && !['constructor','prototype','__proto__'].includes(c.id) && typeof c.nombre === 'string' && c.nombre.trim().length > 0 && c.nombre.trim().length <= 70)
-      .map(c => ({ id: c.id, nombre: c.nombre.trim() }));
+      .map(c => ({ id: c.id, nombre: c.nombre.trim(), fondo: fondos.includes(c.fondo) ? c.fondo : "automatico" }));
   }
   function leerLocales() {
     try { return validar(JSON.parse(localStorage.getItem(clave) || '[]')); }
@@ -76,7 +77,7 @@
     [...base, ...publicados, ...locales].forEach(c => mapa.set(c.id, {...c}));
     return Array.from(mapa.values());
   }
-  function guardar(nombre, idExistente = '') {
+  function guardar(nombre, idExistente = '', fondo = 'automatico') {
     nombre = String(nombre).trim().replace(/\s+/g, ' ');
     if (!nombre || nombre.length > 70) throw Error('Escribe un nombre de 1 a 70 caracteres.');
     const lista = obtener();
@@ -89,7 +90,7 @@
       let numero = 2;
       while (lista.some(c => c.id === id)) id = raiz + '-' + numero++;
     }
-    const nueva = {id, nombre};
+    const nueva = {id, nombre, fondo: fondos.includes(fondo) ? fondo : "automatico"};
     const cambios = [...locales.filter(c => c.id !== id), nueva];
     // Si el navegador no puede guardar, se informa antes de modificar la interfaz.
     localStorage.setItem(clave, JSON.stringify(cambios));

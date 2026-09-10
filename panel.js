@@ -1708,8 +1708,11 @@ formularioPrincipal?.addEventListener("submit", function (evento) {
     activo: document.getElementById("principal-activo")?.checked !== false
   };
 
-  // Este módulo es exclusivo: guardar uno reemplaza al anterior.
-  localStorage.setItem("exhibicionPrincipal", JSON.stringify([anuncio]));
+  const anuncios = obtenerPrincipalGuardado();
+  const posicion = anuncios.findIndex(item => Number(item.id) === idEditando);
+  if (posicion >= 0) anuncios[posicion] = anuncio;
+  else { while (anuncios.some(item => item.id === anuncio.id)) anuncio.id++; anuncios.push(anuncio); }
+  localStorage.setItem("exhibicionPrincipal", JSON.stringify(anuncios));
 
   alert(idEditando
     ? "✅ Anuncio principal actualizado correctamente"
@@ -1729,15 +1732,14 @@ function mostrarPrincipalPanel() {
   if (!lista || !total) return;
 
   const anuncios = obtenerPrincipalGuardado();
-  const item = anuncios[0];
-  total.textContent = item ? "1 anuncio" : "0 anuncios";
+  total.textContent = `${anuncios.length} anuncios`;
 
-  if (!item) {
+  if (!anuncios.length) {
     lista.innerHTML = "<p>Todavía no hay un anuncio principal guardado.</p>";
     return;
   }
 
-  lista.innerHTML = `
+  lista.innerHTML = anuncios.map((item, posicion) => `
     <article class="promocion-panel">
       <div>
         <small>${item.etiqueta || "📢 Anuncio principal"}</small>
@@ -1752,18 +1754,20 @@ function mostrarPrincipalPanel() {
       </div>
 
       <div class="acciones-negocio">
-        <button type="button" class="btn-editar" onclick="editarPrincipal()">Editar</button>
-        <button type="button" class="btn-estado" onclick="cambiarEstadoPrincipal()">
+        <button type="button" class="btn-editar" onclick="editarPrincipal(${Number(item.id)})">Editar</button>
+        <button type="button" class="btn-estado" onclick="cambiarEstadoPrincipal(${Number(item.id)})">
           ${item.activo !== false ? "🟢 Activo" : "🔴 Inactivo"}
         </button>
-        <button type="button" class="btn-eliminar" onclick="eliminarPrincipal()">Eliminar</button>
+        <button type="button" class="btn-eliminar" onclick="eliminarPrincipal(${Number(item.id)})">Eliminar</button>
       </div>
+        <button type="button" class="btn-editar" onclick="moverPrincipal(${Number(item.id)}, -1)" ${posicion === 0 ? 'disabled' : ''}>Subir</button>
+        <button type="button" class="btn-editar" onclick="moverPrincipal(${Number(item.id)}, 1)" ${posicion === anuncios.length - 1 ? 'disabled' : ''}>Bajar</button>
     </article>
-  `;
+  `).join("");
 }
 
-function editarPrincipal() {
-  const item = obtenerPrincipalGuardado()[0];
+function editarPrincipal(id) {
+  const item = obtenerPrincipalGuardado().find(item => Number(item.id) === id);
   if (!item) return;
 
   abrirSeccionPanel("principal");
@@ -1796,21 +1800,25 @@ function editarPrincipal() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function cambiarEstadoPrincipal() {
-  const item = obtenerPrincipalGuardado()[0];
+function cambiarEstadoPrincipal(id) {
+  const anuncios = obtenerPrincipalGuardado();
+  const item = anuncios.find(item => Number(item.id) === id);
   if (!item) return;
   item.activo = item.activo === false;
-  localStorage.setItem("exhibicionPrincipal", JSON.stringify([item]));
+  localStorage.setItem('exhibicionPrincipal', JSON.stringify(anuncios));
   mostrarPrincipalPanel();
-  actualizarDashboard();
 }
-
-function eliminarPrincipal() {
-  if (!confirm("¿Seguro que deseas eliminar el anuncio principal?")) return;
-  localStorage.removeItem("exhibicionPrincipal");
-  limpiarFormularioPrincipal();
+function eliminarPrincipal(id) {
+  if (!confirm('¿Eliminar este anuncio?')) return;
+  localStorage.setItem('exhibicionPrincipal', JSON.stringify(obtenerPrincipalGuardado().filter(item => Number(item.id) !== id)));
+  if(Number(formularioPrincipal.dataset.editandoId)===id) limpiarFormularioPrincipal();
   mostrarPrincipalPanel();
-  actualizarDashboard();
+}
+function moverPrincipal(id, paso) {
+  const anuncios=obtenerPrincipalGuardado();const i=anuncios.findIndex(item=>Number(item.id)===id);const j=i+paso;
+  if(i<0||j<0||j>=anuncios.length)return;
+  [anuncios[i],anuncios[j]]=[anuncios[j],anuncios[i]];
+  localStorage.setItem('exhibicionPrincipal',JSON.stringify(anuncios));mostrarPrincipalPanel();
 }
 
 function exportarPrincipalJSON() {
@@ -1885,7 +1893,9 @@ window.CategoriasExhibicion.lista.then(actualizarCategoriasPanel);
 document.getElementById('categoria-editar').addEventListener('change', function () {
   const categoria = window.CategoriasExhibicion.obtener().find(c => c.id === this.value);
   document.getElementById('categoria-nombre').value = categoria?.nombre || '';
-  document.getElementById('guardar-categoria').textContent = categoria ? 'Guardar nombre' : 'Crear categoría';
+  document.getElementById('categoria-fondo').value = categoria?.fondo || 'automatico';
+  actualizarMuestraFondo();
+  document.getElementById('guardar-categoria').textContent = categoria ? 'Guardar categoría' : 'Crear categoría';
 });
 document.getElementById('form-categoria').addEventListener('submit', async function (evento) {
   evento.preventDefault();
@@ -1894,9 +1904,10 @@ document.getElementById('form-categoria').addEventListener('submit', async funct
   boton.disabled = true;
   try {
     await window.CategoriasExhibicion.lista;
-    const categoria = window.CategoriasExhibicion.guardar(document.getElementById('categoria-nombre').value, document.getElementById('categoria-editar').value);
+    const categoria = window.CategoriasExhibicion.guardar(document.getElementById('categoria-nombre').value, document.getElementById('categoria-editar').value, document.getElementById('categoria-fondo').value);
     estado.textContent = `“${categoria.nombre}” guardada en este navegador. Genera categorias.json y publícalo para que aparezca a los visitantes.`;
     this.reset();
+    actualizarMuestraFondo();
     boton.textContent = 'Crear categoría';
     document.getElementById('categoria').value = categoria.id;
   } catch (error) { estado.textContent = error.message; }
@@ -1912,3 +1923,12 @@ document.getElementById('exportar-categorias').addEventListener('click', async f
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   document.getElementById('estado-categorias').textContent = 'Reemplaza categorias.json en la carpeta del proyecto y súbelo a GitHub. Publica también negocios.json si agregaste o cambiaste negocios.';
 });
+
+function actualizarMuestraFondo(){
+ const muestra=document.getElementById('categoria-fondo-muestra');
+ const fondo=document.getElementById('categoria-fondo').value;
+ muestra.dataset.tema=fondo==='automatico'?'comercios':fondo;
+ muestra.textContent=fondo==='automatico'?'Automático según el nombre':document.getElementById('categoria-fondo').selectedOptions[0].textContent;
+}
+document.getElementById('categoria-fondo').addEventListener('change',actualizarMuestraFondo);
+actualizarMuestraFondo();

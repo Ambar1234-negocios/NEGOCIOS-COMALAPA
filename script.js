@@ -1503,6 +1503,7 @@ async function cargarAnuncioPrincipalPublicado() {
   const contenedor = document.getElementById("anuncio-principal-contenido");
   if (!seccion || !contenedor) return;
 
+  limpiarRotacionPrincipal();
   seccion.classList.add("oculto");
   contenedor.innerHTML = "";
 
@@ -1516,11 +1517,11 @@ async function cargarAnuncioPrincipalPublicado() {
     const datos = await respuesta.json();
     const lista = Array.isArray(datos) ? datos : (datos ? [datos] : []);
     const fechaActual = obtenerFechaISOExhibicion();
-    const anuncio = lista.find((item) => anuncioPrincipalVigente(item, fechaActual));
+    const anuncios = lista.filter((item) => anuncioPrincipalVigente(item, fechaActual));
 
-    if (!anuncio) return;
+    if (!anuncios.length) return;
 
-    contenedor.innerHTML = crearAnuncioPrincipal(anuncio);
+    iniciarRotacionPrincipal(anuncios, contenedor);
     seccion.classList.remove("oculto");
   } catch (error) {
     console.warn("No se pudo cargar principal.json:", error);
@@ -1787,7 +1788,7 @@ cargaNegociosPublicados.finally(async () => {
 
 function actualizarCategoriasPublicas() {
   const contenedor = document.querySelector('.grid-categorias');
-  window.CategoriasExhibicion.obtener().forEach(({id, nombre}) => {
+  window.CategoriasExhibicion.obtener().forEach(({id, nombre, fondo}) => {
     categoriasNombres[id] = nombre.toUpperCase();
     if (!Object.prototype.hasOwnProperty.call(negocios, id)) negocios[id] = [];
     if (!contenedor) return;
@@ -1800,7 +1801,7 @@ function actualizarCategoriasPublicas() {
     }
     const textoTema=(id+' '+nombre).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
     const temas=[['moda',/ropa|moda|calzado|accesorio|gorra/],['belleza',/belleza|barber|peluquer|estetica/],['salud',/salud|medic|farmacia|consultorio/],['comida',/comida|restaurante|pizza|taco|cafeter/],['tecnologia',/streaming|tecnolog|celular/],['herramientas',/construccion|automotriz|taller|servicios/],['hogar',/hotel|hospedaje|bienesraices|casas|terrenos/],['mascotas',/veterinari|mascota/],['agua',/agua|purificadora/],['envios',/mandadito|paqueter|envio/],['fiestas',/fiesta|evento|decoracion/]];
-    boton.dataset.tema=temas.find(([,patron])=>patron.test(textoTema))?.[0]||'comercios';
+    boton.dataset.tema=fondo && fondo!=='automatico' ? fondo : (temas.find(([,patron])=>patron.test(textoTema))?.[0]||'comercios');
     const icono = boton.querySelector('svg')?.cloneNode(true);
     boton.replaceChildren();
     if (icono) boton.appendChild(icono);
@@ -1809,3 +1810,72 @@ function actualizarCategoriasPublicas() {
 }
 
 actualizarCategoriasPublicas();
+
+let limpiarRotacionPrincipal = () => {};
+function iniciarRotacionPrincipal(anuncios, contenedor) {
+  limpiarRotacionPrincipal();
+  contenedor.replaceChildren();
+  const escenario = document.createElement('div');
+  escenario.className = 'principal-escenario';
+  const diapositivas = anuncios.map((anuncio, indice) => {
+    const elemento = document.createElement('div');
+    elemento.className = 'principal-diapositiva';
+    elemento.innerHTML = crearAnuncioPrincipal(anuncio);
+    elemento.setAttribute('role', 'group');
+    elemento.setAttribute('aria-label', `Anuncio ${indice + 1} de ${anuncios.length}`);
+    escenario.append(elemento);
+    return elemento;
+  });
+  contenedor.append(escenario);
+  let indice = 0;
+  const reducido = matchMedia('(prefers-reduced-motion: reduce)');
+  let pausado = reducido.matches;
+  let visible = false;
+  let encima = false;
+  let enfocado = false;
+  let temporizador;
+  const controles = document.createElement('div');
+  controles.className = 'principal-controles';
+  const anterior = document.createElement('button');anterior.type='button';anterior.textContent='←';anterior.setAttribute('aria-label','Anuncio anterior');
+  const siguiente = document.createElement('button');siguiente.type='button';siguiente.textContent='→';siguiente.setAttribute('aria-label','Anuncio siguiente');
+  const contador = document.createElement('span');
+  const pausa = document.createElement('button');pausa.type='button';
+  const actualizarPausa = () => {pausa.textContent=pausado?'Reanudar':'Pausar';pausa.setAttribute('aria-label',pausado?'Reanudar cambio automático':'Pausar cambio automático');};
+  function mostrar(nuevo) {
+    indice=(nuevo+anuncios.length)%anuncios.length;
+    diapositivas.forEach((elemento,i)=>{
+      elemento.classList.toggle('principal-visible',i===indice);
+      elemento.inert=i!==indice;
+      elemento.setAttribute('aria-hidden',String(i!==indice));
+    });
+    contador.textContent=`${indice+1} / ${anuncios.length}`;
+  }
+  function programar() {
+    clearTimeout(temporizador);
+    if(anuncios.length>1 && !pausado && visible && !encima && !enfocado && !document.hidden) {
+      temporizador=setTimeout(()=>{mostrar(indice+1);programar();},12000);
+    }
+  }
+  anterior.onclick=()=>{mostrar(indice-1);programar();};
+  siguiente.onclick=()=>{mostrar(indice+1);programar();};
+  pausa.onclick=()=>{pausado=!pausado;actualizarPausa();programar();};
+  controles.append(anterior,contador,siguiente,pausa);
+  if(anuncios.length>1)contenedor.append(controles);
+  const entrar=()=>{encima=true;programar();};
+  const salir=()=>{encima=false;programar();};
+  const foco=()=>{enfocado=true;programar();};
+  const desenfocar=e=>{enfocado=contenedor.contains(e.relatedTarget);programar();};
+  const cambiarMovimiento=()=>{if(reducido.matches)pausado=true;actualizarPausa();programar();};
+  contenedor.addEventListener('mouseenter',entrar);contenedor.addEventListener('mouseleave',salir);
+  contenedor.addEventListener('focusin',foco);contenedor.addEventListener('focusout',desenfocar);
+  document.addEventListener('visibilitychange',programar);reducido.addEventListener('change',cambiarMovimiento);
+  const observador=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;programar();},{threshold:.25});
+  observador.observe(escenario);
+  mostrar(0);actualizarPausa();
+  limpiarRotacionPrincipal=()=>{
+    clearTimeout(temporizador);observador.disconnect();
+    contenedor.removeEventListener('mouseenter',entrar);contenedor.removeEventListener('mouseleave',salir);
+    contenedor.removeEventListener('focusin',foco);contenedor.removeEventListener('focusout',desenfocar);
+    document.removeEventListener('visibilitychange',programar);reducido.removeEventListener('change',cambiarMovimiento);
+  };
+}

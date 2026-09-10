@@ -475,7 +475,10 @@
           <select id="categoria-editar"><option value="">Crear una categoría nueva</option></select>
           <label for="categoria-nombre">Nombre de la categoría</label>
           <input id="categoria-nombre" type="text" maxlength="70" required placeholder="Por ejemplo: Ropa, Calzado y Accesorios">
-          <button type="submit" id="guardar-categoria">Crear categoría</button>
+          <label for="categoria-fondo">Diseño de fondo</label>
+<select id="categoria-fondo"><option value="automatico">Automático</option><option value="sin-dibujo">Sin dibujo</option><option value="rayas">Rayas discretas</option><option value="moda">Ropa y accesorios</option><option value="belleza">Belleza y barbería</option><option value="salud">Salud</option><option value="comida">Comida</option><option value="tecnologia">Tecnología</option><option value="herramientas">Herramientas</option><option value="hogar">Hogar y hospedaje</option><option value="mascotas">Mascotas</option><option value="agua">Agua</option><option value="envios">Envíos</option><option value="fiestas">Fiestas</option><option value="comercios">Comercios</option></select>
+<div id="categoria-fondo-muestra" class="categoria-fondo-muestra" aria-label="Vista previa del patrón"></div>
+<button type="submit" id="guardar-categoria">Crear categoría</button>
           <button type="button" id="exportar-categorias" class="btn-horario-secundario">Generar categorias.json</button>
           <p id="estado-categorias" role="status" aria-live="polite"></p>
           <p>Al guardar, el cambio queda en este navegador. Para publicarlo, genera categorias.json, reemplázalo en la carpeta del proyecto y súbelo a GitHub. Renombrar conserva los negocios y sus enlaces.</p>
@@ -693,14 +696,13 @@
     <section class="seccion-panel" data-panel-seccion="principal">
 
       <section class="tarjeta-formulario">
-        <form id="form-principal">
+        <p>Los anuncios activos y vigentes se mostrarán por turnos en un solo espacio.</p>
+<form id="form-principal">
           <div class="promocion-form-cabecera">
             <div>
               <p class="cabecera-etiqueta">Espacio premium de inicio</p>
               <h3>📢 Anuncio principal</h3>
-              <p class="texto-ayuda-promocion">
-                Publica un solo anuncio especial debajo del buscador y arriba de Destacados.
-              </p>
+              <p>Los anuncios activos y vigentes se mostrarán por turnos en un solo espacio.</p>
             </div>
             <span class="estado-promocion-form" id="estado-principal-form">Nuevo</span>
           </div>
