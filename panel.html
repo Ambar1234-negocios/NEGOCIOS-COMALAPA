@@ -470,6 +470,16 @@
         <p class="cabecera-etiqueta">Directorio</p>
         <h2>Categorías</h2>
         <p>Resumen de negocios registrados por categoría.</p>
+        <form id="form-categoria" class="tarjeta-formulario">
+          <label for="categoria-editar">Crear o renombrar</label>
+          <select id="categoria-editar"><option value="">Crear una categoría nueva</option></select>
+          <label for="categoria-nombre">Nombre de la categoría</label>
+          <input id="categoria-nombre" type="text" maxlength="70" required placeholder="Por ejemplo: Ropa, Calzado y Accesorios">
+          <button type="submit" id="guardar-categoria">Crear categoría</button>
+          <button type="button" id="exportar-categorias" class="btn-horario-secundario">Generar categorias.json</button>
+          <p id="estado-categorias" role="status" aria-live="polite"></p>
+          <p>Al guardar, el cambio queda en este navegador. Para publicarlo, genera categorias.json, reemplázalo en la carpeta del proyecto y súbelo a GitHub. Renombrar conserva los negocios y sus enlaces.</p>
+        </form>
         <div id="resumen-categorias" class="resumen-categorias"></div>
       </section>
     </section>
@@ -826,7 +836,8 @@
        JAVASCRIPT DEL PANEL
        ============================================================ -->
   <script src="contactos.js?v=2"></script>
-  <script src="panel.js?v=7"></script>
+  <script src="categorias.js?v=1"></script>
+  <script src="panel.js?v=8"></script>
 
 </body>
 </html>

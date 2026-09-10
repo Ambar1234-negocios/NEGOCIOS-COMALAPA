@@ -191,7 +191,7 @@ function renderizarHorarios(horarios = crearHorariosPredeterminados()) {
     return `
       <div class="horario-dia modo-${dia.modo}" data-dia="${clave}">
         <div class="horario-dia-cabecera">
-          <strong>${nombre}</strong>
+          <strong>${escaparNombreCategoria(nombre)}</strong>
 
           <select class="horario-modo" aria-label="Estado de ${nombre}">
             <option value="abierto" ${dia.modo === "abierto" ? "selected" : ""}>Abierto</option>
@@ -636,22 +636,7 @@ function cargarCategoriasFiltro() {
 
   if (!filtro) return;
 
-  const categorias = [
-    ["streaming", "Streaming y tecnología"],
-    ["construccion", "Construcción y materiales"],
-    ["comida", "Comida y restaurantes"],
-    ["salud", "Salud y farmacias"],
-    ["hoteles", "Hoteles y hospedaje"],
-    ["automotriz", "Talleres y refacciones"],
-    ["servicios", "Servicios para el hogar"],
-    ["belleza", "Belleza y estética"],
-    ["mandaditos", "Mandaditos"],
-    ["comercios", "Comercios"],
-    ["profesionales", "Profesionistas"],
-    ["bienesraices", "Casas y terrenos"],
-    ["veterinarias", "Veterinarias"],
-    ["agua", "Purificadoras de agua"]
-  ];
+  const categorias = window.CategoriasExhibicion.obtener().map(c => [c.id, c.nombre]);
 
   categorias.forEach(([valor, nombre]) => {
     const opcion = document.createElement("option");
@@ -934,22 +919,7 @@ function renderizarResumenCategorias() {
   const negocios =
     JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
 
-  const categorias = [
-    ["streaming", "Streaming y tecnología"],
-    ["construccion", "Construcción y materiales"],
-    ["comida", "Comida y restaurantes"],
-    ["salud", "Salud y farmacias"],
-    ["hoteles", "Hoteles y hospedaje"],
-    ["automotriz", "Talleres y refacciones"],
-    ["servicios", "Servicios para el hogar"],
-    ["belleza", "Belleza y estética"],
-    ["mandaditos", "Mandaditos"],
-    ["comercios", "Comercios"],
-    ["profesionales", "Profesionistas"],
-    ["bienesraices", "Casas y terrenos"],
-    ["veterinarias", "Veterinarias"],
-    ["agua", "Purificadoras de agua"]
-  ];
+  const categorias = window.CategoriasExhibicion.obtener().map(c => [c.id, c.nombre]);
 
   contenedor.innerHTML = categorias.map(([valor, nombre]) => {
     const cantidad = negocios.filter((negocio) => negocio.categoria === valor).length;
@@ -1891,3 +1861,54 @@ renderizarResumenCategorias();
 cargarNegociosEnDestacados();
 mostrarDestacadosPanel();
 mostrarPrincipalPanel();
+
+function escaparNombreCategoria(nombre) { return String(nombre).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// Crear y renombrar categorías sin alterar los negocios ni sus enlaces.
+function actualizarCategoriasPanel() {
+  const lista = window.CategoriasExhibicion.obtener();
+  for (const [id, placeholder] of [['categoria','Selecciona una categoría'], ['filtro-categoria','Todas las categorías'], ['categoria-editar','Crear una categoría nueva']]) {
+    const selector = document.getElementById(id);
+    if (!selector) continue;
+    const anterior = selector.value;
+    selector.replaceChildren(new Option(placeholder, ''));
+    lista.forEach(c => selector.add(new Option(c.nombre, c.id)));
+    selector.value = anterior;
+  }
+  const total = document.getElementById('dashboard-total-categorias');
+  if (total) total.textContent = lista.length;
+  renderizarResumenCategorias();
+}
+window.addEventListener('categorias-actualizadas', actualizarCategoriasPanel);
+actualizarCategoriasPanel();
+window.CategoriasExhibicion.lista.then(actualizarCategoriasPanel);
+document.getElementById('categoria-editar').addEventListener('change', function () {
+  const categoria = window.CategoriasExhibicion.obtener().find(c => c.id === this.value);
+  document.getElementById('categoria-nombre').value = categoria?.nombre || '';
+  document.getElementById('guardar-categoria').textContent = categoria ? 'Guardar nombre' : 'Crear categoría';
+});
+document.getElementById('form-categoria').addEventListener('submit', async function (evento) {
+  evento.preventDefault();
+  const boton = document.getElementById('guardar-categoria');
+  const estado = document.getElementById('estado-categorias');
+  boton.disabled = true;
+  try {
+    await window.CategoriasExhibicion.lista;
+    const categoria = window.CategoriasExhibicion.guardar(document.getElementById('categoria-nombre').value, document.getElementById('categoria-editar').value);
+    estado.textContent = `“${categoria.nombre}” guardada en este navegador. Genera categorias.json y publícalo para que aparezca a los visitantes.`;
+    this.reset();
+    boton.textContent = 'Crear categoría';
+    document.getElementById('categoria').value = categoria.id;
+  } catch (error) { estado.textContent = error.message; }
+  finally { boton.disabled = false; }
+});
+document.getElementById('exportar-categorias').addEventListener('click', async function () {
+  await window.CategoriasExhibicion.lista;
+  const blob = new Blob([JSON.stringify(window.CategoriasExhibicion.obtener(), null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const enlace = document.createElement('a');
+  enlace.href = url; enlace.download = 'categorias.json';
+  document.body.appendChild(enlace); enlace.click(); enlace.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  document.getElementById('estado-categorias').textContent = 'Reemplaza categorias.json en la carpeta del proyecto y súbelo a GitHub. Publica también negocios.json si agregaste o cambiaste negocios.';
+});

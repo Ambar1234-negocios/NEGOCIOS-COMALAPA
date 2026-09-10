@@ -1,0 +1,62 @@
+[
+  {
+    "id": "streaming",
+    "nombre": "Streaming y tecnología"
+  },
+  {
+    "id": "construccion",
+    "nombre": "Construcción y materiales"
+  },
+  {
+    "id": "comida",
+    "nombre": "Comida y restaurantes"
+  },
+  {
+    "id": "salud",
+    "nombre": "Salud y farmacias"
+  },
+  {
+    "id": "hoteles",
+    "nombre": "Hoteles y hospedaje"
+  },
+  {
+    "id": "automotriz",
+    "nombre": "Talleres y refacciones"
+  },
+  {
+    "id": "servicios",
+    "nombre": "Servicios para el hogar"
+  },
+  {
+    "id": "belleza",
+    "nombre": "Belleza y estética"
+  },
+  {
+    "id": "mandaditos",
+    "nombre": "Mandaditos"
+  },
+  {
+    "id": "comercios",
+    "nombre": "Comercios"
+  },
+  {
+    "id": "profesionales",
+    "nombre": "Profesionistas"
+  },
+  {
+    "id": "bienesraices",
+    "nombre": "Casas y terrenos"
+  },
+  {
+    "id": "veterinarias",
+    "nombre": "Veterinarias"
+  },
+  {
+    "id": "agua",
+    "nombre": "Purificadoras de agua"
+  },
+  {
+    "id": "cat-ropa-calzado-y-accesorios",
+    "nombre": "Ropa, Calzado y Accesorios"
+  }
+]

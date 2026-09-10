@@ -12,11 +12,11 @@
     "numero": "529631181815",
     "activo": true
   },
-  "amazon": {
-    "numero": "529631181815",
-    "activo": true
-  },
   "mandaditos": {
     "numero": "529633106862"
+  },
+  "temu": {
+    "numero": "529631181815",
+    "activo": true
   }
 }

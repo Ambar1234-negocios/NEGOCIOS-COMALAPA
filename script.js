@@ -107,6 +107,8 @@ function cargarNegociosLocales() {
 }
 
 async function cargarNegociosPublicados() {
+  await window.CategoriasExhibicion.lista;
+  actualizarCategoriasPublicas();
   try {
     const respuesta = await fetch(`negocios.json?v=${Date.now()}`, {
       cache: "no-store"
@@ -211,6 +213,46 @@ function crearTarjetaNegocioListado(negocio, categoria) {
         Ver información
       </button>
     </div>
+  `;
+}
+
+
+// Tarjetas exclusivas de la vista de categoría.
+function escaparTarjetaCategoria(valor) {
+  return String(valor ?? "").replace(/[&<>"']/g, (caracter) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[caracter]));
+}
+
+function crearTarjetaNegocioCategoria(negocio, categoria) {
+  const escapar = escaparTarjetaCategoria;
+  const indice = negocios[categoria].indexOf(negocio);
+  const nombre = negocio.nombre || "Negocio";
+  const iniciales = nombre.trim().split(/\s+/).slice(0, 2).map(p => Array.from(p)[0] || "").join("").toUpperCase();
+  const banner = negocio.banner || negocio.imagen || "";
+  const horario = obtenerEstadoHorario(negocio);
+  const estado = horario.automatico ? horario.estado : "sin-datos";
+  const textoEstado = estado === "abierto" ? "Abierto ahora" : estado === "descanso" ? "Cerrado temporalmente" : estado === "cerrado" ? "Cerrado" : "Horario por confirmar";
+  const accion = escapar('verPerfil(' + JSON.stringify(categoria) + ', ' + indice + ')');
+  return `
+    <article class="categoria-negocio resultado-plan-${obtenerPlanNegocio(negocio)}">
+      <div class="categoria-negocio-portada" aria-hidden="true">
+        ${banner ? `<img src="${escapar(banner)}" alt="" loading="lazy" decoding="async" onerror="this.hidden=true">` : ""}
+        ${etiquetaPromocionNegocio(negocio)}
+      </div>
+      <div class="categoria-negocio-cuerpo">
+        <div class="categoria-negocio-logo" aria-hidden="true">
+          <span>${escapar(iniciales)}</span>
+          ${negocio.logo ? `<img src="${escapar(negocio.logo)}" alt="" loading="lazy" decoding="async" onerror="this.hidden=true">` : ""}
+        </div>
+        <h3><button type="button" class="categoria-negocio-enlace" onclick="${accion}">${escapar(nombre)}</button></h3>
+        <p class="categoria-negocio-descripcion">${escapar(negocio.descripcion || "Conoce sus servicios y datos de contacto.")}</p>
+        <div class="categoria-negocio-pie">
+          <span class="categoria-negocio-estado estado-${estado}" title="${escapar(horario.texto)}"><span aria-hidden="true">●</span> ${textoEstado}</span>
+          <span class="categoria-negocio-cta" aria-hidden="true">Ver perfil <span>↗</span></span>
+        </div>
+      </div>
+    </article>
   `;
 }
 
@@ -566,9 +608,9 @@ function mostrarCategoria(categoria, opciones = {}) {
       </div>
     `;
   } else {
-    lista.innerHTML = negociosCategoria
-      .map((negocio) => crearTarjetaNegocioListado(negocio, categoria))
-      .join("");
+    lista.innerHTML = '<div class="categoria-negocios-grid">' + negociosCategoria
+      .map((negocio) => crearTarjetaNegocioCategoria(negocio, categoria))
+      .join("") + '</div>';
   }
 
   if (actualizarHistorial) {
@@ -1741,3 +1783,29 @@ cargaNegociosPublicados.finally(async () => {
   await cargarAnuncioPrincipalPublicado();
   await cargarDestacadosPublicados();
 });
+
+
+function actualizarCategoriasPublicas() {
+  const contenedor = document.querySelector('.grid-categorias');
+  window.CategoriasExhibicion.obtener().forEach(({id, nombre}) => {
+    categoriasNombres[id] = nombre.toUpperCase();
+    if (!Object.prototype.hasOwnProperty.call(negocios, id)) negocios[id] = [];
+    if (!contenedor) return;
+    let boton = Array.from(contenedor.querySelectorAll('button')).find(b => b.dataset.categoria === id || b.getAttribute('onclick') === `mostrarCategoria('${id}')`);
+    if (!boton) {
+      boton = document.createElement('button');
+      boton.type = 'button'; boton.className = 'categoria'; boton.dataset.categoria = id;
+      boton.addEventListener('click', () => mostrarCategoria(id));
+      contenedor.appendChild(boton);
+    }
+    const textoTema=(id+' '+nombre).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    const temas=[['moda',/ropa|moda|calzado|accesorio|gorra/],['belleza',/belleza|barber|peluquer|estetica/],['salud',/salud|medic|farmacia|consultorio/],['comida',/comida|restaurante|pizza|taco|cafeter/],['tecnologia',/streaming|tecnolog|celular/],['herramientas',/construccion|automotriz|taller|servicios/],['hogar',/hotel|hospedaje|bienesraices|casas|terrenos/],['mascotas',/veterinari|mascota/],['agua',/agua|purificadora/],['envios',/mandadito|paqueter|envio/],['fiestas',/fiesta|evento|decoracion/]];
+    boton.dataset.tema=temas.find(([,patron])=>patron.test(textoTema))?.[0]||'comercios';
+    const icono = boton.querySelector('svg')?.cloneNode(true);
+    boton.replaceChildren();
+    if (icono) boton.appendChild(icono);
+    boton.appendChild(document.createTextNode(nombre));
+  });
+}
+
+actualizarCategoriasPublicas();
