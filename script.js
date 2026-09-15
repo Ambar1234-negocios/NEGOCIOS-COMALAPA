@@ -1780,9 +1780,9 @@ window.addEventListener("popstate", function(event) {
 
 cargaNegociosPublicados.finally(async () => {
   await window.ContactosExhibicion.lista;
+  await cargarDestacadosPublicados();
   prepararNavegacionInicial();
   await cargarAnuncioPrincipalPublicado();
-  await cargarDestacadosPublicados();
 });
 
 

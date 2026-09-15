@@ -34,5 +34,23 @@
     "fechaInicio": "2026-09-01",
     "fechaFin": "2026-09-30",
     "activo": true
+  },
+  {
+    "id": 1789496639807,
+    "negocioSlug": "forno-mexa",
+    "negocioNombre": "Forno Mexa",
+    "categoria": "comida",
+    "etiqueta": "🔥 Promoción de la semana",
+    "titulo": "Pizza al pastor especial",
+    "texto": "Disfruta una pizza artesanal estilo napolitano, preparada en horno de leña y con un toque mexicano de carne al pastor.",
+    "precio": "$299",
+    "precioAnterior": "$399",
+    "precioActual": "$299",
+    "descuento": "10% OFF",
+    "imagen": "imagenes/forno-mexa/foto-1.webp",
+    "estilo": "azul-verde",
+    "fechaInicio": "2026-09-01",
+    "fechaFin": "2026-09-30",
+    "activo": true
   }
 ]
