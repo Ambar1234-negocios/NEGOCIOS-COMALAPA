@@ -1,62 +1,78 @@
 [
   {
     "id": "streaming",
-    "nombre": "Streaming y tecnología"
+    "nombre": "Streaming y tecnología",
+    "fondo": "automatico"
   },
   {
     "id": "construccion",
-    "nombre": "Construcción y materiales"
+    "nombre": "Construcción y materiales",
+    "fondo": "automatico"
   },
   {
     "id": "comida",
-    "nombre": "Comida y restaurantes"
+    "nombre": "Comida y restaurantes",
+    "fondo": "automatico"
   },
   {
     "id": "salud",
-    "nombre": "Salud y farmacias"
+    "nombre": "Salud y farmacias",
+    "fondo": "automatico"
   },
   {
     "id": "hoteles",
-    "nombre": "Hoteles y hospedaje"
+    "nombre": "Hoteles y hospedaje",
+    "fondo": "automatico"
   },
   {
     "id": "automotriz",
-    "nombre": "Talleres y refacciones"
+    "nombre": "Talleres y refacciones",
+    "fondo": "automatico"
   },
   {
     "id": "servicios",
-    "nombre": "Servicios para el hogar"
+    "nombre": "Servicios para el hogar",
+    "fondo": "automatico"
   },
   {
     "id": "belleza",
-    "nombre": "Belleza y estética"
+    "nombre": "Belleza y estética",
+    "fondo": "automatico"
   },
   {
     "id": "mandaditos",
-    "nombre": "Mandaditos"
+    "nombre": "Mandaditos",
+    "fondo": "automatico",
+    "eliminada": true
   },
   {
     "id": "comercios",
-    "nombre": "Comercios"
+    "nombre": "Comercios",
+    "fondo": "automatico"
   },
   {
     "id": "profesionales",
-    "nombre": "Profesionistas"
+    "nombre": "Profesionistas",
+    "fondo": "automatico"
   },
   {
     "id": "bienesraices",
-    "nombre": "Casas y terrenos"
+    "nombre": "Casas y terrenos",
+    "fondo": "automatico"
   },
   {
     "id": "veterinarias",
-    "nombre": "Veterinarias"
+    "nombre": "Veterinarias",
+    "fondo": "automatico"
   },
   {
     "id": "agua",
-    "nombre": "Purificadoras de agua"
+    "nombre": "Purificadoras de agua",
+    "fondo": "automatico"
   },
   {
     "id": "cat-ropa-calzado-y-accesorios",
-    "nombre": "Ropa, Calzado y Accesorios"
+    "nombre": "Ropa, Calzado y Accesorios",
+    "fondo": "automatico"
   }
 ]

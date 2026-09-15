@@ -64,7 +64,7 @@
   function validar(lista) {
     if (!Array.isArray(lista)) return [];
     return lista.filter(c => c && typeof c.id === 'string' && /^[a-z][a-z0-9-]{0,59}$/.test(c.id) && !['constructor','prototype','__proto__'].includes(c.id) && typeof c.nombre === 'string' && c.nombre.trim().length > 0 && c.nombre.trim().length <= 70)
-      .map(c => ({ id: c.id, nombre: c.nombre.trim(), fondo: fondos.includes(c.fondo) ? c.fondo : "automatico" }));
+      .map(c => ({ id: c.id, nombre: c.nombre.trim(), fondo: fondos.includes(c.fondo) ? c.fondo : "automatico", ...(c.eliminada === true ? {eliminada: true} : {}) }));
   }
   function leerLocales() {
     try { return validar(JSON.parse(localStorage.getItem(clave) || '[]')); }
@@ -72,10 +72,24 @@
   }
   let publicados = [];
   let locales = leerLocales();
-  function obtener() {
+  function exportar() {
     const mapa = new Map();
-    [...base, ...publicados, ...locales].forEach(c => mapa.set(c.id, {...c}));
+    [...base, ...publicados, ...locales].forEach(c => {
+      // Una edición antigua del navegador no debe revivir una categoría eliminada.
+      if (!mapa.get(c.id)?.eliminada) mapa.set(c.id, {...c});
+    });
     return Array.from(mapa.values());
+  }
+  function obtener() {
+    return exportar().filter(c => !c.eliminada);
+  }
+  function eliminar(id) {
+    const categoria = obtener().find(c => c.id === id);
+    if (!categoria) throw Error('La categoría ya no existe.');
+    const cambios = [...locales.filter(c => c.id !== id), {...categoria, eliminada: true}];
+    localStorage.setItem(clave, JSON.stringify(cambios));
+    locales = cambios;
+    window.dispatchEvent(new Event('categorias-actualizadas'));
   }
   function guardar(nombre, idExistente = '', fondo = 'automatico') {
     nombre = String(nombre).trim().replace(/\s+/g, ' ');
@@ -88,7 +102,7 @@
       const raiz = ('cat-' + normalizar(nombre).replace(/[^a-z0-9]+/g, '-').replace(/-+$/,'')).slice(0,50);
       id = raiz;
       let numero = 2;
-      while (lista.some(c => c.id === id)) id = raiz + '-' + numero++;
+      while (exportar().some(c => c.id === id)) id = raiz + '-' + numero++;
     }
     const nueva = {id, nombre, fondo: fondos.includes(fondo) ? fondo : "automatico"};
     const cambios = [...locales.filter(c => c.id !== id), nueva];
@@ -98,12 +112,15 @@
     window.dispatchEvent(new Event('categorias-actualizadas'));
     return nueva;
   }
-  const api = window.CategoriasExhibicion = {obtener, guardar, normalizar};
+  const api = window.CategoriasExhibicion = {obtener, guardar, eliminar, exportar, normalizar, cargaPublicada: false};
   api.lista = (async () => {
     try {
       const respuesta = await fetch('categorias.json?v=' + Date.now(), {cache: 'no-store'});
       if (!respuesta.ok) throw Error('No disponible');
-      publicados = validar(await respuesta.json());
+      const datos = await respuesta.json();
+      if (!Array.isArray(datos)) throw Error('Formato no válido');
+      publicados = validar(datos);
+      api.cargaPublicada = true;
     } catch { /* Se conservan las categorías base y los cambios locales. */ }
     window.dispatchEvent(new Event('categorias-actualizadas'));
     return obtener();

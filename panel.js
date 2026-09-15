@@ -1885,6 +1885,7 @@ function actualizarCategoriasPanel() {
   }
   const total = document.getElementById('dashboard-total-categorias');
   if (total) total.textContent = lista.length;
+  actualizarBotonEliminarCategoria();
   renderizarResumenCategorias();
 }
 window.addEventListener('categorias-actualizadas', actualizarCategoriasPanel);
@@ -1896,6 +1897,7 @@ document.getElementById('categoria-editar').addEventListener('change', function 
   document.getElementById('categoria-fondo').value = categoria?.fondo || 'automatico';
   actualizarMuestraFondo();
   document.getElementById('guardar-categoria').textContent = categoria ? 'Guardar categoría' : 'Crear categoría';
+  actualizarBotonEliminarCategoria();
 });
 document.getElementById('form-categoria').addEventListener('submit', async function (evento) {
   evento.preventDefault();
@@ -1907,6 +1909,7 @@ document.getElementById('form-categoria').addEventListener('submit', async funct
     const categoria = window.CategoriasExhibicion.guardar(document.getElementById('categoria-nombre').value, document.getElementById('categoria-editar').value, document.getElementById('categoria-fondo').value);
     estado.textContent = `“${categoria.nombre}” guardada en este navegador. Genera categorias.json y publícalo para que aparezca a los visitantes.`;
     this.reset();
+    actualizarBotonEliminarCategoria();
     actualizarMuestraFondo();
     boton.textContent = 'Crear categoría';
     document.getElementById('categoria').value = categoria.id;
@@ -1915,13 +1918,58 @@ document.getElementById('form-categoria').addEventListener('submit', async funct
 });
 document.getElementById('exportar-categorias').addEventListener('click', async function () {
   await window.CategoriasExhibicion.lista;
-  const blob = new Blob([JSON.stringify(window.CategoriasExhibicion.obtener(), null, 2)], {type: 'application/json'});
+  const blob = new Blob([JSON.stringify(window.CategoriasExhibicion.exportar(), null, 2)], {type: 'application/json'});
   const url = URL.createObjectURL(blob);
   const enlace = document.createElement('a');
   enlace.href = url; enlace.download = 'categorias.json';
   document.body.appendChild(enlace); enlace.click(); enlace.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   document.getElementById('estado-categorias').textContent = 'Reemplaza categorias.json en la carpeta del proyecto y súbelo a GitHub. Publica también negocios.json si agregaste o cambiaste negocios.';
+});
+
+function actualizarBotonEliminarCategoria() {
+  document.getElementById('eliminar-categoria').disabled = !document.getElementById('categoria-editar').value;
+}
+
+document.getElementById('eliminar-categoria').addEventListener('click', async function () {
+  const estado = document.getElementById('estado-categorias');
+  const id = document.getElementById('categoria-editar').value;
+  if (!id || this.disabled) return;
+  this.disabled = true;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+  try {
+    await window.CategoriasExhibicion.lista;
+    if (!window.CategoriasExhibicion.cargaPublicada) throw Error('No se pudo comprobar la lista publicada de categorías. Recarga el panel con conexión antes de eliminar.');
+    const categoria = window.CategoriasExhibicion.obtener().find(c => c.id === id);
+    if (!categoria) throw Error('La categoría ya no existe.');
+    const respuesta = await fetch('negocios.json', {cache: 'no-store', signal: controller.signal});
+    if (!respuesta.ok) throw Error('No se pudieron comprobar los negocios publicados. Intenta de nuevo con conexión.');
+    const publicados = await respuesta.json();
+    const locales = JSON.parse(localStorage.getItem('exhibicionNegocios') || '[]');
+    if (!Array.isArray(publicados) || !Array.isArray(locales)) throw Error('No se pudo comprobar la lista de negocios. No se eliminó la categoría.');
+    if ([...publicados, ...locales].some(n => n?.categoria === id)) {
+      throw Error('Esta categoría tiene negocios guardados o publicados. Cámbialos de categoría y publica negocios.json antes de eliminarla.');
+    }
+    if (!confirm(`¿Quieres eliminar la categoría “${categoria.nombre}”?`)) {
+      estado.textContent = 'Eliminación cancelada. No se cambió la categoría.';
+      return;
+    }
+    if (!confirm(`Segunda confirmación: ¿eliminar definitivamente “${categoria.nombre}”? Después deberás generar y publicar categorias.json. No se eliminarán negocios.`)) {
+      estado.textContent = 'Eliminación cancelada. No se cambió la categoría.';
+      return;
+    }
+    window.CategoriasExhibicion.eliminar(id);
+    document.getElementById('form-categoria').reset();
+    document.getElementById('guardar-categoria').textContent = 'Crear categoría';
+    actualizarMuestraFondo();
+    estado.textContent = `“${categoria.nombre}” eliminada en este navegador. Genera categorias.json, reemplázalo y súbelo a GitHub para publicar la eliminación.`;
+  } catch (error) {
+    estado.textContent = error.name === 'AbortError' ? 'La comprobación tardó demasiado. No se eliminó la categoría; intenta de nuevo con conexión.' : error.message;
+  } finally {
+    clearTimeout(timeout);
+    actualizarBotonEliminarCategoria();
+  }
 });
 
 function actualizarMuestraFondo(){

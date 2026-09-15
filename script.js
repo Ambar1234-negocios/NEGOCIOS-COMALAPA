@@ -1788,6 +1788,11 @@ cargaNegociosPublicados.finally(async () => {
 
 function actualizarCategoriasPublicas() {
   const contenedor = document.querySelector('.grid-categorias');
+  const eliminadas = new Set(window.CategoriasExhibicion.exportar().filter(c => c.eliminada).map(c => c.id));
+  contenedor?.querySelectorAll('button').forEach(boton => {
+    const id = boton.dataset.categoria || /^mostrarCategoria\('([^']+)'\)$/.exec(boton.getAttribute('onclick') || '')?.[1];
+    if (eliminadas.has(id)) boton.remove();
+  });
   window.CategoriasExhibicion.obtener().forEach(({id, nombre, fondo}) => {
     categoriasNombres[id] = nombre.toUpperCase();
     if (!Object.prototype.hasOwnProperty.call(negocios, id)) negocios[id] = [];

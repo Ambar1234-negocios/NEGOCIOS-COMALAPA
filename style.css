@@ -1179,7 +1179,7 @@ footer {
 
     /* Valor móvil aprobado: NO CAMBIAR sin autorización */
     background-size: 200% !important;
-    background-position: center 45%;
+    background-position: center top;
     background-repeat: no-repeat;
   }
 
@@ -1749,7 +1749,7 @@ footer {
   width: 100%;
 }
 
-/* Un destello breve cada ocho segundos, sin bloquear el enlace. */
+/* Un destello breve cada seis segundos, sin bloquear el enlace. */
 .anuncio-principal-card::after {
   content: "";
   position: absolute;
@@ -1758,7 +1758,7 @@ footer {
   pointer-events: none;
   background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,.16) 50%, transparent 65%);
   transform: translateX(-120%);
-  animation: principal-destello 8s ease-in-out infinite;
+  animation: principal-destello 6s ease-in-out infinite;
 }
 @keyframes principal-destello {
   0%, 72% { transform: translateX(-120%); }
@@ -1766,6 +1766,11 @@ footer {
 }
 @media (prefers-reduced-motion: reduce) {
   .anuncio-principal-card::after { animation: none; display: none; }
+}
+@media (max-width: 700px) and (prefers-reduced-motion: no-preference) {
+  .anuncio-principal-card::after {
+    background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,.24) 50%, transparent 65%);
+  }
 }
 @media (max-width: 700px) {
   .anuncio-principal { padding: 10px 12px 4px; }
@@ -2044,32 +2049,40 @@ footer {
   gap: 18px;
   margin: 0 0 24px;
   padding: 20px 24px;
-  border: 1px solid #bcd9cd;
+  border: 1px solid #e4c784;
   border-radius: 20px;
-  background: linear-gradient(120deg, #e8f5ee, #f8fcfa);
-  box-shadow: 0 7px 20px rgba(23,83,60,.08);
+  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22360%22%20height%3D%22180%22%20viewBox%3D%220%200%20360%20180%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23286347%22%20stroke-opacity%3D%220.13%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cg%20transform%3D%22translate%2818%2018%29%20rotate%28-12%2020%2020%29%22%3E%3Cpath%20d%3D%22M4%2012h32l-3%2027H7zM12%2012V8a8%208%200%200%201%2016%200v4M12%2023h16M16%2030h8%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28105%2024%29%20rotate%2815%2018%2020%29%22%3E%3Cpath%20d%3D%22M10%2012Q-2%2022%204%2031q7%2010%2018%201L32%207zM14%2012l6%206M8%2021l6%205M29%209q-5-10%202-9M31%208q9-9%2010-2M31%209q12%200%209%205%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28190%2014%29%20rotate%28-8%2016%2024%29%22%3E%3Cpath%20d%3D%22M11%202h10v7l6%209v27H5V18l6-9zM11%206h10M5%2024h22M5%2036h22M12%2028h8%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28283%2023%29%20rotate%2810%2018%2020%29%22%3E%3Cpath%20d%3D%22M6%2023h27l-4%2018H10zM7%2023q-8-12%205-13%204-16%2014-6%2012-2%2011%2010%208%2010-4%209M15%2028l1%208M24%2028l-1%208%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%2855%20111%29%20rotate%2810%2020%2020%29%22%3E%3Cpath%20d%3D%22M20%2010q-17-12-17%209%200%2022%2017%2018%2017%204%2017-18%200-21-17-9zM20%2011V3M20%205q8-10%2014-2-7%207-14%202%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28153%20106%29%20rotate%28-10%2016%2024%29%22%3E%3Cpath%20d%3D%22M6%2010h24l-3%2034H9zM4%2010h28M19%2010l4-10h9M8%2020h20M12%2030q6-7%2012%200M13%2035h10%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28259%20114%29%20rotate%2812%2020%2020%29%22%3E%3Cpath%20d%3D%22M2%2012h7l6%2022h23l5-17H11M15%2023h25M21%2017v17M31%2017v17M21%2041a3%203%200%201%201-6%200%203%203%200%200%201%206%200M37%2041a3%203%200%201%201-6%200%203%203%200%200%201%206%200%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E") repeat, linear-gradient(120deg, #e8f5ee, #f8fcfa);
+  box-shadow: 0 7px 20px rgba(130,89,20,.08);
 }
-.mandaditos-acceso .mandaditos-titulo { color: #184c38; font-size: 21px; }
-.mandaditos-acceso .mandaditos-descripcion { margin: 5px 0 0; color: #456052; font-size: 14px; line-height: 1.5; }
+.mandaditos-acceso .mandaditos-titulo { color: #000; font-size: 21px; }
+.mandaditos-acceso .mandaditos-descripcion { margin: 5px 0 0; color: #000; font-size: 14px; line-height: 1.5; }
 .mandaditos-acceso .mandaditos-boton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 48px;
   padding: 12px 20px;
+  gap: 8px;
+  border: 1px solid #c69229;
   border-radius: 13px;
-  background: #146653;
-  color: white;
+  background: #ffca4b;
+  color: #000;
   font-size: 15px;
   font-weight: 700;
   text-decoration: none;
   text-align: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba(20,102,83,.16);
+  box-shadow: 0 4px 10px rgba(130,89,20,.16);
 }
-.mandaditos-boton:focus-visible { outline: 3px solid #146653; outline-offset: 4px; }
+.mandaditos-acceso .mandaditos-boton::before {
+  content: "\1F6F5";
+  flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
+}
+.mandaditos-boton:focus-visible { outline: 3px solid #805510; outline-offset: 4px; }
 .compra-boton.compra-temu { background: #c84900; color: #fff; }
-@media (hover: hover) and (pointer: fine) { .mandaditos-acceso .mandaditos-boton:hover { background: #0d5141; } }
+@media (hover: hover) and (pointer: fine) { .mandaditos-acceso .mandaditos-boton:hover { background: #f4b942; } }
 @media (max-width: 650px) {
   .compras-encargo .mandaditos-acceso { flex-direction: column; align-items: stretch; gap: 14px; padding: 18px; }
 }
