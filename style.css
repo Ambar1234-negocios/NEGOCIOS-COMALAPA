@@ -920,6 +920,44 @@ footer {
   padding: 18px;
 }
 
+/* Footer y páginas legales: estilos aislados. */
+.footer-principal p { margin: 0; }
+.footer-legal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+.footer-legal a { color: #d1d5db; text-decoration: none; }
+.footer-legal a:hover,
+.footer-legal a:focus-visible { color: #ffb300; text-decoration: underline; }
+.footer-legal span { color: #6b7280; }
+.pagina-legal { min-height: 100vh; display: flex; flex-direction: column; }
+.legal-contenido {
+  width: calc(100% - 32px);
+  max-width: 900px;
+  margin: 32px auto;
+  padding: clamp(20px, 5vw, 48px);
+  background: #fff;
+  border-top: 4px solid #ffb300;
+  border-radius: 16px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.pagina-legal .footer-principal { margin-top: auto; }
+.legal-contenido h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.2; margin: 24px 0 12px; }
+.legal-contenido h2 { font-size: clamp(20px, 3vw, 25px); line-height: 1.35; margin: 28px 0 12px; }
+.legal-contenido p { margin: 0 0 16px; }
+.legal-contenido ul { padding-left: 24px; margin: 0 0 16px; }
+.legal-contenido li { margin-bottom: 6px; }
+.legal-contenido a { color: #244765; text-decoration: underline; text-underline-offset: 3px; }
+.legal-contenido a:focus-visible,
+.footer-legal a:focus-visible { outline: 2px solid #ffb300; outline-offset: 4px; }
+
+
 
 /* ============================================================
    12. DESTACADOS / PROMOCIONES
