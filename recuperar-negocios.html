@@ -1,4 +1,5 @@
-[
+<!doctype html><html lang="es"><meta charset="utf-8"><title>Recuperar negocios</title><style>body{font:20px system-ui;max-width:760px;margin:65px auto;padding:24px;background:#f5f7f8;color:#172333}button{padding:16px;background:#119b49;color:white;border:0;border-radius:10px;font:inherit;cursor:pointer}p{line-height:1.6}</style><h1>Recuperar tus cuatro negocios</h1><p>Este respaldo incluye El Perico, La Casa del Cofi, Forno Mexa y JC Moda. Se agregarán únicamente los que falten. Los negocios existentes se conservarán sin cambios.</p><p>No modifica archivos del proyecto ni publica cambios.</p><button id="restore">Recuperar negocios</button><p id="status" role="status"></p><p><a href="panel.html">Volver al panel</a></p><script>
+const respaldo = [
   {
     "id": 1787767235096,
     "nombre": "Balconería, Vidrios y Aluminios El Perico",
@@ -444,17 +445,7 @@
     "logo": "imagenes/jc-moda/logo.webp",
     "galeria": [
       "imagenes/jc-moda/foto-1.webp",
-      "imagenes/jc-moda/foto-2.webp",
-      "imagenes/jc-moda/foto-3.webp",
-      "imagenes/jc-moda/foto-4.webp",
-      "imagenes/jc-moda/foto-5.webp",
-      "imagenes/jc-moda/foto-6.webp",
-      "imagenes/jc-moda/foto-7.webp",
-      "imagenes/jc-moda/foto-8.webp",
-      "imagenes/jc-moda/foto-9.webp",
-      "imagenes/jc-moda/foto-10.webp",
-      "imagenes/jc-moda/foto-11.webp",
-      "imagenes/jc-moda/foto-12.webp"
+      "imagenes/jc-moda/foto-2.webp"
     ],
     "delivery": false,
     "tipoDelivery": "",
@@ -462,4 +453,22 @@
     "activo": true,
     "fechaRegistro": "23/9/2026, 10:27:15 a.m."
   }
-]
+];
+const button = document.getElementById('restore');
+const status = document.getElementById('status');
+if (location.origin !== 'http://127.0.0.1:5501') {button.disabled=true;status.textContent='Abre esta página desde http://127.0.0.1:5501/recuperar-negocios.html, en el mismo navegador donde está abierto tu panel.';}
+button.onclick=()=>{try{
+const key='exhibicionNegocios';
+const raw=localStorage.getItem(key);
+const actuales=raw===null?[]:JSON.parse(raw);
+if(!Array.isArray(actuales)||actuales.some(n=>!n||typeof n!=='object'))throw Error('Los datos actuales necesitan revisión. No se cambió nada.');
+const final=actuales.slice();let agregados=0;
+for(const n of respaldo){if(!final.some(x=>String(x.id)===String(n.id)||(x.slug&&x.slug===n.slug))){final.push(n);agregados++;}}
+if(agregados){
+const backupKey='respaldoAntesRecuperacion:'+Date.now()+':'+Math.random().toString(36).slice(2);
+localStorage.setItem(backupKey,JSON.stringify({clave:key,valorAnterior:raw}));
+localStorage.setItem(key,JSON.stringify(final));
+}
+status.textContent='Listo. Se agregaron '+agregados+' negocios. Ahora hay '+final.length+' negocios guardados. Los que ya existían se conservaron. Pulsa “Volver al panel”.';button.disabled=true;
+}catch(e){status.textContent='No se completó la recuperación: '+e.message;}};
+</script></html>
