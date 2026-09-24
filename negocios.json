@@ -788,7 +788,12 @@
       "imagenes/materiales-la-frontera/foto-7.webp",
       "imagenes/materiales-la-frontera/foto-8.webp",
       "imagenes/materiales-la-frontera/foto-9.webp",
-      "imagenes/materiales-la-frontera/foto-10.webp"
+      "imagenes/materiales-la-frontera/foto-10.webp",
+      "imagenes/materiales-la-frontera/foto-11.webp",
+      "imagenes/materiales-la-frontera/foto-12.webp",
+      "imagenes/materiales-la-frontera/foto-13.webp",
+      "imagenes/materiales-la-frontera/foto-14.webp",
+      "imagenes/materiales-la-frontera/foto-15.webp"
     ],
     "delivery": true,
     "tipoDelivery": "gratis",
@@ -934,5 +939,146 @@
     "verificado": false,
     "activo": true,
     "fechaRegistro": "23/9/2026, 10:19:20 p.m."
+  },
+  {
+    "id": 1790268613868,
+    "nombre": "Karen Shop",
+    "slug": "karen-shop",
+    "slogan": "Moda y estilo para toda la familia.",
+    "categoria": "cat-ropa-calzado-y-accesorios",
+    "descripcion": "Karen Shop ofrece una variedad de ropa, calzado y accesorios para dama, caballero y niños. Encuentra vestidos, pantalones, lencería, pijamas, conjuntos deportivos, sandalias, bolsos, carteras y perfumes para diferentes gustos y ocasiones.",
+    "servicios": [
+      "Ropa para dama",
+      "Ropa para caballero",
+      "Ropa infantil",
+      "Lencería",
+      "Calzado",
+      "Bolsos y accesorios",
+      "Perfumes"
+    ],
+    "palabrasClave": [
+      "Karen Shop",
+      "tienda de ropa",
+      "boutique",
+      "ropa para dama",
+      "ropa para mujer",
+      "ropa para caballero",
+      "ropa para hombre",
+      "ropa infantil",
+      "ropa para niños",
+      "ropa para niñas",
+      "moda femenina",
+      "moda masculina",
+      "moda infantil",
+      "vestidos",
+      "vestidos para dama",
+      "pantalones para mujer",
+      "pantalones para dama",
+      "playeras para caballero",
+      "camisetas para hombre",
+      "lencería",
+      "ropa interior femenina",
+      "pijamas",
+      "ropa para dormir",
+      "conjuntos deportivos",
+      "ropa deportiva",
+      "sandalias",
+      "calzado para dama",
+      "bolsos",
+      "bolsas para mujer",
+      "carteras para dama",
+      "accesorios para mujer",
+      "perfumes",
+      "fragancias",
+      "ropa y accesorios",
+      "tienda de ropa en Frontera Comalapa",
+      "Karen Shop Frontera Comalapa."
+    ],
+    "plan": "normal",
+    "telefono": "9631063887",
+    "whatsapp": "9631063887",
+    "direccion": "",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:30",
+            "fin": "20:30"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:30",
+            "fin": "20:30"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:30",
+            "fin": "20:30"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:30",
+            "fin": "20:30"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:30",
+            "fin": "20:30"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:30",
+            "fin": "20:30"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
+    "maps": "",
+    "video": "",
+    "facebook": "",
+    "instagram": "",
+    "tiktok": "",
+    "sitioWeb": "",
+    "banner": "imagenes/karen-shop/banner.webp",
+    "logo": "imagenes/karen-shop/logo.webp",
+    "galeria": [
+      "imagenes/karen-shop/foto-1.webp",
+      "imagenes/karen-shop/foto-2.webp",
+      "imagenes/karen-shop/foto-3.webp",
+      "imagenes/karen-shop/foto-4.webp",
+      "imagenes/karen-shop/foto-5.webp",
+      "imagenes/karen-shop/foto-6.webp",
+      "imagenes/karen-shop/foto-7.webp"
+    ],
+    "delivery": false,
+    "tipoDelivery": "",
+    "verificado": false,
+    "activo": true,
+    "fechaRegistro": "24/9/2026, 10:50:13 a.m."
   }
 ]
