@@ -461,5 +461,478 @@
     "verificado": false,
     "activo": true,
     "fechaRegistro": "23/9/2026, 10:27:15 a.m."
+  },
+  {
+    "id": 1790223560009,
+    "nombre": "Materiales La Frontera",
+    "slug": "materiales-la-frontera",
+    "slogan": "Todo para tu construcción, de principio a fin.",
+    "categoria": "construccion",
+    "descripcion": "Materiales La Frontera ofrece una amplia variedad de materiales para construcción, ferretería, plomería y herrería. Encuentra cemento, acero, láminas, herramientas, pisos y mucho más, con precios de mayoreo y menudeo, servicio a domicilio y pagos mediante transferencia bancaria.",
+    "servicios": [
+      {
+        "nombre": "Materiales para construcción",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Cemento gris",
+          "Cemento blanco",
+          "Calhidra",
+          "Block",
+          "Ladrillo"
+        ]
+      },
+      {
+        "nombre": "Materiales para acabados",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Multiplast",
+          "MS Block",
+          "Pegamix",
+          "Piso sobre piso",
+          "Pisos",
+          "Azulejos"
+        ]
+      },
+      {
+        "nombre": "Aceros y herrería",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Varilla 3/8\"",
+          "Varilla 1/2\"",
+          "Alambrón",
+          "Alambre de amarre",
+          "Clavos para madera de 2\" a 4\"",
+          "Clavos para concreto de 1½\" a 4\"",
+          "Montén calibre 16",
+          "Montén calibre 14",
+          "Perfil 3 × 1½\" calibre 22",
+          "Perfil 3 × 1½\" calibre 20",
+          "PTR 4×4 calibre 14",
+          "PTR 3×3 calibre 14",
+          "PTR 2×2 calibre 14",
+          "PTR 1½ calibre 14",
+          "PTR 1¼ calibre 14"
+        ]
+      },
+      {
+        "nombre": "Láminas onduladas",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Lámina ondulada 3.66 m calibre 32",
+          "Lámina ondulada 3.05 m calibre 32",
+          "Lámina ondulada 2.44 m calibre 32",
+          "Lámina ondulada 1.83 m calibre 32"
+        ]
+      },
+      {
+        "nombre": "Canaletas R-72",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Canaleta R-72 7.32 m calibre 32",
+          "Canaleta R-72 6.10 m calibre 32",
+          "Canaleta R-72 5.50 m calibre 32",
+          "Canaleta R-72 4.88 m calibre 32",
+          "Canaleta R-72 3.66 m calibre 32",
+          "Canaleta R-72 3.05 m calibre 32",
+          "Canaleta R-72 7.32 m calibre 26",
+          "Canaleta R-72 6.10 m calibre 26",
+          "Canaleta R-72 5.50 m calibre 26",
+          "Canaleta R-72 4.78 m calibre 26"
+        ]
+      },
+      {
+        "nombre": "Ferretería y herramientas",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Palas",
+          "Cucharas de albañil",
+          "Martillos",
+          "Marros",
+          "Cepillos de alambre",
+          "Carretillas",
+          "Lijas",
+          "Discos para corte de metal",
+          "Discos para corte de concreto",
+          "Pijas para lámina de 2\" a 3\"",
+          "Birlos",
+          "Llanas",
+          "Flotas"
+        ]
+      },
+      {
+        "nombre": "Plomería",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Tubo PVC ½\"",
+          "Tubo PVC ¾\"",
+          "Tubo PVC 1\"",
+          "Tubo PVC 1½\"",
+          "Tubo PVC 2\"",
+          "Tubo PVC 3\"",
+          "Tubo PVC 4\"",
+          "Tubo PVC 6\"",
+          "Tubo PVC 8\"",
+          "Tazas de baño blancas",
+          "Tazas de baño de color",
+          "Juegos de tazas de baño",
+          "Tinacos Binax",
+          "Tinacos Rotoplas"
+        ]
+      },
+      {
+        "nombre": "Mallas ciclónicas",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Malla ciclónica de 1 m",
+          "Malla ciclónica de 1.50 m",
+          "Malla ciclónica de 1.75 m",
+          "Malla ciclónica de 2 m"
+        ]
+      },
+      {
+        "nombre": "Galvatejas y accesorios para techos",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Galvatejas",
+          "Lámina roja",
+          "Capote liso",
+          "Capote galvateja"
+        ]
+      },
+      "Venta al mayoreo y menudeo"
+    ],
+    "palabrasClave": [
+      "Materiales La Frontera",
+      "materiales de construcción",
+      "venta de materiales",
+      "ferretería",
+      "tlapalería",
+      "materiales para albañilería",
+      "cemento",
+      "cemento gris",
+      "cemento blanco",
+      "calhidra",
+      "cal",
+      "block",
+      "bloques",
+      "ladrillos",
+      "Multiplast",
+      "MS Block",
+      "Pegamix",
+      "piso sobre piso",
+      "pegamento para pisos",
+      "pisos",
+      "azulejos",
+      "acabados para construcción",
+      "materiales para herrería",
+      "aceros",
+      "varillas",
+      "varilla 3/8",
+      "varilla 1/2",
+      "alambrón",
+      "alambre de amarre",
+      "clavos",
+      "clavos para madera",
+      "clavos para concreto",
+      "montenes",
+      "montén calibre 14",
+      "montén calibre 16",
+      "perfiles de acero",
+      "perfil calibre 20",
+      "perfil calibre 22",
+      "PTR",
+      "PTR 4x4",
+      "PTR 3x3",
+      "PTR 2x2",
+      "PTR 1½",
+      "PTR 1¼",
+      "PTR calibre 14",
+      "herrería",
+      "láminas",
+      "láminas para techo",
+      "lámina ondulada",
+      "lámina calibre 32",
+      "canaletas",
+      "canaleta R72",
+      "canaleta calibre 26",
+      "canaleta calibre 32",
+      "lámina roja",
+      "galvateja",
+      "capotes",
+      "capote liso",
+      "capote galvateja",
+      "herramientas",
+      "palas",
+      "cucharas de albañil",
+      "martillos",
+      "marros",
+      "cepillos de alambre",
+      "carretillas",
+      "lijas",
+      "discos de corte",
+      "disco para metal",
+      "disco para concreto",
+      "pijas para lámina",
+      "birlos",
+      "llanas",
+      "flotas",
+      "plomería",
+      "tubería PVC",
+      "tubos PVC",
+      "tubo de media pulgada",
+      "tubo de tres cuartos",
+      "tubo PVC 1 pulgada",
+      "tubo PVC 2 pulgadas",
+      "tubo PVC 3 pulgadas",
+      "tubo PVC 4 pulgadas",
+      "tubo PVC 6 pulgadas",
+      "tubo PVC 8 pulgadas",
+      "tazas de baño",
+      "sanitarios",
+      "tinacos",
+      "Rotoplas",
+      "Binax",
+      "depósitos para agua",
+      "malla ciclónica",
+      "malla para cercar terrenos",
+      "cercado",
+      "malla de 1 metro",
+      "malla de 1.50 metros",
+      "malla de 1.75 metros",
+      "malla de 2 metros",
+      "materiales al mayoreo",
+      "materiales al menudeo",
+      "entrega de materiales a domicilio",
+      "materiales para construir",
+      "materiales para remodelar."
+    ],
+    "plan": "destacado",
+    "telefono": "9632337664",
+    "whatsapp": "9632337664",
+    "direccion": "",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "13:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
+    "maps": "",
+    "video": "",
+    "facebook": "",
+    "instagram": "",
+    "tiktok": "",
+    "sitioWeb": "",
+    "banner": "imagenes/materiales-la-frontera/banner.webp",
+    "logo": "imagenes/materiales-la-frontera/logo.webp",
+    "galeria": [
+      "imagenes/materiales-la-frontera/foto-1.webp",
+      "imagenes/materiales-la-frontera/foto-2.webp",
+      "imagenes/materiales-la-frontera/foto-3.webp",
+      "imagenes/materiales-la-frontera/foto-4.webp",
+      "imagenes/materiales-la-frontera/foto-5.webp",
+      "imagenes/materiales-la-frontera/foto-6.webp",
+      "imagenes/materiales-la-frontera/foto-7.webp",
+      "imagenes/materiales-la-frontera/foto-8.webp",
+      "imagenes/materiales-la-frontera/foto-9.webp",
+      "imagenes/materiales-la-frontera/foto-10.webp"
+    ],
+    "delivery": true,
+    "tipoDelivery": "gratis",
+    "verificado": false,
+    "activo": true,
+    "fechaRegistro": "23/9/2026, 10:19:20 p.m."
+  },
+  {
+    "id": 1790232651069,
+    "nombre": "Sayer – El Titán de las Pinturas",
+    "slug": "el-titan-de-las-pinturas",
+    "slogan": "Color, calidad y soluciones para cada proyecto.",
+    "categoria": "construccion",
+    "descripcion": "El Titán de las Pinturas ofrece una amplia variedad de pinturas y productos especializados para las líneas automotriz, vinílica y madera. También cuenta con productos para detallado automotriz y herramientas para diferentes proyectos.",
+    "servicios": [
+      "Pinturas y productos para uso automotriz.",
+      "Pinturas vinílicas.",
+      "Pinturas y recubrimientos para madera.",
+      "Productos para detallado automotriz.",
+      "Herramientas y accesorios"
+    ],
+    "palabrasClave": [
+      "Sayer",
+      "El Titán de las Pinturas",
+      "tienda de pinturas",
+      "pinturería",
+      "pinturas Sayer",
+      "pintura automotriz",
+      "pintura para carros",
+      "pintura para motos",
+      "pintura vinílica",
+      "pintura para casas",
+      "pintura para paredes",
+      "pintura para interiores",
+      "pintura para exteriores",
+      "pintura para madera",
+      "barnices",
+      "esmaltes",
+      "selladores",
+      "impermeabilizantes",
+      "thinner",
+      "solventes",
+      "lijas",
+      "brochas",
+      "rodillos",
+      "pistolas para pintar",
+      "compresores",
+      "pulimentos",
+      "ceras para autos",
+      "productos para detallado automotriz",
+      "pintura en aerosol",
+      "primarios",
+      "resanadores",
+      "masillas",
+      "accesorios para pintar",
+      "herramientas para pintura",
+      "pintura para muebles",
+      "pintura para puertas",
+      "recubrimientos y materiales para pintar."
+    ],
+    "plan": "normal",
+    "telefono": "9633245310",
+    "whatsapp": "9633245310",
+    "direccion": "3a avenida pte sur, Segunda Calle Sur Pte., 30140 Frontera Comalapa, Chis.",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:30",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:30",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:30",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:30",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:30",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:30",
+            "fin": "14:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
+    "maps": "https://maps.app.goo.gl/2xvi5JHHZfZ4MbJx7?g_st=iw",
+    "video": "",
+    "facebook": "",
+    "instagram": "",
+    "tiktok": "https://www.tiktok.com/@el.titan.de.las.p?_r=1&_t=ZS-99yexP0wjR6",
+    "sitioWeb": "",
+    "banner": "imagenes/el-titan-de-las-pinturas/banner.webp",
+    "logo": "imagenes/el-titan-de-las-pinturas/logo.webp",
+    "galeria": [
+      "imagenes/el-titan-de-las-pinturas/foto-1.webp",
+      "imagenes/el-titan-de-las-pinturas/foto-2.webp",
+      "imagenes/el-titan-de-las-pinturas/foto-3.webp",
+      "imagenes/el-titan-de-las-pinturas/foto-4.webp",
+      "imagenes/el-titan-de-las-pinturas/foto-5.webp",
+      "imagenes/el-titan-de-las-pinturas/foto-6.webp"
+    ],
+    "delivery": false,
+    "tipoDelivery": "",
+    "verificado": false,
+    "activo": true,
+    "fechaRegistro": "23/9/2026, 10:19:20 p.m."
   }
 ]

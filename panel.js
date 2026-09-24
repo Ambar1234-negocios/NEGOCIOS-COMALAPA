@@ -10,6 +10,141 @@
 
 const formulario = document.getElementById("form-negocio");
 
+// El editor conserva textos simples; solo los servicios con detalles usan objetos.
+const zonaServicios = document.getElementById('servicios');
+const originalesServicios = new WeakMap();
+function botonServicio(texto, accion) {
+  const boton = document.createElement('button');
+  boton.type = 'button';
+  boton.className = 'btn-horario-secundario';
+  boton.textContent = texto;
+  boton.addEventListener('click', accion);
+  return boton;
+}
+function agregarFilaServicio(servicio = '') {
+  const fila = document.createElement('fieldset');
+  fila.className = 'servicio-editor-fila';
+  originalesServicios.set(fila, servicio);
+  const leyenda = document.createElement('legend');
+  leyenda.textContent = 'Servicio';
+  fila.append(leyenda);
+  const etiqueta = document.createElement('label');
+  etiqueta.textContent = 'Nombre del servicio';
+  const nombre = document.createElement('input');
+  nombre.className = 'servicio-nombre';
+  nombre.type = 'text';
+  nombre.required = true;
+  nombre.value = ServiciosExhibicion.nombre(servicio);
+  nombre.placeholder = 'Por ejemplo: Bebidas';
+  etiqueta.append(nombre);
+  fila.append(etiqueta);
+  const etiquetaToggle = document.createElement('label');
+  etiquetaToggle.className = 'servicio-toggle';
+  const toggle = document.createElement('input');
+  toggle.type = 'checkbox';
+  toggle.className = 'servicio-activo';
+  toggle.checked = servicio?.mostrarDetalles === true;
+  etiquetaToggle.append(toggle, document.createTextNode('Mostrar detalles en el perfil'));
+  fila.append(etiquetaToggle);
+  const contenido = document.createElement('div');
+  contenido.className = 'servicio-editor-contenido';
+  const nota = document.createElement('p');
+  nota.textContent = 'Escribe o pega toda la lista, separando con comas o un elemento por renglón. Para quitar un detalle, borra su texto. Apagar los detalles los oculta sin borrarlos.';
+  const etiquetaLista = document.createElement('label');
+  etiquetaLista.textContent = 'Lista de detalles';
+  const lista = document.createElement('textarea');
+  lista.className = 'servicio-lista-detalles';
+  lista.rows = 6;
+  lista.placeholder = 'Martillos, Taladros, Pinzas, Desarmadores';
+  const guardados = ServiciosExhibicion.detalles(servicio);
+  lista.value = guardados.join('\n');
+  lista.dataset.valorInicial = lista.value;
+  etiquetaLista.append(lista);
+  const etiquetaSeparador = document.createElement('label');
+  etiquetaSeparador.textContent = 'Separar elementos por';
+  const separador = document.createElement('select');
+  separador.className = 'servicio-separador';
+  for (const [valor, texto] of [['ambos', 'Comas o renglones'], ['lineas', 'Solo renglones (permite comas en un nombre)']]) {
+    const opcion = document.createElement('option');
+    opcion.value = valor;
+    opcion.textContent = texto;
+    separador.append(opcion);
+  }
+  separador.value = guardados.some(item => item.includes(',')) ? 'lineas' : 'ambos';
+  separador.dataset.valorInicial = separador.value;
+  etiquetaSeparador.append(separador);
+  contenido.append(nota, etiquetaLista, etiquetaSeparador);
+  contenido.hidden = !toggle.checked;
+  toggle.addEventListener('change', () => { contenido.hidden = !toggle.checked; });
+  fila.append(contenido);
+  fila.append(botonServicio('Quitar servicio', () => {
+    if ((nombre.value.trim() || lista.value.trim()) && !confirm('¿Quitar este servicio y todos sus detalles?')) return;
+    fila.remove();
+    document.getElementById('agregar-servicio').focus();
+  }));
+  zonaServicios.append(fila);
+  return nombre;
+}
+function cargarServiciosEditor(servicios) {
+  zonaServicios.replaceChildren();
+  servicios.forEach(servicio => agregarFilaServicio(servicio));
+}
+function obtenerServiciosEditor() {
+  return Array.from(zonaServicios.children).map(fila => {
+    const original = originalesServicios.get(fila);
+    const nombre = fila.querySelector('.servicio-nombre').value;
+    const mostrarDetalles = fila.querySelector('.servicio-activo').checked;
+    const lista = fila.querySelector('.servicio-lista-detalles');
+    const separador = fila.querySelector('.servicio-separador');
+    // Un cambio en otro campo o en el interruptor no modifica los detalles anteriores.
+    const sinCambios = lista.value === lista.dataset.valorInicial && separador.value === separador.dataset.valorInicial;
+    const detalles = sinCambios ? [...ServiciosExhibicion.detalles(original)] : lista.value.split(separador.value === 'lineas' ? /\r?\n/ : /[,\r\n]/).map(item => item.trim()).filter(Boolean);
+    if (typeof original === 'string' && !mostrarDetalles && detalles.length === 0) return nombre;
+    return {...(typeof original === 'object' ? original : {}), nombre, mostrarDetalles, detalles};
+  });
+}
+document.getElementById('agregar-servicio').addEventListener('click', () => agregarFilaServicio().focus());
+formulario.addEventListener('reset', () => cargarServiciosEditor([]));
+
+function descargarRespaldoNegocios(datos) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(datos, null, 2)], {type:'application/json;charset=utf-8'}));
+  const enlace = document.createElement('a');
+  enlace.href = url;
+  enlace.download = 'negocios-respaldo-' + Date.now() + '.json';
+  document.body.append(enlace);
+  enlace.click();
+  enlace.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+document.getElementById('importar-negocios-json').addEventListener('change', async function () {
+  const archivo = this.files[0];
+  if (!archivo) return;
+  try {
+    if (formulario.dataset.editandoId || zonaServicios.children.length) throw Error('Guarda el negocio que estás editando antes de importar.');
+    const nuevos = ServiciosExhibicion.validarNegocios(JSON.parse(await archivo.text()));
+    const actuales = JSON.parse(localStorage.getItem('exhibicionNegocios') || '[]');
+    const repetidos = nuevos.filter(n => actuales.some(a => a.id === n.id)).length;
+    if (!confirm(`Se importarán ${nuevos.length} negocios; ${repetidos} reemplazarán negocios con el mismo ID. Los demás se conservarán. ${actuales.length ? 'Primero se descargará un respaldo de los datos actuales.' : ''} ¿Continuar?`)) return;
+    const resultado = [...actuales];
+    nuevos.forEach(negocio => {
+      const indice = resultado.findIndex(item => item.id === negocio.id);
+      if (indice < 0) resultado.push(negocio);
+      else resultado[indice] = negocio;
+    });
+    if (actuales.length) descargarRespaldoNegocios(actuales);
+    localStorage.setItem('exhibicionNegocios', JSON.stringify(resultado));
+    mostrarNegociosPanel();
+    actualizarDashboard();
+    cargarCategoriasFiltro();
+    document.getElementById('estado-publicacion').textContent = `${nuevos.length} negocios importados. Puedes editarlos en Negocios. Para publicarlos, genera negocios.json.`;
+  } catch (error) {
+    alert('No se pudo importar: ' + error.message);
+  } finally {
+    this.value = '';
+  }
+});
+
+
 const campoDelivery = document.getElementById("delivery");
 const campoTipoDelivery = document.getElementById("tipo-delivery");
 
@@ -355,6 +490,12 @@ formulario.addEventListener("submit", function (evento) {
   }
 
   const slug = document.getElementById("slug").value.trim();
+  const idEnEdicion = Number(formulario.dataset.editandoId);
+  if (idEnEdicion) {
+    const existente = (JSON.parse(localStorage.getItem('exhibicionNegocios')) || []).find(item => item.id === idEnEdicion);
+    if (!existente) { alert('El negocio que estabas editando ya no está. Abre Nuevo negocio o vuelve a seleccionarlo desde Negocios.'); return; }
+    if ((existente.nombre !== nombre || existente.slug !== slug) && !confirm('Vas a modificar el negocio existente “' + existente.nombre + '” y guardarlo como “' + nombre + '”. Esto NO crea un negocio adicional. Si deseas agregar otro, cancela y pulsa Nuevo negocio. ¿Actualizar el existente?')) return;
+  }
 
   const bannerSeleccionado =
     document.getElementById("banner").files[0];
@@ -387,12 +528,7 @@ formulario.addEventListener("submit", function (evento) {
     categoria,
     descripcion: document.getElementById("descripcion").value.trim(),
 
-    servicios: document
-      .getElementById("servicios")
-      .value
-      .split("\n")
-      .map((servicio) => servicio.trim())
-      .filter((servicio) => servicio !== ""),
+    servicios: obtenerServiciosEditor(),
 
     palabrasClave: document
       .getElementById("palabras-clave")
@@ -468,7 +604,7 @@ formulario.addEventListener("submit", function (evento) {
       negocio.fechaRegistro =
         negociosGuardados[indice].fechaRegistro || negocio.fechaRegistro;
 
-      negociosGuardados[indice] = negocio;
+      negociosGuardados[indice] = {...negociosGuardados[indice], ...negocio};
     }
 
     delete formulario.dataset.editandoId;
@@ -478,6 +614,7 @@ formulario.addEventListener("submit", function (evento) {
 
     alert(`✅ ${nombre} fue actualizado correctamente`);
   } else {
+    while (negociosGuardados.some(item => item.id === negocio.id)) negocio.id++;
     negociosGuardados.push(negocio);
 
     alert(`✅ ${nombre} fue guardado correctamente`);
@@ -735,8 +872,7 @@ function editarNegocio(id) {
   document.getElementById("categoria").value = negocio.categoria || "";
   document.getElementById("descripcion").value = negocio.descripcion || "";
 
-  document.getElementById("servicios").value =
-    negocio.servicios?.join("\n") || "";
+  cargarServiciosEditor(negocio.servicios || []);
 
   document.getElementById("palabras-clave").value =
     Array.isArray(negocio.palabrasClave)
@@ -778,6 +914,7 @@ function editarNegocio(id) {
     negocio.activo !== false;
 
   formulario.dataset.editandoId = id;
+  document.getElementById('titulo-seccion-panel').textContent = 'Editar negocio: ' + negocio.nombre;
 
   formulario.dataset.bannerActual = negocio.banner || "";
   formulario.dataset.logoActual = negocio.logo || "";
@@ -800,26 +937,39 @@ function editarNegocio(id) {
 // EXPORTAR / PUBLICAR NEGOCIOS
 // ============================================================
 
-function exportarNegociosJSON() {
-  const negociosGuardados =
-    JSON.parse(localStorage.getItem("exhibicionNegocios")) || [];
-
-  const contenido = JSON.stringify(negociosGuardados, null, 2);
-  const archivo = new Blob([contenido], { type: "application/json;charset=utf-8" });
-  const url = URL.createObjectURL(archivo);
-  const enlace = document.createElement("a");
-
-  enlace.href = url;
-  enlace.download = "negocios.json";
-  document.body.appendChild(enlace);
-  enlace.click();
-  enlace.remove();
-  URL.revokeObjectURL(url);
-
-  const estado = document.getElementById("estado-publicacion");
-  if (estado) {
-    estado.textContent =
-      `✅ negocios.json generado con ${negociosGuardados.length} negocio${negociosGuardados.length === 1 ? "" : "s"}. Reemplázalo en la carpeta principal del proyecto y publícalo.`;
+async function exportarNegociosJSON() {
+  const boton = document.getElementById('exportar-negocios-json');
+  if (boton.disabled) return;
+  boton.disabled = true;
+  const estado = document.getElementById('estado-publicacion');
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+  try {
+    if (formulario.dataset.editandoId) throw Error('Guarda primero el negocio que estás editando.');
+    const respuesta = await fetch('negocios.json?v=' + Date.now(), {cache:'no-store',signal:controller.signal});
+    if (!respuesta.ok) throw Error('No se pudo consultar negocios.json. No se descargó ningún archivo para evitar una lista incompleta.');
+    const publicados = ServiciosExhibicion.validarNegocios(await respuesta.json());
+    const guardados = ServiciosExhibicion.validarNegocios(JSON.parse(localStorage.getItem('exhibicionNegocios') || '[]'));
+    const faltantes = publicados.filter(publicado => !guardados.some(local => local.id === publicado.id));
+    if (faltantes.length) throw Error('No se descargó el archivo porque en este navegador faltan estos negocios: ' + faltantes.map(n => n.nombre).join(', ') + '. Recupera o importa sus datos antes de publicar. Si deseas ocultar un negocio publicado, conserva su registro y desactívalo.');
+    if (!confirm('Se descargarán ' + guardados.length + ' negocios: ' + guardados.map(n => n.nombre).join(', ') + '. Comprueba que estén todos antes de reemplazar tu archivo. ¿Continuar?')) return;
+    const archivo = new Blob([JSON.stringify(guardados, null, 2)], {type:'application/json;charset=utf-8'});
+    const url = URL.createObjectURL(archivo);
+    const enlace = document.createElement('a');
+    enlace.href = url;
+    enlace.download = 'negocios.json';
+    document.body.appendChild(enlace);
+    enlace.click();
+    enlace.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    if (estado) estado.textContent = 'negocios.json generado con ' + guardados.length + ' negocios. Se comprobó que incluya todos los IDs del archivo actual.';
+  } catch (error) {
+    const mensaje = error.name === 'AbortError' ? 'La comprobación tardó demasiado. No se descargó ningún archivo. Intenta de nuevo cuando esté disponible la página.' : error.message;
+    if (estado) estado.textContent = mensaje;
+    alert(mensaje);
+  } finally {
+    clearTimeout(timeout);
+    boton.disabled = false;
   }
 }
 
@@ -877,8 +1027,25 @@ function abrirSeccionPanel(seccion) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function iniciarNuevoNegocio() {
+  if (formulario.dataset.editandoId && !confirm('Estás editando un negocio. ¿Descartar los cambios sin guardar y abrir un formulario vacío para crear otro?')) return false;
+  formulario.reset();
+  for (const clave of ['editandoId','bannerActual','logoActual','galeriaActual']) delete formulario.dataset[clave];
+  formulario.querySelector('button[type="submit"]').textContent = 'Guardar negocio';
+  cargarServiciosEditor([]);
+  document.getElementById('ruta-imagenes').textContent = 'imagenes/nombre-del-negocio/';
+  for (const id of ['preview-banner','preview-logo']) document.getElementById(id)?.removeAttribute('src');
+  document.getElementById('preview-galeria')?.replaceChildren();
+  const bannerNombre = document.getElementById('nombre-banner');
+  if (bannerNombre) bannerNombre.textContent = 'Ningún banner seleccionado';
+  actualizarControlDelivery();
+  renderizarHorarios();
+  return true;
+}
+
 document.querySelectorAll(".menu-item[data-seccion]").forEach((boton) => {
   boton.addEventListener("click", function () {
+    if (this.dataset.seccion === 'nuevo-negocio' && !iniciarNuevoNegocio()) return;
     abrirSeccionPanel(this.dataset.seccion);
   });
 });

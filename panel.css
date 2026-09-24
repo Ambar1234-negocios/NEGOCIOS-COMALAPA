@@ -1041,3 +1041,24 @@ button[type="submit"]:hover {
 .categoria-fondo-muestra[data-tema="sin-dibujo"] { --tema-patron:none; }
 .categoria-fondo-muestra[data-tema="rayas"] { --tema-patron:repeating-linear-gradient(135deg,transparent 0 13px,rgba(255,255,255,.65) 13px 14px,transparent 14px 27px); }
 .categoria-fondo-muestra{position:relative;isolation:isolate;overflow:hidden;display:grid;place-items:center;min-height:105px;margin:14px 0 20px;padding:16px;border-radius:16px;background:linear-gradient(135deg,#527b99,#40647f);color:white;font-weight:700;text-align:center}.categoria-fondo-muestra::before{content:'';position:absolute;inset:0;background-image:var(--tema-patron);background-size:145px 100px;opacity:.18;z-index:-1}
+
+/* Editor de servicios: estilos limitados a esta función. */
+.editor-servicios { margin: 20px 0; min-width: 0; }
+.editor-servicios > p, .importar-servicios p { color: #52616d; font-size: 14px; line-height: 1.5; }
+.editor-servicios .servicio-editor-fila { min-width: 0; border: 1px solid #ccdcd4; border-radius: 12px; padding: 16px; margin: 14px 0; }
+.editor-servicios legend { font-weight: 600; padding: 0 6px; }
+.editor-servicios .servicio-toggle { display: flex; align-items: center; gap: 10px; margin: 14px 0; }
+.editor-servicios .servicio-toggle input { width: 18px; height: 18px; margin: 0; flex: 0 0 18px; }
+.editor-servicios .servicio-item { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+.editor-servicios .servicio-item input { flex: 1; min-width: 0; margin: 0; }
+.editor-servicios button { width: auto; margin: 8px 0; }
+.editor-servicios .servicio-item button { flex-shrink: 0; margin: 0; }
+.editor-servicios [hidden] { display: none !important; }
+.editor-servicios .servicio-editor-contenido { border-top: 1px solid #dce6e1; margin-top: 8px; padding-top: 8px; }
+.importar-servicios { margin-top: 18px; }
+.importar-servicios label { display: block; margin-bottom: 8px; }
+.editor-servicios input:focus-visible, .editor-servicios button:focus-visible { outline: 3px solid #28705d; outline-offset: 3px; }
+@media (max-width: 480px) {
+  .editor-servicios .servicio-item { flex-wrap: wrap; }
+  .editor-servicios .servicio-item input { flex-basis: 100%; }
+}

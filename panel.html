@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Administrativo | Exhibición Frontera Comalapa</title>
-  <link rel="stylesheet" href="panel.css?v=3">
+  <link rel="stylesheet" href="panel.css?v=4">
 </head>
 
 <body>
@@ -154,12 +154,12 @@
         <label for="descripcion">Descripción</label>
         <textarea id="descripcion" rows="4"></textarea>
 
-        <label for="servicios">Servicios</label>
-        <textarea
-          id="servicios"
-          rows="5"
-          placeholder="Escribe un servicio por línea"
-        ></textarea>
+<section class="editor-servicios" aria-labelledby="titulo-servicios">
+          <h3 id="titulo-servicios">Servicios</h3>
+          <p>Deja cada servicio como etiqueta o activa sus detalles. Ejemplos: Bebidas → Limonada, Café; Herramientas → Martillos, Taladros.</p>
+          <div id="servicios"></div>
+          <button type="button" id="agregar-servicio" class="btn-horario-secundario">Agregar servicio</button>
+        </section>
 
         <label for="palabras-clave">🔎 Palabras clave para búsqueda</label>
         <textarea
@@ -409,6 +409,11 @@
         📤 Generar negocios.json
       </button>
 
+      <div class="importar-servicios">
+        <label for="importar-negocios-json">Importar negocios desde un archivo JSON</label>
+        <input type="file" id="importar-negocios-json" accept=".json,application/json">
+        <p>Agrega los negocios del archivo. Si un ID ya existe, te pediremos confirmar su reemplazo y descargaremos un respaldo antes de importar.</p>
+      </div>
       <p id="estado-publicacion" class="nota-imagenes">
         Los negocios siguen guardándose localmente hasta que publiques el archivo.
       </p>
@@ -841,7 +846,8 @@
        ============================================================ -->
   <script src="contactos.js?v=2"></script>
   <script src="categorias.js?v=2"></script>
-  <script src="panel.js?v=9"></script>
+  <script src="servicios.js?v=1"></script>
+  <script src="panel.js?v=nuevo-seguro-2"></script>
 
 </body>
 </html>

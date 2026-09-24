@@ -2124,3 +2124,17 @@ footer {
 .principal-controles button { min-width:44px;min-height:44px;padding:8px 14px;border:1px solid #cdd8df;border-radius:12px;background:#fff;color:#243e51;font:inherit;font-weight:700;cursor:pointer; }
 .principal-controles button:focus-visible { outline:3px solid #146653;outline-offset:3px; }
 @media(prefers-reduced-motion:reduce){.principal-diapositiva{transition:none}}
+
+/* Detalles opcionales; las etiquetas simples conservan su presentación. */
+.perfil-oficial .servicios-pills { align-items: flex-start; }
+.perfil-oficial .servicio-desplegable { max-width: 100%; border: 1px solid #c4ded3; border-radius: 14px; background: #eaf5ef; color: #205741; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; box-shadow: 0 3px 8px rgba(31,71,58,.05); }
+.perfil-oficial .servicio-desplegable:nth-child(3n+2) { background: #eaf2fa; border-color: #cbdced; color: #295475; }
+.perfil-oficial .servicio-desplegable:nth-child(3n) { background: #fcf4e4; border-color: #ecddbb; color: #755719; }
+.perfil-oficial .servicio-desplegable summary { cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 12px 16px; font-weight: 600; list-style: none; }
+.perfil-oficial .servicio-desplegable summary::-webkit-details-marker { display: none; }
+.perfil-oficial .servicio-desplegable summary svg { flex-shrink: 0; }
+.perfil-oficial .servicio-desplegable summary::after { content: '▾'; margin-left: 8px; }
+.perfil-oficial .servicio-desplegable[open] summary::after { content: '▴'; }
+.perfil-oficial .servicio-desplegable summary:focus-visible { outline: 3px solid #28705d; outline-offset: 3px; border-radius: 14px; }
+.perfil-oficial .servicio-desplegable ul { margin: 0 16px 14px; padding-left: 20px; border-top: 1px solid currentColor; padding-top: 10px; }
+.perfil-oficial .servicio-desplegable li { margin: 5px 0; }

@@ -187,7 +187,7 @@ function etiquetaPromocionNegocio(negocio) {
 }
 
 function contenidoBuscableNegocio(negocio) {
-  const servicios = Array.isArray(negocio.servicios) ? negocio.servicios.join(" ") : "";
+  const servicios = Array.isArray(negocio.servicios) ? negocio.servicios.map(servicio => [ServiciosExhibicion.nombre(servicio), ...(ServiciosExhibicion.visibles(servicio) ? ServiciosExhibicion.detalles(servicio) : [])].join(" ")).join(" ") : "";
   const palabrasClave = Array.isArray(negocio.palabrasClave)
     ? negocio.palabrasClave.join(" ")
     : (negocio.palabrasClave || "");
@@ -675,9 +675,7 @@ function buscarNegocios(opciones = {}) {
       ? `1 resultado para “${campo.value.trim()}”`
       : `${resultados.length} resultados para “${campo.value.trim()}”`;
 
-  lista.innerHTML = resultados
-    .map(({ categoria, negocio }) => crearTarjetaNegocioListado(negocio, categoria))
-    .join("");
+  lista.innerHTML = '<div class="categoria-negocios-grid">' + resultados.map(({ categoria, negocio }) => crearTarjetaNegocioCategoria(negocio,categoria)).join('') + '</div>';
 
   if (actualizarHistorial) {
     history.pushState(
@@ -730,7 +728,7 @@ function verPerfil(categoria, index, opciones = {}) {
       <section class="perfil-seccion">
         <h4>Servicios</h4>
         <div class="servicios-pills">
-          ${negocio.servicios.map(servicio => `<span>✔ ${servicio}</span>`).join("")}
+          ${negocio.servicios.map(ServiciosExhibicion.renderizar).join("")}
         </div>
       </section>
     `
