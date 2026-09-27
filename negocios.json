@@ -1080,5 +1080,131 @@
     "verificado": false,
     "activo": true,
     "fechaRegistro": "24/9/2026, 10:50:13 a.m."
+  },
+  {
+    "id": 1790474364293,
+    "nombre": "Mega Store",
+    "slug": "mega-store",
+    "slogan": "Tecnología, estilo y soluciones en un solo lugar.",
+    "categoria": "streaming",
+    "descripcion": "Mega Store ofrece accesorios tecnológicos, bocinas, relojes, bolsos para dama y perfumes originales, incluyendo decants de 5 y 10 ml. Además, se especializa en mantenimiento preventivo y reparación de computadoras y consolas Xbox.",
+    "servicios": [
+      {
+        "nombre": "Reparación y mantenimiento de computadoras",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Mantenimiento preventivo de computadoras",
+          "Reparación de computadoras",
+          "Servicio técnico de computadoras"
+        ]
+      },
+      "Reparación de consolas Xbox",
+      "Accesorios tecnológicos",
+      {
+        "nombre": "Perfumes originales y decants",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Perfumes originales",
+          "Decants de perfumes de 5 ml",
+          "Decants de perfumes de 10 ml."
+        ]
+      },
+      "Bolsos para dama"
+    ],
+    "palabrasClave": [],
+    "plan": "normal",
+    "telefono": "9631736696",
+    "whatsapp": "9631736696",
+    "direccion": "1.ª Calle Norte Oriente #39, Barrio Santa Cruz, Frontera Comalapa, Chiapas.",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "09:00",
+            "fin": "18:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "09:00",
+            "fin": "18:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "09:00",
+            "fin": "18:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "09:00",
+            "fin": "18:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "09:00",
+            "fin": "18:00"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "09:00",
+            "fin": "15:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
+    "maps": "https://maps.app.goo.gl/sUS32nic8QQK7y6M8?g_st=ac",
+    "video": "",
+    "facebook": "https://www.facebook.com/share/1FCJQAwG1T/",
+    "instagram": "",
+    "tiktok": "",
+    "sitioWeb": "",
+    "banner": "imagenes/mega-store/banner.webp",
+    "logo": "imagenes/mega-store/logo.webp",
+    "galeria": [
+      "imagenes/mega-store/foto-1.webp",
+      "imagenes/mega-store/foto-2.webp",
+      "imagenes/mega-store/foto-3.webp",
+      "imagenes/mega-store/foto-4.webp",
+      "imagenes/mega-store/foto-5.webp",
+      "imagenes/mega-store/foto-6.webp",
+      "imagenes/mega-store/foto-7.webp",
+      "imagenes/mega-store/foto-8.webp",
+      "imagenes/mega-store/foto-9.webp",
+      "imagenes/mega-store/foto-10.webp",
+      "imagenes/mega-store/foto-11.webp",
+      "imagenes/mega-store/foto-12.webp",
+      "imagenes/mega-store/foto-13.webp",
+      "imagenes/mega-store/foto-14.webp",
+      "imagenes/mega-store/foto-15.webp"
+    ],
+    "delivery": false,
+    "tipoDelivery": "",
+    "verificado": false,
+    "activo": true,
+    "fechaRegistro": "26/9/2026, 7:59:24 p.m."
   }
 ]
