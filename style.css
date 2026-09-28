@@ -2181,20 +2181,15 @@ footer {
     box-shadow: 0 0 9px #ffd45a, 0 0 18px rgba(255,184,0,.55), inset 0 0 7px rgba(255,225,115,.6);
   }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .mandaditos-acceso .mandaditos-boton::before {
-    animation: mandaditos-caballito 3.8s ease-in-out infinite;
-  }
-  .mandaditos-acceso .mandaditos-boton::after {
-    animation: mandaditos-luces 2.6s ease-in-out infinite;
-  }
+.mandaditos-acceso .mandaditos-boton::before {
+  -webkit-animation: mandaditos-caballito 3.8s ease-in-out infinite;
+  animation: mandaditos-caballito 3.8s ease-in-out infinite;
+  will-change: transform;
 }
-@media (prefers-reduced-motion: reduce) {
-  .mandaditos-acceso .mandaditos-boton::before,
-  .mandaditos-acceso .mandaditos-boton::after {
-    animation: none;
-    transform: none;
-  }
+.mandaditos-acceso .mandaditos-boton::after {
+  -webkit-animation: mandaditos-luces 2.6s ease-in-out infinite;
+  animation: mandaditos-luces 2.6s ease-in-out infinite;
+  will-change: border-color, box-shadow;
 }
 
 /* Ilustración de reparto en el acceso principal. */
@@ -2256,16 +2251,10 @@ footer {
     flex-basis: 36px;
   }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .perfil-acciones-oficial .perfil-moto-delivery {
-    animation: mandaditos-caballito 3.8s ease-in-out infinite;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .perfil-acciones-oficial .perfil-moto-delivery {
-    animation: none;
-    transform: none;
-  }
+.perfil-acciones-oficial .perfil-moto-delivery {
+  -webkit-animation: mandaditos-caballito 3.8s ease-in-out infinite;
+  animation: mandaditos-caballito 3.8s ease-in-out infinite;
+  will-change: transform;
 }
 /* Costo de entrega dentro del botón, bajo el título. */
 .perfil-acciones-oficial .accion-delivery .perfil-envio-etiqueta {
