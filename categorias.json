@@ -74,5 +74,10 @@
     "id": "cat-ropa-calzado-y-accesorios",
     "nombre": "Ropa, Calzado y Accesorios",
     "fondo": "automatico"
+  },
+  {
+    "id": "cat-floreria",
+    "nombre": "Florería",
+    "fondo": "rayas"
   }
 ]
