@@ -2138,3 +2138,157 @@ footer {
 .perfil-oficial .servicio-desplegable summary:focus-visible { outline: 3px solid #28705d; outline-offset: 3px; border-radius: 14px; }
 .perfil-oficial .servicio-desplegable ul { margin: 0 16px 14px; padding-left: 20px; border-top: 1px solid currentColor; padding-top: 10px; }
 .perfil-oficial .servicio-desplegable li { margin: 5px 0; }
+
+/* Acceso principal: moto con caballito y luces de marquesina. */
+.compras-encargo .mandaditos-acceso .mandaditos-boton {
+  position: relative;
+  overflow: visible;
+  background: linear-gradient(135deg, #ffe078, #ffc02f);
+  border-color: #d29316;
+  box-shadow: 0 5px 16px rgba(161, 102, 9, .26), inset 0 1px 0 rgba(255,255,255,.65);
+  gap: 16px;
+}
+.mandaditos-acceso .mandaditos-boton::before {
+  display: inline-block;
+  font-size: 30px;
+  line-height: 1;
+  transform-origin: 75% 85%;
+}
+.mandaditos-acceso .mandaditos-boton::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 3px dotted #ffdf72;
+  border-radius: 17px;
+  pointer-events: none;
+  box-shadow: 0 0 7px rgba(255,185,24,.65), inset 0 0 5px rgba(255,185,24,.3);
+}
+@keyframes mandaditos-caballito {
+  0%, 12%, 78%, 100% { transform: translate(0, 0) rotate(0); }
+  20% { transform: translate(1px, 1px) rotate(-6deg); }
+  34% { transform: translate(-3px, -3px) rotate(32deg); }
+  45% { transform: translate(-4px, -3px) rotate(28deg); }
+  55% { transform: translate(-5px, -4px) rotate(35deg); }
+  68% { transform: translate(-2px, 0) rotate(-4deg); }
+}
+@keyframes mandaditos-luces {
+  0%, 100% {
+    border-color: #eeb12b;
+    box-shadow: 0 0 5px rgba(255,185,24,.4), inset 0 0 4px rgba(255,185,24,.2);
+  }
+  50% {
+    border-color: #fff6c7;
+    box-shadow: 0 0 9px #ffd45a, 0 0 18px rgba(255,184,0,.55), inset 0 0 7px rgba(255,225,115,.6);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mandaditos-acceso .mandaditos-boton::before {
+    animation: mandaditos-caballito 3.8s ease-in-out infinite;
+  }
+  .mandaditos-acceso .mandaditos-boton::after {
+    animation: mandaditos-luces 2.6s ease-in-out infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mandaditos-acceso .mandaditos-boton::before,
+  .mandaditos-acceso .mandaditos-boton::after {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Ilustración de reparto en el acceso principal. */
+.compras-encargo .mandaditos-acceso .mandaditos-boton {
+  min-height: 74px;
+  padding: 16px 18px;
+  gap: 14px;
+}
+.mandaditos-acceso .mandaditos-boton::before {
+  content: "";
+  width: 64px;
+  height: 43px;
+  flex: 0 0 64px;
+  background: url("imagenes/moto-mandaditos.png") center / contain no-repeat;
+  transform-origin: 78% 85%;
+  pointer-events: none;
+}
+@media (max-width: 360px) {
+  .compras-encargo .mandaditos-acceso .mandaditos-boton {
+    gap: 10px;
+    padding-inline: 12px;
+  }
+  .mandaditos-acceso .mandaditos-boton::before {
+    width: 54px;
+    height: 36px;
+    flex-basis: 54px;
+  }
+}
+/* Iconos de contacto y reparto dentro de los perfiles. */
+.perfil-acciones-oficial .accion .perfil-icono-whatsapp {
+  display: block;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+}
+.perfil-acciones-oficial .accion .perfil-moto-delivery {
+  display: block;
+  width: 36px;
+  height: 24px;
+  object-fit: contain;
+  flex: 0 0 36px;
+  transform-origin: 78% 85%;
+  pointer-events: none;
+}
+.perfil-acciones-oficial .accion-delivery {
+  overflow: visible;
+  min-height: 56px;
+  padding: 5px 8px;
+  gap: 6px;
+}
+.perfil-acciones-oficial .accion-delivery > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 380px) {
+  .perfil-acciones-oficial .accion .perfil-moto-delivery {
+    width: 36px;
+    height: 24px;
+    flex-basis: 36px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .perfil-acciones-oficial .perfil-moto-delivery {
+    animation: mandaditos-caballito 3.8s ease-in-out infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .perfil-acciones-oficial .perfil-moto-delivery {
+    animation: none;
+    transform: none;
+  }
+}
+/* Costo de entrega dentro del botón, bajo el título. */
+.perfil-acciones-oficial .accion-delivery .perfil-envio-etiqueta {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: 2px;
+  padding: 1px 4px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 12px;
+  text-align: center;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+.perfil-acciones-oficial .accion-delivery .envio-gratis {
+  background: #e5f5e9;
+  border-color: #a6d8b3;
+  color: #14532d;
+}
+.perfil-acciones-oficial .accion-delivery .envio-con-costo {
+  background: #fff0cb;
+  border-color: #e8c46b;
+  color: #713f12;
+}
