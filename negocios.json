@@ -239,7 +239,7 @@
       "Parque Central"
     ],
     "plan": "destacado",
-    "telefono": "",
+    "telefono": "9992511142",
     "whatsapp": "9992511142",
     "direccion": "",
     "horarios": {
@@ -319,11 +319,64 @@
       "imagenes/forno-mexa/foto-6.webp",
       "imagenes/forno-mexa/foto-7.webp"
     ],
-    "delivery": false,
-    "tipoDelivery": "",
+    "delivery": true,
+    "tipoDelivery": "mandaditos",
     "verificado": true,
     "activo": true,
-    "fechaRegistro": "15/9/2026, 12:11:19 p.m."
+    "fechaRegistro": "15/9/2026, 12:11:19 p.m.",
+    "productos": [
+      {
+        "id": "p-a4ba0895-d4ef-4eae-a368-2dc75d7846d5",
+        "nombre": "hamburguesas clasicas",
+        "precio": 99,
+        "foto": "imagenes/forno-mexa/foto-1.webp",
+        "ingredientes": "pan,tomate,cebolla",
+        "disponible": true,
+        "enCarrusel": true,
+        "extras": []
+      },
+      {
+        "id": "p-a69b6641-4408-4f75-bfd7-918c92f94e68",
+        "nombre": "Pizza Hawaiana",
+        "precio": 299,
+        "foto": "imagenes/forno-mexa/foto-2.webp",
+        "ingredientes": "Jamón, piña, queso mozzarella y salsa de tomate",
+        "disponible": true,
+        "enCarrusel": true,
+        "extras": []
+      },
+      {
+        "id": "p-0759fe6c-3c24-40db-9e13-ff320a578347",
+        "nombre": "Pizza Mexicana",
+        "precio": 299,
+        "foto": "imagenes/forno-mexa/foto-3.webp",
+        "ingredientes": "chorizo,masa,chiles,queso",
+        "disponible": true,
+        "enCarrusel": true,
+        "extras": []
+      },
+      {
+        "id": "p-4a774b20-e9da-4e85-bbab-d17c77ba8da7",
+        "nombre": "Pizza de Champiñones",
+        "precio": 250,
+        "foto": "imagenes/forno-mexa/foto-4.webp",
+        "ingredientes": "Champiñones, queso mozzarella y salsa de tomate",
+        "disponible": true,
+        "enCarrusel": true,
+        "extras": []
+      },
+      {
+        "id": "p-71ffc1d4-5c50-45a0-8aaf-0f39ff8e5db2",
+        "nombre": "Pizza de Queso",
+        "precio": 200,
+        "foto": "imagenes/forno-mexa/foto-5.webp",
+        "ingredientes": "Queso mozzarella y salsa de tomate",
+        "disponible": true,
+        "enCarrusel": true,
+        "extras": []
+      }
+    ],
+    "mostrarGaleria": true
   },
   {
     "id": 1790180835560,
