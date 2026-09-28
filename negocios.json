@@ -1206,5 +1206,203 @@
     "verificado": false,
     "activo": true,
     "fechaRegistro": "26/9/2026, 7:59:24 p.m."
+  },
+  {
+    "id": 1790574389951,
+    "nombre": "Elegans Florería",
+    "slug": "elegans-floreria",
+    "slogan": "Detalles que hablan por ti.",
+    "categoria": "cat-floreria",
+    "descripcion": "Elegans Florería ofrece arreglos florales y detalles para diferentes ocasiones, con atención en horario amplio para que puedas encontrar una opción especial cuando la necesites.",
+    "servicios": [
+      {
+        "nombre": "Ramos y arreglos florales",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Ramos de flores",
+          "Arreglos florales",
+          "Arreglos para regalo",
+          "Detalles con flores"
+        ]
+      },
+      {
+        "nombre": "Arreglos para ocasiones especiales",
+        "mostrarDetalles": true,
+        "detalles": [
+          "14 de febrero",
+          "Día de las Madres",
+          "Cumpleaños",
+          "Aniversarios",
+          "Graduaciones",
+          "Pedidas de mano",
+          "Felicitaciones",
+          "Eventos especiales"
+        ]
+      },
+      {
+        "nombre": "Arreglos para eventos",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Centros de mesa",
+          "Arreglos para fiestas",
+          "Decoración floral para eventos",
+          "Arreglos para mesas"
+        ]
+      },
+      {
+        "nombre": "Arreglos de condolencias",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Arreglos para funeral",
+          "Arreglos de condolencias",
+          "Flores para velorios",
+          "Arreglos de despedida"
+        ]
+      },
+      {
+        "nombre": "Detalles para regalar",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Detalles románticos",
+          "Detalles para cumpleaños",
+          "Regalos con flores",
+          "Detalles para ocasiones especiales"
+        ]
+      }
+    ],
+    "palabrasClave": [
+      "Elegans Florería",
+      "florería",
+      "flores",
+      "venta de flores",
+      "ramos de flores",
+      "ramo floral",
+      "arreglos florales",
+      "arreglos de flores",
+      "flores para regalar",
+      "detalles",
+      "regalos",
+      "detalles con flores",
+      "flores para cumpleaños",
+      "arreglos para cumpleaños",
+      "flores para aniversario",
+      "arreglos para aniversario",
+      "flores para novia",
+      "flores románticas",
+      "14 de febrero",
+      "San Valentín",
+      "flores para San Valentín",
+      "arreglos para 14 de febrero",
+      "Día de las Madres",
+      "flores para mamá",
+      "arreglos para Día de las Madres",
+      "graduaciones",
+      "flores para graduación",
+      "arreglos para graduaciones",
+      "eventos especiales",
+      "centros de mesa",
+      "arreglos para eventos",
+      "decoración floral",
+      "arreglos para fiestas",
+      "arreglos para funeral",
+      "flores para funeral",
+      "flores para velorio",
+      "arreglos de condolencias",
+      "flores de condolencias",
+      "detalles para regalar",
+      "regalos románticos",
+      "florería en Frontera Comalapa",
+      "flores en Frontera Comalapa",
+      "Elegans Florería."
+    ],
+    "plan": "normal",
+    "telefono": "9631731610",
+    "whatsapp": "9631731610",
+    "direccion": "1a. Avenida Pte. Nte. 27, Centro, 30140 Frontera Comalapa, Chis.",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "22:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "22:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "22:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "22:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "22:00"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "22:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
+    "maps": "https://maps.app.goo.gl/FVVGpWtpj1X45qDFA?g_st=ac",
+    "video": "",
+    "facebook": "",
+    "instagram": "",
+    "tiktok": "",
+    "sitioWeb": "",
+    "banner": "imagenes/elegans-floreria/banner.webp",
+    "logo": "imagenes/elegans-floreria/logo.webp",
+    "galeria": [
+      "imagenes/elegans-floreria/foto-1.webp",
+      "imagenes/elegans-floreria/foto-2.webp",
+      "imagenes/elegans-floreria/foto-3.webp",
+      "imagenes/elegans-floreria/foto-4.webp",
+      "imagenes/elegans-floreria/foto-5.webp",
+      "imagenes/elegans-floreria/foto-6.webp",
+      "imagenes/elegans-floreria/foto-7.webp",
+      "imagenes/elegans-floreria/foto-8.webp",
+      "imagenes/elegans-floreria/foto-9.webp",
+      "imagenes/elegans-floreria/foto-10.webp"
+    ],
+    "delivery": false,
+    "tipoDelivery": "",
+    "verificado": false,
+    "activo": true,
+    "fechaRegistro": "27/9/2026, 11:46:29 p.m."
   }
 ]
