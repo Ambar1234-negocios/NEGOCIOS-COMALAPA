@@ -494,6 +494,7 @@ formulario.addEventListener("submit", function (evento) {
   if (idEnEdicion) {
     const existente = (JSON.parse(localStorage.getItem('exhibicionNegocios')) || []).find(item => item.id === idEnEdicion);
     if (!existente) { alert('El negocio que estabas editando ya no está. Abre Nuevo negocio o vuelve a seleccionarlo desde Negocios.'); return; }
+    if (existente.descripcion?.trim() && !document.getElementById('descripcion').value.trim() && !confirm('La descripción estaba guardada y ahora está vacía. ¿Quieres borrarla?')) return;
     if ((existente.nombre !== nombre || existente.slug !== slug) && !confirm('Vas a modificar el negocio existente “' + existente.nombre + '” y guardarlo como “' + nombre + '”. Esto NO crea un negocio adicional. Si deseas agregar otro, cancela y pulsa Nuevo negocio. ¿Actualizar el existente?')) return;
   }
 
@@ -511,6 +512,8 @@ formulario.addEventListener("submit", function (evento) {
   // CONSTRUIR DATOS DEL NEGOCIO
   // ============================================================
 
+  let productosMenu;
+  try { productosMenu = window.MenuEditor.leer(); } catch (error) { alert(error.message); return; }
   let horariosNegocio;
 
   try {
@@ -521,6 +524,8 @@ formulario.addEventListener("submit", function (evento) {
   }
 
   const negocio = {
+    mostrarGaleria: document.getElementById("mostrar-galeria").checked,
+    productos: productosMenu,
     id: Date.now(),
     nombre,
     slug,
@@ -607,17 +612,17 @@ formulario.addEventListener("submit", function (evento) {
       negociosGuardados[indice] = {...negociosGuardados[indice], ...negocio};
     }
 
-    delete formulario.dataset.editandoId;
+    // El formulario permanece en edición después de guardar.
 
     document.querySelector('button[type="submit"]').textContent =
       "Guardar negocio";
 
-    alert(`✅ ${nombre} fue actualizado correctamente`);
+
   } else {
     while (negociosGuardados.some(item => item.id === negocio.id)) negocio.id++;
     negociosGuardados.push(negocio);
 
-    alert(`✅ ${nombre} fue guardado correctamente`);
+
   }
 
 
@@ -625,25 +630,19 @@ formulario.addEventListener("submit", function (evento) {
   // GUARDAR EN LOCALSTORAGE
   // ============================================================
 
-  localStorage.setItem(
-    "exhibicionNegocios",
-    JSON.stringify(negociosGuardados)
-  );
+  try {
+    localStorage.setItem("exhibicionNegocios", JSON.stringify(negociosGuardados));
+  } catch (error) {
+    alert("No se pudo guardar. Tus cambios siguen en el formulario. Revisa el espacio disponible del navegador e inténtalo de nuevo.");
+    return;
+  }
 
   mostrarNegociosPanel();
 
   console.log("Negocio guardado:", negocio);
 
-  formulario.reset();
-  delete formulario.dataset.bannerActual;
-  delete formulario.dataset.logoActual;
-  delete formulario.dataset.galeriaActual;
-
-  const planNegocio = document.getElementById("plan-negocio");
-  if (planNegocio) planNegocio.value = "normal";
-
-  actualizarControlDelivery();
-  renderizarHorarios();
+  editarNegocio(negocio.id);
+  alert(`✅ ${nombre} guardado. Su información e imágenes se conservan. Para crear otro negocio, pulsa Nuevo negocio.`);
 });
 
 
@@ -865,6 +864,9 @@ function editarNegocio(id) {
   }
 
   abrirSeccionPanel("nuevo-negocio");
+  // Evita reutilizar archivos seleccionados al editar otro negocio.
+  for (const id of ["banner", "logo", "galeria"]) document.getElementById(id).value = "";
+  document.getElementById("mostrar-galeria").checked = negocio.mostrarGaleria !== false;
 
   document.getElementById("nombre").value = negocio.nombre || "";
   document.getElementById("slug").value = negocio.slug || "";
@@ -873,6 +875,7 @@ function editarNegocio(id) {
   document.getElementById("descripcion").value = negocio.descripcion || "";
 
   cargarServiciosEditor(negocio.servicios || []);
+  window.MenuEditor.cargar(negocio.productos || []);
 
   document.getElementById("palabras-clave").value =
     Array.isArray(negocio.palabrasClave)
@@ -920,6 +923,7 @@ function editarNegocio(id) {
   formulario.dataset.logoActual = negocio.logo || "";
   formulario.dataset.galeriaActual =
     JSON.stringify(negocio.galeria || []);
+  mostrarImagenesGuardadas(negocio);
 
   document.querySelector('button[type="submit"]').textContent =
     "Actualizar negocio";
@@ -2147,3 +2151,17 @@ function actualizarMuestraFondo(){
 }
 document.getElementById('categoria-fondo').addEventListener('change',actualizarMuestraFondo);
 actualizarMuestraFondo();
+
+function mostrarImagenesGuardadas(negocio) {
+  for (const tipo of ['banner','logo']) {
+    const ruta=negocio[tipo] || '';
+    const preview=document.getElementById('preview-'+tipo);
+    if(ruta) preview.src=ruta;else preview.removeAttribute('src');
+    document.getElementById('nombre-'+tipo).textContent=ruta ? 'Guardado: '+ruta+' (se conserva)' : 'Sin imagen guardada';
+  }
+  const fotos=Array.isArray(negocio.galeria)?negocio.galeria:[];
+  const preview=document.getElementById('preview-galeria');preview.replaceChildren();
+  fotos.forEach((ruta,i)=>{const img=document.createElement('img');img.src=ruta;img.alt='Foto guardada '+(i+1);preview.append(img);});
+  document.getElementById('cantidad-galeria').textContent=fotos.length+' fotos guardadas. No necesitas seleccionarlas otra vez.';
+  document.getElementById('ruta-imagenes').textContent='imagenes/'+negocio.slug+'/';
+}

@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Administrativo | Exhibición Frontera Comalapa</title>
   <link rel="stylesheet" href="panel.css?v=4">
+<link rel="stylesheet" href="comida.css?v=pedido-20260928">
 </head>
 
 <body>
@@ -312,7 +313,10 @@
   <img id="preview-logo" alt="Vista previa del logo">
 </div>
 
-        <label for="galeria">Galería WebP</label>
+        <label><input type="checkbox" id="mostrar-galeria" checked> Mostrar galería en el perfil</label>
+<p>Opcional: úsala para fotos del local, ambiente o eventos. Puedes ocultarla y conservar todas sus fotos.</p>
+<p>Las imágenes guardadas se conservan si no seleccionas reemplazos. El selector de archivos vacío no significa que se hayan borrado.</p>
+<label for="galeria">Galería WebP</label>
         <input type="file" id="galeria" accept=".webp" multiple>
         <p id="cantidad-galeria">0 fotos seleccionadas</p>
 
@@ -847,7 +851,8 @@
   <script src="contactos.js?v=2"></script>
   <script src="categorias.js?v=2"></script>
   <script src="servicios.js?v=1"></script>
-  <script src="panel.js?v=nuevo-seguro-2"></script>
+  <script src="comida-panel.js?v=pedido-20260928"></script>
+  <script src="panel.js?v=pedido-20260928"></script>
 
 </body>
 </html>

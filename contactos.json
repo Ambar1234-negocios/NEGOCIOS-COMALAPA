@@ -2,21 +2,29 @@
   "version": 1,
   "shein": {
     "numero": "529631181815",
-    "activo": true
+    "activo": true,
+    "nombre": "SHEIN",
+    "color": "#111111"
   },
   "tiktok": {
     "numero": "529631181815",
-    "activo": true
-  },
-  "mercadolibre": {
-    "numero": "529631181815",
-    "activo": true
-  },
-  "mandaditos": {
-    "numero": "529633106862"
+    "activo": true,
+    "nombre": "TikTok Shop",
+    "color": "#111111"
   },
   "temu": {
     "numero": "529631181815",
-    "activo": true
+    "activo": true,
+    "nombre": "Temu",
+    "color": "#c84900"
+  },
+  "mercadolibre": {
+    "numero": "529631181815",
+    "activo": true,
+    "nombre": "Mercado Libre",
+    "color": "#ffe600"
+  },
+  "mandaditos": {
+    "numero": "529633270600"
   }
 }

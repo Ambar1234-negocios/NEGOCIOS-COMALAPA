@@ -914,7 +914,7 @@ function verPerfil(categoria, index, opciones = {}) {
   </section>
 ` : "";
   
-  const galeriaHTML = negocio.galeria && negocio.galeria.length > 0 ? `
+  const galeriaHTML = negocio.mostrarGaleria !== false && negocio.galeria && negocio.galeria.length > 0 ? `
   <section class="perfil-galeria-fotos">
     <h4>📷 Galería</h4>
     <div class="galeria-grid">
@@ -969,6 +969,7 @@ function verPerfil(categoria, index, opciones = {}) {
           </section>
         ` : ""}
 
+        ${window.ComidaExhibicion.menu(negocio)}
         ${promocionesHTML}
         
         ${galeriaHTML}
@@ -984,6 +985,7 @@ function verPerfil(categoria, index, opciones = {}) {
     </article>
   `;
 
+  window.ComidaExhibicion.conectar(negocio);
   setTimeout(() => {
     document.querySelector(".perfil-negocio").scrollIntoView({
       behavior: "smooth",
@@ -1880,3 +1882,25 @@ function iniciarRotacionPrincipal(anuncios, contenedor) {
     document.removeEventListener('visibilitychange',programar);reducido.removeEventListener('change',cambiarMovimiento);
   };
 }
+
+Promise.resolve(cargaNegociosPublicados).then(() => window.ComidaExhibicion.carrusel(Object.values(negocios).flat()));
+window.addEventListener('comida-abrir', evento => {
+  const detalle = typeof evento.detail === 'string' ? { slug: evento.detail } : (evento.detail || {});
+  for (const [categoria, lista] of Object.entries(negocios)) {
+    const indice = lista.findIndex(n => n.slug === detalle.slug);
+    if (indice >= 0) {
+      verPerfil(categoria, indice);
+      if (detalle.productoId) {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          const tarjeta = Array.from(document.querySelectorAll('[data-producto-id]')).find(el => el.dataset.productoId === detalle.productoId);
+          if (tarjeta) {
+            tarjeta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            tarjeta.classList.add('comida-producto-destacado');
+            setTimeout(() => tarjeta.classList.remove('comida-producto-destacado'), 1800);
+          }
+        }));
+      }
+      break;
+    }
+  }
+});
