@@ -15,11 +15,37 @@
     const vistos=new Set();
     return (Array.isArray(p.extras)?p.extras:[]).filter(x=>x && typeof x.id==='string' && !vistos.has(x.id) && vistos.add(x.id) && typeof x.nombre==='string' && x.nombre.trim() && Number.isFinite(x.precio) && x.precio>=0 && x.precio<=100000 && x.disponible!==false);
   }
+  // Los precios propios aportan solo la diferencia respecto al precio base.
+  function grupos(p) {
+    const vistos=new Set();
+    return (Array.isArray(p.gruposOpciones)?p.gruposOpciones:[]).map(g=>{
+      const ids=new Set();
+      const opciones=(Array.isArray(g?.opciones)?g.opciones:[]).filter(x=>x && typeof x.id==='string' && !ids.has(x.id) && ids.add(x.id) && typeof x.nombre==='string' && x.nombre.trim() && Number.isFinite(x.precio) && x.precio>=0 && x.precio<=100000 && x.disponible!==false);
+      const valido=g && typeof g.id==='string' && !vistos.has(g.id) && typeof g.nombre==='string' && g.nombre.trim() && ['unica','multiple'].includes(g.seleccion);
+      if(g?.id)vistos.add(g.id);
+      return {...g,opciones,valido};
+    });
+  }
+  const ajuste=(p,opciones)=>(opciones||[]).reduce((s,x)=>s+centavos(x.precio)-(x.tipoPrecio==='propio'?centavos(p.precio):0),0);
+  const firmaOpciones=l=>JSON.stringify((l.opciones||[]).map(x=>[x.grupoId,x.id]).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b))));
+  const descripcionOpciones=l=>(l.opciones||[]).map(x=>x.grupoNombre+': '+x.nombre).join(' · ');
+  function validarOpciones(p,seleccion) {
+    const gs=grupos(p);
+    if(gs.some(g=>!g.valido))return 'Este producto tiene opciones incompletas. Consulta al negocio.';
+    if(gs.filter(g=>g.opciones.some(x=>x.tipoPrecio==='propio')).length>1 || gs.some(g=>g.seleccion==='multiple'&&g.opciones.some(x=>x.tipoPrecio==='propio')))return 'Este producto tiene precios de opciones incompatibles. Consulta al negocio.';
+    for(const g of gs){
+      const elegidas=seleccion.filter(x=>x.grupoId===g.id);
+      if(g.obligatorio&&!elegidas.length)return 'Elige una opción de '+g.nombre+'.';
+      if(g.seleccion==='unica'&&elegidas.length>1)return 'Elige solo una opción de '+g.nombre+'.';
+    }
+    if(centavos(p.precio)+ajuste(p,seleccion)<0)return 'Revisa las opciones de este producto.';
+    return '';
+  }
   let pedido={negocio:null,lineas:[]};
-  const unitario=l=>centavos(l.producto.precio)+l.extras.reduce((s,x)=>s+centavos(x.precio),0);
+  const unitario=l=>centavos(l.producto.precio)+ajuste(l.producto,l.opciones)+l.extras.reduce((s,x)=>s+centavos(x.precio),0);
   const total=()=>pedido.lineas.reduce((s,l)=>s+unitario(l)*l.cantidad,0);
   const cantidadTotal=()=>pedido.lineas.reduce((s,l)=>s+l.cantidad,0);
-  function mismaPreparacion(a,b) {return a.producto.id===b.producto.id && a.nota===b.nota && a.extras.map(x=>x.id).sort().join('|')===b.extras.map(x=>x.id).sort().join('|');}
+  function mismaPreparacion(a,b) {return a.producto.id===b.producto.id && a.nota===b.nota && firmaOpciones(a)===firmaOpciones(b) && a.extras.map(x=>x.id).sort().join('|')===b.extras.map(x=>x.id).sort().join('|');}
   let negocioVisible=null;
   let barra;
   function dialogo(titulo,clase,origen) {
@@ -35,7 +61,7 @@
   function resumen() {
     if(!pedido.lineas.length)return '<p>Agrega productos para armar tu pedido.</p>';
     const n=pedido.negocio;
-    return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${escapar(l.producto.nombre)}</strong><p>${l.extras.length?l.extras.map(x=>`${escapar(x.nombre)} (${x.precio?'+ '+dinero(centavos(x.precio)):'sin costo'})`).join(' · '):'Sin extras'}</p>${l.nota?`<p class="pedido-nota">Indicación: ${escapar(l.nota)}</p>`:''}<p>${dinero(unitario(l))} por unidad · <strong>${dinero(unitario(l)*l.cantidad)}</strong></p></div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total de productos: ${dinero(total())}</p><p>${n.delivery===true?(n.tipoDelivery==='gratis'?'El negocio indica entrega gratis. Confirma cobertura y condiciones.':'Envío por cotizar; no está incluido en el total.'):'Este negocio no tiene reparto habilitado. Consulta opciones directamente con él.'}</p><div class="comida-acciones"><button type="button" data-pedido-accion="enviar">${n.delivery===true&&n.tipoDelivery!=='gratis'?'Pedir con Mandaditos':'Consultar pedido por WhatsApp'}</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
+    return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${escapar(l.producto.nombre)}</strong><p>${escapar(descripcionOpciones(l))}</p><p>${l.extras.length?l.extras.map(x=>`${escapar(x.nombre)} (${x.precio?'+ '+dinero(centavos(x.precio)):'sin costo'})`).join(' · '):'Sin extras'}</p>${l.nota?`<p class="pedido-nota">Indicación: ${escapar(l.nota)}</p>`:''}<p>${dinero(unitario(l))} por unidad · <strong>${dinero(unitario(l)*l.cantidad)}</strong></p></div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total de productos: ${dinero(total())}</p><p>${n.delivery===true?(n.tipoDelivery==='gratis'?'El negocio indica entrega gratis. Confirma cobertura y condiciones.':'Envío por cotizar; no está incluido en el total.'):'Este negocio no tiene reparto habilitado. Consulta opciones directamente con él.'}</p><div class="comida-acciones"><button type="button" data-pedido-accion="enviar">${n.delivery===true&&n.tipoDelivery!=='gratis'?'Pedir con Mandaditos':'Consultar pedido por WhatsApp'}</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
   }
   function pintarPedido() {
     const el=document.getElementById('comida-pedido');
@@ -49,14 +75,20 @@
   function configurar(n,p,origen,linea=null) {
     const d=dialogo(linea?'Editar preparación':'Personaliza tu pedido','pedido-configurar',origen);
     const contenido=d.querySelector('.dialogo-contenido');
-    contenido.innerHTML=`${foto(p)}<h3>${escapar(p.nombre)}</h3><p>Precio base: ${dinero(centavos(p.precio))}</p><form><fieldset class="pedido-extras"><legend>Extras y opciones (opcionales)</legend>${extras(p).map(x=>`<label><input type="checkbox" value="${escapar(x.id)}" ${linea?.extras.some(e=>e.id===x.id)?'checked':''}><span>${escapar(x.nombre)}</span><strong>${x.precio?'+ '+dinero(centavos(x.precio)):'Sin costo'}</strong></label>`).join('')||'<p>Este producto no tiene extras configurados.</p>'}</fieldset><label class="pedido-campo">Indicaciones (opcional)<textarea name="nota" rows="2" maxlength="300" placeholder="Por ejemplo: salsa aparte">${escapar(linea?.nota||'')}</textarea></label><label class="pedido-campo">Cantidad<input name="cantidad" type="number" min="1" max="99" step="1" required value="${linea?.cantidad||1}"></label><p class="pedido-config-total" role="status"></p><p class="pedido-config-error" role="alert"></p><button type="submit" class="pedido-confirmar">${linea?'Guardar preparación':'Agregar al pedido'}</button></form>`;
+    const gs=grupos(p);
+    const encabezado=g=>({tamaño:'Elige tu tamaño',sabor:'Elige tu sabor','tipo de carne':'Elige el tipo de carne',presentación:'Elige la presentación'}[String(g.nombre).toLocaleLowerCase('es-MX')]||'Elige: '+g.nombre);
+    const secciones=gs.map((g,i)=>`<fieldset class="pedido-extras pedido-grupo" data-grupo="${i}"><legend>${escapar(encabezado(g))}</legend><p>${g.obligatorio?'Obligatorio':'Opcional'} · ${g.seleccion==='multiple'?'Puedes elegir varias':'Elige una opción'}</p>${g.seleccion==='unica'&&!g.obligatorio?`<label><input type="radio" name="grupo-${i}" value="" ${!linea?.opciones?.some(x=>x.grupoId===g.id)?'checked':''}><span>Sin selección</span></label>`:''}${g.opciones.map(x=>`<label><input type="${g.seleccion==='multiple'?'checkbox':'radio'}" name="grupo-${i}" value="${escapar(x.id)}" ${linea?.opciones?.some(e=>e.grupoId===g.id&&e.id===x.id)?'checked':''}><span>${escapar(x.nombre)}</span><strong>${x.tipoPrecio==='propio'?dinero(centavos(x.precio))+' por unidad':x.precio?'+ '+dinero(centavos(x.precio)):'Sin costo adicional'}</strong></label>`).join('')||'<p>No hay opciones disponibles.</p>'}</fieldset>`).join('');
+    contenido.innerHTML=`${foto(p)}<h3>${escapar(p.nombre)}</h3><p>Precio base: ${dinero(centavos(p.precio))}</p><form>${secciones}<fieldset class="pedido-extras pedido-extras-legacy"><legend>Extras (opcionales)</legend>${extras(p).map(x=>`<label><input type="checkbox" value="${escapar(x.id)}" ${linea?.extras.some(e=>e.id===x.id)?'checked':''}><span>${escapar(x.nombre)}</span><strong>${x.precio?'+ '+dinero(centavos(x.precio)):'Sin costo'}</strong></label>`).join('')||'<p>Este producto no tiene extras configurados.</p>'}</fieldset><label class="pedido-campo">Indicaciones (opcional)<textarea name="nota" rows="2" maxlength="300" placeholder="Por ejemplo: salsa aparte">${escapar(linea?.nota||'')}</textarea></label><label class="pedido-campo">Cantidad<input name="cantidad" type="number" min="1" max="99" step="1" required value="${linea?.cantidad||1}"></label><p class="pedido-config-total" role="status"></p><p class="pedido-config-error" role="alert"></p><button type="submit" class="pedido-confirmar">${linea?'Guardar preparación':'Agregar al pedido'}</button></form>`;
     const form=contenido.querySelector('form');
-    const seleccion=()=>extras(p).filter(x=>Array.from(form.querySelectorAll('input[type=checkbox]:checked')).some(el=>el.value===x.id));
-    const actualizar=()=>{const q=Number(form.elements.cantidad.value);const base=centavos(p.precio)+seleccion().reduce((s,x)=>s+centavos(x.precio),0);form.querySelector('.pedido-config-total').textContent=Number.isInteger(q)&&q>=1&&q<=99?'Subtotal: '+dinero(base*q):'Elige de 1 a 99 unidades.';};form.addEventListener('input',actualizar);actualizar();
+    const seleccion=()=>extras(p).filter(x=>Array.from(form.querySelectorAll('.pedido-extras-legacy input:checked')).some(el=>el.value===x.id));
+    const opciones=()=>gs.flatMap((g,i)=>g.opciones.filter(x=>Array.from(form.querySelectorAll('[data-grupo="'+i+'"] input:checked')).some(el=>el.value===x.id)).map(x=>({...x,grupoId:g.id,grupoNombre:g.nombre})));
+    const actualizar=()=>{const q=Number(form.elements.cantidad.value);const base=centavos(p.precio)+ajuste(p,opciones())+seleccion().reduce((s,x)=>s+centavos(x.precio),0);form.querySelector('.pedido-config-total').textContent=Number.isInteger(q)&&q>=1&&q<=99?'Subtotal: '+dinero(base*q):'Elige de 1 a 99 unidades.';};form.addEventListener('input',actualizar);actualizar();
     form.addEventListener('submit',e=>{
       e.preventDefault();const q=Number(form.elements.cantidad.value);if(!Number.isInteger(q)||q<1||q>99)return;
+      const error=validarOpciones(p,opciones());
+      if(error){form.querySelector('.pedido-config-error').textContent=error;return;}
       if(pedido.negocio && pedido.negocio.id!==n.id && pedido.lineas.length){if(!confirm('Tu pedido es de '+pedido.negocio.nombre+'. ¿Vaciarlo y comenzar uno de '+n.nombre+'?'))return;pedido={negocio:null,lineas:[]};}
-      const nueva={id:linea?.id||crypto.randomUUID(),producto:p,extras:seleccion(),nota:form.elements.nota.value.trim(),cantidad:q};
+      const nueva={id:linea?.id||crypto.randomUUID(),producto:p,extras:seleccion(),opciones:opciones(),nota:form.elements.nota.value.trim(),cantidad:q};
       const otra=pedido.lineas.find(l=>l.id!==linea?.id&&mismaPreparacion(l,nueva));
       if(otra && otra.cantidad+q>99){form.querySelector('.pedido-config-error').textContent='Esta preparación ya tiene '+otra.cantidad+' unidades. El máximo es 99; reduce la cantidad.';return;}
       pedido.negocio=n;
@@ -70,7 +102,7 @@
     const numero=String(!consulta&&n.delivery===true&&n.tipoDelivery!=='gratis'?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
     const normal=numero.length===10?'52'+numero:numero;
     if(!/^\d{11,15}$/.test(normal)){alert('Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.');return;}
-    const mensaje=consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:`Hola, quiero consultar este pedido de ${n.nombre}:\n\n${pedido.lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(unitario(l)*l.cantidad)}${l.extras.length?'\nExtras por unidad: '+l.extras.map(x=>x.nombre+' ('+(x.precio?'+ '+dinero(centavos(x.precio)):'sin costo')+')').join(', '):''}${l.nota?'\nIndicación: '+l.nota:''}`).join('\n\n')}\n\nTotal de productos: ${dinero(total())}\n${n.delivery===true&&n.tipoDelivery!=='gratis'?'Envío por cotizar.\n':''}Por favor confirmen disponibilidad, total final y forma de entrega.\nDirección o punto de entrega: `;
+    const mensaje=consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:`Hola, quiero consultar este pedido de ${n.nombre}:\n\n${pedido.lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(unitario(l)*l.cantidad)}${l.opciones?.length?'\nOpciones: '+descripcionOpciones(l):''}${l.extras.length?'\nExtras por unidad: '+l.extras.map(x=>x.nombre+' ('+(x.precio?'+ '+dinero(centavos(x.precio)):'sin costo')+')').join(', '):''}${l.nota?'\nIndicación: '+l.nota:''}`).join('\n\n')}\n\nTotal de productos: ${dinero(total())}\n${n.delivery===true&&n.tipoDelivery!=='gratis'?'Envío por cotizar.\n':''}Por favor confirmen disponibilidad, total final y forma de entrega.\nDirección o punto de entrega: `;
     if(mensaje.length>6000){alert('El pedido es demasiado largo para WhatsApp. Reduce las indicaciones o los productos distintos.');return;}
     window.open('https://wa.me/'+normal+'?text='+encodeURIComponent(mensaje),'_blank','noopener,noreferrer');
   }

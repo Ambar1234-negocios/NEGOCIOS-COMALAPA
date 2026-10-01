@@ -1457,5 +1457,1570 @@
     "verificado": false,
     "activo": true,
     "fechaRegistro": "27/9/2026, 11:46:29 p.m."
+  },
+  {
+    "mostrarGaleria": true,
+    "productos": [],
+    "id": 1790832275140,
+    "nombre": "Brother’s Caps Exclusive",
+    "slug": "brothers-caps-exclusive",
+    "slogan": "Moda, estilo y tendencias en un solo lugar.",
+    "categoria": "cat-ropa-calzado-y-accesorios",
+    "descripcion": "Brother’s Caps Exclusive es una tienda de ropa, calzado, gorras, perfumes y accesorios con productos en tendencia para diferentes estilos. Maneja prendas, tenis, jeans, gorras, perfumes, mochilas y accesorios de marcas como BOSS, HUGO, Calvin Klein, True Religion, Psycho Bunny, Essentials, American Eagle, Nike, Adidas, Balenciaga, Lacoste, Coach y Louis Vuitton.",
+    "servicios": [
+      {
+        "nombre": "Ropa y moda",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Playeras BOSS",
+          "Playeras HUGO",
+          "Playeras Calvin Klein",
+          "Playeras True Religion",
+          "Playeras Psycho Bunny",
+          "Sudaderas Essentials / Fear of God",
+          "Pantalones American Eagle",
+          "Jeans American Eagle",
+          "Chamarras",
+          "Ropa urbana",
+          "Ropa en tendencia"
+        ]
+      },
+      {
+        "nombre": "Gorras",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Gorras NY",
+          "Gorras New York",
+          "Gorras LA",
+          "Gorras Los Angeles",
+          "Gorras Dandy",
+          "Gorras Rico o Muerto",
+          "Gorras bordadas",
+          "Gorras urbanas",
+          "Gorras de moda"
+        ]
+      },
+      {
+        "nombre": "Calzado",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Tenis Nike",
+          "Tenis Adidas",
+          "Tenis Balenciaga",
+          "Sneakers",
+          "Tenis deportivos",
+          "Tenis para fútbol",
+          "Botas tácticas",
+          "Calzado urbano"
+        ]
+      },
+      {
+        "nombre": "Perfumes",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Perfumes Lacoste",
+          "Perfumes para hombre",
+          "Perfumes para mujer",
+          "Fragancias de diferentes marcas"
+        ]
+      },
+      {
+        "nombre": "Mochilas y accesorios",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Mochilas",
+          "Mariconeras",
+          "Carteras Coach",
+          "Carteras Louis Vuitton",
+          "Cinturones Louis Vuitton",
+          "Accesorios de moda"
+        ]
+      },
+      {
+        "nombre": "Artículos deportivos",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Balones Molten",
+          "Balones Spalding",
+          "Balones Voit",
+          "Balones Gaser",
+          "Balones de fútbol",
+          "Balones de básquetbol"
+        ]
+      },
+      {
+        "nombre": "Accesorios deportivos",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Goggles Fox",
+          "Accesorios deportivos"
+        ]
+      }
+    ],
+    "palabrasClave": [
+      "Brother’s Caps Exclusive",
+      "Brother’s Caps",
+      "tienda de ropa",
+      "ropa de moda",
+      "ropa en tendencia",
+      "ropa urbana",
+      "streetwear",
+      "moda juvenil",
+      "ropa para hombre",
+      "ropa para mujer",
+      "playeras",
+      "camisetas",
+      "sudaderas",
+      "hoodies",
+      "chamarras",
+      "pantalones",
+      "jeans",
+      "gorras",
+      "gorras urbanas",
+      "gorras bordadas",
+      "gorras NY",
+      "gorras New York",
+      "gorras LA",
+      "gorras Los Angeles",
+      "gorras Dandy",
+      "gorras Rico o Muerto",
+      "BOSS",
+      "Hugo Boss",
+      "HUGO",
+      "Calvin Klein",
+      "True Religion",
+      "Psycho Bunny",
+      "Essentials",
+      "Fear of God",
+      "American Eagle",
+      "jeans American Eagle",
+      "playeras BOSS",
+      "playeras HUGO",
+      "playeras Calvin Klein",
+      "playeras True Religion",
+      "playeras Psycho Bunny",
+      "sudaderas Essentials",
+      "tenis",
+      "sneakers",
+      "tenis deportivos",
+      "tenis para fútbol",
+      "botas tácticas",
+      "Nike",
+      "tenis Nike",
+      "Adidas",
+      "tenis Adidas",
+      "Balenciaga",
+      "tenis Balenciaga",
+      "perfumes",
+      "fragancias",
+      "perfumes para hombre",
+      "perfumes para mujer",
+      "Lacoste",
+      "perfumes Lacoste",
+      "mochilas",
+      "mariconeras",
+      "carteras",
+      "cinturones",
+      "Coach",
+      "carteras Coach",
+      "Louis Vuitton",
+      "carteras Louis Vuitton",
+      "cinturones Louis Vuitton",
+      "accesorios de moda",
+      "artículos deportivos",
+      "balones de fútbol",
+      "balones de básquetbol",
+      "Molten",
+      "Spalding",
+      "Voit",
+      "Gaser",
+      "goggles Fox",
+      "Fox",
+      "tienda de ropa en Frontera Comalapa",
+      "gorras en Frontera Comalapa",
+      "tenis en Frontera Comalapa",
+      "perfumes en Frontera Comalapa."
+    ],
+    "plan": "destacado",
+    "telefono": "9631402898",
+    "whatsapp": "9631402898",
+    "direccion": "Cerca de C. Segunda Sur Ote. 62, Centro, 30140 Frontera Comalapa, Chiapas",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
+    "maps": "https://maps.app.goo.gl/NYyU21VJ4TyeZHYG8?g_st=ac",
+    "video": "",
+    "facebook": "https://www.facebook.com/share/1SHS9wfcH3/",
+    "instagram": "",
+    "tiktok": "",
+    "sitioWeb": "",
+    "banner": "imagenes/brothers-caps-exclusive/banner.webp",
+    "logo": "imagenes/brothers-caps-exclusive/logo.webp",
+    "galeria": [
+      "imagenes/brothers-caps-exclusive/foto-1.webp",
+      "imagenes/brothers-caps-exclusive/foto-2.webp",
+      "imagenes/brothers-caps-exclusive/foto-3.webp",
+      "imagenes/brothers-caps-exclusive/foto-4.webp",
+      "imagenes/brothers-caps-exclusive/foto-5.webp",
+      "imagenes/brothers-caps-exclusive/foto-6.webp",
+      "imagenes/brothers-caps-exclusive/foto-7.webp",
+      "imagenes/brothers-caps-exclusive/foto-8.webp",
+      "imagenes/brothers-caps-exclusive/foto-9.webp",
+      "imagenes/brothers-caps-exclusive/foto-10.webp",
+      "imagenes/brothers-caps-exclusive/foto-11.webp",
+      "imagenes/brothers-caps-exclusive/foto-12.webp",
+      "imagenes/brothers-caps-exclusive/foto-13.webp",
+      "imagenes/brothers-caps-exclusive/foto-14.webp",
+      "imagenes/brothers-caps-exclusive/foto-15.webp",
+      "imagenes/brothers-caps-exclusive/foto-16.webp",
+      "imagenes/brothers-caps-exclusive/foto-17.webp",
+      "imagenes/brothers-caps-exclusive/foto-18.webp",
+      "imagenes/brothers-caps-exclusive/foto-19.webp",
+      "imagenes/brothers-caps-exclusive/foto-20.webp",
+      "imagenes/brothers-caps-exclusive/foto-21.webp",
+      "imagenes/brothers-caps-exclusive/foto-22.webp",
+      "imagenes/brothers-caps-exclusive/foto-23.webp",
+      "imagenes/brothers-caps-exclusive/foto-24.webp",
+      "imagenes/brothers-caps-exclusive/foto-25.webp",
+      "imagenes/brothers-caps-exclusive/foto-26.webp",
+      "imagenes/brothers-caps-exclusive/foto-27.webp",
+      "imagenes/brothers-caps-exclusive/foto-28.webp",
+      "imagenes/brothers-caps-exclusive/foto-29.webp",
+      "imagenes/brothers-caps-exclusive/foto-30.webp",
+      "imagenes/brothers-caps-exclusive/foto-31.webp",
+      "imagenes/brothers-caps-exclusive/foto-32.webp",
+      "imagenes/brothers-caps-exclusive/foto-33.webp",
+      "imagenes/brothers-caps-exclusive/foto-34.webp"
+    ],
+    "delivery": false,
+    "tipoDelivery": "",
+    "verificado": false,
+    "activo": true,
+    "fechaRegistro": "30/9/2026, 11:24:35 p.m."
+  },
+  {
+    "mostrarGaleria": true,
+    "productos": [
+      {
+        "id": "adelina-iced",
+        "nombre": "Iced Coffee & Chai",
+        "precio": 70,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-iced-g1",
+            "nombre": "Bebida y tamaño",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-iced-g1-o1",
+                "nombre": "Iced chai latte · Mediano",
+                "precio": 70,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o2",
+                "nombre": "Iced chai latte · Venti",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o3",
+                "nombre": "Dirty chai latte · Mediano",
+                "precio": 75,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o4",
+                "nombre": "Dirty chai latte · Venti",
+                "precio": 88,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o5",
+                "nombre": "Matcha cold foam vainilla · Mediano",
+                "precio": 75,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o6",
+                "nombre": "Matcha cold foam vainilla · Venti",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o7",
+                "nombre": "Matcha cold foam plátano · Mediano",
+                "precio": 75,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o8",
+                "nombre": "Matcha cold foam plátano · Venti",
+                "precio": 88,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o9",
+                "nombre": "Matcha cold foam coco · Mediano",
+                "precio": 75,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o10",
+                "nombre": "Matcha cold foam coco · Venti",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o11",
+                "nombre": "Matcha leche coco · Mediano",
+                "precio": 75,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o12",
+                "nombre": "Matcha leche coco · Venti",
+                "precio": 88,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o13",
+                "nombre": "Taro iced coffee · Mediano",
+                "precio": 75,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o14",
+                "nombre": "Taro iced coffee · Venti",
+                "precio": 88,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o15",
+                "nombre": "Matcha taro · Mediano",
+                "precio": 75,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o16",
+                "nombre": "Matcha taro · Venti",
+                "precio": 88,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o17",
+                "nombre": "Caramel Macchiato · Mediano",
+                "precio": 70,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o18",
+                "nombre": "Caramel Macchiato · Venti",
+                "precio": 88,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o19",
+                "nombre": "Dirty mazapán · Mediano",
+                "precio": 70,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o20",
+                "nombre": "Dirty mazapán · Venti",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o21",
+                "nombre": "White moka · Mediano",
+                "precio": 75,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o22",
+                "nombre": "White moka · Venti",
+                "precio": 88,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o23",
+                "nombre": "Dirty capuchino · Mediano",
+                "precio": 70,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o24",
+                "nombre": "Dirty capuchino · Venti",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o25",
+                "nombre": "Pumpkin spice iced",
+                "precio": 95,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-iced-g1-o26",
+                "nombre": "Lotus coffee",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-frappes",
+        "nombre": "Frappés",
+        "precio": 80,
+        "foto": "imagenes/cafeteria-pasteleria-regalos-adelina/foto-2.webp",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-frappes-g1",
+            "nombre": "Sabor",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-frappes-g1-o1",
+                "nombre": "Matcha frappé",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-frappes-g1-o2",
+                "nombre": "Oreo frappé",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-frappes-g1-o3",
+                "nombre": "Caramel frappé",
+                "precio": 80,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-frappes-g1-o4",
+                "nombre": "Frappuccino",
+                "precio": 80,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-frappes-g1-o5",
+                "nombre": "Mazapán frappé",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-frappes-g1-o6",
+                "nombre": "Chai latte frappé",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-frappes-g1-o9",
+                "nombre": "Taro frappé",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-frappes-g1-o10",
+                "nombre": "Lotus frappé",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-frappes-g1-o11",
+                "nombre": "Pumpkin spice frappé",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-bobba",
+        "nombre": "Bobba Tea",
+        "precio": 80,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-bobba-g1",
+            "nombre": "Variedad",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-bobba-g1-o1",
+                "nombre": "Matcha cold foam",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o2",
+                "nombre": "Chai latte milk tea",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o3",
+                "nombre": "Brown caramel",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o4",
+                "nombre": "Oreo",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o5",
+                "nombre": "Coco",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o6",
+                "nombre": "Mazapán",
+                "precio": 85,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o7",
+                "nombre": "Plátano",
+                "precio": 80,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o8",
+                "nombre": "Matcha plátano",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o9",
+                "nombre": "Matcha coco",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o10",
+                "nombre": "Taro",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o11",
+                "nombre": "Pumpkin spice tea",
+                "precio": 95,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o12",
+                "nombre": "Lotus",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-bobba-g1-o13",
+                "nombre": "Chocolate–Oreo",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-sodas",
+        "nombre": "Sodas italianas",
+        "precio": 70,
+        "foto": "imagenes/cafeteria-pasteleria-regalos-adelina/foto-4.webp",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [
+          {
+            "id": "adelina-sodas-bolitas",
+            "nombre": "Segunda dosis de bolitas explosivas",
+            "precio": 15,
+            "disponible": true
+          }
+        ],
+        "gruposOpciones": [
+          {
+            "id": "adelina-sodas-g1",
+            "nombre": "Sabor",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-sodas-g1-o1",
+                "nombre": "Fresa",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-sodas-g1-o2",
+                "nombre": "Manzana verde",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-sodas-g1-o3",
+                "nombre": "Curazao",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-sodas-g1-o4",
+                "nombre": "Blue Berry",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-sodas-g1-o5",
+                "nombre": "Mango",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-sodas-g1-o6",
+                "nombre": "Violeta",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-cafes",
+        "nombre": "Cafés y lattes",
+        "precio": 40,
+        "foto": "imagenes/cafeteria-pasteleria-regalos-adelina/foto-5.webp",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-cafes-g1",
+            "nombre": "Bebida",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-cafes-g1-o1",
+                "nombre": "Café Dalgona",
+                "precio": 50,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-cafes-g1-o2",
+                "nombre": "Capuchino",
+                "precio": 40,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-cafes-g1-o3",
+                "nombre": "Capuchino Adelina",
+                "precio": 50,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-cafes-g1-o4",
+                "nombre": "White moka",
+                "precio": 50,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-cafes-g1-o5",
+                "nombre": "Taro latte",
+                "precio": 50,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-cafes-g1-o6",
+                "nombre": "Té chai latte",
+                "precio": 50,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-lattes",
+        "nombre": "Lattes especiales calientes",
+        "precio": 55,
+        "foto": "imagenes/cafeteria-pasteleria-regalos-adelina/foto-6.webp",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-lattes-g1",
+            "nombre": "Bebida y tamaño",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-lattes-g1-o1",
+                "nombre": "Pumpkin spice latte · Chico",
+                "precio": 55,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-lattes-g1-o2",
+                "nombre": "Pumpkin spice latte · Venti",
+                "precio": 70,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-lattes-g1-o3",
+                "nombre": "Latte macchiato · Chico",
+                "precio": 55,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-lattes-g1-o4",
+                "nombre": "Latte macchiato · Venti",
+                "precio": 70,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-lattes-g1-o5",
+                "nombre": "Caramel macchiato · Chico",
+                "precio": 55,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-lattes-g1-o6",
+                "nombre": "Caramel macchiato · Venti",
+                "precio": 70,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-tizanas",
+        "nombre": "Tizanas",
+        "precio": 45,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-tizanas-g1",
+            "nombre": "Presentación",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-tizanas-g1-o1",
+                "nombre": "Tizana caliente",
+                "precio": 45,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-tizanas-g1-o2",
+                "nombre": "Tizana mineral",
+                "precio": 70,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-tes",
+        "nombre": "Tés",
+        "precio": 35,
+        "foto": "imagenes/cafeteria-pasteleria-regalos-adelina/foto-7.webp",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-tes-g1",
+            "nombre": "Variedad",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-tes-g1-o1",
+                "nombre": "Manzanilla",
+                "precio": 35,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-tes-g1-o2",
+                "nombre": "Canela manzana",
+                "precio": 35,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-tes-g1-o3",
+                "nombre": "Frutos rojos",
+                "precio": 35,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-tes-g1-o4",
+                "nombre": "Limón hinojo",
+                "precio": 35,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-kitkat",
+        "nombre": "Chocolate caliente Kit Kat",
+        "precio": 35,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-kitkat-g1",
+            "nombre": "Presentación",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-kitkat-g1-o1",
+                "nombre": "Taza chica",
+                "precio": 35,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-kitkat-g1-o2",
+                "nombre": "Taza regular · Doble shot",
+                "precio": 50,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-club",
+        "nombre": "Club sándwich de la casa",
+        "precio": 110,
+        "foto": "imagenes/cafeteria-pasteleria-regalos-adelina/foto-9.webp",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-club-g1",
+            "nombre": "Carne extra",
+            "obligatorio": false,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-club-g1-o1",
+                "nombre": "Pollo deshebrado",
+                "precio": 15,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-club-g1-o2",
+                "nombre": "Longaniza",
+                "precio": 15,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-club-g1-o3",
+                "nombre": "Chorizo",
+                "precio": 15,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-alitas",
+        "nombre": "Orden de alitas",
+        "precio": 110,
+        "foto": "imagenes/cafeteria-pasteleria-regalos-adelina/foto-10.webp",
+        "ingredientes": "Incluye 5 alitas, aderezo, zanahoria y papas normales corte fino con aderezos.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-alitas-g1",
+            "nombre": "Sabor",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-alitas-g1-o1",
+                "nombre": "Lemon Pepper",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-alitas-g1-o2",
+                "nombre": "Búfalo",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-alitas-g1-o3",
+                "nombre": "BBQ",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-alitas-g1-o4",
+                "nombre": "Mango Habanero",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-nachos",
+        "nombre": "Nachos Adelina",
+        "precio": 80,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-nachos-g1",
+            "nombre": "Preparación",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-nachos-g1-o1",
+                "nombre": "Clásicos",
+                "precio": 80,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-nachos-g1-o2",
+                "nombre": "Con pollo",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-nachos-g1-o3",
+                "nombre": "Con chorizo",
+                "precio": 110,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-nachos-g1-o4",
+                "nombre": "Con longaniza",
+                "precio": 110,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-chilaquiles",
+        "nombre": "Chilaquiles rojos de la casa",
+        "precio": 90,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [
+          {
+            "id": "adelina-chilaquiles-huevo",
+            "nombre": "Huevo estrellado extra",
+            "precio": 10,
+            "disponible": true
+          }
+        ],
+        "gruposOpciones": [
+          {
+            "id": "adelina-chilaquiles-g1",
+            "nombre": "Preparación",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-chilaquiles-g1-o1",
+                "nombre": "De la casa · Precio base",
+                "precio": 90,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-chilaquiles-g1-o2",
+                "nombre": "Con pollo",
+                "precio": 100,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-chilaquiles-g1-o3",
+                "nombre": "Con longaniza",
+                "precio": 100,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "adelina-chilaquiles-g1-o4",
+                "nombre": "Con chorizo",
+                "precio": 100,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-papas-casa",
+        "nombre": "Papas de la casa",
+        "precio": 80,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "adelina-papas-gajo",
+        "nombre": "Papas gajo",
+        "precio": 90,
+        "foto": "",
+        "ingredientes": "Orden de papas gajo con aderezos.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "adelina-gajo-explosivas",
+        "nombre": "Papas gajo explosivas",
+        "precio": 130,
+        "foto": "",
+        "ingredientes": "Papas gajo explosivas con 6 boneless.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-gajo-explosivas-g1",
+            "nombre": "Salsa",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-gajo-explosivas-g1-o1",
+                "nombre": "BBQ",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-gajo-explosivas-g1-o2",
+                "nombre": "Búfalo",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-burger-adelina",
+        "nombre": "Hamburguesa Adelina",
+        "precio": 95,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "adelina-burger-hawaiian",
+        "nombre": "Hamburguesa Hawaiian Cute",
+        "precio": 95,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "adelina-burger-queso",
+        "nombre": "Hamburguesa Doble queso",
+        "precio": 95,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "adelina-burger-boneless",
+        "nombre": "Boneless burger con papas gajo",
+        "precio": 110,
+        "foto": "",
+        "ingredientes": "Boneless burger con papas gajo; salsa BBQ o Búfalo a elegir.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "adelina-burger-boneless-g1",
+            "nombre": "Salsa",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "adelina-burger-boneless-g1-o1",
+                "nombre": "BBQ",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "adelina-burger-boneless-g1-o2",
+                "nombre": "Búfalo",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "adelina-burger-arrachera",
+        "nombre": "Paquete hamburguesa de arrachera",
+        "precio": 110,
+        "foto": "",
+        "ingredientes": "Paquete de hamburguesa de arrachera con papas corte fino.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "adelina-pan",
+        "nombre": "Pan francés",
+        "precio": 88,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "adelina-rol",
+        "nombre": "Rol de canela Lotus",
+        "precio": 65,
+        "foto": "",
+        "ingredientes": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      }
+    ],
+    "id": 1790836630931,
+    "nombre": "Cafetería y Regalos Adelina",
+    "slug": "cafeteria-pasteleria-regalos-adelina",
+    "slogan": "El lugar donde el buen café se encuentra con la alta repostería.",
+    "categoria": "comida",
+    "descripcion": "Cafetería, pastelería y tienda de regalos con café, bebidas especiales, postres artesanales y opciones de comida. Un espacio pensado para disfrutar algo rico o encontrar un detalle especial.",
+    "servicios": [
+      {
+        "nombre": "Cafetería y bebidas",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Café",
+          "Bebidas calientes",
+          "Iced coffee",
+          "Chai",
+          "Bobba Tea",
+          "Frappés",
+          "Sodas italianas",
+          "Tés",
+          "Tizanas"
+        ]
+      },
+      {
+        "nombre": "Comida",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Hamburguesas",
+          "Alitas",
+          "Boneless",
+          "Papas",
+          "Nachos",
+          "Chilaquiles",
+          "Club sándwich",
+          "Pan francés"
+        ]
+      },
+      {
+        "nombre": "Repostería y postres",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Pasteles artesanales",
+          "Postres artesanales",
+          "Cheesecake",
+          "Rollos de canela",
+          "Waffles"
+        ]
+      },
+      "Regalos y detalles"
+    ],
+    "palabrasClave": [
+      "Cafetería Adelina",
+      "Cafetería Pastelería y Regalos Adelina",
+      "cafetería",
+      "café",
+      "café en Frontera Comalapa",
+      "pastelería",
+      "postres",
+      "pasteles",
+      "repostería",
+      "regalos",
+      "detalles",
+      "bebidas calientes",
+      "bebidas frías",
+      "capuchino",
+      "café Dalgona",
+      "white moka",
+      "taro latte",
+      "chai latte",
+      "té",
+      "tizana",
+      "pumpkin spice latte",
+      "latte macchiato",
+      "caramel macchiato",
+      "chocolate caliente",
+      "iced coffee",
+      "iced chai latte",
+      "dirty chai latte",
+      "matcha",
+      "matcha latte",
+      "matcha cold foam",
+      "taro iced coffee",
+      "bobba tea",
+      "bubble tea",
+      "tapioca",
+      "frappé",
+      "frappuccino",
+      "frappé de Oreo",
+      "frappé de mazapán",
+      "frappé de matcha",
+      "frappé de taro",
+      "frappé Lotus",
+      "sodas italianas",
+      "soda italiana de fresa",
+      "manzana verde",
+      "curazao",
+      "blueberry",
+      "mango",
+      "violeta",
+      "hamburguesas",
+      "hamburguesa de arrachera",
+      "hamburguesa Adelina",
+      "boneless burger",
+      "alitas",
+      "boneless",
+      "BBQ",
+      "búfalo",
+      "lemon pepper",
+      "mango habanero",
+      "papas gajo",
+      "papas explosivas",
+      "papas de la casa",
+      "nachos",
+      "chilaquiles",
+      "club sándwich",
+      "pan francés",
+      "waffles",
+      "cheesecake",
+      "fresas con chocolate",
+      "roll de canela Lotus",
+      "Sweet Combo",
+      "postres artesanales",
+      "pasteles artesanales",
+      "regalos Adelina",
+      "comida y bebidas",
+      "cafetería con postres",
+      "cafetería en Frontera Comalapa."
+    ],
+    "plan": "normal",
+    "telefono": "5560812519",
+    "whatsapp": "5560812519",
+    "direccion": "",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "11:00",
+            "fin": "21:30"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "11:00",
+            "fin": "21:30"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "11:00",
+            "fin": "21:30"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "11:00",
+            "fin": "21:30"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "11:00",
+            "fin": "21:30"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "11:00",
+            "fin": "21:30"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "11:00",
+            "fin": "21:30"
+          }
+        ]
+      }
+    },
+    "maps": "",
+    "video": "",
+    "facebook": "https://www.facebook.com/share/1D3qCgtsFj/",
+    "instagram": "",
+    "tiktok": "",
+    "sitioWeb": "",
+    "banner": "imagenes/cafeteria-pasteleria-regalos-adelina/banner.webp",
+    "logo": "imagenes/cafeteria-pasteleria-regalos-adelina/logo.webp",
+    "galeria": [],
+    "delivery": true,
+    "tipoDelivery": "mandaditos",
+    "verificado": false,
+    "activo": true,
+    "fechaRegistro": "1/10/2026, 12:37:10 a.m."
   }
 ]

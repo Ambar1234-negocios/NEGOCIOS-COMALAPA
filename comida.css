@@ -43,3 +43,10 @@
 .comida-producto-destacado{animation:comidaDestacar 1.8s ease}
 @keyframes comidaDestacar{0%,100%{box-shadow:0 6px 20px #173f2910}35%,65%{box-shadow:0 0 0 4px #e5a52b,0 10px 28px #173f2928;transform:translateY(-2px)}}
 @media(prefers-reduced-motion:reduce){.comida-producto-destacado{animation:none;outline:3px solid #e5a52b;outline-offset:3px}}
+
+/* Grupos de variantes: reglas limitadas al editor y al pedido. */
+.producto-grupo-editor{margin:12px 0;padding:12px;border:1px solid #cad9cf;border-radius:12px;background:#fff}
+.producto-opcion-editor{padding:12px;margin:10px 0;border:1px solid #dce6df;border-radius:10px;background:#f7faf7}
+.producto-editor select{display:block;width:100%;padding:10px;font:inherit;border:1px solid #a8bfae;border-radius:8px}
+.producto-grupo-editor>button{margin:6px 8px 0 0}.pedido-grupo>p{font-size:14px;color:#526158}
+.pedido-grupo input[type=radio]{width:20px;height:20px}.pedido-grupo strong{text-align:right}
