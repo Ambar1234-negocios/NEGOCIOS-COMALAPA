@@ -218,7 +218,7 @@
     "slug": "forno-mexa",
     "slogan": "Pizza artesanal estilo napolitano con toque mexicano",
     "categoria": "comida",
-    "descripcion": "",
+    "descripcion": "Forno Mexa es una pizzería artesanal especializada en pizza estilo napolitano, preparada en horno de leña. Su propuesta combina masa artesanal de fermentación lenta, ingredientes frescos y un toque mexicano, ofreciendo pizzas ligeras por dentro, crujientes por fuera y llenas de sabor.",
     "servicios": [
       "Pizza estilo napolitano",
       "Pizza artesanal al horno de leña",
@@ -241,23 +241,18 @@
     "plan": "destacado",
     "telefono": "9992511142",
     "whatsapp": "9992511142",
-    "direccion": "",
+    "direccion": "frente a COMIDA CHINA, Centro, 30140 Frontera Comalapa, Chis.",
     "horarios": {
       "lunes": {
-        "modo": "abierto",
-        "turnos": [
-          {
-            "inicio": "08:00",
-            "fin": "17:00"
-          }
-        ]
+        "modo": "cerrado",
+        "turnos": []
       },
       "martes": {
         "modo": "abierto",
         "turnos": [
           {
-            "inicio": "08:00",
-            "fin": "17:00"
+            "inicio": "01:00",
+            "fin": "21:00"
           }
         ]
       },
@@ -265,8 +260,8 @@
         "modo": "abierto",
         "turnos": [
           {
-            "inicio": "08:00",
-            "fin": "17:00"
+            "inicio": "01:00",
+            "fin": "21:00"
           }
         ]
       },
@@ -274,8 +269,8 @@
         "modo": "abierto",
         "turnos": [
           {
-            "inicio": "08:00",
-            "fin": "17:00"
+            "inicio": "01:00",
+            "fin": "21:00"
           }
         ]
       },
@@ -283,8 +278,8 @@
         "modo": "abierto",
         "turnos": [
           {
-            "inicio": "08:00",
-            "fin": "17:00"
+            "inicio": "01:00",
+            "fin": "21:00"
           }
         ]
       },
@@ -292,19 +287,24 @@
         "modo": "abierto",
         "turnos": [
           {
-            "inicio": "08:00",
-            "fin": "17:00"
+            "inicio": "01:00",
+            "fin": "21:00"
           }
         ]
       },
       "domingo": {
-        "modo": "cerrado",
-        "turnos": []
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "01:00",
+            "fin": "21:00"
+          }
+        ]
       }
     },
-    "maps": "",
+    "maps": "https://maps.app.goo.gl/FqASXdQazuoXUeUR7",
     "video": "",
-    "facebook": "https://www.facebook.com/share/1EY59igEBa/",
+    "facebook": "https://www.facebook.com/share/1G3DX2jrcE/",
     "instagram": "",
     "tiktok": "",
     "sitioWeb": "",
@@ -326,54 +326,460 @@
     "fechaRegistro": "15/9/2026, 12:11:19 p.m.",
     "productos": [
       {
-        "id": "p-a4ba0895-d4ef-4eae-a368-2dc75d7846d5",
-        "nombre": "hamburguesas clasicas",
-        "precio": 99,
-        "foto": "imagenes/forno-mexa/foto-1.webp",
-        "ingredientes": "pan,tomate,cebolla",
-        "disponible": true,
-        "enCarrusel": true,
-        "extras": []
-      },
-      {
-        "id": "p-a69b6641-4408-4f75-bfd7-918c92f94e68",
-        "nombre": "Pizza Hawaiana",
-        "precio": 299,
+        "id": "forno-pizza-margarita",
+        "nombre": "Pizza Margarita",
+        "precio": 110,
         "foto": "imagenes/forno-mexa/foto-2.webp",
-        "ingredientes": "Jamón, piña, queso mozzarella y salsa de tomate",
+        "ingredientes": "Salsa de tomate, queso mozzarella y albahaca fresca.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
         "disponible": true,
-        "enCarrusel": true,
-        "extras": []
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
       },
       {
-        "id": "p-0759fe6c-3c24-40db-9e13-ff320a578347",
-        "nombre": "Pizza Mexicana",
-        "precio": 299,
-        "foto": "imagenes/forno-mexa/foto-3.webp",
-        "ingredientes": "chorizo,masa,chiles,queso",
-        "disponible": true,
-        "enCarrusel": true,
-        "extras": []
-      },
-      {
-        "id": "p-4a774b20-e9da-4e85-bbab-d17c77ba8da7",
-        "nombre": "Pizza de Champiñones",
-        "precio": 250,
+        "id": "forno-pizza-pepperoni",
+        "nombre": "Pizza Pepperoni",
+        "precio": 149,
         "foto": "imagenes/forno-mexa/foto-4.webp",
-        "ingredientes": "Champiñones, queso mozzarella y salsa de tomate",
+        "ingredientes": "Salsa de tomate, queso mozzarella y pepperoni.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
         "disponible": true,
-        "enCarrusel": true,
-        "extras": []
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
       },
       {
-        "id": "p-71ffc1d4-5c50-45a0-8aaf-0f39ff8e5db2",
-        "nombre": "Pizza de Queso",
-        "precio": 200,
-        "foto": "imagenes/forno-mexa/foto-5.webp",
-        "ingredientes": "Queso mozzarella y salsa de tomate",
+        "id": "forno-pizza-hawaiana",
+        "nombre": "Pizza Hawaiana",
+        "precio": 159,
+        "foto": "",
+        "ingredientes": "Salsa de tomate, queso mozzarella, jamón y piña.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
         "disponible": true,
-        "enCarrusel": true,
-        "extras": []
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "forno-pizza-mexicana",
+        "nombre": "Pizza Mexicana",
+        "precio": 179,
+        "foto": "",
+        "ingredientes": "Salsa de tomate, queso mozzarella, carne molida, cebolla morada y chile pimiento.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "forno-pizza-forno-mexa",
+        "nombre": "Pizza Forno Mexa",
+        "precio": 189,
+        "foto": "",
+        "ingredientes": "Salsa de tomate, queso mozzarella, carne molida, cebolla morada, champiñón y chile pimiento.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "forno-pizza-fungi",
+        "nombre": "Pizza Fungi",
+        "precio": 130,
+        "foto": "",
+        "ingredientes": "Salsa de tomate, queso mozzarella y champiñones.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "forno-pizza-la-regina",
+        "nombre": "Pizza La Regina",
+        "precio": 155,
+        "foto": "",
+        "ingredientes": "Salsa de tomate, queso mozzarella, champiñones y jamón.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "forno-pizza-la-matinal",
+        "nombre": "Pizza La Matinal",
+        "precio": 165,
+        "foto": "",
+        "ingredientes": "Salsa de tomate, queso mozzarella, champiñones y chorizo.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "forno-pizza-diavola",
+        "nombre": "Pizza Diavola",
+        "precio": 155,
+        "foto": "",
+        "ingredientes": "Salsa de tomate, queso mozzarella, pepperoni, rodajas de chile jalapeño y albahaca fresca.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "forno-pizza-combinada",
+        "nombre": "Pizza Combinada",
+        "precio": 180,
+        "foto": "",
+        "ingredientes": "Hasta dos ingredientes de la carta; indicar en observaciones.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.\nEscribe los ingredientes deseados en Indicaciones; el negocio confirmará la elección.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "forno-pizza-del-chef",
+        "nombre": "Pizza Del Chef",
+        "precio": 220,
+        "foto": "",
+        "ingredientes": "Salsa de tomate, queso mozzarella, camarón, queso parmesano y champiñón.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "forno-pastas",
+        "nombre": "Pastas",
+        "precio": 140,
+        "ingredientes": "Alfredo con pollo: Salsa Alfredo con pechuga de pollo a la plancha y parmesano\nAlfredo con camarón: Salsa Alfredo con camarones salteados a la mantequilla y parmesano\nBolognesa: Carne en cocción lenta, estofada con pomodoro, queso parmesano y finas hierbas",
+        "foto": "imagenes/forno-mexa/foto-6.webp",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "forno-pastas-g1",
+            "nombre": "Preparación",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "forno-pastas-g1-o1",
+                "nombre": "Alfredo con pollo",
+                "precio": 140,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-pastas-g1-o2",
+                "nombre": "Alfredo con camarón",
+                "precio": 180,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-pastas-g1-o3",
+                "nombre": "Bolognesa",
+                "precio": 169,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "forno-hamburguesas",
+        "nombre": "Hamburguesas Forno",
+        "precio": 120,
+        "ingredientes": "Carne, lechuga, cebolla caramelizada, tomate, queso mozzarella y tocino. La presentación con papas incluye papas rejillas fritas.",
+        "foto": "imagenes/forno-mexa/foto-1.webp",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "forno-hamburguesas-g1",
+            "nombre": "Presentación",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "forno-hamburguesas-g1-o1",
+                "nombre": "Sencilla",
+                "precio": 120,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-hamburguesas-g1-o2",
+                "nombre": "Con papas rejillas fritas",
+                "precio": 159,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "forno-alitas-boneless",
+        "nombre": "Alitas y Boneless",
+        "precio": 150,
+        "ingredientes": "Alitas: 8 piezas con pepino, zanahoria y ranch. Boneless: 250 g con pepino, zanahoria y ranch. El menú menciona un extra de $10, a consultar con el negocio.",
+        "foto": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "forno-alitas-boneless-g1",
+            "nombre": "Elige tu orden",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "forno-alitas-boneless-g1-o1",
+                "nombre": "Alitas · 8 piezas",
+                "precio": 150,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-alitas-boneless-g1-o2",
+                "nombre": "Boneless · 250 g",
+                "precio": 155,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          },
+          {
+            "id": "forno-alitas-boneless-g2",
+            "nombre": "Salsa",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "forno-alitas-boneless-g2-o1",
+                "nombre": "BBQ",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "forno-alitas-boneless-g2-o2",
+                "nombre": "Búfalo",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "forno-alitas-boneless-g2-o3",
+                "nombre": "Parmesano",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "forno-alitas-boneless-g2-o4",
+                "nombre": "Mango Habanero",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "forno-papas",
+        "nombre": "Papas a la francesa",
+        "precio": 59,
+        "ingredientes": "200 g de papas y salsa catsup.",
+        "foto": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "forno-refrescos",
+        "nombre": "Refrescos",
+        "precio": 30,
+        "ingredientes": "",
+        "foto": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "forno-refrescos-g1",
+            "nombre": "Refresco",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "forno-refrescos-g1-o1",
+                "nombre": "7UP",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "forno-refrescos-g1-o2",
+                "nombre": "Pepsi",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "forno-refrescos-g1-o3",
+                "nombre": "Manzanita",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "forno-refrescos-g1-o4",
+                "nombre": "Mirinda",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "forno-refrescos-g1-o5",
+                "nombre": "Coca-Cola",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "forno-sin-alcohol",
+        "nombre": "Bebidas sin alcohol",
+        "precio": 10,
+        "ingredientes": "Para aguas de sabor, indica el sabor deseado en observaciones; el negocio confirmará disponibilidad.",
+        "foto": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "forno-sin-alcohol-g1",
+            "nombre": "Bebida",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "forno-sin-alcohol-g1-o1",
+                "nombre": "Agua pura · ½ L",
+                "precio": 10,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-sin-alcohol-g1-o2",
+                "nombre": "Aguas de sabor",
+                "precio": 25,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-sin-alcohol-g1-o3",
+                "nombre": "Café",
+                "precio": 30,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "forno-con-alcohol",
+        "nombre": "Bebidas con alcohol",
+        "precio": 40,
+        "ingredientes": "",
+        "foto": "",
+        "disponible": true,
+        "enCarrusel": false,
+        "extras": [],
+        "gruposOpciones": [
+          {
+            "id": "forno-con-alcohol-g1",
+            "nombre": "Bebida",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "forno-con-alcohol-g1-o1",
+                "nombre": "Vino · Copa",
+                "precio": 65,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-con-alcohol-g1-o2",
+                "nombre": "Clericot · Copa",
+                "precio": 89,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-con-alcohol-g1-o3",
+                "nombre": "Jarra de clericot",
+                "precio": 220,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-con-alcohol-g1-o4",
+                "nombre": "Michelada clásica",
+                "precio": 60,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-con-alcohol-g1-o5",
+                "nombre": "Michelada de mango",
+                "precio": 65,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-con-alcohol-g1-o6",
+                "nombre": "Cerveza Bohemia · Oscura",
+                "precio": 40,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-con-alcohol-g1-o7",
+                "nombre": "Cerveza Bohemia · Clara",
+                "precio": 40,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-con-alcohol-g1-o8",
+                "nombre": "Cerveza Bohemia · Ámbar",
+                "precio": 40,
+                "tipoPrecio": "propio",
+                "disponible": true
+              },
+              {
+                "id": "forno-con-alcohol-g1-o9",
+                "nombre": "Cerveza Bohemia · Trigo",
+                "precio": 40,
+                "tipoPrecio": "propio",
+                "disponible": true
+              }
+            ]
+          }
+        ]
       }
     ],
     "mostrarGaleria": true
