@@ -3022,5 +3022,173 @@
     "verificado": false,
     "activo": true,
     "fechaRegistro": "1/10/2026, 12:37:10 a.m."
+  },
+  {
+    "mostrarGaleria": true,
+    "productos": [],
+    "id": 1791305630343,
+    "nombre": "Platería Aguilar",
+    "slug": "plateria-aguilar",
+    "slogan": "Plata 925, detalles que perduran.",
+    "categoria": "cat-joyeria-y-accesorios",
+    "descripcion": "Platería Aguilar ofrece joyería de plata 925 al mayoreo y menudeo, con cadenas, pulsos, anillos, dijes, aretes, gargantillas y juegos. También realiza soldaduras, limpiezas y trabajos de grabado láser y personalizado.",
+    "servicios": [
+      {
+        "nombre": "Joyería de plata 925",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Cadenas",
+          "Pulsos",
+          "Anillos",
+          "Dijes",
+          "Aretes",
+          "Gargantillas",
+          "Juegos de joyería"
+        ]
+      },
+      "Venta al mayoreo y menudeo",
+      {
+        "nombre": "Reparación y mantenimiento de joyería",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Soldaduras",
+          "Limpiezas"
+        ]
+      },
+      {
+        "nombre": "Grabados personalizados",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Grabado láser",
+          "Grabado letra por letra",
+          "Trabajos de letras"
+        ]
+      }
+    ],
+    "palabrasClave": [
+      "Platería Aguilar",
+      "Joyería de Plata Aguilar",
+      "joyería de plata",
+      "joyería",
+      "plata 925",
+      "plata .925",
+      "cadenas de plata",
+      "pulsos de plata",
+      "pulseras de plata",
+      "anillos de plata",
+      "dijes de plata",
+      "aretes de plata",
+      "gargantillas de plata",
+      "juegos de joyería",
+      "accesorios de plata",
+      "venta de plata",
+      "plata al mayoreo",
+      "plata al menudeo",
+      "joyería al mayoreo",
+      "joyería al menudeo",
+      "soldadura de joyería",
+      "reparación de joyería",
+      "limpieza de joyería",
+      "limpieza de plata",
+      "grabado en plata",
+      "grabado láser",
+      "grabado personalizado",
+      "letras grabadas",
+      "joyería personalizada",
+      "regalos de plata",
+      "accesorios para dama",
+      "platería en Frontera Comalapa",
+      "joyería en Frontera Comalapa",
+      "joyería Barrio Cuernavaca"
+    ],
+    "plan": "normal",
+    "telefono": "9631865352",
+    "whatsapp": "9631865352",
+    "direccion": "Contra esquina de la Primaria Niños Héroes, Barrio Cuernavaca, cerca de Central Sur, C.P. 30140, Frontera Comalapa, Chiapas.",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "09:00",
+            "fin": "16:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "09:00",
+            "fin": "16:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "09:00",
+            "fin": "16:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "09:00",
+            "fin": "16:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "13:30"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "10:00",
+            "fin": "14:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
+    "maps": "https://maps.app.goo.gl/G9qwujporsPBruRD9?g_st=ac",
+    "video": "",
+    "facebook": "https://www.facebook.com/share/1LrajY7n8f/",
+    "instagram": "",
+    "tiktok": "",
+    "sitioWeb": "",
+    "banner": "imagenes/plateria-aguilar/banner.webp",
+    "logo": "imagenes/plateria-aguilar/logo.webp",
+    "galeria": [
+      "imagenes/plateria-aguilar/foto-1.webp",
+      "imagenes/plateria-aguilar/foto-2.webp",
+      "imagenes/plateria-aguilar/foto-3.webp",
+      "imagenes/plateria-aguilar/foto-4.webp",
+      "imagenes/plateria-aguilar/foto-5.webp",
+      "imagenes/plateria-aguilar/foto-6.webp",
+      "imagenes/plateria-aguilar/foto-7.webp",
+      "imagenes/plateria-aguilar/foto-8.webp",
+      "imagenes/plateria-aguilar/foto-9.webp",
+      "imagenes/plateria-aguilar/foto-10.webp"
+    ],
+    "delivery": false,
+    "tipoDelivery": "",
+    "verificado": false,
+    "activo": true,
+    "fechaRegistro": "6/10/2026, 10:53:50 a.m."
   }
 ]

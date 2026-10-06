@@ -79,5 +79,10 @@
     "id": "cat-floreria",
     "nombre": "Florería",
     "fondo": "rayas"
+  },
+  {
+    "id": "cat-joyeria-y-accesorios",
+    "nombre": "Joyería y accesorios",
+    "fondo": "rayas"
   }
 ]
