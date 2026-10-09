@@ -987,10 +987,10 @@ function verPerfil(categoria, index, opciones = {}) {
 
   window.ComidaExhibicion.conectar(negocio);
   setTimeout(() => {
-    document.querySelector(".perfil-negocio").scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+    const tarjeta=opciones.productoId?Array.from(document.querySelectorAll('.perfil-oficial [data-producto-id]')).find(el=>el.dataset.productoId===opciones.productoId):null;
+    const destino=tarjeta||document.querySelector('.perfil-negocio');
+    destino?.scrollIntoView({behavior:'smooth',block:tarjeta?'center':'start'});
+    if(tarjeta){tarjeta.classList.add('comida-producto-destacado');setTimeout(()=>tarjeta.classList.remove('comida-producto-destacado'),2400);}
   }, 100);
 }
 
@@ -1372,67 +1372,49 @@ function iniciarCarruselDestacados() {
 }
 
 
-async function cargarDestacadosPublicados() {
-  const carrusel = document.querySelector(".carrusel-destacados");
-
-  if (!carrusel) return;
-
-  try {
-    const respuesta = await fetch(`destacados.json?v=${Date.now()}`, {
-      cache: "no-store"
-    });
-
-    if (!respuesta.ok) {
-      throw new Error(`HTTP ${respuesta.status}`);
-    }
-
-    const destacados = await respuesta.json();
-    destacadosPublicados = Array.isArray(destacados) ? destacados : [];
-    const fechaActual = obtenerFechaISOExhibicion();
-
-    const visibles = mezclarLista(
-      (Array.isArray(destacados) ? destacados : [])
-        .filter((item) => destacadoVigente(item, fechaActual))
-        .filter((item) => encontrarNegocioPorSlug(item.negocioSlug))
-    );
-
-    detenerCarruselDestacados();
-
-    if (visibles.length === 0) {
-      carrusel.innerHTML = [1, 2, 3, 4]
-        .map(crearDestacadoProximamente)
-        .join("");
-      iniciarCarruselDestacados();
-      return;
-    }
-
-    const tarjetasReales = visibles.map(crearTarjetaDestacado);
-    const tarjetasDemo = [];
-
-    // SOLO PARA ESTA PRUEBA VISUAL: completamos hasta 4 tarjetas
-    // con "Próximamente" para poder probar el carrusel y la rotación.
-    for (let i = tarjetasReales.length; i < 4; i++) {
-      tarjetasDemo.push(crearDestacadoProximamente(i + 1));
-    }
-
-    carrusel.innerHTML = [...tarjetasReales, ...tarjetasDemo].join("");
-
-    iniciarCarruselDestacados();
-
-  } catch (error) {
-    console.warn("No se pudo cargar destacados.json:", error);
-
-    carrusel.innerHTML = `
-      <div class="card">
-        <h3>⭐ Próximamente</h3>
-        <p>Muy pronto encontrarás aquí promociones destacadas de Frontera Comalapa.</p>
-      </div>
-    `;
-  }
+function ordenarPromocionesPorNegocio(items,anterior=''){
+  const mezclar=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const grupos=new Map();for(const item of items){const key=item.slug||item.id;if(!grupos.has(key))grupos.set(key,[]);grupos.get(key).push(item);}
+  let negocios=mezclar([...grupos.keys()]);for(const key of negocios)grupos.set(key,mezclar(grupos.get(key)));
+  if(negocios.length>1&&negocios[0]===anterior){const j=1+Math.floor(Math.random()*(negocios.length-1));[negocios[0],negocios[j]]=[negocios[j],negocios[0]];}
+  const salida=[];while(negocios.length){for(const key of negocios)salida.push(grupos.get(key).shift());negocios=negocios.filter(key=>grupos.get(key).length);}
+  return salida;
 }
-
-
-
+let listaPromocionesActual=[];
+let firmaListaPromociones='';
+function mostrarTodasPromociones(origen){
+  const d=document.createElement('dialog');d.className='promociones-todas';d.setAttribute('aria-label','Todas las promociones disponibles');
+  const cerrar=document.createElement('button');cerrar.type='button';cerrar.className='promociones-cerrar';cerrar.textContent='Cerrar ×';cerrar.onclick=()=>d.close();
+  const h=document.createElement('h2');h.textContent='Todas las promociones disponibles';const nota=document.createElement('p');nota.textContent='Toca una promoción para visitar el negocio o elegir el producto.';
+  const grid=document.createElement('div');grid.className='promociones-todas-grid carrusel-destacados';grid.innerHTML=listaPromocionesActual.map(x=>x.html).join('');
+  d.append(cerrar,h,nota,grid);document.body.append(d);d.showModal();const overflow=document.body.style.overflow;document.body.style.overflow='hidden';
+  d.addEventListener('close',()=>{document.body.style.overflow=overflow;d.remove();origen?.focus();},{once:true});
+  grid.addEventListener('click',e=>{if(e.target.closest('.destacado-publicado'))d.close();});
+}
+function actualizarOfertasDestacadas(){
+  const carrusel=document.querySelector('.carrusel-destacados');if(!carrusel)return;
+  const fechaActual=obtenerFechaISOExhibicion();
+  const manuales=destacadosPublicados.filter(item=>destacadoVigente(item,fechaActual)&&encontrarNegocioPorSlug(item.negocioSlug));
+  const auto=window.MejorasExhibicion?.tarjetasOfertas()||[];
+  const datos=window.__ofertasProductos||[];
+  const items=[...manuales.map((p,i)=>({id:'manual-'+(p.id||i),slug:p.negocioSlug,html:crearTarjetaDestacado(p)})),...auto.map((html,i)=>({id:'producto-'+(datos[i]?.p.id||i)+'-'+(datos[i]?.o?.id||''),slug:datos[i]?.n.slug||'producto-'+i,html}))];
+  const firma=JSON.stringify(items);if(firma!==firmaListaPromociones){
+    let anterior='';try{anterior=sessionStorage.getItem('exhibicionPrimeraPromo')||'';}catch{}
+    listaPromocionesActual=ordenarPromocionesPorNegocio(items,anterior);firmaListaPromociones=firma;
+    try{if(listaPromocionesActual.length)sessionStorage.setItem('exhibicionPrimeraPromo',listaPromocionesActual[0].slug);}catch{}
+  }
+  detenerCarruselDestacados();
+  carrusel.innerHTML=listaPromocionesActual.length?listaPromocionesActual.map(x=>x.html).join(''):[1,2,3,4].map(crearDestacadoProximamente).join('');
+  let boton=carrusel.parentElement.querySelector('.promociones-ver-todas');if(!boton){boton=document.createElement('button');boton.type='button';boton.className='promociones-ver-todas';boton.onclick=()=>mostrarTodasPromociones(boton);carrusel.after(boton);}
+  boton.textContent='Ver todas las promociones ('+listaPromocionesActual.length+')';boton.hidden=!listaPromocionesActual.length;
+  iniciarCarruselDestacados();
+}
+window.actualizarOfertasDestacadas=actualizarOfertasDestacadas;
+async function cargarDestacadosPublicados(){
+  try{const respuesta=await fetch('destacados.json?v='+Date.now(),{cache:'no-store'});if(!respuesta.ok)throw Error('HTTP '+respuesta.status);const datos=await respuesta.json();destacadosPublicados=Array.isArray(datos)?datos:[];}
+  catch(error){console.warn('No se pudo cargar destacados.json:',error);destacadosPublicados=[];}
+  actualizarOfertasDestacadas();
+}
 // ============================================================
 // ANUNCIO PRINCIPAL
 // Lee principal.json y muestra como máximo un anuncio vigente.
@@ -1889,17 +1871,7 @@ window.addEventListener('comida-abrir', evento => {
   for (const [categoria, lista] of Object.entries(negocios)) {
     const indice = lista.findIndex(n => n.slug === detalle.slug);
     if (indice >= 0) {
-      verPerfil(categoria, indice);
-      if (detalle.productoId) {
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          const tarjeta = Array.from(document.querySelectorAll('[data-producto-id]')).find(el => el.dataset.productoId === detalle.productoId);
-          if (tarjeta) {
-            tarjeta.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            tarjeta.classList.add('comida-producto-destacado');
-            setTimeout(() => tarjeta.classList.remove('comida-producto-destacado'), 1800);
-          }
-        }));
-      }
+      verPerfil(categoria, indice, {productoId:detalle.productoId});
       break;
     }
   }

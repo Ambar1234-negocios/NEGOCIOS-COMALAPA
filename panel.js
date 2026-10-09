@@ -651,6 +651,7 @@ formulario.addEventListener("submit", function (evento) {
 // ============================================================
 
 function mostrarNegociosPanel() {
+  window.MejorasExhibicion?.panelOfertas();
   const lista = document.getElementById("lista-panel-negocios");
   const total = document.getElementById("total-negocios");
 
@@ -1506,6 +1507,7 @@ document.getElementById("cancelar-edicion-promocion")
   ?.addEventListener("click", limpiarFormularioPromocion);
 
 function mostrarDestacadosPanel() {
+  window.MejorasExhibicion?.panelOfertas();
   const lista = document.getElementById("lista-destacados");
   const total = document.getElementById("total-destacados");
 

@@ -8,7 +8,7 @@
     return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2]>.179?'#111111':'#ffffff';
   }
   const clave = 'exhibicionContactosV1';
-  const inicial = () => ({version:1,...Object.fromEntries(Object.keys(plataformas).map(k=>[k,{numero:'',activo:false,nombre:plataformas[k],color:colores[k]}])),mandaditos:{numero:'529633106862'}});
+  const inicial = () => ({version:1,...Object.fromEntries(Object.keys(plataformas).map(k=>[k,{numero:'',activo:false,nombre:plataformas[k],color:colores[k]}])),mandaditos:{numero:'529633106862'},taxi:{numero:'',activo:false}});
   function numero(valor) {
     const limpio=String(valor??'').replace(/[\s()+.-]/g,'');
     if(!/^\d+$/.test(limpio))return '';
@@ -26,6 +26,7 @@
         color:/^#[0-9a-f]{6}$/i.test(contacto?.color)?contacto.color:colores[k]};
     }
     salida.mandaditos.numero=numero(datos.mandaditos?.numero)||salida.mandaditos.numero;
+    const nt=numero(datos.taxi?.numero);salida.taxi={numero:nt,activo:datos.taxi?.activo===true&&!!nt};
     return salida;
   }
   const api=window.ContactosExhibicion={actual:inicial(),numero,normalizar};
@@ -78,12 +79,12 @@
     const form=document.getElementById('form-contactos');if(!form)return;
     const estado=document.getElementById('estado-contactos');
     let borrador=api.actual;
-    try {const guardado=localStorage.getItem(clave);if(guardado)borrador=normalizar(JSON.parse(guardado));}catch{estado.textContent='No se pudo recuperar el borrador local. Se muestran los datos publicados.';}
+    try {const guardado=localStorage.getItem(clave);if(guardado){const anterior=JSON.parse(guardado);borrador=normalizar(anterior);if(!Object.prototype.hasOwnProperty.call(anterior,'taxi'))borrador.taxi={...api.actual.taxi};}}catch{estado.textContent='No se pudo recuperar el borrador local. Se muestran los datos publicados.';}
     const campos=document.getElementById('campos-contactos');
-    for(const [k,nombre] of Object.entries({...plataformas,mandaditos:'Mandaditos'})) {
+    for(const [k,nombre] of Object.entries({...plataformas,mandaditos:'Mandaditos',taxi:'Taxi'})) {
       const grupo=document.createElement('fieldset');grupo.className='contacto-campo';
       const leyenda=document.createElement('legend');leyenda.textContent=nombre;
-      const etiqueta=document.createElement('label');etiqueta.htmlFor='numero-'+k;etiqueta.textContent='Número de WhatsApp';
+      const etiqueta=document.createElement('label');etiqueta.htmlFor='numero-'+k;etiqueta.textContent=k==='taxi'?'Número para llamadas y WhatsApp':'Número de WhatsApp';
       const input=document.createElement('input');input.id='numero-'+k;input.type='tel';input.inputMode='numeric';input.maxLength=10;input.minLength=10;input.pattern='[0-9]{10}';input.value=borrador[k].numero.replace(/^52(?=\d{10}$)/,'');input.placeholder='Ejemplo: 9631234567';input.required=k==='mandaditos';
       input.addEventListener('input',()=>{
         input.value=input.value.replace(/\D/g,'').slice(0,10);
@@ -100,7 +101,7 @@
         input.value=nuevo;input.setCustomValidity('');
       });
       grupo.append(leyenda,etiqueta,input);
-      if(k!=='mandaditos') {
+      if(k!=='mandaditos'&&k!=='taxi') {
         const etiquetaNombre=document.createElement('label');etiquetaNombre.htmlFor='nombre-'+k;etiquetaNombre.textContent='Nombre del botón';
         const campoNombre=document.createElement('input');campoNombre.id='nombre-'+k;campoNombre.type='text';campoNombre.maxLength=40;campoNombre.required=true;campoNombre.value=borrador[k].nombre;
         const etiquetaColor=document.createElement('label');etiquetaColor.htmlFor='color-'+k;etiquetaColor.textContent='Color de fondo';
@@ -112,22 +113,23 @@
         const activo=document.createElement('input');activo.type='checkbox';activo.id='activo-'+k;activo.checked=borrador[k].activo;
         const label=document.createElement('label');label.className='contacto-activo';label.append(activo,document.createTextNode('Mostrar botón de '+nombre));grupo.append(label);
       }
+      if(k==='taxi'){const activo=document.createElement('input');activo.type='checkbox';activo.id='activo-taxi';activo.checked=borrador.taxi.activo;const label=document.createElement('label');label.className='contacto-activo';label.append(activo,document.createTextNode('Mostrar Pedir taxi'));grupo.append(label);}
       campos.append(grupo);
     }
     function recoger() {
       const datos=inicial();
-      for(const k of [...Object.keys(plataformas),'mandaditos']) {
+      for(const k of [...Object.keys(plataformas),'mandaditos','taxi']) {
         const input=document.getElementById('numero-'+k);
         const activo=k==='mandaditos'||document.getElementById('activo-'+k).checked;
         const n=/^\d{10}$/.test(input.value)?'52'+input.value:'';
         input.setCustomValidity((activo||input.value.trim())&&!n?'Escribe exactamente 10 dígitos, sin +52.':'');
         if(!input.reportValidity())return null;
-        if(k!=='mandaditos') {
+        if(k!=='mandaditos'&&k!=='taxi') {
           const campoNombre=document.getElementById('nombre-'+k);
           campoNombre.setCustomValidity(campoNombre.value.trim()?'':'Escribe el nombre del botón.');
           if(!campoNombre.reportValidity())return null;
         }
-        datos[k]=k==='mandaditos'?{numero:n}:{numero:n,activo,nombre:document.getElementById('nombre-'+k).value.trim(),color:document.getElementById('color-'+k).value};
+        datos[k]=k==='mandaditos'?{numero:n}:k==='taxi'?{numero:n,activo}:{numero:n,activo,nombre:document.getElementById('nombre-'+k).value.trim(),color:document.getElementById('color-'+k).value};
       }
       return datos;
     }

@@ -26,5 +26,9 @@
   },
   "mandaditos": {
     "numero": "529633106862"
+  },
+  "taxi": {
+    "numero": "529631181819",
+    "activo": true
   }
 }
