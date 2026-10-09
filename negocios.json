@@ -3596,5 +3596,296 @@
     "verificado": false,
     "activo": true,
     "fechaRegistro": "6/10/2026, 10:53:50 a.m."
+  },
+  {
+    "mostrarGaleria": true,
+    "productos": [],
+    "id": 1791516347112,
+    "nombre": "Estética Janeth",
+    "slug": "estetica-janeth",
+    "slogan": "Belleza, cuidado y estilo en un solo lugar.",
+    "categoria": "belleza",
+    "descripcion": "Estética Janeth ofrece servicios de belleza y cuidado personal como cortes, tintes, peinados, alaciados, manicura, pedicura, uñas acrílicas y gel. También cuenta con productos para el cuidado del cabello, cosméticos, fragancias y accesorios.",
+    "servicios": [
+      {
+        "nombre": "Cabello",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Cortes de cabello",
+          "Tintes",
+          "Peinados",
+          "Planchado de cabello",
+          "Alaciado de cabello",
+          "Alaciado coreano",
+          "Tratamientos capilares"
+        ]
+      },
+      {
+        "nombre": "Uñas",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Uñas acrílicas",
+          "Gelish",
+          "Aplicación de gel",
+          "Diseños de uñas",
+          "Decoración de uñas",
+          "Manicura"
+        ]
+      },
+      {
+        "nombre": "Pedicura y cuidado de pies",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Pedicura",
+          "Cuidado de pies",
+          "Baño spa para pies"
+        ]
+      },
+      {
+        "nombre": "Peinados",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Peinados para eventos",
+          "Recogidos",
+          "Trenzas",
+          "Peinados con accesorios"
+        ]
+      },
+      {
+        "nombre": "Venta de productos de belleza",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Shampoos",
+          "Acondicionadores",
+          "Tratamientos para el cabello",
+          "Aceites para el cabello",
+          "Espumas para peinar",
+          "Gel para cabello",
+          "Labiales",
+          "Cosméticos",
+          "Body mist",
+          "Fragancias corporales"
+        ]
+      }
+    ],
+    "palabrasClave": [
+      "Estética Janeth",
+      "Estetica Janeth",
+      "estética",
+      "estetica",
+      "salón de belleza",
+      "salon de belleza",
+      "salón",
+      "salon",
+      "belleza",
+      "corte de cabello",
+      "cortes de cabello",
+      "corte para dama",
+      "cortes para dama",
+      "corte de mujer",
+      "tintes",
+      "tinte",
+      "tinte de cabello",
+      "coloración de cabello",
+      "coloracion de cabello",
+      "pintar cabello",
+      "pintar el cabello",
+      "cambio de color",
+      "matizador",
+      "shampoo matizador",
+      "champú matizador",
+      "tratamiento capilar",
+      "tratamientos capilares",
+      "tratamiento para cabello",
+      "tratamientos para el cabello",
+      "cuidado del cabello",
+      "alaciado",
+      "alaciado de cabello",
+      "alisado",
+      "alisado de cabello",
+      "cabello lacio",
+      "alaciado coreano",
+      "alisado coreano",
+      "planchado de cabello",
+      "plancha de cabello",
+      "peinados",
+      "peinado",
+      "peinados para eventos",
+      "peinados elegantes",
+      "recogidos",
+      "trenzas",
+      "manicure",
+      "manicura",
+      "maniquiur",
+      "pedicure",
+      "pedicura",
+      "pediquiur",
+      "cuidado de pies",
+      "spa de pies",
+      "baño para pies",
+      "uñas",
+      "uñas acrílicas",
+      "unas acrilicas",
+      "acrílicas",
+      "acrilicas",
+      "uñas de gel",
+      "unas de gel",
+      "gelish",
+      "gelis",
+      "gel",
+      "gel para uñas",
+      "Organic Nails",
+      "diseños de uñas",
+      "diseño de uñas",
+      "decoracion de uñas",
+      "decoración de uñas",
+      "uñas francesas",
+      "francés en uñas",
+      "french nails",
+      "uñas con flores",
+      "uñas con brillo",
+      "esmaltes",
+      "colores de uñas",
+      "A.V.Y.N.A.",
+      "Vittalé Professional",
+      "Yuya",
+      "shampoo profesional",
+      "champú profesional",
+      "acondicionador",
+      "shampoo para caspa",
+      "shampoo anticaspa",
+      "shampoo para cabello teñido",
+      "shampoo rojo",
+      "shampoo violeta",
+      "aceite de argán",
+      "aceite de argan",
+      "mousse para cabello",
+      "espuma para cabello",
+      "gel para cabello",
+      "productos para cabello",
+      "productos de belleza",
+      "labiales",
+      "labial",
+      "maquillaje",
+      "cosméticos",
+      "cosmeticos",
+      "Aida Beauty",
+      "Zermat",
+      "body mist",
+      "bodi mist",
+      "fragancias corporales",
+      "perfume corporal",
+      "Chantaly",
+      "aretes",
+      "arete",
+      "collares",
+      "collar",
+      "anillos",
+      "anillo",
+      "pulseras",
+      "pulsera",
+      "accesorios de belleza",
+      "accesorios para dama",
+      "estética en Frontera Comalapa",
+      "estetica en Frontera Comalapa",
+      "uñas en Frontera Comalapa",
+      "unas en Frontera Comalapa",
+      "pedicura en Frontera Comalapa",
+      "pedicure en Frontera Comalapa",
+      "cortes de cabello en Frontera Comalapa",
+      "salón de belleza en Frontera Comalapa"
+    ],
+    "plan": "normal",
+    "telefono": "9631410930",
+    "whatsapp": "9631410930",
+    "direccion": "https://maps.app.goo.gl/oNxnxfdun76zT5RL9?g_st=acyu",
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
+    "maps": "https://maps.app.goo.gl/oNxnxfdun76zT5RL9?g_st=ac",
+    "video": "",
+    "facebook": "",
+    "instagram": "",
+    "tiktok": "",
+    "sitioWeb": "",
+    "banner": "imagenes/estetica-janeth/banner.webp",
+    "logo": "imagenes/estetica-janeth/logo.webp",
+    "galeria": [
+      "imagenes/estetica-janeth/foto-1.webp",
+      "imagenes/estetica-janeth/foto-2.webp",
+      "imagenes/estetica-janeth/foto-3.webp",
+      "imagenes/estetica-janeth/foto-4.webp",
+      "imagenes/estetica-janeth/foto-5.webp",
+      "imagenes/estetica-janeth/foto-6.webp",
+      "imagenes/estetica-janeth/foto-7.webp",
+      "imagenes/estetica-janeth/foto-8.webp",
+      "imagenes/estetica-janeth/foto-9.webp",
+      "imagenes/estetica-janeth/foto-10.webp",
+      "imagenes/estetica-janeth/foto-11.webp",
+      "imagenes/estetica-janeth/foto-12.webp",
+      "imagenes/estetica-janeth/foto-13.webp"
+    ],
+    "delivery": false,
+    "tipoDelivery": "",
+    "verificado": false,
+    "activo": true,
+    "fechaRegistro": "8/10/2026, 9:25:47 p.m."
   }
 ]
