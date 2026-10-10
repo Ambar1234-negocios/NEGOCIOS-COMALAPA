@@ -332,7 +332,7 @@
         "foto": "imagenes/forno-mexa/foto-2.webp",
         "ingredientes": "Salsa de tomate, queso mozzarella y albahaca fresca.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
         "disponible": true,
-        "enCarrusel": false,
+        "enCarrusel": true,
         "extras": [],
         "gruposOpciones": [],
         "promocion": {
@@ -378,7 +378,7 @@
         "foto": "",
         "ingredientes": "Salsa de tomate, queso mozzarella, jamón y piña.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
         "disponible": true,
-        "enCarrusel": false,
+        "enCarrusel": true,
         "extras": [],
         "gruposOpciones": [],
         "promocion": {
@@ -412,7 +412,7 @@
         "foto": "",
         "ingredientes": "Salsa de tomate, queso mozzarella, carne molida, cebolla morada, champiñón y chile pimiento.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
         "disponible": true,
-        "enCarrusel": false,
+        "enCarrusel": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -436,7 +436,19 @@
         "disponible": true,
         "enCarrusel": false,
         "extras": [],
-        "gruposOpciones": []
+        "gruposOpciones": [],
+        "promocion": {
+          "activa": true,
+          "tipo": "2x1",
+          "etiqueta": "",
+          "horaInicio": "",
+          "horaFin": "",
+          "precio": null,
+          "inicio": "2026-10-09",
+          "fin": "2026-12-09",
+          "color": "verde",
+          "brillo": false
+        }
       },
       {
         "id": "forno-pizza-la-matinal",
@@ -445,7 +457,7 @@
         "foto": "",
         "ingredientes": "Salsa de tomate, queso mozzarella, champiñones y chorizo.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
         "disponible": true,
-        "enCarrusel": false,
+        "enCarrusel": true,
         "extras": [],
         "gruposOpciones": []
       },
