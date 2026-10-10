@@ -334,7 +334,19 @@
         "disponible": true,
         "enCarrusel": false,
         "extras": [],
-        "gruposOpciones": []
+        "gruposOpciones": [],
+        "promocion": {
+          "activa": true,
+          "tipo": "2x1",
+          "etiqueta": "chidita",
+          "horaInicio": "",
+          "horaFin": "",
+          "precio": 85,
+          "inicio": "2026-10-08",
+          "fin": "2026-10-14",
+          "color": "verde",
+          "brillo": true
+        }
       },
       {
         "id": "forno-pizza-pepperoni",
@@ -343,9 +355,21 @@
         "foto": "imagenes/forno-mexa/foto-4.webp",
         "ingredientes": "Salsa de tomate, queso mozzarella y pepperoni.\nEl menú indica 33/35 cm de diámetro y 8 rebanadas.",
         "disponible": true,
-        "enCarrusel": false,
+        "enCarrusel": true,
         "extras": [],
-        "gruposOpciones": []
+        "gruposOpciones": [],
+        "promocion": {
+          "activa": true,
+          "tipo": "precio",
+          "etiqueta": "buenisima",
+          "horaInicio": "",
+          "horaFin": "",
+          "precio": 98.99,
+          "inicio": "2026-10-08",
+          "fin": "2026-10-22",
+          "color": "verde",
+          "brillo": true
+        }
       },
       {
         "id": "forno-pizza-hawaiana",
@@ -356,7 +380,19 @@
         "disponible": true,
         "enCarrusel": false,
         "extras": [],
-        "gruposOpciones": []
+        "gruposOpciones": [],
+        "promocion": {
+          "activa": true,
+          "tipo": "2x1",
+          "etiqueta": "",
+          "horaInicio": "",
+          "horaFin": "",
+          "precio": null,
+          "inicio": "2026-10-08",
+          "fin": "2026-10-23",
+          "color": "verde",
+          "brillo": true
+        }
       },
       {
         "id": "forno-pizza-mexicana",
