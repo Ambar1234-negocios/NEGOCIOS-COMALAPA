@@ -7,7 +7,8 @@
   <title>Panel Administrativo | Exhibición Frontera Comalapa</title>
   <link rel="stylesheet" href="panel.css?v=4">
 <link rel="stylesheet" href="comida.css?v=variantes-20260930">
-<link rel="stylesheet" href="mejoras.css?v=panel-claro-20261008">
+<link rel="stylesheet" href="mejoras.css?v=diseno-anuncios-20261010">
+<link rel="stylesheet" href="propiedades.css?v=separadas-20261010">
 </head>
 
 <body>
@@ -28,6 +29,7 @@
       <button type="button" class="menu-item" data-seccion="negocios">🏪 Negocios</button>
       <button type="button" class="menu-item" data-seccion="categorias">📂 Categorías</button>
       <button type="button" class="menu-item" data-seccion="destacados">⭐ Destacados / Promociones</button>
+      <button type="button" class="menu-item" id="nueva-propiedad">🏡 Nueva propiedad</button>
       <button type="button" class="menu-item" data-seccion="principal">📢 Anuncio principal</button>
       <button type="button" class="menu-item" data-seccion="configuracion">⚙ Configuración</button>
     </nav>
@@ -773,6 +775,7 @@
             </div>
           </div>
 
+<div class="grid-dos-columnas"><div><label for="principal-tema">Fondo del anuncio</label><select id="principal-tema"><option value="morado">Morado</option><option value="azul">Azul</option><option value="verde">Verde</option><option value="cafe">Café</option><option value="dorado">Dorado</option><option value="blanco">Blanco</option><option value="personalizado">Color personalizado</option></select></div><div><label for="principal-color-fondo">Color personalizado</label><input type="color" id="principal-color-fondo" value="#321344"><small>El texto ajusta su contraste automáticamente.</small></div></div>
           <label class="check-promocion">
             <input type="checkbox" id="principal-activo" checked>
             Anuncio activo
@@ -849,14 +852,18 @@
   <!-- ============================================================
        JAVASCRIPT DEL PANEL
        ============================================================ -->
+<script src="diseno-principal.js?v=20261010"></script>
   <script src="contactos.js?v=taxi-integrado-20261008"></script>
   <script src="categorias.js?v=2"></script>
   <script src="servicios.js?v=1"></script>
 <script src="promociones-productos.js?v=horarios-20261008"></script>
 <script src="promociones-editor.js?v=panel-claro-20261008"></script>
-<script src="mejoras.js?v=taxi-integrado-20261008"></script>
-  <script src="comida-panel.js?v=panel-claro-20261008"></script>
-  <script src="panel.js?v=ubicacion-20261008"></script>
+<script src="mejoras.js?v=diseno-anuncios-20261010"></script>
+  <script src="comida-panel.js?v=diseno-anuncios-20261010"></script>
+  <script src="imagenes-principal.js?v=20261010"></script>
+  <script src="propiedades.js?v=20261010-panel"></script>
+<script src="propiedades-panel.js?v=separadas-20261010"></script>
+<script src="panel.js?v=propiedades-separadas-20261010"></script>
 
 <script src="publicacion-pendientes.js?v=20261009"></script>
 </body>

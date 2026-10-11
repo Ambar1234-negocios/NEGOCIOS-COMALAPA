@@ -4140,5 +4140,56 @@
         "turnos": []
       }
     }
+  },
+  {
+    "id": 1791696799094,
+    "nombre": "Lote Los Mangos · EJEMPLO",
+    "slug": "lote-los-mangos",
+    "categoria": "bienesraices",
+    "propiedad": {
+      "tipo": "Lote",
+      "estado": "Disponible",
+      "precio": 165000,
+      "superficie": 200,
+      "construccion": "",
+      "frente": 10,
+      "fondo": 20,
+      "habitaciones": "",
+      "banos": "",
+      "medidas": "Lote rectangular de 10 metros de frente por 20 metros de fondo, con superficie de 200 m².",
+      "servicios": "calle amplia y alumbrado público. Conexiones de agua y luz por confirmar.",
+      "areas": "áreas verdes y acceso controlado.",
+      "ubicacion": "Frontera Comalapa, Chiapas. Ubicación de demostración; dirección exacta pendiente.",
+      "pagos": "contado o pagos. Enganche, plazos",
+      "regimen": "Propiedad privada",
+      "documentos": "",
+      "notaDocumentos": "",
+      "enPublicidad": true,
+      "temaPublicidad": "morado"
+    },
+    "horarios": null,
+    "horario": "",
+    "productos": [],
+    "servicios": [],
+    "delivery": false,
+    "tipoDelivery": "",
+    "verificado": false,
+    "plan": "normal",
+    "fechaRegistro": "10/10/2026, 11:33:19 p.m.",
+    "descripcion": "Lote de ejemplo con espacio para construir tu hogar y disfrutar en familia.",
+    "telefono": "9633106862",
+    "whatsapp": "9633106862",
+    "direccion": "",
+    "maps": "https://maps.app.goo.gl/DfGegWDrmHiQ2c978",
+    "video": "",
+    "mostrarGaleria": true,
+    "activo": true,
+    "banner": "imagenes/lote-los-mangos/banner.webp",
+    "logo": "imagenes/lote-los-mangos/logo.webp",
+    "galeria": [
+      "imagenes/lote-los-mangos/foto-1.webp",
+      "imagenes/lote-los-mangos/foto-2.webp",
+      "imagenes/lote-los-mangos/foto-3.webp"
+    ]
   }
 ]

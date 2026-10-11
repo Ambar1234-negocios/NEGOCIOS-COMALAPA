@@ -512,20 +512,22 @@ formulario.addEventListener("submit", function (evento) {
   // CONSTRUIR DATOS DEL NEGOCIO
   // ============================================================
 
+  const propiedadFicha = null;
   let productosMenu;
-  try { productosMenu = window.MenuEditor.leer(); } catch (error) { alert(error.message); return; }
+  try { productosMenu = propiedadFicha ? [] : window.MenuEditor.leer(); } catch (error) { alert(error.message); return; }
   let horariosNegocio;
 
   try {
-    horariosNegocio = obtenerHorariosDelFormulario();
+    horariosNegocio = propiedadFicha ? null : obtenerHorariosDelFormulario();
   } catch (error) {
     alert(error.message);
     return;
   }
 
   const negocio = {
+    propiedad: propiedadFicha,
     mostrarGaleria: document.getElementById("mostrar-galeria").checked,
-    productos: productosMenu,
+    productos: propiedadFicha ? [] : productosMenu,
     id: Date.now(),
     nombre,
     slug,
@@ -547,7 +549,7 @@ formulario.addEventListener("submit", function (evento) {
     telefono: document.getElementById("telefono").value.trim(),
     whatsapp: document.getElementById("whatsapp").value.trim(),
     direccion: document.getElementById("direccion").value.trim(),
-    horarios: horariosNegocio,
+    horarios: propiedadFicha ? null : horariosNegocio,
     maps: document.getElementById("maps").value.trim(),
     video: document.getElementById("video").value.trim(),
     facebook: document.getElementById("facebook").value.trim(),
@@ -575,11 +577,11 @@ formulario.addEventListener("submit", function (evento) {
           }
         })(),
 
-    delivery: document.getElementById("delivery").checked,
+    delivery: propiedadFicha ? false : document.getElementById("delivery").checked,
     tipoDelivery: document.getElementById("delivery").checked
       ? document.getElementById("tipo-delivery").value
       : "",
-    verificado: document.getElementById("verificado").checked,
+    verificado: propiedadFicha ? false : document.getElementById("verificado").checked,
     activo: document.getElementById("activo").checked,
     fechaRegistro: new Date().toLocaleString()
   };
@@ -864,6 +866,7 @@ function editarNegocio(id) {
     return;
   }
 
+  if (negocio.propiedad) { window.PropiedadesEditor.editar(negocio); return; }
   abrirSeccionPanel("nuevo-negocio");
   // Evita reutilizar archivos seleccionados al editar otro negocio.
   for (const id of ["banner", "logo", "galeria"]) document.getElementById(id).value = "";
@@ -1010,7 +1013,7 @@ function abrirSeccionPanel(seccion) {
   });
 
   document.querySelectorAll(".menu-item").forEach((boton) => {
-    boton.classList.toggle("activo", boton.dataset.seccion === seccion);
+    boton.classList.toggle("activo", (boton.dataset.seccion === seccion || (boton.id === "nueva-propiedad" && seccion === "propiedades")));
   });
 
   const titulo = document.getElementById("titulo-seccion-panel");
@@ -1047,6 +1050,8 @@ function iniciarNuevoNegocio() {
   renderizarHorarios();
   return true;
 }
+
+document.getElementById("nueva-propiedad").addEventListener("click", () => window.PropiedadesEditor.nueva());
 
 document.querySelectorAll(".menu-item[data-seccion]").forEach((boton) => {
   boton.addEventListener("click", function () {
@@ -1211,7 +1216,7 @@ function actualizarSelectorImagenPromocion() {
 
   if (imagenActual) {
     ruta.textContent = imagenActual;
-    preview.src = imagenActual;
+    preview.src = window.ImagenesPrincipal?.url(imagenActual) || imagenActual;
     preview.classList.add("visible");
     sinImagen.style.display = "none";
   } else {
@@ -1780,6 +1785,7 @@ function actualizarPreviewPrincipal() {
   const card = document.getElementById("preview-principal-card");
   if (!card) return;
 
+  DisenoPrincipal.aplicar(card,valorPrincipal("principal-tema"),valorPrincipal("principal-color-fondo"));
   const etiqueta = valorPrincipal("principal-etiqueta") || "ANUNCIO ESPECIAL";
   const titulo = valorPrincipal("principal-titulo") || "Título del anuncio principal";
   const texto = valorPrincipal("principal-texto") || "Descripción breve del anuncio.";
@@ -1800,12 +1806,14 @@ function actualizarPreviewPrincipal() {
     const img = document.createElement("img");
     img.className = "preview-promocion-producto";
     img.alt = "Imagen del anuncio principal";
-    img.src = archivo ? URL.createObjectURL(archivo) : imagenActual;
+    img.src = archivo ? URL.createObjectURL(archivo) : (window.ImagenesPrincipal?.url(imagenActual) || imagenActual);
     card.appendChild(img);
   }
 }
 
 [
+  "principal-tema",
+  "principal-color-fondo",
   "principal-etiqueta",
   "principal-titulo",
   "principal-texto",
@@ -1849,7 +1857,7 @@ function limpiarFormularioPrincipal() {
   actualizarPreviewPrincipal();
 }
 
-formularioPrincipal?.addEventListener("submit", function (evento) {
+formularioPrincipal?.addEventListener("submit", async function (evento) {
   evento.preventDefault();
 
   const titulo = valorPrincipal("principal-titulo");
@@ -1875,12 +1883,16 @@ formularioPrincipal?.addEventListener("submit", function (evento) {
     boton: valorPrincipal("principal-boton") || "Ver más",
     enlace: valorPrincipal("principal-enlace"),
     mensajeWhatsapp: valorPrincipal("principal-mensaje-whatsapp"),
+    tema: valorPrincipal("principal-tema") || "morado",
+    colorFondo: valorPrincipal("principal-color-fondo") || "#321344",
     imagen: obtenerRutaImagenPrincipal(),
     fechaInicio,
     fechaFin,
     activo: document.getElementById("principal-activo")?.checked !== false
   };
 
+  const archivoPrincipal=document.getElementById('principal-imagen-archivo')?.files?.[0];
+  try{if(archivoPrincipal)await ImagenesPrincipal.guardar(anuncio.imagen,archivoPrincipal);}catch{alert('No se pudo conservar la imagen en este navegador. No se guardó el anuncio; inténtalo de nuevo.');return;}
   const anuncios = obtenerPrincipalGuardado();
   const posicion = anuncios.findIndex(item => Number(item.id) === idEditando);
   if (posicion >= 0) anuncios[posicion] = anuncio;
@@ -1888,8 +1900,8 @@ formularioPrincipal?.addEventListener("submit", function (evento) {
   localStorage.setItem("exhibicionPrincipal", JSON.stringify(anuncios));
 
   alert(idEditando
-    ? "✅ Anuncio principal actualizado correctamente"
-    : "✅ Anuncio principal guardado correctamente");
+    ? "✅ Anuncio principal actualizado. Pulsa Ver para previsualizar. Para publicarlo, descarga principal.json y copia la imagen en su ruta."
+    : "✅ Anuncio principal guardado. Pulsa Ver para previsualizar. Para publicarlo, descarga principal.json y copia la imagen en su ruta.");
 
   limpiarFormularioPrincipal();
   mostrarPrincipalPanel();
@@ -1905,7 +1917,22 @@ function mostrarPrincipalPanel() {
   if (!lista || !total) return;
 
   const anuncios = obtenerPrincipalGuardado();
-  total.textContent = `${anuncios.length} anuncios`;
+  const fichasPublicidad = window.PropiedadesExhibicion.anuncios(JSON.parse(localStorage.getItem('exhibicionNegocios') || '[]'));
+  total.textContent = `${anuncios.length} anuncios manuales · ${fichasPublicidad.length} propiedades`;
+  let zonaPropiedades=document.getElementById('principal-propiedades-auto');
+  if(!zonaPropiedades){zonaPropiedades=document.createElement('section');zonaPropiedades.id='principal-propiedades-auto';lista.before(zonaPropiedades);}
+  zonaPropiedades.replaceChildren();
+  if(fichasPublicidad.length){
+    const titulo=document.createElement('h3');titulo.textContent='Propiedades en publicidad principal';
+    const ayuda=document.createElement('p');ayuda.textContent='Estos anuncios toman sus datos de las fichas. Edita la propiedad para cambiarlos o desmarca Mostrar en publicidad principal para quitarlos. Se publican con negocios.json.';zonaPropiedades.append(titulo,ayuda);
+    fichasPublicidad.forEach(anuncio=>{
+      const card=document.createElement('article');card.className='promocion-panel';
+      const datos=document.createElement('div');const nombre=document.createElement('h3');nombre.textContent=anuncio.titulo;const texto=document.createElement('p');texto.textContent=anuncio.texto;datos.append(nombre,texto);
+      const acciones=document.createElement('div');acciones.className='acciones-negocio';
+      const editar=document.createElement('button');editar.type='button';editar.textContent='Editar propiedad';editar.onclick=()=>editarNegocio(anuncio.propiedadId);
+      const ver=document.createElement('a');ver.className='btn-ver';ver.textContent='Ver ficha';ver.href=anuncio.enlace;ver.target='_blank';ver.rel='noopener noreferrer';acciones.append(ver,editar);card.append(datos,acciones);zonaPropiedades.append(card);
+    });
+  }
 
   if (!anuncios.length) {
     lista.innerHTML = "<p>Todavía no hay un anuncio principal guardado.</p>";
@@ -1927,7 +1954,9 @@ function mostrarPrincipalPanel() {
       </div>
 
       <div class="acciones-negocio">
+        <button type="button" class="btn-ver" onclick="verAnuncioPrincipalGuardado(${Number(item.id)})">Ver</button>
         <button type="button" class="btn-editar" onclick="editarPrincipal(${Number(item.id)})">Editar</button>
+        ${item.imagen ? `<button type="button" class="btn-editar" onclick="descargarImagenAnuncioPrincipal(${Number(item.id)})">Descargar imagen</button>` : ""}
         <button type="button" class="btn-estado" onclick="cambiarEstadoPrincipal(${Number(item.id)})">
           ${item.activo !== false ? "🟢 Activo" : "🔴 Inactivo"}
         </button>
@@ -1954,6 +1983,8 @@ function editarPrincipal(id) {
   document.getElementById("principal-inicio").value = item.fechaInicio || "";
   document.getElementById("principal-fin").value = item.fechaFin || "";
   document.getElementById("principal-activo").checked = item.activo !== false;
+  document.getElementById("principal-tema").value = item.tema || "morado";
+  document.getElementById("principal-color-fondo").value = /^#[0-9a-f]{6}$/i.test(item.colorFondo||"")?item.colorFondo:"#321344";
 
   formularioPrincipal.dataset.editandoId = item.id;
   formularioPrincipal.dataset.imagenActual = item.imagen || "";
@@ -2167,3 +2198,6 @@ function mostrarImagenesGuardadas(negocio) {
   document.getElementById('cantidad-galeria').textContent=fotos.length+' fotos guardadas. No necesitas seleccionarlas otra vez.';
   document.getElementById('ruta-imagenes').textContent='imagenes/'+negocio.slug+'/';
 }
+
+function verAnuncioPrincipalGuardado(id){const u=new URL('index.html',location.href);u.searchParams.set('vistaPrincipal',String(id));window.open(u.href,'_blank','noopener');}
+function descargarImagenAnuncioPrincipal(id){const item=obtenerPrincipalGuardado().find(x=>Number(x.id)===id);if(item?.imagen)ImagenesPrincipal.descargar(item.imagen);}

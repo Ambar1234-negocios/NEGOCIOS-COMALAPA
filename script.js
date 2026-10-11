@@ -144,7 +144,8 @@ let destacadosPublicados = [];
 // ============================================================
 
 function crearLinkWhatsapp(negocio) {
-  const numero = negocio.whatsapp || WHATSAPP_GENERAL;
+  const digitos = String(negocio.whatsapp || "").replace(/\D/g, "");
+  const numero = negocio.propiedad && digitos.length === 10 ? "52" + digitos : negocio.whatsapp || WHATSAPP_GENERAL;
   const mensaje = `Hola, vi ${negocio.nombre} en Exhibición Frontera Comalapa y quiero información.`;
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
 }
@@ -230,9 +231,13 @@ function crearTarjetaNegocioCategoria(negocio, categoria) {
   const nombre = negocio.nombre || "Negocio";
   const iniciales = nombre.trim().split(/\s+/).slice(0, 2).map(p => Array.from(p)[0] || "").join("").toUpperCase();
   const banner = negocio.banner || negocio.imagen || "";
-  const horario = obtenerEstadoHorario(negocio);
-  const estado = horario.automatico ? horario.estado : "sin-datos";
-  const textoEstado = estado === "abierto" ? "Abierto ahora" : estado === "descanso" ? "Cerrado temporalmente" : estado === "cerrado" ? "Cerrado" : "Horario por confirmar";
+  const propiedad = negocio.propiedad;
+  const horario = propiedad ? null : obtenerEstadoHorario(negocio);
+  const estadoVenta = ["Disponible", "En trato", "Vendida"].includes(propiedad?.estado) ? propiedad.estado : "Disponible";
+  const estado = propiedad ? ({Disponible:"disponible", "En trato":"en-trato", Vendida:"vendida"}[estadoVenta]) : horario.automatico ? horario.estado : "sin-datos";
+  const textoEstado = propiedad ? estadoVenta : estado === "abierto" ? "Abierto ahora" : estado === "descanso" ? "Cerrado temporalmente" : estado === "cerrado" ? "Cerrado" : "Horario por confirmar";
+  const tipoBoton = {Lote:"lote", Terreno:"terreno", Casa:"casa", Departamento:"departamento", Edificio:"edificio", Parcela:"parcela", "Local comercial":"local"};
+  const textoBoton = propiedad ? "Ver " + (tipoBoton[propiedad.tipo] || "propiedad") : "Ver perfil";
   const accion = escapar('verPerfil(' + JSON.stringify(categoria) + ', ' + indice + ')');
   return `
     <article class="categoria-negocio resultado-plan-${obtenerPlanNegocio(negocio)}">
@@ -248,8 +253,8 @@ function crearTarjetaNegocioCategoria(negocio, categoria) {
         <h3><button type="button" class="categoria-negocio-enlace" onclick="${accion}">${escapar(nombre)}</button></h3>
         <p class="categoria-negocio-descripcion">${escapar(negocio.descripcion || "Conoce sus servicios y datos de contacto.")}</p>
         <div class="categoria-negocio-pie">
-          <span class="categoria-negocio-estado estado-${estado}" title="${escapar(horario.texto)}"><span aria-hidden="true">●</span> ${textoEstado}</span>
-          <span class="categoria-negocio-cta" aria-hidden="true">Ver perfil <span>↗</span></span>
+          <span class="categoria-negocio-estado estado-${estado}" title="${escapar(propiedad ? textoEstado : horario.texto)}"><span aria-hidden="true">●</span> ${escapar(textoEstado)}</span>
+          <span class="categoria-negocio-cta" aria-hidden="true">${escapar(textoBoton)} <span>↗</span></span>
         </div>
       </div>
     </article>
@@ -596,7 +601,7 @@ function mostrarCategoria(categoria, opciones = {}) {
   if (!negocios[categoria]) return;
 
   titulo.style.display = "block";
-  titulo.textContent = "Negocios de " + (categoriasNombres[categoria] || categoria.toUpperCase());
+  titulo.textContent = categoria === "bienesraices" ? "Casas y terrenos" : "Negocios de " + (categoriasNombres[categoria] || categoria.toUpperCase());
 
   const negociosCategoria = ordenarNegociosPorPlan(negocios[categoria]);
 
@@ -723,7 +728,7 @@ function verPerfil(categoria, index, opciones = {}) {
   const logo = negocio.logo || "";
   const estadoHorario = obtenerEstadoHorario(negocio);
 
-  const serviciosHTML = negocio.servicios && negocio.servicios.length > 0
+  const serviciosHTML = !negocio.propiedad && negocio.servicios && negocio.servicios.length > 0
     ? `
       <section class="perfil-seccion">
         <h4>Servicios</h4>
@@ -745,7 +750,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
       
 
-      ${(negocio.horarios || negocio.horario) ? `
+      ${!negocio.propiedad && (negocio.horarios || negocio.horario) ? `
         <div class="detalle-card">
           <h4>🕒 Horario</h4>
           <p><strong>${estadoHorario.texto}</strong></p>
@@ -774,7 +779,7 @@ function verPerfil(categoria, index, opciones = {}) {
         <a class="accion accion-whatsapp" href="${crearLinkWhatsapp(negocio)}" target="_blank" rel="noopener noreferrer">
           <svg class="perfil-icono-whatsapp" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.52 3.48A11.91 11.91 0 0 0 12.04 0C5.46 0 .1 5.35.1 11.93c0 2.1.55 4.16 1.6 5.98L0 24l6.24-1.64a11.94 11.94 0 0 0 5.8 1.48h.01c6.58 0 11.94-5.35 11.95-11.93a11.85 11.85 0 0 0-3.48-8.43ZM12.05 21.82a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.7.97.99-3.61-.24-.37a9.87 9.87 0 0 1-1.52-5.29c0-5.47 4.45-9.92 9.92-9.92a9.85 9.85 0 0 1 7.02 2.91 9.85 9.85 0 0 1 2.9 7.03c0 5.47-4.45 9.87-9.97 9.87Zm5.44-7.41c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.87 1.21 3.07c.15.2 2.1 3.2 5.09 4.49.71.3 1.26.48 1.69.62.71.22 1.35.19 1.86.11.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35Z"/></svg>
           <div>
-            <strong>WhatsApp</strong>
+            <strong>${negocio.propiedad ? "Quiero más información" : "WhatsApp"}</strong>
             <small>Enviar mensaje</small>
           </div>
         </a>
@@ -805,7 +810,7 @@ function verPerfil(categoria, index, opciones = {}) {
           <span>▶️</span>
           <div>
             <strong>Ver video</strong>
-            <small>Video del negocio</small>
+            <small>${negocio.propiedad ? "Recorrido de la propiedad" : "Video del negocio"}</small>
           </div>
         </a>
       ` : ""}
@@ -946,7 +951,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
         ${logo ? `
           <div class="perfil-logo-oficial">
-            <img src="${logo}" alt="Logo de ${negocio.nombre}">
+            <img src="${logo}" alt="${negocio.propiedad ? "Foto principal de" : "Logo de"} ${negocio.nombre}">
           </div>
         ` : ""}
 
@@ -969,12 +974,14 @@ function verPerfil(categoria, index, opciones = {}) {
           </section>
         ` : ""}
 
-        ${window.ComidaExhibicion.menu(negocio)}
+        ${window.PropiedadesExhibicion.renderizar(negocio)}
+        ${negocio.propiedad ? "" : window.ComidaExhibicion.menu(negocio)}
         ${promocionesHTML}
         
         ${galeriaHTML}
 
         ${botonesHTML}
+        ${window.PropiedadesExhibicion.acciones(negocio)}
 
         ${detallesHTML}
 
@@ -1087,6 +1094,7 @@ function crearTarjetaDestacado(destacado) {
       onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); abrirDestacado('${slug}'); }"
     >
       <div class="destacado-contenido">
+        <strong class="promo-negocio-arriba">${destacado.negocioNombre || "Negocio local"}</strong>
         <span class="destacado-etiqueta">${etiqueta}</span>
 
         <h3>${titulo}</h3>
@@ -1449,19 +1457,20 @@ function obtenerEnlacePrincipal(anuncio) {
 }
 
 function crearAnuncioPrincipal(anuncio) {
-  const etiqueta = anuncio.etiqueta || "ANUNCIO ESPECIAL";
-  const titulo = anuncio.titulo || "Anuncio principal";
-  const texto = anuncio.texto || "";
-  const boton = anuncio.boton || "Ver más";
+  const escapar = escaparTarjetaCategoria;
+  const etiqueta = escapar(anuncio.etiqueta || "ANUNCIO ESPECIAL");
+  const titulo = escapar(anuncio.titulo || "Anuncio principal");
+  const texto = escapar(anuncio.texto || "");
+  const boton = escapar(anuncio.boton || "Ver más");
   const enlace = obtenerEnlacePrincipal(anuncio);
-  const imagen = anuncio.imagen || "";
+  const imagen = escapar(anuncio.imagen || "");
   const claseSinImagen = imagen ? "" : " anuncio-principal-card-sin-imagen";
   const etiquetaApertura = enlace
-    ? `href="${enlace}" target="_blank" rel="noopener noreferrer"`
+    ? `href="${escapar(enlace)}" target="_blank" rel="noopener noreferrer"`
     : 'href="#" onclick="event.preventDefault();"';
 
   return `
-    <a class="anuncio-principal-card${claseSinImagen}" ${etiquetaApertura}>
+    <a class="anuncio-principal-card${claseSinImagen}" data-diseno-principal="true" style="${DisenoPrincipal.estilo(anuncio.tema,anuncio.colorFondo)}" ${etiquetaApertura}>
       <div class="anuncio-principal-texto-wrap">
         <span class="anuncio-principal-etiqueta">${etiqueta}</span>
         <h2>${titulo}</h2>
@@ -1488,21 +1497,22 @@ async function cargarAnuncioPrincipalPublicado() {
   contenedor.innerHTML = "";
 
   try {
-    const respuesta = await fetch(`principal.json?v=${Date.now()}`, {
-      cache: "no-store"
-    });
-
-    if (!respuesta.ok) throw new Error(`HTTP ${respuesta.status}`);
-
-    const datos = await respuesta.json();
-    const lista = Array.isArray(datos) ? datos : (datos ? [datos] : []);
-    const fechaActual = obtenerFechaISOExhibicion();
-    const anuncios = lista.filter((item) => anuncioPrincipalVigente(item, fechaActual));
-
+    const vistaId=new URLSearchParams(location.search).get('vistaPrincipal');
+    let lista;
+    if(vistaId){await window.ImagenesPrincipal?.lista;const guardados=JSON.parse(localStorage.getItem('exhibicionPrincipal')||'[]');lista=guardados.filter(item=>String(item.id)===vistaId).map(item=>({...item,imagen:window.ImagenesPrincipal?.url(item.imagen)||item.imagen}));const aviso=document.createElement('p');aviso.setAttribute('role','status');aviso.textContent=lista.length?'VISTA PREVIA DEL ANUNCIO GUARDADO EN ESTE NAVEGADOR. Se muestra aunque esté inactivo o fuera de fecha. Aún debes exportar principal.json y copiar su imagen para publicarlo.':'No se encontró este anuncio guardado. Abre la vista desde el mismo navegador y dirección del panel.';aviso.style.cssText='padding:16px;background:#fff0c2;color:#4b3700;border:2px solid #cf9c27;border-radius:10px';seccion.before(aviso);}
+    else{
+      lista=[];
+      try{const respuesta=await fetch('principal.json?v='+Date.now(),{cache:'no-store'});if(!respuesta.ok)throw Error('HTTP '+respuesta.status);const datos=await respuesta.json();lista=Array.isArray(datos)?datos:(datos?[datos]:[]);}catch(error){console.warn('No se pudieron cargar los anuncios manuales.',error);}
+      await cargaNegociosPublicados;
+      lista.push(...window.PropiedadesExhibicion.anuncios(Object.values(negocios).flat()));
+    }
+    const fechaActual=obtenerFechaISOExhibicion();
+    const anuncios=vistaId?lista:lista.filter(item=>anuncioPrincipalVigente(item,fechaActual));
     if (!anuncios.length) return;
 
     iniciarRotacionPrincipal(anuncios, contenedor);
     seccion.classList.remove("oculto");
+    if(vistaId)setTimeout(()=>seccion.scrollIntoView({behavior:"smooth",block:"center"}),200);
   } catch (error) {
     console.warn("No se pudo cargar principal.json:", error);
   }
@@ -1800,68 +1810,63 @@ let limpiarRotacionPrincipal = () => {};
 function iniciarRotacionPrincipal(anuncios, contenedor) {
   limpiarRotacionPrincipal();
   contenedor.replaceChildren();
+  if (!anuncios.length) return;
+  const clave = 'exhibicionUltimoPrincipalV1';
+  const identidad = anuncio => String(anuncio.id ?? anuncio.enlace ?? anuncio.titulo);
+  const orden = [...anuncios];
+  for (let i = orden.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [orden[i], orden[j]] = [orden[j], orden[i]];
+  }
+  let anterior = '';
+  try { anterior = sessionStorage.getItem(clave) || ''; } catch {}
+  if (orden.length > 1 && identidad(orden[0]) === anterior) {
+    const distinto = orden.findIndex(a => identidad(a) !== anterior);
+    if (distinto > 0) [orden[0], orden[distinto]] = [orden[distinto], orden[0]];
+  }
   const escenario = document.createElement('div');
   escenario.className = 'principal-escenario';
-  const diapositivas = anuncios.map((anuncio, indice) => {
+  const diapositivas = orden.map(anuncio => {
     const elemento = document.createElement('div');
     elemento.className = 'principal-diapositiva';
     elemento.innerHTML = crearAnuncioPrincipal(anuncio);
-    elemento.setAttribute('role', 'group');
-    elemento.setAttribute('aria-label', `Anuncio ${indice + 1} de ${anuncios.length}`);
     escenario.append(elemento);
     return elemento;
   });
   contenedor.append(escenario);
   let indice = 0;
   const reducido = matchMedia('(prefers-reduced-motion: reduce)');
-  let pausado = reducido.matches;
-  let visible = false;
-  let encima = false;
-  let enfocado = false;
-  let temporizador;
-  const controles = document.createElement('div');
-  controles.className = 'principal-controles';
-  const anterior = document.createElement('button');anterior.type='button';anterior.textContent='←';anterior.setAttribute('aria-label','Anuncio anterior');
-  const siguiente = document.createElement('button');siguiente.type='button';siguiente.textContent='→';siguiente.setAttribute('aria-label','Anuncio siguiente');
-  const contador = document.createElement('span');
-  const pausa = document.createElement('button');pausa.type='button';
-  const actualizarPausa = () => {pausa.textContent=pausado?'Reanudar':'Pausar';pausa.setAttribute('aria-label',pausado?'Reanudar cambio automático':'Pausar cambio automático');};
+  let visible = false, encima = false, enfocado = false, temporizador;
   function mostrar(nuevo) {
-    indice=(nuevo+anuncios.length)%anuncios.length;
-    diapositivas.forEach((elemento,i)=>{
-      elemento.classList.toggle('principal-visible',i===indice);
-      elemento.inert=i!==indice;
-      elemento.setAttribute('aria-hidden',String(i!==indice));
+    indice = (nuevo + orden.length) % orden.length;
+    diapositivas.forEach((elemento, i) => {
+      elemento.classList.toggle('principal-visible', i === indice);
+      elemento.inert = i !== indice;
+      elemento.setAttribute('aria-hidden', String(i !== indice));
     });
-    contador.textContent=`${indice+1} / ${anuncios.length}`;
+    try { sessionStorage.setItem(clave, identidad(orden[indice])); } catch {}
   }
   function programar() {
     clearTimeout(temporizador);
-    if(anuncios.length>1 && !pausado && visible && !encima && !enfocado && !document.hidden) {
-      temporizador=setTimeout(()=>{mostrar(indice+1);programar();},12000);
+    if (orden.length > 1 && visible && !encima && !enfocado && !document.hidden && !reducido.matches) {
+      temporizador = setTimeout(() => { mostrar(indice + 1); programar(); }, 8000);
     }
   }
-  anterior.onclick=()=>{mostrar(indice-1);programar();};
-  siguiente.onclick=()=>{mostrar(indice+1);programar();};
-  pausa.onclick=()=>{pausado=!pausado;actualizarPausa();programar();};
-  controles.append(anterior,contador,siguiente,pausa);
-  if(anuncios.length>1)contenedor.append(controles);
-  const entrar=()=>{encima=true;programar();};
-  const salir=()=>{encima=false;programar();};
-  const foco=()=>{enfocado=true;programar();};
-  const desenfocar=e=>{enfocado=contenedor.contains(e.relatedTarget);programar();};
-  const cambiarMovimiento=()=>{if(reducido.matches)pausado=true;actualizarPausa();programar();};
-  contenedor.addEventListener('mouseenter',entrar);contenedor.addEventListener('mouseleave',salir);
-  contenedor.addEventListener('focusin',foco);contenedor.addEventListener('focusout',desenfocar);
-  document.addEventListener('visibilitychange',programar);reducido.addEventListener('change',cambiarMovimiento);
-  const observador=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;programar();},{threshold:.25});
+  const entrar = () => { encima = true; programar(); };
+  const salir = () => { encima = false; programar(); };
+  const foco = () => { enfocado = true; programar(); };
+  const desenfocar = e => { enfocado = contenedor.contains(e.relatedTarget); programar(); };
+  contenedor.addEventListener('mouseenter', entrar);contenedor.addEventListener('mouseleave', salir);
+  contenedor.addEventListener('focusin', foco);contenedor.addEventListener('focusout', desenfocar);
+  document.addEventListener('visibilitychange', programar);reducido.addEventListener('change', programar);
+  const observador = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; programar(); }, {threshold:.25});
+  mostrar(0);
   observador.observe(escenario);
-  mostrar(0);actualizarPausa();
-  limpiarRotacionPrincipal=()=>{
+  limpiarRotacionPrincipal = () => {
     clearTimeout(temporizador);observador.disconnect();
-    contenedor.removeEventListener('mouseenter',entrar);contenedor.removeEventListener('mouseleave',salir);
-    contenedor.removeEventListener('focusin',foco);contenedor.removeEventListener('focusout',desenfocar);
-    document.removeEventListener('visibilitychange',programar);reducido.removeEventListener('change',cambiarMovimiento);
+    contenedor.removeEventListener('mouseenter', entrar);contenedor.removeEventListener('mouseleave', salir);
+    contenedor.removeEventListener('focusin', foco);contenedor.removeEventListener('focusout', desenfocar);
+    document.removeEventListener('visibilitychange', programar);reducido.removeEventListener('change', programar);
   };
 }
 

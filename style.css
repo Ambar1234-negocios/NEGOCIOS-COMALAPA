@@ -2281,3 +2281,6 @@ footer {
   border-color: #e8c46b;
   color: #713f12;
 }
+.categoria-negocio-estado.estado-disponible{background:#e2f5e7;border-color:#b9dfc4;color:#195c33}
+.categoria-negocio-estado.estado-en-trato{background:#fff1c9;border-color:#e8d58b;color:#735500}
+.categoria-negocio-estado.estado-vendida{background:#eeeef1;border-color:#d4d4db;color:#51515f}

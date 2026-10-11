@@ -50,7 +50,7 @@
       const servicio=document.createElement('div');servicio.className='mandaditos-acceso';
       const informacion=document.createElement('div');
       const encabezado=document.createElement('h2');encabezado.className='mandaditos-titulo';encabezado.textContent='Mandaditos en Comalapa';
-      const descripcion=document.createElement('p');descripcion.className='mandaditos-descripcion';descripcion.textContent='Compras locales, recogidas y entregas a domicilio.';
+      const descripcion=document.createElement('p');descripcion.className='mandaditos-descripcion';descripcion.textContent='Compras locales y entrega a domicilio.';
       const pedir=document.createElement('a');pedir.className='mandaditos-boton';pedir.textContent='Pedir un mandadito';
       const mensajeMandadito='Hola, necesito un servicio de mandaditos.\n\nNecesito comprar o recoger:\nLugar de compra o recogida:\nDirección de entrega:\nReferencia para llegar:\nHorario deseado:\n\n¿Me confirmas disponibilidad y costo del servicio?';
       pedir.href='https://wa.me/'+api.actual.mandaditos.numero+'?text='+encodeURIComponent(mensajeMandadito);
@@ -73,7 +73,7 @@
           const accion=document.createElement('small');accion.textContent='Solicitar por WhatsApp';
           a.append(marca,accion);grid.append(a);
         }
-        zona.append(titulo,ayuda,grid);
+        const plataformasZona=document.createElement('div');plataformasZona.className='compras-plataformas';plataformasZona.append(titulo,ayuda,grid);zona.append(plataformasZona);
       }
     }
     const form=document.getElementById('form-contactos');if(!form)return;
