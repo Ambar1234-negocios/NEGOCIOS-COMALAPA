@@ -3935,5 +3935,210 @@
     "verificado": false,
     "activo": true,
     "fechaRegistro": "8/10/2026, 9:25:47 p.m."
+  },
+  {
+    "id": 1791688611054,
+    "nombre": "Óptica DAYBE",
+    "slug": "optica-daybe",
+    "slogan": "El arte de ver con elegancia.",
+    "categoria": "cat-opticas-y-salud-visual",
+    "descripcion": "Óptica DAYBE ofrece atención optométrica, examen de la vista, lentes graduados, lentes de contacto, reparación y ajustes. También cuenta con armazones de diferentes estilos y marcas como Ray-Ban, Versace y otras opciones disponibles en tienda. Atención con el optometrista Daniel Velázquez. Promociones: examen de la vista gratis en la compra de tus lentes y 30% de descuento en cualquier lente graduado presentando la tarjeta. Consulta en tienda la vigencia, la tarjeta requerida y las promociones de cada mes.",
+    "servicios": [
+      {
+        "nombre": "Optometría",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Atención con optometrista",
+          "Examen de la vista",
+          "Revisión visual"
+        ]
+      },
+      {
+        "nombre": "Lentes graduados",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Lentes graduados",
+          "Lentes con graduación",
+          "Armazones para lentes"
+        ]
+      },
+      {
+        "nombre": "Lentes de contacto",
+        "mostrarDetalles": false,
+        "detalles": []
+      },
+      {
+        "nombre": "Reparación y ajustes",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Reparación de lentes",
+          "Ajuste de armazones",
+          "Ajustes de lentes"
+        ]
+      },
+      {
+        "nombre": "Armazones de marca",
+        "mostrarDetalles": true,
+        "detalles": [
+          "Ray-Ban",
+          "Versace",
+          "Otras marcas disponibles en tienda"
+        ]
+      }
+    ],
+    "palabrasClave": [
+      "Óptica DAYBE",
+      "Optica DAYBE",
+      "óptica",
+      "optica",
+      "óptica en Frontera Comalapa",
+      "optica en Frontera Comalapa",
+      "lentes",
+      "lente",
+      "lentes graduados",
+      "lente graduado",
+      "lentes con graduación",
+      "lentes con graduacion",
+      "lentes para ver",
+      "anteojos",
+      "gafas",
+      "armazones",
+      "armazon",
+      "armazones para lentes",
+      "monturas para lentes",
+      "lentes de contacto",
+      "optometrista",
+      "optometría",
+      "optometria",
+      "examen de la vista",
+      "examen visual",
+      "revisión de la vista",
+      "revision de la vista",
+      "checar la vista",
+      "checar vista",
+      "salud visual",
+      "cuidado visual",
+      "problemas de vista",
+      "problemas de visión",
+      "vista cansada",
+      "reparación de lentes",
+      "reparar lentes",
+      "arreglo de lentes",
+      "arreglar lentes",
+      "ajuste de lentes",
+      "ajustar lentes",
+      "Ray-Ban",
+      "Ray Ban",
+      "Rayban",
+      "lentes Ray-Ban",
+      "armazones Ray-Ban",
+      "Versace",
+      "lentes Versace",
+      "armazones Versace",
+      "lentes de marca",
+      "armazones de marca",
+      "examen de la vista gratis",
+      "promociones en lentes",
+      "descuento en lentes",
+      "lentes en Frontera Comalapa",
+      "óptica cerca de Comex",
+      "optica cerca de Comex",
+      "Daniel Velázquez",
+      "Daniel Velazquez"
+    ],
+    "plan": "normal",
+    "telefono": "9631570450",
+    "whatsapp": "9631570450",
+    "direccion": "Primera Poniente Sur #46, abajo de Comex, Frontera Comalapa, Chiapas.",
+    "horario": "Lunes a sábado: 9:00 a. m. – 7:00 p. m. Domingo: por confirmar.",
+    "maps": "https://maps.app.goo.gl/DfGegWDrmHiQ2c978",
+    "video": "",
+    "facebook": "",
+    "instagram": "",
+    "tiktok": "",
+    "sitioWeb": "",
+    "banner": "imagenes/optica-daybe/banner.webp",
+    "logo": "imagenes/optica-daybe/logo.webp",
+    "galeria": [
+      "imagenes/optica-daybe/foto-1.webp",
+      "imagenes/optica-daybe/foto-2.webp",
+      "imagenes/optica-daybe/foto-3.webp",
+      "imagenes/optica-daybe/foto-4.webp",
+      "imagenes/optica-daybe/foto-5.webp",
+      "imagenes/optica-daybe/foto-6.webp",
+      "imagenes/optica-daybe/foto-7.webp",
+      "imagenes/optica-daybe/foto-8.webp",
+      "imagenes/optica-daybe/foto-9.webp",
+      "imagenes/optica-daybe/foto-10.webp",
+      "imagenes/optica-daybe/foto-11.webp",
+      "imagenes/optica-daybe/foto-12.webp"
+    ],
+    "delivery": false,
+    "tipoDelivery": "",
+    "verificado": false,
+    "activo": true,
+    "fechaRegistro": "10/10/26, 9:16 p.m.",
+    "mostrarGaleria": true,
+    "productos": [],
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    }
   }
 ]

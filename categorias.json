@@ -84,5 +84,10 @@
     "id": "cat-joyeria-y-accesorios",
     "nombre": "Joyería y accesorios",
     "fondo": "rayas"
+  },
+  {
+    "id": "cat-opticas-y-salud-visual",
+    "nombre": "Ópticas y salud visual",
+    "fondo": "salud"
   }
 ]
