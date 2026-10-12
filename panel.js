@@ -518,7 +518,7 @@ formulario.addEventListener("submit", function (evento) {
   let horariosNegocio;
 
   try {
-    horariosNegocio = propiedadFicha ? null : obtenerHorariosDelFormulario();
+    horariosNegocio = propiedadFicha || window.MenuEditor.configuracion().tipoCatalogo === 'digital' ? null : obtenerHorariosDelFormulario();
   } catch (error) {
     alert(error.message);
     return;
@@ -528,6 +528,7 @@ formulario.addEventListener("submit", function (evento) {
     propiedad: propiedadFicha,
     mostrarGaleria: document.getElementById("mostrar-galeria").checked,
     productos: propiedadFicha ? [] : productosMenu,
+    ...window.MenuEditor.configuracion(),
     id: Date.now(),
     nombre,
     slug,
@@ -577,7 +578,7 @@ formulario.addEventListener("submit", function (evento) {
           }
         })(),
 
-    delivery: propiedadFicha ? false : document.getElementById("delivery").checked,
+    delivery: propiedadFicha || window.MenuEditor.configuracion().tipoCatalogo === 'digital' ? false : document.getElementById("delivery").checked,
     tipoDelivery: document.getElementById("delivery").checked
       ? document.getElementById("tipo-delivery").value
       : "",
@@ -879,6 +880,7 @@ function editarNegocio(id) {
   document.getElementById("descripcion").value = negocio.descripcion || "";
 
   cargarServiciosEditor(negocio.servicios || []);
+  window.MenuEditor.configurar(negocio);
   window.MenuEditor.cargar(negocio.productos || []);
 
   document.getElementById("palabras-clave").value =

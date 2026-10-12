@@ -56,3 +56,7 @@
 .comida-seccion>summary small{font-size:13px;font-weight:400;margin-left:8px;color:#4c665d}
 .comida-seccion>.comida-grid{padding:14px}
 .comida-seccion>summary:focus-visible{outline:3px solid #28786a;outline-offset:-3px}
+
+.digital-condiciones{font-size:.9rem;color:#294a67;line-height:1.6}.digital-pagos{background:#edf4ff;border:1px solid #cbdaf0;border-radius:18px;padding:20px;margin:24px 0}.digital-pagos ul{display:flex;flex-wrap:wrap;gap:10px;list-style:none;padding:0}.digital-pagos li{background:white;border-radius:10px;padding:10px 14px}.pedido-extras[hidden]{display:none}
+
+.digital-seccion{margin:24px 0}.digital-seccion>h5{font-size:1.15rem;color:#294a67;margin:0 0 14px}

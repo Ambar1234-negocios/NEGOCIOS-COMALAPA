@@ -1,9 +1,27 @@
 (() => {
   'use strict';
   const form=document.getElementById('form-negocio');
-  const bloque=document.createElement('section');bloque.className='tarjeta-formulario';
-  bloque.innerHTML='<h2>Menú / Productos</h2><p class="comida-editor-nota">Configura tus productos y sus precios reales en MXN. La foto, los ingredientes y los extras son opcionales. Los extras se cobran por unidad; las opciones sin costo llevan precio 0. Guarda el negocio y genera negocios.json para publicar.</p><div id="productos-editor"></div><button type="button" id="producto-nuevo">+ Agregar producto</button>';
+  const bloque=document.createElement('section');bloque.className='tarjeta-formulario catalogo-editor';
+  bloque.innerHTML='<h2>Menú / Productos</h2><p class="comida-editor-nota">Configura tus productos y sus precios reales en MXN. La foto, los ingredientes y los extras son opcionales. Los extras se cobran por unidad; las opciones sin costo llevan precio 0. Guarda el negocio y genera negocios.json para publicar.</p><label>Tipo de catálogo<select id="tipo-catalogo"><option value="comida">Productos / comida</option><option value="digital">Streaming / Servicios digitales</option></select></label><label id="metodos-pago-label" hidden>Métodos de pago (uno por línea, sin números de cuenta)<textarea id="catalogo-metodos-pago" rows="6"></textarea></label><div id="productos-editor"></div><button type="button" id="producto-nuevo">+ Agregar producto</button>';
   form.append(bloque);const lista=bloque.querySelector('#productos-editor');const originales=new WeakMap();
+  const tipo=bloque.querySelector('#tipo-catalogo');
+  const pagos=bloque.querySelector('#catalogo-metodos-pago');
+  function actualizarTipo(){
+    const d=tipo.value==='digital';
+    bloque.querySelector('h2').textContent=d?'Catálogo de servicios':'Menú / Productos';
+    bloque.querySelector('.comida-editor-nota').textContent=d?'Cada servicio y combo lleva su propia tarjeta. Captura nombre, precio, duración, dispositivos y foto opcional. La entrega y el soporte se atienden por WhatsApp.':'Configura productos, precios, ingredientes, extras y opciones. Guarda el negocio y genera negocios.json para publicar.';
+    bloque.querySelector('#metodos-pago-label').hidden=!d;
+    bloque.querySelector('#producto-nuevo').textContent=d?'+ Agregar servicio o combo':'+ Agregar producto';
+    for(const row of lista.children){
+      for(const key of ['duracionMeses','dispositivos'])row.querySelector('[data-campo='+key+']').parentElement.hidden=!d;
+      for(const key of ['ingredientes','enCarrusel'])row.querySelector('[data-campo='+key+']').parentElement.hidden=d;
+      row.querySelectorAll('.producto-extras,.promocion-editor').forEach(el=>el.hidden=d);
+      const seccion=row.querySelector('[data-campo=seccion]');seccion.placeholder=d?'Ejemplo: Combos de 2 plataformas':'Ejemplo: Hamburguesas';
+      row.querySelector('[data-campo=nombre]').parentElement.firstChild.textContent=d?'Nombre del servicio o combo':'Nombre del producto';
+      seccion.parentElement.firstChild.textContent=d?'Sección del catálogo (opcional)':'Sección del menú (opcional)';
+    }
+  }
+  tipo.addEventListener('change',actualizarTipo);
   function refrescarResumen(){
     for(const row of lista.children){
       const nombre=row.querySelector('[data-campo=nombre]')?.value.trim()||'Nuevo producto';
@@ -64,6 +82,7 @@
     campo(row,'Sección del menú (opcional)','text','seccion',p.seccion).placeholder='Ejemplo: Hamburguesas';
     precio(row,'Precio base en MXN','precio',p.precio);
     campo(row,'Ruta de la foto (opcional)','text','foto',p.foto).placeholder='imagenes/negocio/foto-1.webp';
+    for(const [key,label] of [['duracionMeses','Duración (meses)'],['dispositivos','Dispositivos']]){const el=campo(row,label,'number',key,p[key]??1);el.min=1;el.max=99;el.step=1;}
     campo(row,'Ingredientes (opcional)','textarea','ingredientes',p.ingredientes);
     campo(row,' Disponible','checkbox','disponible',p.disponible!==false);campo(row,' Mostrar en el carrusel de comida','checkbox','enCarrusel',p.enCarrusel!==false);
     const detalles=document.createElement('details');detalles.className='producto-extras';const titulo=document.createElement('summary');titulo.textContent='Extras y opciones';detalles.append(titulo);
@@ -76,14 +95,16 @@
     const listaGrupos=document.createElement('div');listaGrupos.className='producto-grupos-lista';grupos.append(listaGrupos);(Array.isArray(p.gruposOpciones)?p.gruposOpciones:[]).forEach(g=>grupo(listaGrupos,g));
     const nuevoGrupo=document.createElement('button');nuevoGrupo.type='button';nuevoGrupo.textContent='+ Agregar grupo';nuevoGrupo.onclick=()=>grupo(listaGrupos);grupos.append(nuevoGrupo);row.append(grupos);
     PromosEditor.editor(row,originales.get(row),()=>row.querySelector('[data-campo=precio]').value,()=>!Array.from(row.querySelectorAll('[data-campo=opcion-tipo]')).some(el=>el.value==='propio'));
-    const quitar=document.createElement('button');quitar.type='button';quitar.textContent='Quitar producto';quitar.onclick=()=>{if(confirm('¿Quitar este producto? Se aplica al guardar el negocio.'))row.remove();};row.append(quitar);const fin=document.createElement('p');fin.className='menu-producto-fin';row.append(fin);lista.append(row);refrescarResumen();
+    const quitar=document.createElement('button');quitar.type='button';quitar.textContent='Quitar producto';quitar.onclick=()=>{if(confirm('¿Quitar este producto? Se aplica al guardar el negocio.'))row.remove();};row.append(quitar);const fin=document.createElement('p');fin.className='menu-producto-fin';row.append(fin);lista.append(row);refrescarResumen();actualizarTipo();
   }
   function leer(){
     return Array.from(lista.children).map(row=>{
       const get=k=>row.querySelector('[data-campo="'+k+'"]');const foto=get('foto').value.trim();
-      if(foto&&(!/^imagenes\/[a-zA-Z0-9_./ -]+\.(webp|png|jpe?g)$/i.test(foto)||foto.includes('..')))throw Error('Usa una ruta dentro de imagenes/, con extensión webp, png o jpg.');
+      if(foto&&(!/^imagenes\/[^?#<>"\x00-\x1f]+\.(webp|png|jpe?g)$/i.test(foto)||foto.includes('..')||foto.includes('\\')))throw Error('Usa una ruta dentro de imagenes/, con extensión webp, png o jpg.');
       function numero(el){const n=Number(el.value);if(!el.value.trim()||!Number.isFinite(n)||n<0||n>100000)throw Error('Revisa el precio del producto y de sus extras.');return Math.round(n*100)/100;}
       if(!get('nombre').value.trim())throw Error('Cada producto necesita nombre.');
+      const digital=tipo.value==='digital';
+      const condiciones={};if(digital)for(const k of ['duracionMeses','dispositivos']){const v=Number(get(k).value);if(!Number.isInteger(v)||v<1||v>99)throw Error('Duración y dispositivos deben ser números enteros entre 1 y 99.');condiciones[k]=v;}
       const extras=Array.from(row.querySelectorAll('.producto-extra-editor')).map(e=>{const n=e.querySelector('[data-campo="extra-nombre"]').value.trim();if(!n)throw Error('Cada extra necesita nombre.');return {...originales.get(e),id:e.dataset.id,nombre:n,precio:numero(e.querySelector('[data-campo="extra-precio"]')),disponible:e.querySelector('[data-campo="extra-disponible"]').checked};});
       const gruposOpciones=Array.from(row.querySelectorAll('.producto-grupo-editor')).map(g=>{
         const getG=k=>g.querySelector('[data-campo="'+k+'"]');const nombre=getG('grupo-nombre').value.trim();
@@ -100,11 +121,11 @@
         return {...originales.get(g),id:g.dataset.id,nombre,obligatorio:getG('grupo-obligatorio').checked,seleccion,opciones};
       });
       if(gruposOpciones.filter(g=>g.opciones.some(o=>o.tipoPrecio==='propio')).length>1)throw Error('Usa precio propio en un solo grupo por producto; los demás deben usar adicionales.');
-      return {...originales.get(row),...row._leerPromocion(),id:row.dataset.id,nombre:get('nombre').value.trim(),seccion:get('seccion').value.trim(),precio:numero(get('precio')),foto,ingredientes:get('ingredientes').value.trim(),disponible:get('disponible').checked,enCarrusel:get('enCarrusel').checked,extras,...(gruposOpciones.length||originales.get(row)?.gruposOpciones?{gruposOpciones}:{})};
+      return {...originales.get(row),...row._leerPromocion(),id:row.dataset.id,nombre:get('nombre').value.trim(),seccion:get('seccion').value.trim(),precio:numero(get('precio')),foto,ingredientes:get('ingredientes').value.trim(),disponible:get('disponible').checked,enCarrusel:digital?false:get('enCarrusel').checked,...condiciones,extras:digital?[]:extras,...(digital?{gruposOpciones:[]}:(gruposOpciones.length||originales.get(row)?.gruposOpciones?{gruposOpciones}:{}))};
     });
   }
-  window.MenuEditor={leer,cargar:ps=>{lista.replaceChildren();(Array.isArray(ps)?ps:[]).forEach(agregar);}};
-  bloque.querySelector('#producto-nuevo').onclick=()=>agregar();form.addEventListener('reset',()=>lista.replaceChildren());
+  window.MenuEditor={leer,configuracion:()=>({tipoCatalogo:tipo.value,metodosPago:tipo.value==='digital'?pagos.value.split('\n').map(x=>x.trim()).filter(Boolean):[]}),configurar:n=>{tipo.value=n?.tipoCatalogo==='digital'?'digital':'comida';pagos.value=Array.isArray(n?.metodosPago)?n.metodosPago.join('\n'):'';actualizarTipo();},cargar:ps=>{lista.replaceChildren();(Array.isArray(ps)?ps:[]).forEach(agregar);}};
+  bloque.querySelector('#producto-nuevo').onclick=()=>agregar();form.addEventListener('reset',()=>{lista.replaceChildren();queueMicrotask(()=>{tipo.value='comida';pagos.value='';actualizarTipo();});});
   // Revelar el campo inválido aunque su grupo esté plegado.
   bloque.addEventListener('invalid',e=>{let el=e.target.parentElement;while(el&&el!==bloque){if(el.tagName==='DETAILS')el.open=true;el=el.parentElement;}},true);
 })();

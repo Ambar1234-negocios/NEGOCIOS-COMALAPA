@@ -2,10 +2,14 @@
 (() => {
   'use strict';
   const escapar = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const imagen = v => typeof v === 'string' && /^imagenes\/[a-zA-Z0-9_./ -]+\.(webp|png|jpe?g)$/i.test(v) && !v.includes('..') ? v : '';
+  const imagen = v => typeof v === 'string' && /^imagenes\/[^?#<>"\x00-\x1f]+\.(webp|png|jpe?g)$/i.test(v) && !v.includes('..') && !v.includes('\\') ? v : '';
   const dinero = centavos => new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(centavos / 100);
   function productos(n) { return (Array.isArray(n.productos) ? n.productos : []).filter(p => p && typeof p.id === 'string' && typeof p.nombre === 'string' && p.nombre.trim() && Number.isFinite(p.precio) && p.precio >= 0 && p.precio <= 100000 && p.disponible !== false); }
-  function foto(p) { const ruta=imagen(p.foto); return ruta ? `<img src="${escapar(ruta)}" alt="${escapar(p.nombre)}" loading="lazy" onerror="this.hidden=true">` : '<div class="comida-sin-foto" aria-hidden="true">🍽️</div>'; }
+  const digital = n => n?.tipoCatalogo === 'digital';
+  const duracion = p => (Number.isInteger(p.duracionMeses)&&p.duracionMeses>0?p.duracionMeses:1);
+  const dispositivos = p => (Number.isInteger(p.dispositivos)&&p.dispositivos>0?p.dispositivos:1);
+  const condiciones = p => `Duración: ${duracion(p)} ${duracion(p)===1?'mes':'meses'} · Uso: ${dispositivos(p)} ${dispositivos(p)===1?'dispositivo':'dispositivos'}`;
+  function foto(p, esDigital=false) { const ruta=imagen(p.foto); return ruta ? `<img src="${escapar(ruta)}" alt="${escapar(p.nombre)}" loading="lazy" onerror="this.hidden=true">` : `<div class="comida-sin-foto" aria-hidden="true">${esDigital?'📺':'🍽️'}</div>`; }
   function etiquetas(p){
     const propias=grupos(p).flatMap(g=>g.opciones.filter(o=>o.tipoPrecio==='propio'));
     const ofertas=propias.length?propias.filter(o=>PromosProductos.vigente(o.promocion,o.precio)).map(o=>({nombre:o.nombre,precio:o.precio,promo:o.promocion})):PromosProductos.vigente(p.promocion,p.precio)?[{nombre:'',precio:p.precio,promo:p.promocion}]:[];
@@ -13,10 +17,10 @@
   }
   function menu(n) {
     if (!productos(n).length) return '';
-    const tarjetas=ps=>ps.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p)}<span>Ver foto e información</span></button>` : foto(p)}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}<p>${dinero(Math.round(p.precio*100))}</p><button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button></article>`).join('');
+    const tarjetas=ps=>ps.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p,digital(n))}<span>Ver foto e información</span></button>` : foto(p,digital(n))}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}<p>${dinero(Math.round(p.precio*100))}</p>${digital(n)?`<p class="digital-condiciones">${escapar(condiciones(p))}</p>`:""}<button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button></article>`).join('');
     const lista=productos(n);const nombres=[...new Set(lista.map(p=>String(p.seccion||'').trim()||'Otros productos'))];
-    const contenido=lista.some(p=>String(p.seccion||'').trim())?nombres.map(nombre=>{const ps=lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre);return `<details class="comida-seccion"><summary>${escapar(nombre)} <small>${ps.length} ${ps.length===1?'producto':'productos'}</small></summary><div class="comida-grid">${tarjetas(ps)}</div></details>`;}).join(''): `<div class="comida-grid">${tarjetas(lista)}</div>`;
-    return `<section class="comida-menu" aria-label="Menú y productos"><h4>Menú / Productos</h4><p>Precios en MXN. Disponibilidad y entrega por confirmar.</p>${contenido}<div id="comida-pedido"></div></section>`;
+    const contenido=digital(n)?nombres.map(nombre=>`<section class="digital-seccion"><h5>${escapar(nombre)}</h5><div class="comida-grid">${tarjetas(lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre))}</div></section>`).join(''):lista.some(p=>String(p.seccion||'').trim())?nombres.map(nombre=>{const ps=lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre);return `<details class="comida-seccion"><summary>${escapar(nombre)} <small>${ps.length} ${ps.length===1?'producto':'productos'}</small></summary><div class="comida-grid">${tarjetas(ps)}</div></details>`;}).join(''): `<div class="comida-grid">${tarjetas(lista)}</div>`;
+    return `<section class="comida-menu" aria-label="${digital(n)?'Catálogo de servicios':'Menú y productos'}"><h4>${digital(n)?'Catálogo de servicios':'Menú / Productos'}</h4><p>${digital(n)?'Elige tu servicio. Entrega y soporte por WhatsApp. Precios en MXN.':'Precios en MXN. Disponibilidad y entrega por confirmar.'}</p>${contenido}${digital(n)&&Array.isArray(n.metodosPago)&&n.metodosPago.length?`<section class="digital-pagos"><h4>Métodos de pago</h4><ul>${n.metodosPago.filter(x=>typeof x==='string').map(x=>`<li>${escapar(x)}</li>`).join('')}</ul><p>Pide los datos de pago por WhatsApp.</p></section>`:''}<div id="comida-pedido"></div></section>`;
   }
   const centavos = precio => Math.round(Number(precio) * 100);
   function extras(p) {
@@ -71,7 +75,8 @@
   function resumen() {
     if(!pedido.lineas.length)return '<p>Agrega productos para armar tu pedido.</p>';
     const n=pedido.negocio;
-    return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${escapar(l.producto.nombre)}</strong><p>${escapar(descripcionOpciones(l))}</p><p>${l.extras.length?l.extras.map(x=>`${escapar(x.nombre)} (${x.precio?'+ '+dinero(centavos(x.precio)):'sin costo'})`).join(' · '):'Sin extras'}</p>${l.nota?`<p class="pedido-nota">Indicación: ${escapar(l.nota)}</p>`:''}<p class="pedido-promo">${escapar(detallePromo(l))}</p><p>${dinero(unitario(l))} por unidad · <strong>${dinero(importe(l))}</strong></p></div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total de productos: ${dinero(total())}</p><p>${n.delivery===true?(n.tipoDelivery==='gratis'?'El negocio indica entrega gratis. Confirma cobertura y condiciones.':'Envío por cotizar; no está incluido en el total.'):'Este negocio no tiene reparto habilitado. Consulta opciones directamente con él.'}</p><div class="comida-acciones"><button type="button" data-pedido-accion="enviar">${n.delivery===true&&n.tipoDelivery!=='gratis'?'Pedir con Mandaditos':'Consultar pedido por WhatsApp'}</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
+    if(digital(n)) return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${l.cantidad} × ${escapar(l.producto.nombre)} — ${dinero(importe(l))}</strong><p>${escapar(condiciones(l.producto))}</p>${l.nota?`<p>${escapar(l.nota)}</p>`:''}</div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total: ${dinero(total())}</p><p>Entrega y soporte por WhatsApp.</p><div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
+    return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${escapar(l.producto.nombre)}</strong><p>${escapar(descripcionOpciones(l))}</p><p>${l.extras.length?l.extras.map(x=>`${escapar(x.nombre)} (${x.precio?'+ '+dinero(centavos(x.precio)):'sin costo'})`).join(' · '):'Sin extras'}</p>${l.nota?`<p class="pedido-nota">Indicación: ${escapar(l.nota)}</p>`:''}<p class="pedido-promo">${escapar(detallePromo(l))}</p><p>${dinero(unitario(l))} por unidad · <strong>${dinero(importe(l))}</strong></p></div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total de productos: ${dinero(total())}</p><p>${n.delivery===true?(n.tipoDelivery==='gratis'?'El negocio indica entrega gratis. Confirma cobertura y condiciones.':'Envío por cotizar; no está incluido en el total.'):'Este negocio no tiene reparto habilitado. Consulta opciones directamente con él.'}</p><div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
   }
   function pintarPedido() {
     const el=document.getElementById('comida-pedido');
@@ -83,19 +88,19 @@
   }
   function verPedido(origen) {const d=dialogo('Tu pedido','pedido-dialogo',origen);const el=d.querySelector('.dialogo-contenido');el.classList.add('pedido-resumen-modal');el.innerHTML=resumen();}
   function configurar(n,p,origen,linea=null) {
-    const d=dialogo(linea?'Editar preparación':'Personaliza tu pedido','pedido-configurar',origen);
+    const d=dialogo(digital(n)?(linea?'Editar servicio':'Elige tu servicio'):(linea?'Editar preparación':'Personaliza tu pedido'),'pedido-configurar',origen);
     const contenido=d.querySelector('.dialogo-contenido');
-    const gs=grupos(p);
+    const gs=digital(n)?[]:grupos(p);
     const encabezado=g=>({tamaño:'Elige tu tamaño',sabor:'Elige tu sabor','tipo de carne':'Elige el tipo de carne',presentación:'Elige la presentación'}[String(g.nombre).toLocaleLowerCase('es-MX')]||'Elige: '+g.nombre);
     const secciones=gs.map((g,i)=>`<fieldset class="pedido-extras pedido-grupo" data-grupo="${i}"><legend>${escapar(encabezado(g))}</legend><p>${g.obligatorio?'Obligatorio':'Opcional'} · ${g.seleccion==='multiple'?'Puedes elegir varias':'Elige una opción'}</p>${g.seleccion==='unica'&&!g.obligatorio?`<label><input type="radio" name="grupo-${i}" value="" ${!linea?.opciones?.some(x=>x.grupoId===g.id)?'checked':''}><span>Sin selección</span></label>`:''}${g.opciones.map(x=>`<label><input type="${g.seleccion==='multiple'?'checkbox':'radio'}" name="grupo-${i}" value="${escapar(x.id)}" ${linea?.opciones?.some(e=>e.grupoId===g.id&&e.id===x.id)?'checked':''}><span>${escapar(x.nombre)}</span><strong>${x.tipoPrecio==='propio'?(PromosProductos.textoOpcion(x,dinero)||dinero(centavos(x.precio))+' por unidad'):x.precio?'+ '+dinero(centavos(x.precio)):'Sin costo adicional'}</strong></label>`).join('')||'<p>No hay opciones disponibles.</p>'}</fieldset>`).join('');
-    contenido.innerHTML=`${foto(p)}<h3>${escapar(p.nombre)}</h3><p>Precio base: ${dinero(centavos(p.precio))}</p><form>${secciones}<fieldset class="pedido-extras pedido-extras-legacy"><legend>Extras (opcionales)</legend>${extras(p).map(x=>`<label><input type="checkbox" value="${escapar(x.id)}" ${linea?.extras.some(e=>e.id===x.id)?'checked':''}><span>${escapar(x.nombre)}</span><strong>${x.precio?'+ '+dinero(centavos(x.precio)):'Sin costo'}</strong></label>`).join('')||'<p>Este producto no tiene extras configurados.</p>'}</fieldset><label class="pedido-campo">Indicaciones (opcional)<textarea name="nota" rows="2" maxlength="300" placeholder="Por ejemplo: salsa aparte">${escapar(linea?.nota||'')}</textarea></label><label class="pedido-campo">Cantidad<input name="cantidad" type="number" min="1" max="99" step="1" required value="${linea?.cantidad||1}"></label><p class="pedido-config-total" role="status"></p><p class="pedido-config-error" role="alert"></p><button type="submit" class="pedido-confirmar">${linea?'Guardar preparación':'Agregar al pedido'}</button></form>`;
+    contenido.innerHTML=`${foto(p,digital(n))}<h3>${escapar(p.nombre)}</h3><p>${digital(n)?'Precio':'Precio base'}: ${dinero(centavos(p.precio))}</p>${digital(n)?`<p>${escapar(condiciones(p))}</p>`:''}<form>${digital(n)?'':secciones}<fieldset class="pedido-extras pedido-extras-legacy" ${digital(n)?'hidden':''}><legend>Extras (opcionales)</legend>${extras(p).map(x=>`<label><input type="checkbox" value="${escapar(x.id)}" ${linea?.extras.some(e=>e.id===x.id)?'checked':''}><span>${escapar(x.nombre)}</span><strong>${x.precio?'+ '+dinero(centavos(x.precio)):'Sin costo'}</strong></label>`).join('')||'<p>Este producto no tiene extras configurados.</p>'}</fieldset><label class="pedido-campo">Indicaciones (opcional)<textarea name="nota" rows="2" maxlength="300" placeholder="${digital(n)?'¿Tienes alguna duda sobre el servicio?':'Por ejemplo: salsa aparte'}">${escapar(linea?.nota||'')}</textarea></label><label class="pedido-campo">Cantidad<input name="cantidad" type="number" min="1" max="99" step="1" required value="${linea?.cantidad||1}"></label><p class="pedido-config-total" role="status"></p><p class="pedido-config-error" role="alert"></p><button type="submit" class="pedido-confirmar">${linea?(digital(n)?'Guardar servicio':'Guardar preparación'):'Agregar al pedido'}</button></form>`;
     const form=contenido.querySelector('form');
-    const seleccion=()=>extras(p).filter(x=>Array.from(form.querySelectorAll('.pedido-extras-legacy input:checked')).some(el=>el.value===x.id));
+    const seleccion=()=> (digital(n)?[]:extras(p)).filter(x=>Array.from(form.querySelectorAll('.pedido-extras-legacy input:checked')).some(el=>el.value===x.id));
     const opciones=()=>gs.flatMap((g,i)=>g.opciones.filter(x=>Array.from(form.querySelectorAll('[data-grupo="'+i+'"] input:checked')).some(el=>el.value===x.id)).map(x=>({...x,grupoId:g.id,grupoNombre:g.nombre})));
     const actualizar=()=>{const q=Number(form.elements.cantidad.value);const calculo=PromosProductos.calcular({producto:p,opciones:opciones(),extras:seleccion(),cantidad:q});form.querySelector('.pedido-config-total').textContent=Number.isInteger(q)&&q>=1&&q<=99?'Subtotal: '+dinero(calculo.total)+(calculo.etiqueta?' · '+calculo.etiqueta:''):'Elige de 1 a 99 unidades.';};form.addEventListener('input',actualizar);actualizar();
     form.addEventListener('submit',e=>{
       e.preventDefault();const q=Number(form.elements.cantidad.value);if(!Number.isInteger(q)||q<1||q>99)return;
-      const error=validarOpciones(p,opciones());
+      const error=digital(n)?'':validarOpciones(p,opciones());
       if(error){form.querySelector('.pedido-config-error').textContent=error;return;}
       if(pedido.negocio && pedido.negocio.id!==n.id && pedido.lineas.length){if(!confirm('Tu pedido es de '+pedido.negocio.nombre+'. ¿Vaciarlo y comenzar uno de '+n.nombre+'?'))return;pedido={negocio:null,lineas:[]};}
       const nueva={id:linea?.id||crypto.randomUUID(),producto:p,extras:seleccion(),opciones:opciones(),nota:form.elements.nota.value.trim(),cantidad:q};
@@ -107,12 +112,15 @@
       d.close();pintarPedido();
     });
   }
+  function mensajeDigital(lineas,importeTotal) {
+    return `Hola, quiero realizar este pedido:\n\n${lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}\nDuración: ${duracion(l.producto)} ${duracion(l.producto)===1?'mes':'meses'}\nDispositivos: ${dispositivos(l.producto)}${l.nota?'\nConsulta: '+l.nota:''}`).join('\n\n')}\n\nTotal: ${dinero(importeTotal)}\n\n¿Me compartes los datos de pago?`;
+  }
   function whatsapp(n,consulta) {
     if(!consulta&&!pedido.lineas.length)return;
-    const numero=String(!consulta&&n.delivery===true&&n.tipoDelivery!=='gratis'?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
+    const numero=String(!consulta&&!digital(n)&&n.delivery===true&&n.tipoDelivery!=='gratis'?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
     const normal=numero.length===10?'52'+numero:numero;
     if(!/^\d{11,15}$/.test(normal)){alert('Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.');return;}
-    const mensaje=consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:`Hola, quiero consultar este pedido de ${n.nombre}:\n\n${pedido.lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}${detallePromo(l)?'\n'+detallePromo(l):''}${l.opciones?.length?'\nOpciones: '+descripcionOpciones(l):''}${l.extras.length?'\nExtras por unidad: '+l.extras.map(x=>x.nombre+' ('+(x.precio?'+ '+dinero(centavos(x.precio)):'sin costo')+')').join(', '):''}${l.nota?'\nIndicación: '+l.nota:''}`).join('\n\n')}\n\nTotal de productos: ${dinero(total())}\n${n.delivery===true&&n.tipoDelivery!=='gratis'?'Envío por cotizar.\n':''}Por favor confirmen disponibilidad, total final y forma de entrega.\nDirección o punto de entrega: `;
+    const mensaje=digital(n)?(consulta?`Hola, estoy viendo el catálogo de ${n.nombre}. Quiero información sobre sus servicios digitales.`:mensajeDigital(pedido.lineas,total())):consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:`Hola, quiero realizar este pedido de ${n.nombre}:\n\n${pedido.lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}${detallePromo(l)?'\n'+detallePromo(l):''}${l.opciones?.length?'\nOpciones: '+descripcionOpciones(l):''}${l.extras.length?'\nExtras por unidad: '+l.extras.map(x=>x.nombre+' ('+(x.precio?'+ '+dinero(centavos(x.precio)):'sin costo')+')').join(', '):''}${l.nota?'\nIndicación: '+l.nota:''}`).join('\n\n')}\n\nTotal de productos: ${dinero(total())}\n${n.delivery===true&&n.tipoDelivery!=='gratis'?'Envío por cotizar.\n':''}Por favor confirmen disponibilidad, total final y forma de entrega.\nDirección o punto de entrega: `;
     if(mensaje.length>6000){alert('El pedido es demasiado largo para WhatsApp. Reduce las indicaciones o los productos distintos.');return;}
     window.open('https://wa.me/'+normal+'?text='+encodeURIComponent(mensaje),'_blank','noopener,noreferrer');
   }
@@ -128,7 +136,7 @@
     pintarPedido();
   });
 
-  function abrirFoto(p,origen) {
+  function abrirFoto(p,origen,esDigital=false) {
     document.getElementById('comida-visor')?.remove();
     const dialog=document.createElement('dialog');dialog.id='comida-visor';dialog.className='comida-visor';
     dialog.setAttribute('aria-labelledby','comida-visor-titulo');
@@ -140,7 +148,7 @@
     const ingredientes=typeof p.ingredientes==='string'?p.ingredientes.trim():'';
     if(ingredientes){
       const detalles=document.createElement('details');detalles.className='comida-ingredientes';
-      const boton=document.createElement('summary');boton.textContent='Ingredientes';
+      const boton=document.createElement('summary');boton.textContent=esDigital?'Detalles del servicio':'Ingredientes';
       const texto=document.createElement('p');texto.textContent=ingredientes;detalles.append(boton,texto);dialog.append(detalles);
     }
     const overflow=document.body.style.overflow;
@@ -156,7 +164,7 @@
     const consulta=document.createElement('button');consulta.type='button';consulta.textContent='Preguntar qué más hay disponible';consulta.onclick=()=>whatsapp(n,true);el.append(consulta);
     el.addEventListener('click',e=>{
       const b=e.target.closest('button');if(!b)return;
-      if(b.dataset.verProducto){const p=productos(n).find(p=>p.id===b.dataset.verProducto);if(p)abrirFoto(p,b);return;}
+      if(b.dataset.verProducto){const p=productos(n).find(p=>p.id===b.dataset.verProducto);if(p)abrirFoto(p,b,digital(n));return;}
       if(b.dataset.agregarProducto){const p=productos(n).find(p=>p.id===b.dataset.agregarProducto);if(p)configurar(n,p,b);}
     });
   }
@@ -167,7 +175,7 @@
     const grupos=lista.filter(n=>n.categoria==='comida' && n.activo!==false).map(n=>productos(n).filter(p=>p.enCarrusel!==false).map(p=>({n,p})));
     const items=[];for(let i=0;grupos.some(g=>g[i]);i++)grupos.forEach(g=>{if(g[i])items.push(g[i]);});
     seccion.hidden=!items.length;if(!items.length)return;
-    const tarjetas=items.map(({n,p})=>`<a href="?negocio=${encodeURIComponent(n.slug)}&producto=${encodeURIComponent(p.id)}" class="comida-producto comida-carrusel-producto" data-slug="${escapar(n.slug)}" data-producto="${escapar(p.id)}">${foto(p)}<strong>${escapar(p.nombre)}</strong><span>${escapar(n.nombre)} · ${dinero(Math.round(p.precio*100))}</span></a>`).join('');
+    const tarjetas=items.map(({n,p})=>`<a href="?negocio=${encodeURIComponent(n.slug)}&producto=${encodeURIComponent(p.id)}" class="comida-producto comida-carrusel-producto" data-slug="${escapar(n.slug)}" data-producto="${escapar(p.id)}">${foto(p,digital(n))}<strong>${escapar(p.nombre)}</strong><span>${escapar(n.nombre)} · ${dinero(Math.round(p.precio*100))}</span></a>`).join('');
     seccion.innerHTML=`<div class="comida-cabecera"><div><h2>¿Qué se te antoja hoy?</h2><p>Descubre el menú de los negocios de aquí.</p></div></div><div class="comida-carrusel" aria-label="Productos de negocios de comida"><div class="comida-carrusel-track">${tarjetas}${tarjetas}</div></div>`;
 
     const fila=seccion.querySelector('.comida-carrusel');
@@ -228,6 +236,6 @@
     document.querySelectorAll('.pedido-configurar form').forEach(f=>f.dispatchEvent(new Event('input')));
     if(window.__listaOfertasProductos)window.MejorasExhibicion?.ofertas(window.__listaOfertasProductos);
   },30000);
-  window.ComidaExhibicion={menu,conectar,carrusel,productos,dinero,imagen};
+  window.ComidaExhibicion={menu,conectar,carrusel,productos,dinero,imagen,mensajeDigital};
 })();
 
