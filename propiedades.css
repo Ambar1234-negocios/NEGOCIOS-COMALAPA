@@ -1,3 +1,112 @@
 .propiedad-editor{padding:20px;margin:0 0 24px;border:2px solid #94b7a0;border-radius:18px;background:#f3f8f1}.propiedad-editor fieldset{border:0;padding:0;min-width:0}.propiedad-editor details,.propiedad-ficha details{border:1px solid #d3dfd4;border-radius:12px;margin:12px 0;overflow:hidden;background:#fff}.propiedad-editor summary,.propiedad-ficha summary{padding:14px;font-weight:700;cursor:pointer;background:#f1f6ef}.propiedad-editor details label{padding:0 14px 14px;display:block}.propiedad-editor [hidden]{display:none!important}.propiedad-ficha{margin:24px 0;color:#20382b}.propiedad-resumen{background:#f3f7f1;padding:20px;border-radius:18px}.propiedad-resumen h4{font-size:28px;margin:14px 0}.propiedad-estado,.propiedad-tipo{display:inline-block;padding:6px 12px;border-radius:99px;font-size:14px;font-weight:700;margin:0 8px 8px 0}.propiedad-tipo{background:#fff;border:1px solid #d3dfd4}.estado-0{background:#d5f1dc;color:#19542a}.estado-1{background:#fff0ba;color:#6a4a00}.estado-2{background:#eceef0;color:#37434b}.propiedad-datos{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px}.propiedad-datos div{background:#fff;border-radius:12px;padding:12px}.propiedad-datos strong,.propiedad-datos span{display:block}.propiedad-datos span{font-size:13px;color:#536356}.propiedad-texto{padding:16px;white-space:pre-wrap;overflow-wrap:anywhere}.propiedad-texto p{margin:0 0 12px}.propiedad-ficha>h4{font-size:22px;margin:20px 0 12px}.propiedad-citas{margin-top:12px}
 
 .propiedad-form-grupo{border:1px solid #dce4dd;border-radius:16px;padding:20px;margin:0 0 24px;min-width:0;background:#fff}.propiedad-form-grupo legend{font-size:20px;font-weight:750;padding:0 8px;color:#243c30}.propiedad-formulario details{border:1px solid #d3dfd4;border-radius:12px;margin:12px 0;overflow:hidden}.propiedad-formulario summary{padding:14px;font-weight:700;cursor:pointer;background:#f3f7f0}.propiedad-formulario details>label{display:block;padding:0 14px 14px}.propiedad-formulario label{display:block;margin-top:12px}.propiedad-formulario input[type=checkbox]{width:auto!important;display:inline-block;margin-right:8px}.propiedad-fotos-preview{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}.propiedad-fotos-preview img{width:130px;height:100px;object-fit:cover;border-radius:10px}.propiedad-form-acciones{display:flex;gap:12px;flex-wrap:wrap}.propiedad-formulario code{display:block;overflow-wrap:anywhere;background:#f3f6f1;padding:12px;border-radius:10px}@media(max-width:600px){.propiedad-form-grupo{padding:14px}.propiedad-form-acciones{display:grid;grid-template-columns:1fr}}
+
+/* Diseño exclusivo de fichas inmobiliarias. */
+.perfil-propiedad{background:#fff!important;border:1px solid #e3e8ef;border-radius:26px;overflow:hidden}
+.perfil-propiedad .perfil-hero-oficial{height:clamp(220px,34vw,420px);overflow:hidden}
+.perfil-propiedad .perfil-hero-oficial>img{width:100%;height:100%;object-fit:cover}
+.perfil-propiedad .perfil-titulo-oficial h3{color:#173c5a;font-size:clamp(25px,4vw,38px);line-height:1.2}
+.perfil-propiedad .perfil-descripcion-oficial{background:#f2f6fa;border-left:4px solid #d2a74a;padding:16px 20px;border-radius:0 14px 14px 0}
+.perfil-propiedad .propiedad-resumen{background:linear-gradient(125deg,#132f4c,#225f79);padding:26px;border-radius:22px;box-shadow:0 12px 30px #132f4c1c;color:#fff}
+.perfil-propiedad .propiedad-tipo{background:#ffffff16;color:#fff;border-color:#ffffff55}
+.perfil-propiedad .propiedad-resumen h4{color:#ffe09a;font-size:clamp(30px,5vw,44px);line-height:1.2;margin:14px 0 22px}
+.perfil-propiedad .propiedad-resumen h4::before{content:'PRECIO';display:block;color:#dfeaf3;font-size:12px;letter-spacing:1.6px;margin-bottom:8px}
+.perfil-propiedad .propiedad-datos{gap:12px}
+.perfil-propiedad .propiedad-datos div{background:#fff;color:#173c5a;border-radius:14px;padding:16px;box-shadow:0 3px 8px #0000000d}
+.perfil-propiedad .propiedad-datos strong{font-size:22px;line-height:1.3}
+.perfil-propiedad .propiedad-datos span{color:#53677a;font-size:13px;margin-top:6px}
+.perfil-propiedad .propiedad-ficha>h4{color:#173c5a;font-size:24px;margin:28px 0 16px}
+.perfil-propiedad .propiedad-ficha details{border:1px solid #dde5ef;border-radius:14px;box-shadow:0 3px 12px #173c5a08;margin:12px 0}
+.perfil-propiedad .propiedad-ficha summary{background:#edf4fc;color:#204c76;border-left:5px solid #508bc0;padding:18px;font-size:16px}
+.perfil-propiedad .propiedad-ficha details:nth-of-type(2) summary{background:#eef7f3;color:#245a48;border-left-color:#4c987b}
+.perfil-propiedad .propiedad-ficha details:nth-of-type(3) summary{background:#f4f0fa;color:#574775;border-left-color:#9270b8}
+.perfil-propiedad .propiedad-ficha details:nth-of-type(4) summary{background:#edf6fa;color:#2c5c72;border-left-color:#589ab8}
+.perfil-propiedad .propiedad-ficha details:nth-of-type(5) summary{background:#fff6e5;color:#765620;border-left-color:#c49a49}
+.perfil-propiedad .propiedad-ficha details:nth-of-type(6) summary{background:#f3f4f7;color:#4c5869;border-left-color:#8390a3}
+.perfil-propiedad .propiedad-ficha details[open] summary{border-bottom:1px solid #e1e6ec}
+.perfil-propiedad .propiedad-texto{color:#334c60;background:#fff;line-height:1.7;padding:20px}
+.perfil-propiedad .perfil-galeria-fotos{padding:22px;background:#f4f7fa;border-radius:20px;margin:26px 0}
+.perfil-propiedad .perfil-galeria-fotos h4{color:#173c5a;font-size:23px}
+.perfil-propiedad .galeria-grid img{border-radius:14px;box-shadow:0 5px 14px #14304915}
+.perfil-propiedad .perfil-acciones-oficial .accion{border:1px solid #dce5ee;background:#fff;color:#173c5a;box-shadow:0 3px 12px #173c5a0c}
+.perfil-propiedad .perfil-acciones-oficial .accion-whatsapp{background:#166451;color:#fff;border-color:#166451}
+.perfil-propiedad .perfil-acciones-oficial .accion-whatsapp small{color:#e2f4ef}
+.perfil-propiedad .propiedad-citas .accion:first-child{background:#173c5a;color:#fff;border-color:#173c5a}
+.perfil-propiedad .propiedad-citas .accion:last-child{background:#fff4d9;color:#664b1c;border-color:#e2cd9b}
+.perfil-propiedad .propiedad-citas .accion:last-child small{color:#664b1c}
+@media(max-width:600px){.perfil-propiedad .propiedad-resumen{padding:20px}.perfil-propiedad .propiedad-datos{grid-template-columns:repeat(2,minmax(0,1fr))}.perfil-propiedad .perfil-galeria-fotos{padding:14px}}
+
+/* Ficha clara y cercana: datos primero, detalles fáciles de abrir. */
+.perfil-propiedad .perfil-hero-oficial .mejora-ampliar{display:block;width:100%;height:100%;padding:0}
+.perfil-propiedad .perfil-hero-oficial .mejora-ampliar img{width:100%;height:100%;object-fit:cover}
+.perfil-propiedad .perfil-titulo-oficial h3{font-size:clamp(25px,3.2vw,36px);color:#213e52}
+.perfil-propiedad .perfil-descripcion-oficial{background:#f5f8fa;border-left:3px solid #729997;line-height:1.7}
+.perfil-propiedad .propiedad-resumen{background:#f4f8f9;border:1px solid #d9e5e8;border-radius:18px;box-shadow:none;color:#213e52;padding:24px}
+.perfil-propiedad .propiedad-tipo{background:#fff;color:#385569;border-color:#d3e0e6}
+.perfil-propiedad .propiedad-resumen h4{color:#213e52;font-size:clamp(28px,4vw,38px);margin:14px 0 22px;overflow-wrap:anywhere}
+.perfil-propiedad .propiedad-resumen h4::before{content:'Precio';color:#536976;letter-spacing:0;font-size:14px}
+.perfil-propiedad .propiedad-resumen h4 small{display:block;font-size:13px;font-weight:400;color:#536976;margin-top:6px}
+.perfil-propiedad .propiedad-datos{grid-template-columns:repeat(3,minmax(0,1fr))}
+.perfil-propiedad .propiedad-datos div{border:1px solid #e0e8eb;box-shadow:none;padding:16px;min-width:0}
+.perfil-propiedad .propiedad-datos strong{font-size:22px;overflow-wrap:anywhere}
+.perfil-propiedad .propiedad-ficha>h4{font-size:23px;margin-bottom:6px}
+.perfil-propiedad .propiedad-ayuda{color:#536976;font-size:14px;margin:0 0 18px}
+.perfil-propiedad .propiedad-ficha details{box-shadow:none;border-color:#dce5e8}
+.perfil-propiedad .propiedad-ficha details summary{background:#fff;color:#213e52;border-left:3px solid #80a6a0;padding:18px;line-height:1.5;font-size:16px}
+.perfil-propiedad .propiedad-ficha details[open] summary{background:#f1f7f6;border-bottom:1px solid #dce5e8}
+.perfil-propiedad .propiedad-ficha summary>span{vertical-align:middle}
+.perfil-propiedad .propiedad-icono{display:inline-block;font-size:21px;margin:0 10px 0 4px}
+.perfil-propiedad .propiedad-ficha summary small{display:block;font-size:13px;font-weight:400;color:#536976;margin:5px 0 0 35px}
+.perfil-propiedad .propiedad-texto{font-size:16px;line-height:1.7}
+.perfil-propiedad .perfil-galeria-fotos{background:#f7f9fa;box-shadow:none}
+.perfil-propiedad .propiedad-citas .accion:nth-child(2){background:#eef5f7;color:#213e52;border-color:#ccdce4}
+.perfil-propiedad .propiedad-citas .accion:nth-child(2) small{color:#536976}
+.perfil-propiedad .propiedad-citas .accion-compartir{background:#fff;color:#213e52;border-color:#dce5ee}
+.perfil-propiedad .propiedad-citas .accion-compartir small{color:#536976}
+.perfil-propiedad .perfil-acciones-oficial .accion:focus-visible,.perfil-propiedad summary:focus-visible{outline:3px solid #28786a;outline-offset:3px}
+@media(max-width:600px){.perfil-propiedad .propiedad-resumen{padding:18px}.perfil-propiedad .propiedad-datos{grid-template-columns:repeat(2,minmax(0,1fr))}.perfil-propiedad .propiedad-ficha details summary{padding:16px 12px}.perfil-propiedad .propiedad-icono{margin-right:6px}.perfil-propiedad .propiedad-texto{padding:16px}}
+
+/* Presentación residencial y distribución compacta. */
+.perfil-propiedad .propiedad-resumen{background:linear-gradient(120deg,#dcecfb,#edf5fd);border-color:#afcce5;box-shadow:0 8px 24px #274e7810}
+.perfil-propiedad .propiedad-resumen h4{color:#16456d;font-weight:800;font-size:clamp(30px,4vw,42px)}
+.perfil-propiedad .perfil-subtitulo{color:#3e6685!important;font-size:16px!important}
+.perfil-propiedad .perfil-subtitulo[hidden]{display:none!important}
+.perfil-propiedad .perfil-descripcion-oficial{background:#edf5fd;border-left-color:#74a6d0}
+.perfil-propiedad .propiedad-contacto .accion{background:#edf5fd;color:#214765;border-color:#c7dced;border-radius:16px;min-height:76px}
+.perfil-propiedad .propiedad-contacto .accion-whatsapp{background:#166451;color:#fff}
+.perfil-propiedad .propiedad-contacto .accion small{color:inherit;opacity:.85}
+.perfil-propiedad .propiedad-contacto .accion-compartir{background:#e4effa;color:#214765}
+.perfil-propiedad .perfil-galeria-fotos{background:#eaf3fc;border:1px solid #c9deef}
+.perfil-propiedad .galeria-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;overflow:visible!important}
+.perfil-propiedad .galeria-grid img{width:100%!important;max-width:none!important;height:clamp(140px,18vw,240px)!important;object-fit:cover;cursor:pointer;min-width:0;border-radius:14px}
+.perfil-propiedad .galeria-grid img:only-child{grid-column:1/-1;height:320px!important}
+.perfil-propiedad .propiedad-recorrido{display:block;position:relative;min-height:170px;margin:22px 0;border-radius:20px;overflow:hidden;background:#214765;color:#fff}
+.perfil-propiedad .propiedad-recorrido img{display:block;width:100%;height:280px;object-fit:cover;filter:brightness(.7)}
+.perfil-propiedad .propiedad-recorrido>span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:750;text-shadow:0 2px 6px #000}
+.perfil-propiedad .propiedad-recorrido:focus-visible{outline:3px solid #28786a;outline-offset:3px}
+@media(max-width:600px){.perfil-propiedad .propiedad-tres-medidas{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.perfil-propiedad .propiedad-tres-medidas div{padding:12px 4px;text-align:center}.perfil-propiedad .propiedad-tres-medidas strong{font-size:clamp(16px,4.5vw,20px)}.perfil-propiedad .propiedad-tres-medidas span{font-size:12px}.perfil-propiedad .galeria-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.perfil-propiedad .galeria-grid img:first-child{grid-column:1/-1;height:210px!important}.perfil-propiedad .propiedad-recorrido img{height:210px}}
+@media(min-width:601px){.perfil-propiedad .propiedad-contacto .accion:last-child:nth-child(odd){grid-column:1/-1}}
+
+.perfil-propiedad .perfil-galeria-fotos .propiedad-recorrido{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:0;margin:18px 0 0;padding:18px;background:#214765;text-align:center;text-decoration:none;border-radius:14px}
+.perfil-propiedad .perfil-galeria-fotos .propiedad-recorrido>span{position:static;display:block;font-size:18px;text-shadow:none}
+.perfil-propiedad .propiedad-recorrido small{color:#e0edfa;font-size:13px}
+.perfil-propiedad .propiedad-contacto .accion small{white-space:normal;line-height:1.4}
+
+.perfil-propiedad .propiedad-info-extra{margin:26px 0}
+.perfil-propiedad .propiedad-info-extra h4{font-size:23px;color:#214765;margin:0 0 16px}
+.perfil-propiedad .propiedad-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.perfil-propiedad .propiedad-info-grid article{background:#edf5fd;border:1px solid #c7dced;border-radius:16px;padding:20px;min-width:0}
+.perfil-propiedad .propiedad-info-grid article>span{font-size:24px;color:#28786a}
+.perfil-propiedad .propiedad-info-grid h5{font-size:18px;color:#214765;margin:12px 0}
+.perfil-propiedad .propiedad-info-grid p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;color:#334c60;margin:0}
+.propiedad-editor-item{padding:16px;border:1px solid #c7dced;border-radius:14px;margin:14px 0;background:#f3f8fd}
+.propiedad-editor-item button{margin-top:12px}
+@media(max-width:600px){.perfil-propiedad .propiedad-info-grid{grid-template-columns:1fr}}
+
+/* Características de la propiedad: una fila deslizable en teléfonos. */
+@media(max-width:600px){
+.perfil-propiedad [data-propiedad-info="incluye"] .propiedad-info-grid{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#729ec2 #e5eff8}
+.perfil-propiedad [data-propiedad-info="incluye"] .propiedad-info-grid article{flex:0 0 84%;box-sizing:border-box;scroll-snap-align:start;padding:18px}
+.perfil-propiedad [data-propiedad-info="incluye"] h4::after{content:'Desliza para ver más →';display:block;font-size:13px;font-weight:400;color:#536976;margin-top:8px}
+}

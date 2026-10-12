@@ -23,6 +23,7 @@
   campo(general,comunes,'nombre','Nombre de la propiedad').required=true;
   const slug=campo(general,comunes,'slug','Nombre de la carpeta');slug.required=true;slug.pattern='[a-z0-9]+(?:-[a-z0-9]+)*';slug.placeholder='Ejemplo: lote-comalapa-01';
   nota(general,'Una carpeta distinta para cada propiedad. Usa letras minúsculas, números y guiones.');
+  campo(general,campos,'localidad','Localidad y municipio (ejemplo: Barrio La Lima · Frontera Comalapa, Chiapas)');
   campo(general,comunes,'descripcion','Descripción de la propiedad','textarea');
   campo(general,campos,'tipo','Tipo de inmueble','select',api.tipos);
   campo(general,campos,'estado','Estado de venta','select',api.estados);
@@ -33,6 +34,23 @@
   nota(medidas,'Deja vacíos los datos que no correspondan; por ejemplo, habitaciones en un lote.');
   const detalles=grupo('📝 Detalles de la propiedad');
   for(const [key,texto] of api.secciones){const bloque=document.createElement('details');const summary=document.createElement('summary');summary.textContent=texto;bloque.append(summary);detalles.append(bloque);campo(bloque,campos,key,texto,'textarea');}
+
+  function listaEditor(key,titulo,etiquetas,ayuda){
+    const contenedor=grupo(titulo);nota(contenedor,ayuda);const filas=document.createElement('div');contenedor.append(filas);let entradas=[];
+    function agregar(datos={}){const fila=document.createElement('div');fila.className='propiedad-editor-item';const camposFila={};
+      for(const [nombre,label] of etiquetas)campo(fila,camposFila,nombre,label,nombre==='descripcion'||nombre==='respuesta'?'textarea':'text').id='';
+      Object.entries(camposFila).forEach(([k,e])=>e.value=datos[k]||'');
+      const quitar=document.createElement('button');quitar.type='button';quitar.textContent='Quitar este elemento';quitar.onclick=()=>{entradas=entradas.filter(x=>x!==camposFila);fila.remove();};fila.append(quitar);filas.append(fila);entradas.push(camposFila);
+    }
+    const boton=document.createElement('button');boton.type='button';boton.textContent='Agregar';boton.onclick=()=>agregar();contenedor.append(boton);
+    return {cargar(datos){filas.replaceChildren();entradas=[];(Array.isArray(datos)?datos:[]).forEach(agregar);},leer(){return entradas.map(f=>Object.fromEntries(Object.entries(f).map(([k,e])=>[k,e.value.trim()]))).filter(x=>Object.values(x).some(Boolean));}};
+  }
+  const listasInfo={
+    incluye:listaEditor('incluye','🏡 ¿Qué incluye esta propiedad?',[['titulo','Nombre (ejemplo: Agua)'],['descripcion','Explicación: qué incluye, si está instalado, proyectado o tiene costo aparte']],'Agrega únicamente características de esta propiedad. Puedes aclarar lo que está pendiente de confirmar.'),
+    cercanos:listaEditor('cercanos','📍 ¿Qué tienes cerca?',[['titulo','Lugar o referencia'],['descripcion','Distancia o tiempo aproximado y cómo se llega']],'Ejemplo: escuela cercana · 5 minutos caminando. Confirma las referencias antes de publicarlas.'),
+    preguntas:listaEditor('preguntas','💬 Dudas antes de comprar',[['pregunta','Pregunta'],['respuesta','Respuesta']],'Puedes responder: ¿Qué incluye el precio?, ¿Hay cuotas?, ¿Qué documentos puedo revisar? o ¿Puedo ir a conocerlo?')
+  };
+
   const documentos=grupo('📄 Régimen y documentación');
   campo(documentos,campos,'regimen','Régimen de propiedad','select',api.regimenes);
   campo(documentos,campos,'documentos','Documentación disponible');
@@ -79,10 +97,11 @@
     original=n?{...n}:null;const p=n?.propiedad||{};
     Object.entries(comunes).forEach(([key,el])=>{if(el.type==='checkbox')el.checked=key==='activo'?n?.activo!==false:n?.mostrarGaleria!==false;else el.value=n?.[key]||'';});
     Object.entries(campos).forEach(([key,el])=>{if(el.type==='checkbox')el.checked=p[key]===true;else el.value=p[key]??(key==='tipo'?'Lote':key==='estado'?'Disponible':key==='regimen'?'Por confirmar':key==='temaPublicidad'?'verde':'');});
+    Object.entries(listasInfo).forEach(([key,editor])=>editor.cargar(p[key]));
     limpiarUrls();Object.entries(archivos).forEach(([key,el])=>{el.value='';vistas[key].replaceChildren();guardadas(key);});rutaFotos();
     guardar.textContent=n?'Actualizar propiedad':'Guardar propiedad';estado.textContent='';
   }
-  function leer(){const p={...(original?.propiedad||{})};Object.entries(campos).forEach(([key,el])=>{p[key]=el.type==='checkbox'?el.checked:el.type==='number'?(el.value===''?'':Number(el.value)):el.value.trim();});return api.validar(p);}
+  function leer(){const p={...(original?.propiedad||{})};Object.entries(campos).forEach(([key,el])=>{p[key]=el.type==='checkbox'?el.checked:el.type==='number'?(el.value===''?'':Number(el.value)):el.value.trim();});Object.entries(listasInfo).forEach(([key,editor])=>p[key]=editor.leer());for(const key of ['incluye','cercanos','preguntas'])if(p[key].some(item=>Object.values(item).some(value=>!value)))throw Error('Completa los dos campos de cada elemento o quítalo antes de guardar.');return api.validar(p);}
   function abrir(){abrirSeccionPanel('propiedades');document.getElementById('titulo-seccion-panel').textContent=original?'Editar propiedad: '+original.nombre:'Nueva propiedad';renderLista();}
   function nueva(){if(original&&!confirm('¿Abrir una ficha vacía? Los cambios sin guardar de esta propiedad se descartarán.'))return false;cargar(null);abrir();return true;}
   function editar(n){cargar(n);abrir();}
@@ -102,6 +121,7 @@
     if(!confirm('¿Rellenar esta ficha con un lote de ejemplo? Se reemplazan sus datos de ejemplo, pero no el contacto ni las fotos.'))return;
     const p={tipo:'Lote',estado:'Disponible',precio:200000,superficie:200,frente:10,fondo:20,regimen:'Por confirmar',temaPublicidad:'verde',medidas:'Lote rectangular de ejemplo: 10 metros de frente y 20 de fondo. Superficie: 200 m².',servicios:'Ejemplo: alumbrado público y calles amplias. Confirmar derechos y conexiones de luz y agua y cargos de consumo.',areas:'Ejemplo: áreas verdes y acceso controlado. Características por confirmar.',ubicacion:'Frontera Comalapa. Dirección y referencias pendientes.',pagos:'Ejemplo: contado o pagos. Enganche, plazo, intereses y cuotas por confirmar.',documentos:'Por confirmar',notaDocumentos:'Datos y precio de demostración. Falta revisar la documentación.'};
     Object.entries(campos).forEach(([key,el])=>{if(el.type==='checkbox')el.checked=false;else el.value=p[key]??'';});
+    Object.values(listasInfo).forEach(editor=>editor.cargar([]));
     comunes.nombre.value='Lote de 200 m² en Comalapa · EJEMPLO';comunes.slug.value='lote-comalapa-01';comunes.descripcion.value='Ficha de demostración: lote de 10 × 20 metros. Precio e información ficticios; no es una oferta real.';rutaFotos();
   };
   form.addEventListener('submit',event=>{

@@ -3,9 +3,29 @@
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function dialogo(titulo,origen){const d=document.createElement('dialog');d.className='mejora-dialogo';d.innerHTML='<button type="button" class="mejora-cerrar">Cerrar ×</button><h2></h2><div class="mejora-contenido"></div>';d.querySelector('h2').textContent=titulo;d.setAttribute('aria-label',titulo);d.querySelector('button').onclick=()=>d.close();const overflow=document.body.style.overflow;d.addEventListener('close',()=>{document.body.style.overflow=overflow;d.remove();origen?.focus();},{once:true});d.addEventListener('click',e=>{const r=d.getBoundingClientRect();if(e.target===d&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))d.close();});document.body.append(d);d.showModal();document.body.style.overflow='hidden';return d;}
   async function compartir(n,b){const u=new URL(location.origin+location.pathname);u.searchParams.set('negocio',n.slug);try{if(navigator.share)await navigator.share({title:n.nombre,url:u.href});else{const d=dialogo('Compartir '+n.nombre,b);const box=d.querySelector('.mejora-contenido');const field=document.createElement('input');field.readOnly=true;field.value=u.href;field.setAttribute('aria-label','Enlace del negocio');const copiar=document.createElement('button');copiar.textContent='Copiar enlace';copiar.onclick=async()=>{try{await navigator.clipboard.writeText(u.href);copiar.textContent='Enlace copiado';}catch{field.select();copiar.textContent='Selecciona y copia el enlace';}};const wa=document.createElement('a');wa.textContent='Compartir por WhatsApp';wa.href='https://wa.me/?text='+encodeURIComponent(n.nombre+' '+u.href);wa.target='_blank';wa.rel='noopener';box.append(field,copiar,wa);}}catch(e){if(e.name!=='AbortError')alert('No se pudo compartir. Puedes copiar la dirección de la página.');}}
-  function perfil(n){const perfil=document.querySelector('.perfil-oficial');if(!perfil)return;
+  function perfil(n){const perfil=document.querySelector('.perfil-oficial');if(!perfil)return; if(n.propiedad){
+      const subtitulo=perfil.querySelector('.perfil-subtitulo');
+      if(subtitulo){subtitulo.textContent=n.propiedad.localidad||'';subtitulo.hidden=!n.propiedad.localidad;}
+      const grupos=Array.from(perfil.querySelectorAll('.perfil-acciones-oficial'));
+      if(grupos.length){const primero=grupos[0];primero.classList.add('propiedad-contacto');for(const grupo of grupos.slice(1)){primero.append(...grupo.children);grupo.remove();}}
+      const medidas=perfil.querySelector('.propiedad-datos');if(medidas&&medidas.children.length===3)medidas.classList.add('propiedad-tres-medidas');
+      const galeria=perfil.querySelector('.perfil-galeria-fotos');
+      const caracteristicas=perfil.querySelector('[data-propiedad-info=incluye]');if(galeria&&caracteristicas)galeria.before(caracteristicas);
+      if(galeria){const titulo=galeria.querySelector('h4');if(titulo)titulo.textContent='Conoce el lugar en fotos';}
+      const whatsapp=perfil.querySelector('.accion-whatsapp');
+      if(whatsapp){const ayuda=whatsapp.querySelector('small');if(ayuda)ayuda.textContent='Escríbenos; también puedes solicitar una videollamada';}
+      const video=perfil.querySelector('.accion-video');
+      if(video&&!perfil.querySelector('.propiedad-recorrido')){
+        const recorrido=document.createElement('a');recorrido.className='propiedad-recorrido';recorrido.href=video.href;recorrido.target='_blank';recorrido.rel='noopener noreferrer';
+        
+        const texto=document.createElement('span');texto.textContent='🎬 Ver video del recorrido';recorrido.append(texto);
+        if(galeria)galeria.append(recorrido);
+        else{const bloque=document.createElement('section');bloque.className='perfil-galeria-fotos';bloque.append(recorrido);perfil.querySelector('.propiedad-ficha')?.after(bloque);}
+        video.remove();
+      }
+    }
     for(const img of perfil.querySelectorAll('.perfil-hero-oficial img,.perfil-logo-oficial img')){if(img.closest('button'))continue;const b=document.createElement('button');b.type='button';b.className='mejora-ampliar';b.setAttribute('aria-label','Ampliar '+img.alt);img.replaceWith(b);b.append(img);b.onclick=()=>{const d=dialogo(img.alt,b),copia=document.createElement('img');copia.src=img.src;copia.alt=img.alt;copia.className='mejora-foto';copia.onerror=()=>{copia.replaceWith(document.createTextNode('No se pudo cargar la imagen.'));};d.querySelector('.mejora-contenido').append(copia);};}
-    if(!perfil.querySelector('.mejora-compartir')){const b=document.createElement('button');b.type='button';b.className='accion accion-compartir mejora-compartir';b.innerHTML='<span aria-hidden="true">↗</span><div><strong>Compartir negocio</strong><small>Enviar enlace</small></div>';b.onclick=()=>compartir(n,b);perfil.querySelector('.perfil-acciones-oficial')?.append(b);}
+    if(!perfil.querySelector('.mejora-compartir')){const b=document.createElement('button');b.type='button';b.className='accion accion-compartir mejora-compartir';b.innerHTML='<span aria-hidden="true">↗</span><div><strong>'+ (n.propiedad?'Compartir propiedad':'Compartir negocio') +'</strong><small>Enviar enlace</small></div>';b.onclick=()=>compartir(n,b);const acciones=perfil.querySelectorAll('.perfil-acciones-oficial');acciones[acciones.length-1]?.append(b);}
   }
   function recopilar(lista,soloVigentes=true){const items=[];
     for(const n of lista.filter(n=>n.activo!==false)){for(const p of window.ComidaExhibicion?ComidaExhibicion.productos(n):(n.productos||[]).filter(p=>p.disponible!==false)){

@@ -4165,7 +4165,25 @@
       "documentos": "",
       "notaDocumentos": "",
       "enPublicidad": true,
-      "temaPublicidad": "morado"
+      "temaPublicidad": "morado",
+      "incluye": [
+        {
+          "titulo": "Barda perimetral",
+          "descripcion": "Ejemplo: barda alrededor del terreno para delimitar el espacio. Característica ficticia para mostrar esta tarjeta."
+        },
+        {
+          "titulo": "Acceso por calle amplia",
+          "descripcion": "Ejemplo: espacio para entrar y salir en vehículo. El acceso real debe confirmarse."
+        },
+        {
+          "titulo": "Espacio para tu proyecto",
+          "descripcion": "200 m² de superficie: 10 metros de frente y 20 de fondo, según esta ficha de demostración."
+        },
+        {
+          "titulo": "Agua y luz",
+          "descripcion": "Conexiones pendientes de confirmar. Este ejemplo no incluye una instalación comprobada."
+        }
+      ]
     },
     "horarios": null,
     "horario": "",
@@ -4181,7 +4199,7 @@
     "whatsapp": "9633106862",
     "direccion": "",
     "maps": "https://maps.app.goo.gl/DfGegWDrmHiQ2c978",
-    "video": "",
+    "video": "https://www.facebook.com/share/v/19TTRpBUbK/",
     "mostrarGaleria": true,
     "activo": true,
     "banner": "imagenes/lote-los-mangos/banner.webp",

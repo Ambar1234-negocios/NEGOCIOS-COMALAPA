@@ -930,7 +930,7 @@ function verPerfil(categoria, index, opciones = {}) {
   </section>
 ` : "";
   lista.innerHTML = `
-    <article class="perfil-negocio perfil-oficial">
+    <article class="perfil-negocio perfil-oficial${negocio.propiedad ? " perfil-propiedad" : ""}">
 
       <button class="btn-regresar-perfil" onclick="volverCategoriaDesdePerfil('${categoria}')">
         ← Volver a la categoría
@@ -1835,8 +1835,7 @@ function iniciarRotacionPrincipal(anuncios, contenedor) {
   });
   contenedor.append(escenario);
   let indice = 0;
-  const reducido = matchMedia('(prefers-reduced-motion: reduce)');
-  let visible = false, encima = false, enfocado = false, temporizador;
+  let encima = false, enfocado = false, temporizador;
   function mostrar(nuevo) {
     indice = (nuevo + orden.length) % orden.length;
     diapositivas.forEach((elemento, i) => {
@@ -1848,8 +1847,8 @@ function iniciarRotacionPrincipal(anuncios, contenedor) {
   }
   function programar() {
     clearTimeout(temporizador);
-    if (orden.length > 1 && visible && !encima && !enfocado && !document.hidden && !reducido.matches) {
-      temporizador = setTimeout(() => { mostrar(indice + 1); programar(); }, 8000);
+    if (orden.length > 1 && !encima && !enfocado && !document.hidden) {
+      temporizador = setTimeout(() => { mostrar(indice + 1); programar(); }, 6000);
     }
   }
   const entrar = () => { encima = true; programar(); };
@@ -1858,15 +1857,14 @@ function iniciarRotacionPrincipal(anuncios, contenedor) {
   const desenfocar = e => { enfocado = contenedor.contains(e.relatedTarget); programar(); };
   contenedor.addEventListener('mouseenter', entrar);contenedor.addEventListener('mouseleave', salir);
   contenedor.addEventListener('focusin', foco);contenedor.addEventListener('focusout', desenfocar);
-  document.addEventListener('visibilitychange', programar);reducido.addEventListener('change', programar);
-  const observador = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; programar(); }, {threshold:.25});
+  document.addEventListener('visibilitychange', programar);
   mostrar(0);
-  observador.observe(escenario);
+  programar();
   limpiarRotacionPrincipal = () => {
-    clearTimeout(temporizador);observador.disconnect();
+    clearTimeout(temporizador);
     contenedor.removeEventListener('mouseenter', entrar);contenedor.removeEventListener('mouseleave', salir);
     contenedor.removeEventListener('focusin', foco);contenedor.removeEventListener('focusout', desenfocar);
-    document.removeEventListener('visibilitychange', programar);reducido.removeEventListener('change', programar);
+    document.removeEventListener('visibilitychange', programar);
   };
 }
 
