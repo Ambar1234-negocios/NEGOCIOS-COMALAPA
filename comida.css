@@ -50,3 +50,9 @@
 .producto-editor select{display:block;width:100%;padding:10px;font:inherit;border:1px solid #a8bfae;border-radius:8px}
 .producto-grupo-editor>button{margin:6px 8px 0 0}.pedido-grupo>p{font-size:14px;color:#526158}
 .pedido-grupo input[type=radio]{width:20px;height:20px}.pedido-grupo strong{text-align:right}
+
+.comida-seccion{margin:14px 0;border:1px solid #c9dfd7;border-radius:16px;background:#fff;overflow:hidden}
+.comida-seccion>summary{padding:18px;font-size:19px;font-weight:750;color:#214b3d;background:#edf6f2;cursor:pointer}
+.comida-seccion>summary small{font-size:13px;font-weight:400;margin-left:8px;color:#4c665d}
+.comida-seccion>.comida-grid{padding:14px}
+.comida-seccion>summary:focus-visible{outline:3px solid #28786a;outline-offset:-3px}

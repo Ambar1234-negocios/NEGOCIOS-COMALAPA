@@ -145,7 +145,7 @@ let destacadosPublicados = [];
 
 function crearLinkWhatsapp(negocio) {
   const digitos = String(negocio.whatsapp || "").replace(/\D/g, "");
-  const numero = negocio.propiedad && digitos.length === 10 ? "52" + digitos : negocio.whatsapp || WHATSAPP_GENERAL;
+  const numero = digitos.length === 10 ? "52" + digitos : negocio.whatsapp || WHATSAPP_GENERAL;
   const mensaje = `Hola, vi ${negocio.nombre} en Exhibición Frontera Comalapa y quiero información.`;
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
 }
@@ -995,6 +995,7 @@ function verPerfil(categoria, index, opciones = {}) {
   window.ComidaExhibicion.conectar(negocio);
   setTimeout(() => {
     const tarjeta=opciones.productoId?Array.from(document.querySelectorAll('.perfil-oficial [data-producto-id]')).find(el=>el.dataset.productoId===opciones.productoId):null;
+    if(tarjeta){for(let padre=tarjeta.parentElement;padre;padre=padre.parentElement)if(padre.tagName==='DETAILS')padre.open=true;}
     const destino=tarjeta||document.querySelector('.perfil-negocio');
     destino?.scrollIntoView({behavior:'smooth',block:tarjeta?'center':'start'});
     if(tarjeta){tarjeta.classList.add('comida-producto-destacado');setTimeout(()=>tarjeta.classList.remove('comida-producto-destacado'),2400);}

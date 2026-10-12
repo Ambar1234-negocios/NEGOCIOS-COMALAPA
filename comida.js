@@ -13,7 +13,10 @@
   }
   function menu(n) {
     if (!productos(n).length) return '';
-    return `<section class="comida-menu" aria-label="Menú y productos"><h4>Menú / Productos</h4><p>Precios en MXN. Disponibilidad y entrega por confirmar.</p><div class="comida-grid">${productos(n).map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p)}<span>Ver foto e información</span></button>` : foto(p)}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}<p>${dinero(Math.round(p.precio*100))}</p><button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button></article>`).join('')}</div><div id="comida-pedido"></div></section>`;
+    const tarjetas=ps=>ps.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p)}<span>Ver foto e información</span></button>` : foto(p)}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}<p>${dinero(Math.round(p.precio*100))}</p><button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button></article>`).join('');
+    const lista=productos(n);const nombres=[...new Set(lista.map(p=>String(p.seccion||'').trim()||'Otros productos'))];
+    const contenido=lista.some(p=>String(p.seccion||'').trim())?nombres.map(nombre=>{const ps=lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre);return `<details class="comida-seccion"><summary>${escapar(nombre)} <small>${ps.length} ${ps.length===1?'producto':'productos'}</small></summary><div class="comida-grid">${tarjetas(ps)}</div></details>`;}).join(''): `<div class="comida-grid">${tarjetas(lista)}</div>`;
+    return `<section class="comida-menu" aria-label="Menú y productos"><h4>Menú / Productos</h4><p>Precios en MXN. Disponibilidad y entrega por confirmar.</p>${contenido}<div id="comida-pedido"></div></section>`;
   }
   const centavos = precio => Math.round(Number(precio) * 100);
   function extras(p) {

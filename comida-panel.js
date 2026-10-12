@@ -61,6 +61,7 @@
     const row=document.createElement('div');row.className='producto-editor';row.dataset.id=p.id||'p-'+crypto.randomUUID();originales.set(row,{...p});
     const cab=document.createElement('header');cab.className='menu-producto-cabecera';cab.innerHTML='<strong></strong><span></span>';row.append(cab);
     const n=campo(row,'Nombre del producto','text','nombre',p.nombre);n.required=true;n.maxLength=100;
+    campo(row,'Sección del menú (opcional)','text','seccion',p.seccion).placeholder='Ejemplo: Hamburguesas';
     precio(row,'Precio base en MXN','precio',p.precio);
     campo(row,'Ruta de la foto (opcional)','text','foto',p.foto).placeholder='imagenes/negocio/foto-1.webp';
     campo(row,'Ingredientes (opcional)','textarea','ingredientes',p.ingredientes);
@@ -99,7 +100,7 @@
         return {...originales.get(g),id:g.dataset.id,nombre,obligatorio:getG('grupo-obligatorio').checked,seleccion,opciones};
       });
       if(gruposOpciones.filter(g=>g.opciones.some(o=>o.tipoPrecio==='propio')).length>1)throw Error('Usa precio propio en un solo grupo por producto; los demás deben usar adicionales.');
-      return {...originales.get(row),...row._leerPromocion(),id:row.dataset.id,nombre:get('nombre').value.trim(),precio:numero(get('precio')),foto,ingredientes:get('ingredientes').value.trim(),disponible:get('disponible').checked,enCarrusel:get('enCarrusel').checked,extras,...(gruposOpciones.length||originales.get(row)?.gruposOpciones?{gruposOpciones}:{})};
+      return {...originales.get(row),...row._leerPromocion(),id:row.dataset.id,nombre:get('nombre').value.trim(),seccion:get('seccion').value.trim(),precio:numero(get('precio')),foto,ingredientes:get('ingredientes').value.trim(),disponible:get('disponible').checked,enCarrusel:get('enCarrusel').checked,extras,...(gruposOpciones.length||originales.get(row)?.gruposOpciones?{gruposOpciones}:{})};
     });
   }
   window.MenuEditor={leer,cargar:ps=>{lista.replaceChildren();(Array.isArray(ps)?ps:[]).forEach(agregar);}};
