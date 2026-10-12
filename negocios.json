@@ -4220,9 +4220,68 @@
     "telefono": "9632312720",
     "whatsapp": "9632312720",
     "direccion": "Barrio El Diamante, Frontera Comalapa, Chiapas.",
-    "horarios": null,
+    "horarios": {
+      "lunes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "martes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "miercoles": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "jueves": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "viernes": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "sabado": {
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "08:00",
+            "fin": "17:00"
+          }
+        ]
+      },
+      "domingo": {
+        "modo": "cerrado",
+        "turnos": []
+      }
+    },
     "horario": "Horario por confirmar: el menú indica 4:00 p. m. a 10:30 p. m.; una imagen indica inicio a las 5:30 p. m.",
-    "maps": "",
+    "maps": "https://maps.app.goo.gl/iAb6TPmFhqxACnAUA?g_st=ac",
     "facebook": "",
     "instagram": "",
     "video": "",
@@ -5243,11 +5302,15 @@
     "activo": true,
     "plan": "normal",
     "verificado": false,
-    "delivery": false,
-    "tipoDelivery": "",
+    "delivery": true,
+    "tipoDelivery": "mandaditos",
     "mostrarGaleria": true,
-    "banner": "",
-    "logo": "",
-    "galeria": []
+    "banner": "imagenes/casa-tacubayo/banner.webp",
+    "logo": "imagenes/casa-tacubayo/logo.webp",
+    "galeria": [],
+    "propiedad": null,
+    "tiktok": "",
+    "sitioWeb": "",
+    "fechaRegistro": "11/10/2026, 10:45:38 p.m."
   }
 ]
