@@ -69,8 +69,8 @@
       pedir.target='_blank';pedir.rel='noopener noreferrer';
       pedir.addEventListener('click',e=>{if(window.ServiciosPedidos){e.preventDefault();window.ServiciosPedidos.abrir('mandaditos',api.actual.mandaditos.numero,'Mandaditos',pedir);}});
       informacion.append(encabezado,descripcion);servicio.append(informacion,pedir);zona.append(servicio);zona.hidden=false;
-      const paqueteria=document.createElement('div');paqueteria.className='mandaditos-acceso';
-      const infoPaquete=document.createElement('div');const tituloPaquete=document.createElement('h2');tituloPaquete.textContent='Paquetería y envíos';const detallePaquete=document.createElement('p');detallePaquete.textContent='Envía, recibe o consulta tu paquete. Traídas de Comitán y recepción de Estados Unidos.';infoPaquete.append(tituloPaquete,detallePaquete);
+      const paqueteria=document.createElement('div');paqueteria.className='mandaditos-acceso paqueteria-acceso';
+      const infoPaquete=document.createElement('div');const tituloPaquete=document.createElement('h2');tituloPaquete.textContent='Paquetería y envíos';const detallePaquete=document.createElement('p');detallePaquete.textContent='Recogida en Comalapa para envío desde Comitán y traslado de paquetes recibidos en Comitán hacia Comalapa. Consulta cobertura con el encargado.';infoPaquete.append(tituloPaquete,detallePaquete);
       const botonPaquete=document.createElement('button');botonPaquete.type='button';botonPaquete.className='mandaditos-boton';botonPaquete.textContent='Solicitar paquetería';botonPaquete.onclick=()=>window.ServiciosPedidos.abrir('paqueteria',api.actual.paqueteria.numero,'Paquetería',botonPaquete);paqueteria.append(infoPaquete,botonPaquete);zona.append(paqueteria);
       const activos=Object.entries(plataformas).filter(([k])=>api.actual[k].activo);
       if(activos.length) {

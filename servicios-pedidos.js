@@ -13,7 +13,8 @@
       ['pago','Forma de pago',['Efectivo','Transferencia','Por confirmar'],true],
       ['otro','Otros detalles','textarea',false]]},
     paqueteria:{titulo:'Solicitar paquetería',campos:[
-      ['servicio','¿Qué necesitas?',['Enviar un paquete','Recibir un paquete','Consultar un envío'],true],
+      ['servicio','¿Qué necesitas?',['Enviar un paquete','Recibir un paquete','Cotizar un servicio','Consultar un envío en curso'],true],
+      ['compania','¿Por qué paquetería prefieres enviarlo?',['Recomiéndenme una','Estafeta','FedEx','J&T Express México'],false],
       ['origen','¿De dónde sale el paquete?','text',true,'Ciudad o lugar de origen; por ejemplo: Comitán o Estados Unidos'],
       ['destino','¿A dónde debe llegar?','text',true,'Ciudad, colonia o punto de entrega'],
       ['detalle','¿Qué contiene o qué necesitas consultar?','textarea',true],
@@ -29,6 +30,7 @@
   };
   const limpiar=v=>String(v||'').trim();
   function etiqueta(tipo,servicio,key,base){
+    if(tipo==='paqueteria'&&key==='detalle')return ({'Enviar un paquete':'¿Qué vas a enviar?','Recibir un paquete':'¿Qué paquete esperas recibir?','Cotizar un servicio':'¿Qué necesitas cotizar?','Consultar un envío en curso':'¿Qué necesitas saber de tu envío?'})[servicio]||base;
     if(tipo!=='mandaditos')return base;
     const textos={
       'Comprar algo':{detalle:'¿Qué necesitas comprar?',establecimiento:'¿En qué negocio?',cantidad:'Cantidad o medidas'},
@@ -75,7 +77,7 @@
       if(tipo==='mandaditos'&&key==='destino'){const nota=document.createElement('small');nota.className='servicios-ayuda';nota.textContent='Si prefieres, comparte tu dirección o ubicación después por WhatsApp.';label.append(nota);}
       if(tipo==='compra'&&key==='enlace'){
         const ayudaEnlace=document.createElement('button');ayudaEnlace.type='button';ayudaEnlace.className='servicios-ayuda-enlace';ayudaEnlace.textContent='No sé cómo hacerlo';
-        ayudaEnlace.onclick=()=>window.open('https://wa.me/'+destino+'?text='+encodeURIComponent(mensajeAyuda(nombre)),'_blank','noopener,noreferrer');
+        ayudaEnlace.onclick=()=>{window.open('https://wa.me/'+destino+'?text='+encodeURIComponent(mensajeAyuda(nombre)),'_blank','noopener,noreferrer');d.close();};
         form.append(ayudaEnlace);
       }
     }
@@ -88,14 +90,30 @@
       form.elements.servicio.addEventListener('change',actualizarPreguntas);actualizarPreguntas();
     }
     if(tipo==='mandaditos'){const aviso=document.createElement('p');aviso.className='servicios-aviso-transferencia';aviso.textContent='Al pagar por transferencia se cobran $10 extra.';const actualizar=()=>aviso.hidden=form.elements.pago.value!=='Transferencia';form.elements.pago.addEventListener('change',actualizar);actualizar();form.elements.pago.parentElement.append(aviso);}
+    if(tipo==='paqueteria'){
+      const campos=form.elements;
+      const nota=document.createElement('small');nota.className='servicios-ayuda';nota.textContent='Describe el contenido, especialmente si son alimentos, líquidos o artículos delicados. El encargado confirmará si la compañía los admite y cómo deben empacarse.';campos.detalle.parentElement.append(nota);
+      const actualizarPaquete=()=>{
+        const servicio=campos.servicio.value,consulta=servicio==='Consultar un envío en curso';
+        for(const [key,base,,required] of e.campos){
+          const campo=campos[key];
+          const ocultar=(key==='compania'&&servicio!=='Enviar un paquete')||(key==='guia'&&servicio!=='Recibir un paquete'&&!consulta)||(consulta&&['origen','destino','cantidad','medidas','fecha'].includes(key));
+          campo.disabled=ocultar;campo.parentElement.hidden=ocultar;campo.required=required&&!ocultar;campo.setCustomValidity('');
+          etiquetas[key].textContent=etiqueta(tipo,servicio,key,base)+(campo.required?' *':' (opcional)');
+        }
+        nota.hidden=consulta;
+      };
+      campos.servicio.addEventListener('change',actualizarPaquete);actualizarPaquete();
+    }
     const error=document.createElement('p');error.setAttribute('role','alert');
     const enviar=document.createElement('button');enviar.type='submit';enviar.className='servicios-enviar';enviar.textContent=tipo==='compra'?'Consultar compra por WhatsApp':tipo==='paqueteria'?'Solicitar cotización por WhatsApp':'Solicitar mandadito por WhatsApp';
     form.append(error,enviar);form.addEventListener('submit',ev=>{
-      ev.preventDefault();const datos={};for(const [k] of e.campos)datos[k]=limpiar(form.elements[k].value);if(tipo==='mandaditos'&&elegirLugar.value==='No importa')datos.establecimiento='No importa';
-      for(const [key,,t,required] of e.campos){const campo=form.elements[key];campo.setCustomValidity('');if(required&&!datos[key])campo.setCustomValidity('Completa este campo.');if(t==='url'&&datos[key]){try{const url=new URL(datos[key]);if(!['http:','https:'].includes(url.protocol))throw Error();}catch{campo.setCustomValidity('Pega un enlace válido que empiece con https:// o http://.');}}}
+      ev.preventDefault();const datos={};for(const [k] of e.campos)datos[k]=form.elements[k].disabled?'':limpiar(form.elements[k].value);if(tipo==='mandaditos'&&elegirLugar.value==='No importa')datos.establecimiento='No importa';
+      for(const [key,,t,required] of e.campos){const campo=form.elements[key];campo.setCustomValidity('');if(campo.required&&!campo.disabled&&!datos[key])campo.setCustomValidity('Completa este campo.');if(t==='url'&&datos[key]){try{const url=new URL(datos[key]);if(!['http:','https:'].includes(url.protocol))throw Error();}catch{campo.setCustomValidity('Pega un enlace válido que empiece con https:// o http://.');}}}
       if(!form.reportValidity())return;
       const texto=mensaje(tipo,nombre,datos);if(texto.length>6000){error.textContent='La solicitud es demasiado larga. Reduce los detalles.';return;}
       window.open('https://wa.me/'+destino+'?text='+encodeURIComponent(texto),'_blank','noopener,noreferrer');
+      d.close();
     });
     form.addEventListener('input',ev=>ev.target.setCustomValidity?.(''));
     d.append(cerrar,titulo,ayuda,form);const overflow=document.body.style.overflow;
