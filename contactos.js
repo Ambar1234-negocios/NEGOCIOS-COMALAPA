@@ -19,6 +19,7 @@
   function normalizar(datos) {
     const salida=inicial();
     if(!datos || typeof datos!=='object' || Array.isArray(datos))return salida;
+    salida.revisionContactos=typeof datos.revisionContactos==='string'?datos.revisionContactos:'';
     for(const k of Object.keys(plataformas)) {
       const contacto = datos[k];
       const n=numero(contacto?.numero);
@@ -31,7 +32,15 @@
     const nt=numero(datos.taxi?.numero);salida.taxi={numero:nt,activo:datos.taxi?.activo===true&&!!nt};
     return salida;
   }
-  const api=window.ContactosExhibicion={actual:inicial(),numero,normalizar};
+  function reconciliar(datos,publicados){
+    const salida=normalizar(datos),base=normalizar(publicados);
+    if(base.revisionContactos&&salida.revisionContactos!==base.revisionContactos){
+      for(const k of [...Object.keys(plataformas),'mandaditos','paqueteria'])salida[k]={...salida[k],numero:base[k].numero,...('activo' in base[k]?{activo:base[k].activo}:{})};
+      salida.revisionContactos=base.revisionContactos;
+    }
+    return salida;
+  }
+  const api=window.ContactosExhibicion={actual:inicial(),numero,normalizar,reconciliar};
   api.lista=(async()=>{
     const controller=new AbortController();
     const timeout=setTimeout(()=>controller.abort(),5000);
@@ -86,7 +95,7 @@
     const form=document.getElementById('form-contactos');if(!form)return;
     const estado=document.getElementById('estado-contactos');
     let borrador=api.actual;
-    try {const guardado=localStorage.getItem(clave);if(guardado){const anterior=JSON.parse(guardado);borrador=normalizar(anterior);if(anterior.version!==2){for(const k of [...Object.keys(plataformas),'mandaditos','paqueteria'])borrador[k]={...api.actual[k]};}for(const k of ['paqueteria','aliexpress','amazon'])if(!Object.prototype.hasOwnProperty.call(anterior,k))borrador[k]={...api.actual[k]};if(!Object.prototype.hasOwnProperty.call(anterior,'taxi'))borrador.taxi={...api.actual.taxi};}}catch{estado.textContent='No se pudo recuperar el borrador local. Se muestran los datos publicados.';}
+    try {const guardado=localStorage.getItem(clave);if(guardado){const anterior=JSON.parse(guardado);borrador=reconciliar(anterior,api.actual);if(anterior.version!==2){for(const k of [...Object.keys(plataformas),'mandaditos','paqueteria'])borrador[k]={...api.actual[k]};}for(const k of ['paqueteria','aliexpress','amazon'])if(!Object.prototype.hasOwnProperty.call(anterior,k))borrador[k]={...api.actual[k]};if(!Object.prototype.hasOwnProperty.call(anterior,'taxi'))borrador.taxi={...api.actual.taxi};}}catch{estado.textContent='No se pudo recuperar el borrador local. Se muestran los datos publicados.';}
     const campos=document.getElementById('campos-contactos');
     for(const [k,nombre] of Object.entries({...plataformas,mandaditos:'Mandaditos',paqueteria:'Paquetería',taxi:'Taxi'})) {
       const grupo=document.createElement('fieldset');grupo.className='contacto-campo';
@@ -124,7 +133,7 @@
       campos.append(grupo);
     }
     function recoger() {
-      const datos=inicial();
+      const datos=inicial();datos.revisionContactos=api.actual.revisionContactos;
       for(const k of [...Object.keys(plataformas),'mandaditos','paqueteria','taxi']) {
         const input=document.getElementById('numero-'+k);
         const activo=k==='mandaditos'||k==='paqueteria'||document.getElementById('activo-'+k).checked;

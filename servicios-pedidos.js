@@ -7,7 +7,7 @@
       ['detalle','¿Qué necesitas comprar o recoger?','textarea',true],
       ['cantidad','Cantidad o medidas','text',false,'Ejemplo: 2 kilos, 3 piezas'],
       ['establecimiento','Establecimiento o lugar','text',false],
-      ['destino','Dirección de entrega','textarea',true],
+      ['destino','Dirección de entrega','textarea',false],
       ['referencia','Referencia para llegar','text',false],
       ['horario','Horario deseado','text',false],
       ['pago','Forma de pago',['Efectivo','Transferencia','Por confirmar'],true],
@@ -43,7 +43,7 @@
     const e=esquemas[tipo];if(!e)throw Error('Servicio no reconocido.');
     const encabezado=tipo==='compra'?`Hola, quiero solicitar una compra en ${nombre}.`:tipo==='paqueteria'?'Hola, quiero solicitar un servicio de paquetería.':'Hola, quiero solicitar un mandadito.';
     const lineas=e.campos.filter(([k])=>limpiar(datos[k])).map(([k,label])=>`${etiqueta(tipo,datos.servicio,k,label).replace(/^¿|\?$/g,'')}: ${limpiar(datos[k])}`);
-    return encabezado+'\n\n'+lineas.join('\n')+'\n\n'+(tipo==='compra'?'¿Me confirman disponibilidad, costo total y entrega?':tipo==='paqueteria'?'¿Me confirman si pueden realizar este servicio, el costo y el tiempo estimado?':'¿Me confirman disponibilidad y costo de la compra y del servicio?')+(tipo==='mandaditos'&&datos.pago==='Transferencia'?'\nPagaré por transferencia. Compártanme los datos de pago y confírmenme el total.':'');
+    return encabezado+'\n\n'+lineas.join('\n')+'\n\n'+(tipo==='compra'?'¿Me confirman disponibilidad, costo total y entrega?':tipo==='paqueteria'?'¿Me confirman si pueden realizar este servicio, el costo y el tiempo estimado?':'¿Me confirman disponibilidad y costo de la compra y del servicio?')+(tipo==='mandaditos'&&datos.pago==='Transferencia'?'\nPagaré por transferencia; el formulario indica un cargo extra de $10. Compártanme los datos de pago y confírmenme el total.':'');
   }
   function abrir(tipo,numero,nombre,origen){
     const e=esquemas[tipo];const destino=window.ContactosExhibicion?.numero(numero);
@@ -53,7 +53,7 @@
     const cerrar=document.createElement('button');cerrar.type='button';cerrar.className='servicios-cerrar';cerrar.textContent='Cerrar ×';cerrar.onclick=()=>d.close();
     const titulo=document.createElement('h2');titulo.textContent=e.titulo+(tipo==='compra'?' en '+nombre:'');
     const ayuda=document.createElement('p');ayuda.textContent='Completa tu solicitud. Al continuar se abrirá WhatsApp; el servicio se confirma por ese medio.';
-    const form=document.createElement('form');const etiquetas={};let elegirLugar;
+    const form=document.createElement('form');const etiquetas={};let elegirLugar,tituloLugar;
     for(const [key,text,t,required,placeholder] of e.campos){
       const label=document.createElement('label');const span=document.createElement('span');span.textContent=text+(required?' *':' (opcional)');
       const campo=document.createElement(Array.isArray(t)?'select':t==='textarea'?'textarea':'input');campo.name=key;campo.required=required;
@@ -64,7 +64,7 @@
       etiquetas[key]=span;
       label.append(span,campo);
       if(tipo==='mandaditos'&&key==='establecimiento'){
-        const opcionLabel=document.createElement('label');const opcionTitulo=document.createElement('span');opcionTitulo.textContent='Preferencia del lugar';
+        const opcionLabel=document.createElement('label');const opcionTitulo=document.createElement('span');opcionTitulo.textContent='¿Dónde comprar?';tituloLugar=opcionTitulo;
         elegirLugar=document.createElement('select');elegirLugar.name='preferenciaLugar';
         for(const texto of ['Indicar un lugar','No importa']){const opt=document.createElement('option');opt.value=texto;opt.textContent=texto;elegirLugar.append(opt);}
         opcionLabel.append(opcionTitulo,elegirLugar);form.append(opcionLabel);
@@ -72,6 +72,7 @@
         const pista=document.createElement('small');pista.className='servicios-ayuda';pista.textContent='Puedes indicar el negocio o elegir «No importa».';opcionLabel.append(pista);
       }
       form.append(label);
+      if(tipo==='mandaditos'&&key==='destino'){const nota=document.createElement('small');nota.className='servicios-ayuda';nota.textContent='Si prefieres, comparte tu dirección o ubicación después por WhatsApp.';label.append(nota);}
       if(tipo==='compra'&&key==='enlace'){
         const ayudaEnlace=document.createElement('button');ayudaEnlace.type='button';ayudaEnlace.className='servicios-ayuda-enlace';ayudaEnlace.textContent='No sé cómo hacerlo';
         ayudaEnlace.onclick=()=>window.open('https://wa.me/'+destino+'?text='+encodeURIComponent(mensajeAyuda(nombre)),'_blank','noopener,noreferrer');
@@ -81,10 +82,12 @@
     if(tipo==='mandaditos'){
       const actualizarPreguntas=()=>{
         for(const [key,base,,required] of e.campos)etiquetas[key].textContent=etiqueta(tipo,form.elements.servicio.value,key,base)+(required?' *':' (opcional)');
+        tituloLugar.textContent=({'Comprar algo':'¿Dónde comprar?','Recoger algo':'¿Dónde recoger?','Pagar algo':'¿Dónde pagar?','Otra cosa':'¿Dónde necesitas ayuda? (opcional)'})[form.elements.servicio.value];
         form.elements.cantidad.placeholder=form.elements.servicio.value==='Pagar algo'?'Ejemplo: $250':'Ejemplo: 2 kilos, 3 piezas';
       };
       form.elements.servicio.addEventListener('change',actualizarPreguntas);actualizarPreguntas();
     }
+    if(tipo==='mandaditos'){const aviso=document.createElement('p');aviso.className='servicios-aviso-transferencia';aviso.textContent='Al pagar por transferencia se cobran $10 extra.';const actualizar=()=>aviso.hidden=form.elements.pago.value!=='Transferencia';form.elements.pago.addEventListener('change',actualizar);actualizar();form.elements.pago.parent.append(aviso);}
     const error=document.createElement('p');error.setAttribute('role','alert');
     const enviar=document.createElement('button');enviar.type='submit';enviar.className='servicios-enviar';enviar.textContent=tipo==='compra'?'Consultar compra por WhatsApp':tipo==='paqueteria'?'Solicitar cotización por WhatsApp':'Solicitar mandadito por WhatsApp';
     form.append(error,enviar);form.addEventListener('submit',ev=>{
