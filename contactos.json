@@ -43,8 +43,8 @@
     "numero": "529631865470"
   },
   "taxi": {
-    "numero": "",
-    "activo": false
+    "numero": "529631181819",
+    "activo": true
   },
-  "revisionContactos": "destinos-20261014-confirmados"
+  "revisionContactos": "destinos-taxi-restaurado-20261014"
 }

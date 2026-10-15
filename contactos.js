@@ -38,6 +38,7 @@
       for(const k of [...Object.keys(plataformas),'mandaditos','paqueteria'])salida[k]={...salida[k],numero:base[k].numero,...('activo' in base[k]?{activo:base[k].activo}:{})};
       salida.revisionContactos=base.revisionContactos;
     }
+    if(!Object.prototype.hasOwnProperty.call(datos||{},'taxi') || (salida.revisionContactos!==normalizar(datos).revisionContactos&&!salida.taxi.numero))salida.taxi={...base.taxi};
     return salida;
   }
   const api=window.ContactosExhibicion={actual:inicial(),numero,normalizar,reconciliar};

@@ -87,7 +87,7 @@
       };
       form.elements.servicio.addEventListener('change',actualizarPreguntas);actualizarPreguntas();
     }
-    if(tipo==='mandaditos'){const aviso=document.createElement('p');aviso.className='servicios-aviso-transferencia';aviso.textContent='Al pagar por transferencia se cobran $10 extra.';const actualizar=()=>aviso.hidden=form.elements.pago.value!=='Transferencia';form.elements.pago.addEventListener('change',actualizar);actualizar();form.elements.pago.parent.append(aviso);}
+    if(tipo==='mandaditos'){const aviso=document.createElement('p');aviso.className='servicios-aviso-transferencia';aviso.textContent='Al pagar por transferencia se cobran $10 extra.';const actualizar=()=>aviso.hidden=form.elements.pago.value!=='Transferencia';form.elements.pago.addEventListener('change',actualizar);actualizar();form.elements.pago.parentElement.append(aviso);}
     const error=document.createElement('p');error.setAttribute('role','alert');
     const enviar=document.createElement('button');enviar.type='submit';enviar.className='servicios-enviar';enviar.textContent=tipo==='compra'?'Consultar compra por WhatsApp':tipo==='paqueteria'?'Solicitar cotización por WhatsApp':'Solicitar mandadito por WhatsApp';
     form.append(error,enviar);form.addEventListener('submit',ev=>{
