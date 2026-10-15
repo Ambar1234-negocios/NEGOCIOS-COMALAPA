@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "shein": {
     "numero": "529631181815",
     "activo": true,
@@ -24,8 +24,23 @@
     "nombre": "Mercado Libre",
     "color": "#ffe600"
   },
+  "aliexpress": {
+    "numero": "",
+    "activo": false,
+    "nombre": "AliExpress",
+    "color": "#e43225"
+  },
+  "amazon": {
+    "numero": "",
+    "activo": false,
+    "nombre": "Amazon",
+    "color": "#232f3e"
+  },
   "mandaditos": {
     "numero": "529633106862"
+  },
+  "paqueteria": {
+    "numero": "529631865470"
   },
   "taxi": {
     "numero": "529631181819",

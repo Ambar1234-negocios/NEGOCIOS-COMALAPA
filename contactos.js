@@ -1,31 +1,33 @@
 /* Configuración compartida de compras por encargo y Mandaditos. */
 (() => {
   'use strict';
-  const plataformas = {shein:'SHEIN',tiktok:'TikTok Shop',temu:'Temu',mercadolibre:'Mercado Libre'};
-  const colores={shein:'#111111',tiktok:'#111111',temu:'#c84900',mercadolibre:'#ffe600'};
+  const plataformas = {shein:'SHEIN',tiktok:'TikTok Shop',temu:'Temu',mercadolibre:'Mercado Libre',aliexpress:'AliExpress',amazon:'Amazon'};
+  const colores={shein:'#111111',tiktok:'#111111',temu:'#c84900',mercadolibre:'#ffe600',aliexpress:'#e43225',amazon:'#232f3e'};
   function colorTexto(hex) {
     const rgb=hex.slice(1).match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);
     return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2]>.179?'#111111':'#ffffff';
   }
   const clave = 'exhibicionContactosV1';
-  const inicial = () => ({version:1,...Object.fromEntries(Object.keys(plataformas).map(k=>[k,{numero:'',activo:false,nombre:plataformas[k],color:colores[k]}])),mandaditos:{numero:'529633106862'},taxi:{numero:'',activo:false}});
+  const inicial = () => ({version:2,...Object.fromEntries(Object.keys(plataformas).map(k=>[k,{numero:'',activo:false,nombre:plataformas[k],color:colores[k]}])),mandaditos:{numero:'529631891480'},paqueteria:{numero:'529631865470'},taxi:{numero:'',activo:false}});
   function numero(valor) {
     const limpio=String(valor??'').replace(/[\s()+.-]/g,'');
     if(!/^\d+$/.test(limpio))return '';
     if(limpio.length===10)return '52'+limpio;
+    if(/^521\d{10}$/.test(limpio))return '52'+limpio.slice(3);
     return /^52\d{10}$/.test(limpio)?limpio:'';
   }
   function normalizar(datos) {
     const salida=inicial();
     if(!datos || typeof datos!=='object' || Array.isArray(datos))return salida;
     for(const k of Object.keys(plataformas)) {
-      const contacto = datos[k] || (k === 'temu' ? datos.amazon : null);
+      const contacto = datos[k];
       const n=numero(contacto?.numero);
       salida[k]={numero:n,activo:contacto?.activo===true && !!n,
         nombre:typeof contacto?.nombre==='string'&&contacto.nombre.trim()?contacto.nombre.trim().slice(0,40):plataformas[k],
         color:/^#[0-9a-f]{6}$/i.test(contacto?.color)?contacto.color:colores[k]};
     }
     salida.mandaditos.numero=numero(datos.mandaditos?.numero)||salida.mandaditos.numero;
+    salida.paqueteria.numero=numero(datos.paqueteria?.numero)||salida.paqueteria.numero;
     const nt=numero(datos.taxi?.numero);salida.taxi={numero:nt,activo:datos.taxi?.activo===true&&!!nt};
     return salida;
   }
@@ -55,7 +57,11 @@
       const mensajeMandadito='Hola, necesito un servicio de mandaditos.\n\nNecesito comprar o recoger:\nLugar de compra o recogida:\nDirección de entrega:\nReferencia para llegar:\nHorario deseado:\n\n¿Me confirmas disponibilidad y costo del servicio?';
       pedir.href='https://wa.me/'+api.actual.mandaditos.numero+'?text='+encodeURIComponent(mensajeMandadito);
       pedir.target='_blank';pedir.rel='noopener noreferrer';
+      pedir.addEventListener('click',e=>{if(window.ServiciosPedidos){e.preventDefault();window.ServiciosPedidos.abrir('mandaditos',api.actual.mandaditos.numero,'Mandaditos',pedir);}});
       informacion.append(encabezado,descripcion);servicio.append(informacion,pedir);zona.append(servicio);zona.hidden=false;
+      const paqueteria=document.createElement('div');paqueteria.className='mandaditos-acceso';
+      const infoPaquete=document.createElement('div');const tituloPaquete=document.createElement('h2');tituloPaquete.textContent='Paquetería y envíos';const detallePaquete=document.createElement('p');detallePaquete.textContent='Envía, recibe o consulta tu paquete. Traídas de Comitán y recepción de Estados Unidos.';infoPaquete.append(tituloPaquete,detallePaquete);
+      const botonPaquete=document.createElement('button');botonPaquete.type='button';botonPaquete.className='mandaditos-boton';botonPaquete.textContent='Solicitar paquetería';botonPaquete.onclick=()=>window.ServiciosPedidos.abrir('paqueteria',api.actual.paqueteria.numero,'Paquetería',botonPaquete);paqueteria.append(infoPaquete,botonPaquete);zona.append(paqueteria);
       const activos=Object.entries(plataformas).filter(([k])=>api.actual[k].activo);
       if(activos.length) {
         const titulo=document.createElement('h2');titulo.textContent='Compras en línea por encargo';
@@ -69,6 +75,7 @@
           const mensaje=`Hola, me gustaría solicitar una compra de ${nombre}. Te comparto el enlace o una captura del producto para que me confirmes el costo y la entrega.\n\nProducto o enlace:\nCantidad:\nTalla o color (si aplica):`;
           a.href=`https://wa.me/${api.actual[k].numero}?text=${encodeURIComponent(mensaje)}`;
           a.target='_blank';a.rel='noopener noreferrer';
+          a.addEventListener('click',e=>{if(window.ServiciosPedidos){e.preventDefault();window.ServiciosPedidos.abrir('compra',api.actual[k].numero,nombre,a);}});
           const marca=document.createElement('strong');marca.textContent=nombre;
           const accion=document.createElement('small');accion.textContent='Solicitar por WhatsApp';
           a.append(marca,accion);grid.append(a);
@@ -79,9 +86,9 @@
     const form=document.getElementById('form-contactos');if(!form)return;
     const estado=document.getElementById('estado-contactos');
     let borrador=api.actual;
-    try {const guardado=localStorage.getItem(clave);if(guardado){const anterior=JSON.parse(guardado);borrador=normalizar(anterior);if(!Object.prototype.hasOwnProperty.call(anterior,'taxi'))borrador.taxi={...api.actual.taxi};}}catch{estado.textContent='No se pudo recuperar el borrador local. Se muestran los datos publicados.';}
+    try {const guardado=localStorage.getItem(clave);if(guardado){const anterior=JSON.parse(guardado);borrador=normalizar(anterior);if(anterior.version!==2){for(const k of [...Object.keys(plataformas),'mandaditos','paqueteria'])borrador[k]={...api.actual[k]};}for(const k of ['paqueteria','aliexpress','amazon'])if(!Object.prototype.hasOwnProperty.call(anterior,k))borrador[k]={...api.actual[k]};if(!Object.prototype.hasOwnProperty.call(anterior,'taxi'))borrador.taxi={...api.actual.taxi};}}catch{estado.textContent='No se pudo recuperar el borrador local. Se muestran los datos publicados.';}
     const campos=document.getElementById('campos-contactos');
-    for(const [k,nombre] of Object.entries({...plataformas,mandaditos:'Mandaditos',taxi:'Taxi'})) {
+    for(const [k,nombre] of Object.entries({...plataformas,mandaditos:'Mandaditos',paqueteria:'Paquetería',taxi:'Taxi'})) {
       const grupo=document.createElement('fieldset');grupo.className='contacto-campo';
       const leyenda=document.createElement('legend');leyenda.textContent=nombre;
       const etiqueta=document.createElement('label');etiqueta.htmlFor='numero-'+k;etiqueta.textContent=k==='taxi'?'Número para llamadas y WhatsApp':'Número de WhatsApp';
@@ -101,7 +108,7 @@
         input.value=nuevo;input.setCustomValidity('');
       });
       grupo.append(leyenda,etiqueta,input);
-      if(k!=='mandaditos'&&k!=='taxi') {
+      if(k!=='mandaditos'&&k!=='paqueteria'&&k!=='taxi') {
         const etiquetaNombre=document.createElement('label');etiquetaNombre.htmlFor='nombre-'+k;etiquetaNombre.textContent='Nombre del botón';
         const campoNombre=document.createElement('input');campoNombre.id='nombre-'+k;campoNombre.type='text';campoNombre.maxLength=40;campoNombre.required=true;campoNombre.value=borrador[k].nombre;
         const etiquetaColor=document.createElement('label');etiquetaColor.htmlFor='color-'+k;etiquetaColor.textContent='Color de fondo';
@@ -118,18 +125,18 @@
     }
     function recoger() {
       const datos=inicial();
-      for(const k of [...Object.keys(plataformas),'mandaditos','taxi']) {
+      for(const k of [...Object.keys(plataformas),'mandaditos','paqueteria','taxi']) {
         const input=document.getElementById('numero-'+k);
-        const activo=k==='mandaditos'||document.getElementById('activo-'+k).checked;
+        const activo=k==='mandaditos'||k==='paqueteria'||document.getElementById('activo-'+k).checked;
         const n=/^\d{10}$/.test(input.value)?'52'+input.value:'';
         input.setCustomValidity((activo||input.value.trim())&&!n?'Escribe exactamente 10 dígitos, sin +52.':'');
         if(!input.reportValidity())return null;
-        if(k!=='mandaditos'&&k!=='taxi') {
+        if(k!=='mandaditos'&&k!=='paqueteria'&&k!=='taxi') {
           const campoNombre=document.getElementById('nombre-'+k);
           campoNombre.setCustomValidity(campoNombre.value.trim()?'':'Escribe el nombre del botón.');
           if(!campoNombre.reportValidity())return null;
         }
-        datos[k]=k==='mandaditos'?{numero:n}:k==='taxi'?{numero:n,activo}:{numero:n,activo,nombre:document.getElementById('nombre-'+k).value.trim(),color:document.getElementById('color-'+k).value};
+        datos[k]=(k==='mandaditos'||k==='paqueteria')?{numero:n}:k==='taxi'?{numero:n,activo}:{numero:n,activo,nombre:document.getElementById('nombre-'+k).value.trim(),color:document.getElementById('color-'+k).value};
       }
       return datos;
     }

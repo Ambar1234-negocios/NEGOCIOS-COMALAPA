@@ -117,8 +117,9 @@
   }
   function whatsapp(n,consulta) {
     if(!consulta&&!pedido.lineas.length)return;
+    if(!consulta && (pedido.negocio?.id!==n?.id || pedido.lineas.some(l=>!n.productos?.some(p=>p.id===l.producto.id)))){alert('El pedido no corresponde a este negocio. Revisa tu carrito antes de enviarlo.');return;}
     const numero=String(!consulta&&!digital(n)&&n.delivery===true&&n.tipoDelivery!=='gratis'?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
-    const normal=numero.length===10?'52'+numero:numero;
+    const normal=window.ContactosExhibicion?.numero(numero)||(numero.length===10?'52'+numero:numero);
     if(!/^\d{11,15}$/.test(normal)){alert('Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.');return;}
     const mensaje=digital(n)?(consulta?`Hola, estoy viendo el catálogo de ${n.nombre}. Quiero información sobre sus servicios digitales.`:mensajeDigital(pedido.lineas,total())):consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:`Hola, quiero realizar este pedido de ${n.nombre}:\n\n${pedido.lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}${detallePromo(l)?'\n'+detallePromo(l):''}${l.opciones?.length?'\nOpciones: '+descripcionOpciones(l):''}${l.extras.length?'\nExtras por unidad: '+l.extras.map(x=>x.nombre+' ('+(x.precio?'+ '+dinero(centavos(x.precio)):'sin costo')+')').join(', '):''}${l.nota?'\nIndicación: '+l.nota:''}`).join('\n\n')}\n\nTotal de productos: ${dinero(total())}\n${n.delivery===true&&n.tipoDelivery!=='gratis'?'Envío por cotizar.\n':''}Por favor confirmen disponibilidad, total final y forma de entrega.\nDirección o punto de entrega: `;
     if(mensaje.length>6000){alert('El pedido es demasiado largo para WhatsApp. Reduce las indicaciones o los productos distintos.');return;}
