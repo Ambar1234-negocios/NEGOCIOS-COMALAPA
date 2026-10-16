@@ -7,10 +7,9 @@
       ['detalle','¿Qué necesitas comprar o recoger?','textarea',true],
       ['cantidad','Cantidad o medidas','text',false,'Ejemplo: 2 kilos, 3 piezas'],
       ['establecimiento','Establecimiento o lugar','text',false],
-      ['destino','Dirección de entrega','textarea',false],
-      ['referencia','Referencia para llegar','text',false],
-      ['horario','Horario deseado','text',false],
-      ['pago','Forma de pago',['Efectivo','Transferencia','Por confirmar'],true],
+      ['destino','Dirección de entrega','textarea',false,'Ejemplo: Barrio Las Limas, frente a la agencia municipal'],
+      ['horario','¿En cuánto tiempo lo necesitas?','text',false,'Ejemplo: Lo antes posible o en una hora'],
+      ['pago','Forma de pago',['Efectivo','Transferencia'],true],
       ['otro','Otros detalles','textarea',false]]},
     paqueteria:{titulo:'Solicitar paquetería',campos:[
       ['servicio','¿Qué necesitas?',['Enviar un paquete','Recibir un paquete','Cotizar un servicio','Consultar un envío en curso'],true],
@@ -44,8 +43,12 @@
   function mensaje(tipo,nombre,datos){
     const e=esquemas[tipo];if(!e)throw Error('Servicio no reconocido.');
     const encabezado=tipo==='compra'?`Hola, quiero solicitar una compra en ${nombre}.`:tipo==='paqueteria'?'Hola, quiero solicitar un servicio de paquetería.':'Hola, quiero solicitar un mandadito.';
-    const lineas=e.campos.filter(([k])=>limpiar(datos[k])).map(([k,label])=>`${etiqueta(tipo,datos.servicio,k,label).replace(/^¿|\?$/g,'')}: ${limpiar(datos[k])}`);
-    return encabezado+'\n\n'+lineas.join('\n')+'\n\n'+(tipo==='compra'?'¿Me confirman disponibilidad, costo total y entrega?':tipo==='paqueteria'?'¿Me confirman si pueden realizar este servicio, el costo y el tiempo estimado?':'¿Me confirman disponibilidad y costo de la compra y del servicio?')+(tipo==='mandaditos'&&datos.pago==='Transferencia'?'\nPagaré por transferencia; el formulario indica un cargo extra de $10. Compártanme los datos de pago y confírmenme el total.':'');
+    const adicionales=tipo==='mandaditos'&&Array.isArray(datos.paradas)?datos.paradas:[];
+    const comunes=['destino','horario','pago','otro'];
+    const lineas=e.campos.filter(([k])=>!adicionales.length||!comunes.includes(k)).filter(([k])=>limpiar(datos[k])).map(([k,label])=>`${etiqueta(tipo,datos.servicio,k,label).replace(/^¿|\?$/g,'')}: ${limpiar(datos[k])}`);
+    const textoParadas=adicionales.map((p,i)=>'Parada '+(i+2)+'\n'+[['servicio','Servicio'],['detalle',etiqueta('mandaditos',p.servicio,'detalle','Detalle')],['cantidad',etiqueta('mandaditos',p.servicio,'cantidad','Cantidad')],['establecimiento',etiqueta('mandaditos',p.servicio,'establecimiento','Lugar')]].filter(([k])=>limpiar(p[k])).map(([k,label])=>label.replace(/^¿|\?$/g,'')+': '+limpiar(p[k])).join('\n')).join('\n\n');
+    const entregaComun=adicionales.length?e.campos.filter(([k])=>comunes.includes(k)&&limpiar(datos[k])).map(([k,label])=>label+': '+limpiar(datos[k])).join('\n'):'';
+    return encabezado+'\n\n'+(adicionales.length?'Pedido principal\n':'')+lineas.join('\n')+(textoParadas?'\n\n'+textoParadas:'')+(entregaComun?'\n\nEntrega y pago de la solicitud\n'+entregaComun:'')+'\n\n'+(tipo==='compra'?'¿Me confirman disponibilidad, costo total y entrega?':tipo==='paqueteria'?'¿Me confirman si pueden realizar este servicio, el costo y el tiempo estimado?':'¿Me confirman disponibilidad y costo de la compra y del servicio?')+(tipo==='mandaditos'&&datos.pago==='Transferencia'?'\nPagaré por transferencia, sin comisión extra por esta forma de pago. Compártanme los datos de pago y confírmenme el total.':'');
   }
   function abrir(tipo,numero,nombre,origen){
     const e=esquemas[tipo];const destino=window.ContactosExhibicion?.numero(numero);
@@ -55,7 +58,29 @@
     const cerrar=document.createElement('button');cerrar.type='button';cerrar.className='servicios-cerrar';cerrar.textContent='Cerrar ×';cerrar.onclick=()=>d.close();
     const titulo=document.createElement('h2');titulo.textContent=e.titulo+(tipo==='compra'?' en '+nombre:'');
     const ayuda=document.createElement('p');ayuda.textContent='Completa tu solicitud. Al continuar se abrirá WhatsApp; el servicio se confirma por ese medio.';
-    const form=document.createElement('form');const etiquetas={};let elegirLugar,tituloLugar;
+    const form=document.createElement('form');const etiquetas={};let elegirLugar,tituloLugar;let paradas=[];let contadorParadas=0;
+    function bloqueParadas(){
+      const zona=document.createElement('section');zona.className='servicios-paradas';
+      const titulo=document.createElement('h3');titulo.textContent='¿Necesitas algo más?';
+      const ayuda=document.createElement('p');ayuda.className='servicios-ayuda';ayuda.textContent='Agrega otra compra o recogida, por ejemplo tacos y después pan. Todo se envía en una sola solicitud.';
+      const lista=document.createElement('div');const agregar=document.createElement('button');agregar.type='button';agregar.className='servicios-agregar-parada';agregar.textContent='+ Agregar otra parada';
+      const nota=document.createElement('small');nota.className='servicios-ayuda';nota.textContent='El costo de las paradas adicionales se confirma por WhatsApp.';
+      ayuda.hidden=true;nota.hidden=true;
+      const refrescar=()=>{ayuda.hidden=paradas.length===0;nota.hidden=paradas.length===0;paradas.forEach((p,i)=>p.titulo.textContent='Parada '+(i+2));agregar.disabled=paradas.length>=4;nota.textContent=paradas.length>=4?'Puedes incluir hasta 5 paradas en esta solicitud. El costo se confirma por WhatsApp.':'El costo de las paradas adicionales se confirma por WhatsApp.';};
+      agregar.onclick=()=>{
+        if(paradas.length>=4)return;const id=++contadorParadas;const tarjeta=document.createElement('fieldset');tarjeta.className='servicios-parada';const leyenda=document.createElement('legend');tarjeta.append(leyenda);const campos={},labels={};
+        for(const [key,text,t,required,placeholder] of esquemas.mandaditos.campos.filter(([k])=>['servicio','detalle','cantidad','establecimiento'].includes(k))){
+          const label=document.createElement('label'),span=document.createElement('span');labels[key]=span;const input=document.createElement(Array.isArray(t)?'select':t==='textarea'?'textarea':'input');input.name='parada-'+id+'-'+key;input.required=required;
+          if(Array.isArray(t)){for(const texto of t){const opt=document.createElement('option');opt.value=texto;opt.textContent=texto;input.append(opt);}}else if(t==='textarea'){input.rows=2;input.maxLength=500;}else{input.type='text';input.maxLength=300;}
+          if(placeholder)input.placeholder=placeholder;campos[key]=input;label.append(span,input);tarjeta.append(label);
+        }
+        campos.establecimiento.placeholder='Negocio o escribe: no importa';
+        const actualizar=()=>{for(const [key,input] of Object.entries(campos))labels[key].textContent=etiqueta('mandaditos',campos.servicio.value,key,key==='servicio'?'¿Qué necesitas?':key)+(input.required?' *':' (opcional)');campos.cantidad.placeholder=campos.servicio.value==='Pagar algo'?'Ejemplo: $250':'Ejemplo: 2 tacos o $50 de pan';};
+        campos.servicio.addEventListener('change',actualizar);actualizar();const quitar=document.createElement('button');quitar.type='button';quitar.className='servicios-quitar-parada';quitar.textContent='Quitar parada';
+        const parada={tarjeta,titulo:leyenda,campos};quitar.onclick=()=>{paradas=paradas.filter(p=>p!==parada);tarjeta.remove();refrescar();};tarjeta.append(quitar);paradas.push(parada);lista.append(tarjeta);refrescar();campos.detalle.focus();
+      };
+      zona.append(titulo,agregar,lista,ayuda,nota);return zona;
+    }
     for(const [key,text,t,required,placeholder] of e.campos){
       const label=document.createElement('label');const span=document.createElement('span');span.textContent=text+(required?' *':' (opcional)');
       const campo=document.createElement(Array.isArray(t)?'select':t==='textarea'?'textarea':'input');campo.name=key;campo.required=required;
@@ -89,7 +114,7 @@
       };
       form.elements.servicio.addEventListener('change',actualizarPreguntas);actualizarPreguntas();
     }
-    if(tipo==='mandaditos'){const aviso=document.createElement('p');aviso.className='servicios-aviso-transferencia';aviso.textContent='Al pagar por transferencia se cobran $10 extra.';const actualizar=()=>aviso.hidden=form.elements.pago.value!=='Transferencia';form.elements.pago.addEventListener('change',actualizar);actualizar();form.elements.pago.parentElement.append(aviso);}
+    if(tipo==='mandaditos'){const aviso=document.createElement('p');aviso.className='servicios-aviso-transferencia';aviso.textContent='✓ Sin comisión extra por transferencia';const actualizar=()=>aviso.hidden=form.elements.pago.value!=='Transferencia';form.elements.pago.addEventListener('change',actualizar);actualizar();form.elements.pago.parentElement.append(aviso);}
     if(tipo==='paqueteria'){
       const campos=form.elements;
       const nota=document.createElement('small');nota.className='servicios-ayuda';nota.textContent='Describe el contenido, especialmente si son alimentos, líquidos o artículos delicados. El encargado confirmará si la compañía los admite y cómo deben empacarse.';campos.detalle.parentElement.append(nota);
@@ -107,9 +132,10 @@
     }
     const error=document.createElement('p');error.setAttribute('role','alert');
     const enviar=document.createElement('button');enviar.type='submit';enviar.className='servicios-enviar';enviar.textContent=tipo==='compra'?'Consultar compra por WhatsApp':tipo==='paqueteria'?'Solicitar cotización por WhatsApp':'Solicitar mandadito por WhatsApp';
-    form.append(error,enviar);form.addEventListener('submit',ev=>{
+    form.append(error,enviar);if(tipo==='mandaditos')form.append(bloqueParadas());form.addEventListener('submit',ev=>{
       ev.preventDefault();const datos={};for(const [k] of e.campos)datos[k]=form.elements[k].disabled?'':limpiar(form.elements[k].value);if(tipo==='mandaditos'&&elegirLugar.value==='No importa')datos.establecimiento='No importa';
       for(const [key,,t,required] of e.campos){const campo=form.elements[key];campo.setCustomValidity('');if(campo.required&&!campo.disabled&&!datos[key])campo.setCustomValidity('Completa este campo.');if(t==='url'&&datos[key]){try{const url=new URL(datos[key]);if(!['http:','https:'].includes(url.protocol))throw Error();}catch{campo.setCustomValidity('Pega un enlace válido que empiece con https:// o http://.');}}}
+      if(tipo==='mandaditos'){datos.paradas=paradas.map(p=>Object.fromEntries(Object.entries(p.campos).map(([k,input])=>{input.setCustomValidity('');const valor=limpiar(input.value);if(input.required&&!valor)input.setCustomValidity('Escribe qué necesitas en esta parada.');return [k,valor];})));}
       if(!form.reportValidity())return;
       const texto=mensaje(tipo,nombre,datos);if(texto.length>6000){error.textContent='La solicitud es demasiado larga. Reduce los detalles.';return;}
       window.open('https://wa.me/'+destino+'?text='+encodeURIComponent(texto),'_blank','noopener,noreferrer');
