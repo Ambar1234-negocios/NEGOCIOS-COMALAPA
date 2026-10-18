@@ -1,4 +1,4 @@
-/* Menú y pedido: los precios se calculan en centavos; un negocio por pedido. */
+/* Menú y pedido: los precios se calculan en centavos; comida agrupada por negocio; servicios digitales separados. */
 (() => {
   'use strict';
   const escapar = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -62,7 +62,27 @@
   const detallePromo=l=>{const c=PromosProductos.calcular(l);return c.promo?'Oferta: '+c.etiqueta+(c.gratis?' · '+c.gratis+' unidad(es) sin costo base':'')+' · Extras y adicionales por cada unidad.':'';};
   const total=()=>pedido.lineas.reduce((s,l)=>s+importe(l),0);
   const cantidadTotal=()=>pedido.lineas.reduce((s,l)=>s+l.cantidad,0);
-  function mismaPreparacion(a,b) {return a.producto.id===b.producto.id && a.nota===b.nota && firmaOpciones(a)===firmaOpciones(b) && a.extras.map(x=>x.id).sort().join('|')===b.extras.map(x=>x.id).sort().join('|');}
+  function mismaPreparacion(a,b) {return (a.negocio?.id||pedido.negocio?.id)===(b.negocio?.id||pedido.negocio?.id) && a.producto.id===b.producto.id && a.nota===b.nota && firmaOpciones(a)===firmaOpciones(b) && a.extras.map(x=>x.id).sort().join('|')===b.extras.map(x=>x.id).sort().join('|');}
+  const esComida=n=>n?.categoria==='comida'&&!digital(n);
+  const dueno=l=>l.negocio||pedido.negocio;
+  function gruposPedido(){
+    const mapa=new Map();for(const l of pedido.lineas){const n=dueno(l);if(!n)continue;if(!mapa.has(n.id))mapa.set(n.id,{negocio:n,lineas:[]});mapa.get(n.id).lineas.push(l);}return [...mapa.values()];
+  }
+  function normalizarPedido(){
+    for(const l of pedido.lineas)if(!l.negocio)l.negocio=pedido.negocio;
+    pedido.negocio=pedido.lineas[0]?.negocio||null;
+    if(!pedido.lineas.length){pagoPedido='';entregaPedido='';}
+  }
+  function incorporar(n,nueva,linea){
+    if(pedido.lineas.length&&pedido.negocio?.id!==n.id&&!(esComida(n)&&pedido.lineas.every(l=>esComida(dueno(l)))))return 'Los servicios digitales y los pedidos de comida se realizan por separado.';
+    for(const l of pedido.lineas)if(!l.negocio)l.negocio=pedido.negocio;
+    nueva.negocio=n;
+    const otra=pedido.lineas.find(l=>l.id!==linea?.id&&mismaPreparacion(l,nueva));
+    if(otra&&otra.cantidad+nueva.cantidad>99)return 'Esta preparación supera el máximo de 99 unidades.';
+    if(linea)pedido.lineas=pedido.lineas.filter(l=>l.id!==linea.id);
+    if(otra)otra.cantidad+=nueva.cantidad;else pedido.lineas.push(nueva);
+    normalizarPedido();return '';
+  }
   let negocioVisible=null;
   let barra;
   function dialogo(titulo,clase,origen) {
@@ -75,15 +95,36 @@
     d.addEventListener('click',e=>{const r=d.getBoundingClientRect();if(e.target===d&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))d.close();});
     document.body.append(d);d.showModal();document.body.style.overflow='hidden';return d;
   }
+  let pagoPedido='';
+  let entregaPedido='';
+  const opcionesPago=n=>digital(n)?['Transferencia','Depósito']:['Efectivo','Transferencia'];
+  function avisoPago(n,pago){
+    if(pago==='Transferencia')return '\u2705 Aprovecha y paga por transferencia sin comisión.';
+    if(pago==='Depósito')return 'Puedes depositar en OXXO, Farmacias del Ahorro o BBVA. Solicita los datos por WhatsApp. El establecimiento puede cobrar su propia comisión por el depósito.';
+    return '\u2705 Aprovecha y paga por transferencia sin comisión.';
+  }
+  function selectorPago(n){
+    const opciones=opcionesPago(n);if(!opciones.includes(pagoPedido))pagoPedido='';
+    return `<section class="pedido-pago"><label>¿Cómo prefieres pagar?<select data-pago-pedido aria-label="Forma de pago del pedido"><option value="">Elige una opción</option>${opciones.map(p=>`<option value="${escapar(p)}" ${pagoPedido===p?'selected':''}>${escapar(p==='Transferencia'?'Transferencia bancaria':p)}</option>`).join('')}</select></label><p class="pedido-pago-aviso" role="status">${escapar(avisoPago(n,pagoPedido))}</p>${digital(n)?'<small>Transferencias mediante BBVA o Banamex. Los datos de pago se comparten por WhatsApp.</small>':''}</section>`;
+  }
+  function textoPago(pago){return pago==='Transferencia'?'\u{1f4b3} Pagaré por transferencia bancaria.':pago==='Depósito'?'\u{1f3ea} Pagaré mediante depósito.':'\u{1f4b5} Pagaré en efectivo.';}
+  document.addEventListener('change',e=>{
+    if(!e.target.matches?.('[data-pago-pedido]')||!pedido.negocio)return;
+    pagoPedido=opcionesPago(pedido.negocio).includes(e.target.value)?e.target.value:'';
+    document.querySelectorAll('[data-pago-pedido]').forEach(select=>select.value=pagoPedido);
+    document.querySelectorAll('.pedido-pago-aviso').forEach(aviso=>aviso.textContent=avisoPago(pedido.negocio,pagoPedido));
+  });
+  document.addEventListener('input',e=>{if(e.target.matches?.('[data-entrega-pedido]'))entregaPedido=e.target.value.slice(0,500);});
   function resumen() {
     if(!pedido.lineas.length)return '<p>Agrega productos para armar tu pedido.</p>';
     const n=pedido.negocio;
-    if(digital(n)) return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${l.cantidad} × ${escapar(l.producto.nombre)} — ${dinero(importe(l))}</strong><p>${escapar(condiciones(l.producto))}</p>${l.nota?`<p>${l.producto.nombre.includes(' + ')||l.cantidad>1?'Nombres de los perfiles':'Nombre del perfil'}: ${escapar(l.nota)}</p>`:''}</div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total: ${dinero(total())}</p><p>Entrega y soporte por WhatsApp.</p><div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
-    return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${escapar(l.producto.nombre)}</strong><p>${escapar(descripcionOpciones(l))}</p><p>${l.extras.length?l.extras.map(x=>`${escapar(x.nombre)} (${x.precio?'+ '+dinero(centavos(x.precio)):'sin costo'})`).join(' · '):'Sin extras'}</p>${l.nota?`<p class="pedido-nota">Indicación: ${escapar(l.nota)}</p>`:''}<p class="pedido-promo">${escapar(detallePromo(l))}</p><p>${dinero(unitario(l))} por unidad · <strong>${dinero(importe(l))}</strong></p></div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total de productos: ${dinero(total())}</p><p>${n.delivery===true?(n.tipoDelivery==='gratis'?'El negocio indica entrega gratis. Confirma cobertura y condiciones.':'Envío por cotizar; no está incluido en el total.'):'Este negocio no tiene reparto habilitado. Consulta opciones directamente con él.'}</p><div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
+    if(digital(n)) return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${l.cantidad} × ${escapar(l.producto.nombre)} — ${dinero(importe(l))}</strong><p>${escapar(condiciones(l.producto))}</p>${l.nota?`<p>${l.producto.nombre.includes(' + ')||l.cantidad>1?'Nombres de los perfiles':'Nombre del perfil'}: ${escapar(l.nota)}</p>`:''}</div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total: ${dinero(total())}</p><p>Entrega y soporte por WhatsApp.</p>${selectorPago(n)}<div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
+    const agrupados=gruposPedido();
+    return `<h4>${agrupados.length>1?'Mi pedido · Varios negocios':'Mi pedido · '+escapar(n.nombre)}</h4>${agrupados.map(g=>`<section class="pedido-negocio-grupo"><h5>${escapar(g.negocio.nombre)}</h5>${g.lineas.map(l=>`<div class="pedido-linea"><div><strong>${escapar(l.producto.nombre)}</strong><p>${escapar(descripcionOpciones(l))}</p><p>${l.extras.length?l.extras.map(x=>`${escapar(x.nombre)} (${x.precio?'+ '+dinero(centavos(x.precio)):'sin costo'})`).join(' · '):'Sin extras'}</p>${l.nota?`<p class="pedido-nota">Indicación: ${escapar(l.nota)}</p>`:''}<p class="pedido-promo">${escapar(detallePromo(l))}</p><p>${dinero(unitario(l))} por unidad · <strong>${dinero(importe(l))}</strong></p></div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-subtotal-negocio">Subtotal: ${dinero(g.lineas.reduce((s,l)=>s+importe(l),0))}</p></section>`).join('')}<p class="pedido-total" role="status">Total de productos: ${dinero(total())}</p><p>Entrega: se confirma al solicitar.</p><label class="pedido-entrega">¿Dónde lo entregamos? (opcional)<textarea data-entrega-pedido maxlength="500" rows="2" placeholder="Dirección y referencias">${escapar(entregaPedido)}</textarea></label>${selectorPago(n)}<div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
   }
   function pintarPedido() {
     const el=document.getElementById('comida-pedido');
-    if(el)el.innerHTML=pedido.negocio && negocioVisible && pedido.negocio.id!==negocioVisible.id && pedido.lineas.length?`<p>Tienes un pedido de ${escapar(pedido.negocio.nombre)}.</p><button type="button" data-pedido-accion="ver">Ver mi pedido</button>`:resumen();
+    if(el)el.innerHTML=resumen();
     document.querySelectorAll('.pedido-resumen-modal').forEach(e=>e.innerHTML=resumen());
     if(!barra){barra=document.createElement('button');barra.type='button';barra.className='pedido-barra';barra.onclick=()=>verPedido(barra);document.body.append(barra);}
     barra.hidden=!pedido.lineas.length;document.body.classList.toggle('tiene-pedido',Boolean(pedido.lineas.length));
@@ -105,39 +146,43 @@
       e.preventDefault();const q=Number(form.elements.cantidad.value);if(!Number.isInteger(q)||q<1||q>99)return;
       const error=digital(n)?'':validarOpciones(p,opciones());
       if(error){form.querySelector('.pedido-config-error').textContent=error;return;}
-      if(pedido.negocio && pedido.negocio.id!==n.id && pedido.lineas.length){if(!confirm('Tu pedido es de '+pedido.negocio.nombre+'. ¿Vaciarlo y comenzar uno de '+n.nombre+'?'))return;pedido={negocio:null,lineas:[]};}
-      const nueva={id:linea?.id||crypto.randomUUID(),producto:p,extras:seleccion(),opciones:opciones(),nota:form.elements.nota.value.trim(),cantidad:q};
-      const otra=pedido.lineas.find(l=>l.id!==linea?.id&&mismaPreparacion(l,nueva));
-      if(otra && otra.cantidad+q>99){form.querySelector('.pedido-config-error').textContent='Esta preparación ya tiene '+otra.cantidad+' unidades. El máximo es 99; reduce la cantidad.';return;}
-      pedido.negocio=n;
-      if(linea)pedido.lineas=pedido.lineas.filter(l=>l.id!==linea.id);
-      if(otra)otra.cantidad+=q;else pedido.lineas.push(nueva);
+      if(pedido.negocio && pedido.negocio.id!==n.id && pedido.lineas.length && !(esComida(n)&&pedido.lineas.every(l=>esComida(dueno(l))))){if(!confirm('Tu pedido es de '+pedido.negocio.nombre+'. ¿Vaciarlo y comenzar uno de '+n.nombre+'?'))return;pedido={negocio:null,lineas:[]};pagoPedido='';}
+      const nueva={id:linea?.id||crypto.randomUUID(),producto:p,negocio:n,extras:seleccion(),opciones:opciones(),nota:form.elements.nota.value.trim(),cantidad:q};
+      const errorPedido=incorporar(n,nueva,linea);
+      if(errorPedido){form.querySelector('.pedido-config-error').textContent=errorPedido;return;}
       d.close();pintarPedido();
     });
   }
   function mensajeDigital(lineas,importeTotal) {
-    return `Hola, quiero realizar este pedido:\n\n${lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}\nDuración: ${duracion(l.producto)} ${duracion(l.producto)===1?'mes':'meses'}\nDispositivos: ${dispositivos(l.producto)}${l.nota?'\n'+(l.producto.nombre.includes(' + ')||l.cantidad>1?'Nombres de los perfiles':'Nombre del perfil')+': '+l.nota:''}`).join('\n\n')}\n\nTotal: ${dinero(importeTotal)}\n\n¿Me compartes los datos de pago?`;
+    return `Hola, quiero realizar este pedido:\n\n${lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}\nDuración: ${duracion(l.producto)} ${duracion(l.producto)===1?'mes':'meses'}\nDispositivos: ${dispositivos(l.producto)}${l.nota?'\n'+(l.producto.nombre.includes(' + ')||l.cantidad>1?'Nombres de los perfiles':'Nombre del perfil')+': '+l.nota:''}`).join('\n\n')}\n\nTotal: ${dinero(importeTotal)}`;
+  }
+  function mensajeComida(){
+    const gs=gruposPedido();
+    const textoLinea=l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}${detallePromo(l)?'\n'+detallePromo(l):''}${l.opciones?.length?'\nOpciones: '+descripcionOpciones(l):''}${l.extras.length?'\nExtras: '+l.extras.map(x=>x.nombre+' ('+dinero(centavos(x.precio))+')').join(', '):''}${l.nota?'\nIndicación: '+l.nota:''}`;
+    return (gs.length>1?'Hola, quiero solicitar este pedido de varios negocios:':'Hola, quiero realizar este pedido de '+gs[0].negocio.nombre+':')+'\n\n'+gs.map(g=>'\u{1f37d} '+g.negocio.nombre+'\n'+g.lineas.map(textoLinea).join('\n\n')+'\nSubtotal: '+dinero(g.lineas.reduce((s,l)=>s+importe(l),0))).join('\n\n')+'\n\nTotal de productos: '+dinero(total())+(entregaPedido?'\n\u{1f3e0} Entregar en: '+entregaPedido:'')+'\n¿Me confirman disponibilidad y el total con el servicio de entrega?';
   }
   function whatsapp(n,consulta) {
     if(!consulta&&!pedido.lineas.length)return;
-    if(!consulta && (pedido.negocio?.id!==n?.id || pedido.lineas.some(l=>!n.productos?.some(p=>p.id===l.producto.id)))){alert('El pedido no corresponde a este negocio. Revisa tu carrito antes de enviarlo.');return;}
-    const numero=String(!consulta&&!digital(n)&&n.delivery===true&&n.tipoDelivery!=='gratis'?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
+    if(!consulta && (pedido.negocio?.id!==n?.id || pedido.lineas.some(l=>!dueno(l)?.productos?.some(p=>p.id===l.producto.id)|| (gruposPedido().length>1&&!esComida(dueno(l)))))){alert('El pedido no corresponde a este negocio. Revisa tu carrito antes de enviarlo.');return;}
+    if(!consulta&&!opcionesPago(n).includes(pagoPedido)){alert('Elige cómo prefieres pagar antes de realizar el pedido.');return;}
+    const numero=String(!consulta&&!digital(n)&&(gruposPedido().length>1||(n.delivery===true&&n.tipoDelivery!=='gratis'))?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
     const normal=window.ContactosExhibicion?.numero(numero)||(numero.length===10?'52'+numero:numero);
     if(!/^\d{11,15}$/.test(normal)){alert('Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.');return;}
-    const mensaje=digital(n)?(consulta?`Hola, estoy viendo el catálogo de ${n.nombre}. Quiero información sobre sus servicios digitales.`:mensajeDigital(pedido.lineas,total())):consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:`Hola, quiero realizar este pedido de ${n.nombre}:\n\n${pedido.lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}${detallePromo(l)?'\n'+detallePromo(l):''}${l.opciones?.length?'\nOpciones: '+descripcionOpciones(l):''}${l.extras.length?'\nExtras por unidad: '+l.extras.map(x=>x.nombre+' ('+(x.precio?'+ '+dinero(centavos(x.precio)):'sin costo')+')').join(', '):''}${l.nota?'\nIndicación: '+l.nota:''}`).join('\n\n')}\n\nTotal de productos: ${dinero(total())}\n${n.delivery===true&&n.tipoDelivery!=='gratis'?'Envío por cotizar.\n':''}Por favor confirmen disponibilidad, total final y forma de entrega.\nDirección o punto de entrega: `;
+    let mensaje=digital(n)?(consulta?`Hola, estoy viendo el catálogo de ${n.nombre}. Quiero información sobre sus servicios digitales.`:mensajeDigital(pedido.lineas,total())):consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:mensajeComida();
+    if(!consulta)mensaje+='\n\n'+textoPago(pagoPedido)+(pagoPedido==='Transferencia'||pagoPedido==='Depósito'?'\n¿Me confirmas el total y los datos de pago?':'');
     if(mensaje.length>6000){alert('El pedido es demasiado largo para WhatsApp. Reduce las indicaciones o los productos distintos.');return;}
-    window.open('https://wa.me/'+normal+'?text='+encodeURIComponent(mensaje),'_blank','noopener,noreferrer');
+    window.open('https://api.whatsapp.com/send?phone='+normal+'&text='+encodeURIComponent(mensaje),'_blank','noopener,noreferrer');
   }
   document.addEventListener('click',e=>{
     const b=e.target.closest('[data-pedido-accion]');if(!b)return;
     const accion=b.dataset.pedidoAccion;const linea=pedido.lineas.find(l=>l.id===b.dataset.linea);
     if(accion==='ver'){verPedido(b);return;}
     if(accion==='enviar'){whatsapp(pedido.negocio,false);return;}
-    if(accion==='editar'&&linea){configurar(pedido.negocio,linea.producto,b,linea);return;}
-    if(accion==='vaciar'){if(!confirm('¿Vaciar todo el pedido?'))return;pedido.lineas=[];}
+    if(accion==='editar'&&linea){configurar(dueno(linea),linea.producto,b,linea);return;}
+    if(accion==='vaciar'){if(!confirm('¿Vaciar todo el pedido?'))return;pedido.lineas=[];pagoPedido='';}
     if(linea && (accion==='quitar' || (accion==='menos' && linea.cantidad===1)) && !confirm('¿Quitar del pedido esta preparación de '+linea.producto.nombre+'?')) return;
     if(linea){if(accion==='mas')linea.cantidad=Math.min(99,linea.cantidad+1);if(accion==='menos')linea.cantidad--;if(accion==='quitar')linea.cantidad=0;pedido.lineas=pedido.lineas.filter(l=>l.cantidad>0);}
-    pintarPedido();
+    normalizarPedido();pintarPedido();
   });
 
   function abrirFoto(p,origen,esDigital=false) {

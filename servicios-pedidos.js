@@ -10,9 +10,7 @@
       ['titular','¿A nombre de quién está?','text',false],
       ['pagado','¿Ya está pagado?',['No estoy seguro','Sí','No'],false],
       ['pendiente','Monto pendiente','text',false,'Ejemplo: $250'],
-      ['recibo','¿Necesitamos recoger tu recibo?',['No, lo comparto por WhatsApp','Sí'],false],
-      ['origenRecibo','¿Dónde recogemos tu recibo?','text',false],
-      ['comprobante','¿Cómo entregamos tu comprobante?',['Por WhatsApp','En una dirección'],false],
+      ['comprobante','¿Cómo quieres recibir tu comprobante?',['Por WhatsApp — foto del comprobante','En físico, a mi domicilio'],false],
       ['destino','Dirección de entrega','textarea',false,'Ejemplo: Barrio Las Limas, frente a la agencia municipal'],
       ['horario','¿En cuánto tiempo lo necesitas?','text',false,'Ejemplo: Lo antes posible o en una hora'],
       ['pago','¿Cómo pagarás el servicio?',['Efectivo','Transferencia'],true],
@@ -54,7 +52,7 @@
     const agregar=(label,v)=>{if(limpiar(v))lineas.push(label+limpiar(v));};
     if(servicio==='Comprar algo'){agregar('\u{1f6d2} Cantidad o presupuesto: ',p.cantidad);agregar('\u{1f4cd} Dónde comprar: ',p.establecimiento);}
     if(servicio==='Recoger algo'){agregar('\u{1f4cd} Recoger en: ',p.establecimiento);agregar('\u{1f464} A nombre de: ',p.titular);agregar('\u{1f9fe} ¿Ya está pagado?: ',p.pagado);if(p.pagado==='No')agregar('\u{1f4b5} Monto pendiente: ',pesos(p.pendiente));}
-    if(servicio==='Pagar algo'){agregar('\u{1f4b5} Monto a pagar: ',pesos(p.cantidad));agregar('\u{1f4cd} Lugar de pago: ',p.establecimiento);if(p.recibo==='Sí')agregar('\u{1f9fe} Recoger recibo en: ',p.origenRecibo);else lineas.push('\u{1f9fe} Compartiré el recibo por WhatsApp.');agregar('\u{1f4c4} Comprobante: ',p.comprobante);}
+    if(servicio==='Pagar algo'){agregar('\u{1f4b5} Monto a pagar: ',pesos(p.cantidad));agregar('\u{1f4cd} Lugar de pago: ',p.establecimiento);agregar('\u{1f4c4} Comprobante: ',p.comprobante);}
     if(servicio==='Otra cosa')agregar('\u{1f4cd} Dónde necesitamos ir: ',p.establecimiento);
     return lineas.join('\n');
   }
@@ -108,7 +106,7 @@
     if(condicionesCompra)form.append(condicionesCompra);
     function adaptarEncargo(campos,labels,preferencia){
       const servicio=campos.servicio.value,comprar=servicio==='Comprar algo',recoger=servicio==='Recoger algo',pagar=servicio==='Pagar algo';
-      const visibles={cantidad:comprar||pagar,titular:recoger,pagado:recoger,pendiente:recoger&&campos.pagado.value==='No',recibo:pagar,origenRecibo:pagar&&campos.recibo.value==='Sí',comprobante:pagar};
+      const visibles={cantidad:comprar||pagar,titular:recoger,pagado:recoger,pendiente:recoger&&campos.pagado.value==='No',comprobante:pagar};
       if(preferencia){preferencia.parentElement.hidden=!comprar&&!pagar;preferencia.disabled=!comprar&&!pagar;
         const opciones=comprar?['Indicar un lugar','Donde esté disponible']:['Indicar un lugar','Necesito que me orienten'];
         Array.from(preferencia.children).forEach((o,i)=>{o.textContent=opciones[i];o.value=opciones[i];});
@@ -118,9 +116,9 @@
         const visible=key in visibles?visibles[key]:true;
         const lugarLibre=key==='establecimiento'&&preferencia&&!preferencia.disabled&&preferencia.value!=='Indicar un lugar';
         input.disabled=!visible||!!lugarLibre;input.parentElement.hidden=input.disabled;
-        input.required=key==='servicio'||key==='detalle'||(key==='establecimiento'&&recoger)||(key==='origenRecibo'&&visibles.origenRecibo);
+        input.required=key==='servicio'||key==='detalle'||(key==='establecimiento'&&recoger);
         if(input.disabled)input.setCustomValidity('');
-        if(labels[key])labels[key].textContent=etiqueta('mandaditos',servicio,key,({servicio:'¿Qué necesitas?',titular:'¿A nombre de quién está?',pagado:'¿Ya está pagado?',pendiente:'Monto pendiente',recibo:'¿Necesitamos recoger tu recibo?',origenRecibo:'¿Dónde recogemos tu recibo?',comprobante:'¿Cómo entregamos tu comprobante?'})[key]||key)+(input.required?' *':' (opcional)');
+        if(labels[key])labels[key].textContent=etiqueta('mandaditos',servicio,key,({servicio:'¿Qué necesitas?',titular:'¿A nombre de quién está?',pagado:'¿Ya está pagado?',pendiente:'Monto pendiente',recibo:'¿Necesitamos recoger tu recibo?',origenRecibo:'¿Dónde recogemos tu recibo?',comprobante:'¿Cómo quieres recibir tu comprobante?'})[key]||key)+(input.required?' *':' (opcional)');
       }
       campos.establecimiento.placeholder=recoger?'Negocio o dirección de recogida':comprar?'Nombre del negocio':'Lugar o dirección';
       campos.cantidad.placeholder=pagar?'$ Monto del recibo':'Ejemplo: 2 kilos o $200 de carne';
@@ -135,14 +133,14 @@
       const refrescar=()=>{actualizarEntrega();ayuda.hidden=paradas.length===0;nota.hidden=paradas.length===0;paradas.forEach((p,i)=>p.titulo.textContent='Parada '+(i+2));agregar.disabled=paradas.length>=4;nota.textContent=paradas.length>=4?'Puedes incluir hasta 5 paradas en esta solicitud. El costo se confirma por WhatsApp.':'El costo de las paradas adicionales se confirma por WhatsApp.';};
       agregar.onclick=()=>{
         if(paradas.length>=4)return;const id=++contadorParadas;const tarjeta=document.createElement('fieldset');tarjeta.className='servicios-parada';const leyenda=document.createElement('legend');tarjeta.append(leyenda);const campos={},labels={};
-        for(const [key,text,t,required,placeholder] of esquemas.mandaditos.campos.filter(([k])=>['servicio','detalle','cantidad','establecimiento','titular','pagado','pendiente','recibo','origenRecibo','comprobante'].includes(k))){
+        for(const [key,text,t,required,placeholder] of esquemas.mandaditos.campos.filter(([k])=>['servicio','detalle','cantidad','establecimiento','titular','pagado','pendiente','comprobante'].includes(k))){
           const label=document.createElement('label'),span=document.createElement('span');labels[key]=span;const input=document.createElement(Array.isArray(t)?'select':t==='textarea'?'textarea':'input');input.name='parada-'+id+'-'+key;input.required=required;
           if(Array.isArray(t)){for(const texto of t){const opt=document.createElement('option');opt.value=texto;opt.textContent=texto;input.append(opt);}}else if(t==='textarea'){input.rows=2;input.maxLength=500;}else{input.type='text';input.maxLength=300;}
           if(placeholder)input.placeholder=placeholder;campos[key]=input;label.append(span,input);tarjeta.append(label);
         }
         const preferencia=document.createElement('select');preferencia.name='parada-'+id+'-preferenciaLugar';const lugarLabel=document.createElement('label');const lugarTitulo=document.createElement('span');
         for(const valor of ['Indicar un lugar','Donde esté disponible']){const o=document.createElement('option');o.value=valor;o.textContent=valor;preferencia.append(o);}lugarLabel.append(lugarTitulo,preferencia);tarjeta.append(lugarLabel);
-        const actualizar=()=>adaptarEncargo(campos,labels,preferencia);for(const key of ['servicio','pagado','recibo','comprobante'])campos[key].addEventListener('change',actualizar);preferencia.addEventListener('change',actualizar);actualizar();
+        const actualizar=()=>adaptarEncargo(campos,labels,preferencia);for(const key of ['servicio','pagado','comprobante'])campos[key].addEventListener('change',actualizar);preferencia.addEventListener('change',actualizar);actualizar();
         const quitar=document.createElement('button');quitar.type='button';quitar.className='servicios-quitar-parada';quitar.textContent='Quitar parada';
         const parada={tarjeta,titulo:leyenda,campos,preferencia};quitar.onclick=()=>{paradas=paradas.filter(p=>p!==parada);tarjeta.remove();refrescar();};tarjeta.append(quitar);paradas.push(parada);lista.append(tarjeta);refrescar();campos.detalle.focus();
       };
@@ -177,13 +175,13 @@
         const temas={'Comprar algo':'comprar','Recoger algo':'recoger','Pagar algo':'pagar','Otra cosa':'otro'};
         d.setAttribute('data-mandadito',temas[form.elements.servicio.value]||'otro');
 
-        const keys=['servicio','detalle','cantidad','establecimiento','titular','pagado','pendiente','recibo','origenRecibo','comprobante'];
+        const keys=['servicio','detalle','cantidad','establecimiento','titular','pagado','pendiente','comprobante'];
         adaptarEncargo(Object.fromEntries(keys.map(k=>[k,form.elements[k]])),etiquetas,elegirLugar);
         const soloPago=form.elements.servicio.value==='Pagar algo'&&paradas.length===0;
-        const destinoCampo=form.elements.destino;destinoCampo.disabled=soloPago&&form.elements.comprobante.value==='Por WhatsApp';destinoCampo.parentElement.hidden=destinoCampo.disabled;
+        const destinoCampo=form.elements.destino;destinoCampo.disabled=soloPago&&form.elements.comprobante.value==='Por WhatsApp — foto del comprobante';destinoCampo.parentElement.hidden=destinoCampo.disabled;
         etiquetas.destino.textContent=(soloPago?'¿Dónde entregamos tu comprobante?':'¿Dónde lo entregamos?')+' (opcional)';
       };
-      for(const key of ['servicio','pagado','recibo','comprobante'])form.elements[key].addEventListener('change',actualizarPreguntas);
+      for(const key of ['servicio','pagado','comprobante'])form.elements[key].addEventListener('change',actualizarPreguntas);
       elegirLugar.addEventListener('change',actualizarPreguntas);actualizarPreguntas();
       actualizarEntrega=actualizarPreguntas;
     }
