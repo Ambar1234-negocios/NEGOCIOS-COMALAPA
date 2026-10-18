@@ -60,3 +60,5 @@
 .digital-condiciones{font-size:.9rem;color:#294a67;line-height:1.6}.digital-pagos{background:#edf4ff;border:1px solid #cbdaf0;border-radius:18px;padding:20px;margin:24px 0}.digital-pagos ul{display:flex;flex-wrap:wrap;gap:10px;list-style:none;padding:0}.digital-pagos li{background:white;border-radius:10px;padding:10px 14px}.pedido-extras[hidden]{display:none}
 
 .digital-seccion{margin:24px 0}.digital-seccion>h5{font-size:1.15rem;color:#294a67;margin:0 0 14px}
+
+.digital-aviso{margin:16px 0;border:1px solid #b4ccec;border-radius:14px;background:#f1f6ff;overflow:hidden}.digital-aviso>summary{display:list-item;cursor:pointer;padding:13px 16px;background:#dfeaff;color:#1c4166;font-weight:700;line-height:1.5}.digital-aviso>summary:focus-visible{outline:3px solid #e7b531;outline-offset:-3px}.digital-aviso>div{padding:0 16px}.digital-aviso p{line-height:1.6}

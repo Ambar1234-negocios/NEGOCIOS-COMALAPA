@@ -25,7 +25,8 @@
     compra:{titulo:'Consultar compra',campos:[
       ['enlace','Enlace del producto','url',true,'Pega aquí el enlace del producto'],
       ['cantidad','Cantidad','number',true],
-      ['detalle','Talla, color o detalles','textarea',false]]}
+      ['detalle','Talla, color o detalles','textarea',false],
+      ['pago','¿Cómo prefieres pagar?',['Transferencia','Efectivo'],true]]}
   };
   const limpiar=v=>String(v||'').trim();
   function etiqueta(tipo,servicio,key,base){
@@ -58,7 +59,22 @@
     const cerrar=document.createElement('button');cerrar.type='button';cerrar.className='servicios-cerrar';cerrar.textContent='Cerrar ×';cerrar.onclick=()=>d.close();
     const titulo=document.createElement('h2');titulo.textContent=e.titulo+(tipo==='compra'?' en '+nombre:'');
     const ayuda=document.createElement('p');ayuda.textContent='Completa tu solicitud. Al continuar se abrirá WhatsApp; el servicio se confirma por ese medio.';
+    if(tipo==='mandaditos')ayuda.textContent='Cuéntanos qué necesitas para atenderte más rápido y llevar tu pedido al lugar correcto.';
+    let condicionesCompra;
+    if(tipo==='compra'){
+      ayuda.textContent='Con gusto te cotizamos. Comparte el enlace y te confirmamos el total por WhatsApp.';
+      const pagoCompleto=document.createElement('strong');pagoCompleto.className='servicios-pago-completo';pagoCompleto.textContent='Para realizar la compra se requiere el pago completo del total acordado. No se realizan pedidos para pagar al recibir.';ayuda.append(pagoCompleto);
+      const beneficio=document.createElement('span');beneficio.className='servicios-beneficio';beneficio.textContent='✓ Entrega a domicilio incluida dentro de la ciudad de Comalapa.';ayuda.append(beneficio);
+      const condiciones=document.createElement('details');condiciones.className='servicios-condiciones-compra';
+      const resumen=document.createElement('summary');resumen.textContent='¿Qué incluye la cotización?';
+      const costos=document.createElement('ul');
+      for(const detalle of ['Tu producto.','El envío que cobre la tienda, cuando no sea gratis.','El traslado de Comitán a Comalapa, que se cobra aparte aunque la tienda dé envío gratis.']){const item=document.createElement('li');item.textContent=detalle;costos.append(item);}
+      const devoluciones=document.createElement('p');devoluciones.textContent='Si compramos desde nuestra cuenta, una devolución aceptada por la tienda incluye gestión y traslado sin costo extra. Si compras desde tu cuenta, cotizamos la devolución aparte. Los cambios que requieran otro traslado tienen costo adicional.';
+      condiciones.append(resumen,costos,devoluciones);
+      condicionesCompra=condiciones;
+    }
     const form=document.createElement('form');const etiquetas={};let elegirLugar,tituloLugar;let paradas=[];let contadorParadas=0;
+    if(condicionesCompra)form.append(condicionesCompra);
     function bloqueParadas(){
       const zona=document.createElement('section');zona.className='servicios-paradas';
       const titulo=document.createElement('h3');titulo.textContent='¿Necesitas algo más?';
@@ -108,13 +124,21 @@
     }
     if(tipo==='mandaditos'){
       const actualizarPreguntas=()=>{
+        const temas={'Comprar algo':'comprar','Recoger algo':'recoger','Pagar algo':'pagar','Otra cosa':'otro'};
+        d.setAttribute('data-mandadito',temas[form.elements.servicio.value]||'otro');
+
         for(const [key,base,,required] of e.campos)etiquetas[key].textContent=etiqueta(tipo,form.elements.servicio.value,key,base)+(required?' *':' (opcional)');
         tituloLugar.textContent=({'Comprar algo':'¿Dónde comprar?','Recoger algo':'¿Dónde recoger?','Pagar algo':'¿Dónde pagar?','Otra cosa':'¿Dónde necesitas ayuda? (opcional)'})[form.elements.servicio.value];
         form.elements.cantidad.placeholder=form.elements.servicio.value==='Pagar algo'?'Ejemplo: $250':'Ejemplo: 2 kilos, 3 piezas';
       };
       form.elements.servicio.addEventListener('change',actualizarPreguntas);actualizarPreguntas();
     }
-    if(tipo==='mandaditos'){const aviso=document.createElement('p');aviso.className='servicios-aviso-transferencia';aviso.textContent='✓ Sin comisión extra por transferencia';const actualizar=()=>aviso.hidden=form.elements.pago.value!=='Transferencia';form.elements.pago.addEventListener('change',actualizar);actualizar();form.elements.pago.parentElement.append(aviso);}
+    if(tipo==='mandaditos'){const aviso=document.createElement('p');aviso.className='servicios-aviso-transferencia';const actualizar=()=>{aviso.hidden=false;aviso.textContent=form.elements.pago.value==='Transferencia'?'✓ Agiliza tu pedido pagando por transferencia. Sin comisión extra.':'✨ Aprovecha y paga por transferencia sin comisión.';};form.elements.pago.addEventListener('change',actualizar);actualizar();form.elements.pago.parentElement.append(aviso);}
+    if(tipo==='compra'){
+      const aviso=document.createElement('p');aviso.className='servicios-beneficio';
+      const actualizarPago=()=>{aviso.textContent=form.elements.pago.value==='Transferencia'?'✓ Después de cotizar y confirmar el total, te compartimos los datos para transferir. En cuanto confirmemos tu pago completo, podremos realizar la compra.':'Después de cotizar y aceptar el total, acordamos contigo el horario y la forma de recibir el efectivo. Realizamos la compra cuando recibamos el pago completo.';};
+      form.elements.pago.addEventListener('change',actualizarPago);actualizarPago();form.elements.pago.parentElement.append(aviso);
+    }
     if(tipo==='paqueteria'){
       const campos=form.elements;
       const nota=document.createElement('small');nota.className='servicios-ayuda';nota.textContent='Describe el contenido, especialmente si son alimentos, líquidos o artículos delicados. El encargado confirmará si la compañía los admite y cómo deben empacarse.';campos.detalle.parentElement.append(nota);
