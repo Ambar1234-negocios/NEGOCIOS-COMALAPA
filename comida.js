@@ -100,9 +100,12 @@
   let nombrePedido='';
   let entregaPedido='';
   let modoEntrega='domicilio';
-  const opcionesPago=n=>digital(n)?['Transferencia','Depósito']:modoEntrega==='recoger'?['Transferencia']:['Efectivo','Transferencia'];
+  const opcionesPago=n=>digital(n)?['Transferencia','Depósito']:modoEntrega==='recoger'?['Transferencia']:['Transferencia','Efectivo','Transferencia al recibir'];
   function avisoPago(n,pago){
-    if(pago==='Transferencia')return '\u2705 Aprovecha y paga por transferencia sin comisión.';
+    if(!digital(n)&&pago==='Transferencia')return 'Adelanta tu pago para que al recibir solo disfrutes tu pedido. Solicita los datos y el total confirmado por WhatsApp.';
+    if(pago==='Transferencia al recibir')return 'Transfiere cuando llegue tu pedido. Recepción confirmará el pago antes de que el repartidor entregue.';
+    if(pago==='Efectivo')return 'Paga al repartidor cuando recibas tu pedido.';
+    if(pago==='Transferencia')return 'Transferencia sin comisión. Solicita los datos por WhatsApp.';
     if(pago==='Depósito')return 'Puedes depositar en OXXO, Farmacias del Ahorro o BBVA. Solicita los datos por WhatsApp. El establecimiento puede cobrar su propia comisión por el depósito.';
     return '\u2705 Aprovecha y paga por transferencia sin comisión.';
   }
@@ -112,9 +115,9 @@
   }
   function selectorPago(n){
     const opciones=opcionesPago(n);if(!opciones.includes(pagoPedido))pagoPedido='';
-    return `<section class="pedido-pago"><label>¿Cómo prefieres pagar?<select data-pago-pedido aria-label="Forma de pago del pedido"><option value="">Elige una opción</option>${opciones.map(p=>`<option value="${escapar(p)}" ${pagoPedido===p?'selected':''}>${escapar(p==='Transferencia'?'Transferencia bancaria':p)}</option>`).join('')}</select></label><p class="pedido-pago-aviso" role="status">${escapar(avisoPago(n,pagoPedido))}</p>${digital(n)?'<small>Transferencias mediante BBVA o Banamex. Los datos de pago se comparten por WhatsApp.</small>':''}</section>`;
+    return `<section class="pedido-pago"><label>¿Cómo prefieres pagar?<select data-pago-pedido aria-label="Forma de pago del pedido"><option value="">Elige una opción</option>${opciones.map(p=>`<option value="${escapar(p)}" ${pagoPedido===p?'selected':''}>${escapar(digital(n)?(p==='Transferencia'?'Transferencia bancaria':p):p==='Transferencia'?'🏦 Transferir ahora y dejar mi pago listo':p==='Efectivo'?'💵 Pagar en efectivo al recibir':'📲 Transferir cuando llegue mi pedido')}</option>`).join('')}</select></label><p class="pedido-pago-aviso" role="status">${escapar(avisoPago(n,pagoPedido))}</p>${digital(n)?'<small>Transferencias mediante BBVA o Banamex. Los datos de pago se comparten por WhatsApp.</small>':''}</section>`;
   }
-  function textoPago(pago){return pago==='Transferencia'?'\u{1f4b3} Pagaré por transferencia bancaria.':pago==='Depósito'?'\u{1f3ea} Pagaré mediante depósito.':'\u{1f4b5} Pagaré en efectivo.';}
+  function textoPago(pago){if(pago==='Transferencia al recibir')return '📲 Transferiré cuando llegue mi pedido. Recepción confirmará el pago antes de entregarlo.';return pago==='Transferencia'?'\u{1f4b3} Pagaré por transferencia bancaria.':pago==='Depósito'?'\u{1f3ea} Pagaré mediante depósito.':'\u{1f4b5} Pagaré en efectivo.';}
   document.addEventListener('change',e=>{
     if(e.target.matches?.('[data-modo-entrega]')&&pedido.negocio&&!digital(pedido.negocio)){if(e.target.value==='recoger'&&gruposPedido().length>1)return;modoEntrega=e.target.value==='recoger'?'recoger':'domicilio';if(modoEntrega==='recoger')pagoPedido='Transferencia';pintarPedido();return;}
     if(!e.target.matches?.('[data-pago-pedido]')||!pedido.negocio)return;
@@ -182,7 +185,7 @@
     if(!consulta)mensaje+='\n\n'+textoPago(pagoPedido)+(pagoPedido==='Transferencia'||pagoPedido==='Depósito'?'\n¿Me confirmas el total y los datos de pago?':'');
     if(mensaje.length>6000){alert('El pedido es demasiado largo para WhatsApp. Reduce las indicaciones o los productos distintos.');return;}
     if(!consulta&&!digital(n)){
-      const solicitud={cliente:nombrePedido.trim(),entrega:modoEntrega,pago:pagoPedido==='Transferencia'?'transferencia':'efectivo',direccion:entregaPedido,total_esperado:total(),lineas:pedido.lineas.map(l=>({negocio:dueno(l).slug,producto:l.producto.id,cantidad:l.cantidad,opciones:(l.opciones||[]).map(o=>({grupo:o.grupoId,opcion:o.id})),extras:l.extras.map(x=>x.id),nota:l.nota||''}))};
+      const solicitud={cliente:nombrePedido.trim(),entrega:modoEntrega,pago:pagoPedido.startsWith('Transferencia')?'transferencia':'efectivo',pago_al_recibir:pagoPedido==='Transferencia al recibir',direccion:entregaPedido,total_esperado:total(),lineas:pedido.lineas.map(l=>({negocio:dueno(l).slug,producto:l.producto.id,cantidad:l.cantidad,opciones:(l.opciones||[]).map(o=>({grupo:o.grupoId,opcion:o.id})),extras:l.extras.map(x=>x.id),nota:l.nota||''}))};
       const abrir=()=>window.PedidosExhibicion.abrir({solicitud,numero:normal,mensaje,contenedor});
       if(window.PedidosExhibicion?.version===24){abrir();return;}
       const carga=document.createElement('script');carga.src='/pedidos-publicos.js?v=24';carga.onload=abrir;carga.onerror=()=>alert('No se pudo cargar el registro del pedido. Revisa tu conexión y vuelve a intentarlo.');document.head.append(carga);return;
