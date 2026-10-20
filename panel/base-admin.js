@@ -17,9 +17,9 @@ function mostrar(){
  if(!token){tokenVistaValidado=null;validacionVista=null;cerrarVistaPrivada();return;}
  if(token===tokenVistaValidado){el('acceso').hidden=true;el('panel').hidden=false;document.body?.classList?.add('sesion-autorizada');return;}
  cerrarVistaPrivada();if(validacionVista?.token===token)return;
- const requiereMaestro=document.body?.dataset?.acceso==='maestro';
+ const requiereMaestro=document.body?.dataset?.acceso==='maestro',requiereRecepcion=document.body?.dataset?.acceso==='recepcion';
  validacionVista={token};
- (async()=>{try{await api('/auth/v1/user');if(requiereMaestro){const permitido=await api('/rest/v1/rpc/piloto_es_admin',{method:'POST',datos:{}});if(permitido!==true)throw Error('Esta cuenta no tiene autorización para este panel.');}if(cuenta?.access_token!==token)return;tokenVistaValidado=token;el('acceso').hidden=true;el('panel').hidden=false;document.body?.classList?.add('sesion-autorizada');}catch(e){if(cuenta?.access_token!==token)return;cerrarVistaPrivada();aviso(e.message);}finally{if(validacionVista?.token===token)validacionVista=null;}})();
+ (async()=>{try{await api('/auth/v1/user');if(requiereMaestro||requiereRecepcion){const permitido=await api('/rest/v1/rpc/'+(requiereRecepcion?'piloto_es_operador':'piloto_es_admin'),{method:'POST',datos:{}});if(permitido!==true)throw Error('Esta cuenta no tiene autorización para este panel.');}if(cuenta?.access_token!==token)return;tokenVistaValidado=token;el('acceso').hidden=true;el('panel').hidden=false;document.body?.classList?.add('sesion-autorizada');}catch(e){if(cuenta?.access_token!==token)return;cerrarVistaPrivada();aviso(e.message);}finally{if(validacionVista?.token===token)validacionVista=null;}})();
 }
 function liberarFotos(){for(const u of urls)URL.revokeObjectURL(u);urls=[];}
 async function fotoPrivada(ruta,img){if(!ruta)return;try{const b=await api('/storage/v1/object/authenticated/'+BUCKET+'/'+ruta,{blob:true});const u=URL.createObjectURL(b);urls.push(u);img.src=u;img.hidden=false;}catch{img.hidden=true;}}
