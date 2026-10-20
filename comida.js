@@ -2,7 +2,8 @@
 (() => {
   'use strict';
   const escapar = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const imagen = v => typeof v === 'string' && /^imagenes\/[^?#<>"\x00-\x1f]+\.(webp|png|jpe?g)$/i.test(v) && !v.includes('..') && !v.includes('\\') ? v : '';
+  const fotoPublicada = v => typeof v === 'string' && /^https:\/\/gyvoyzxsgckpfkagzjtf\.supabase\.co\/storage\/v1\/object\/public\/menu-publico\/[a-f0-9-]+\/[a-f0-9-]+\.webp$/.test(v);
+  const imagen = v => fotoPublicada(v) ? v : typeof v === 'string' && /^imagenes\/[^?#<>"\x00-\x1f]+\.(webp|png|jpe?g)$/i.test(v) && !v.includes('..') && !v.includes('\\') ? v : '';
   const dinero = centavos => new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(centavos / 100);
   function productos(n) { return (Array.isArray(n.productos) ? n.productos : []).filter(p => p && typeof p.id === 'string' && typeof p.nombre === 'string' && p.nombre.trim() && Number.isFinite(p.precio) && p.precio >= 0 && p.precio <= 100000 && p.disponible !== false); }
   const digital = n => n?.tipoCatalogo === 'digital';

@@ -118,8 +118,9 @@ async function cargarNegociosPublicados() {
       throw new Error(`HTTP ${respuesta.status}`);
     }
 
-    const negociosPublicados = await respuesta.json();
+    const negociosPublicados = await window.MenuPublicado.aplicar(await respuesta.json());
     agregarNegociosDinamicos(negociosPublicados);
+    window.MenuPublicado.actualizarExistentes(negocios);
 
     console.log(
       `Negocios publicados cargados: ${Array.isArray(negociosPublicados) ? negociosPublicados.length : 0}`
