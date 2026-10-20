@@ -57,4 +57,4 @@ function pintarFotoEditor(){const img=el('editar-foto-previa');img.hidden=true;i
 el('editar-foto').onchange=()=>tarea(async()=>{const archivo=el('editar-foto').files[0];if(!archivo)return;const nueva=await comprimir(archivo);if(fotoTemporalMenu)URL.revokeObjectURL(fotoTemporalMenu);fotoNuevaMenu=nueva;fotoSubidaMenu=null;fotoTemporalMenu=URL.createObjectURL(nueva);pintarFotoEditor();});
 el('quitar-foto').onclick=()=>{limpiarFotoEditor();fotoActualMenu='';pintarFotoEditor();};
 
-el('nuevo-producto').onclick=()=>{if(!menuCompleto)return;abrirProducto({id:crypto.randomUUID(),nombre:'',precio:'',ingredientes:'',foto:'',seccion:el('categoria-menu').value||'',disponible:true,extras:[],gruposOpciones:[],esNuevo:true});el('editar-nombre').focus();};
+el('nuevo-producto').onclick=()=>{if(!menuCompleto)return;abrirProducto({id:crypto.randomUUID(),nombre:'',precio:'',ingredientes:'',foto:'',seccion:el('categoria-menu').value||categoriaProducto(menuCompleto.borrador.productos.find(p=>!p.eliminado)||{id:'',nombre:''}),disponible:true,extras:[],gruposOpciones:[],esNuevo:true});el('editar-nombre').focus();};
