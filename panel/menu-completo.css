@@ -5,3 +5,5 @@ body{background:#f3f6f5}header{background:linear-gradient(120deg,#143d32,#27805b
 .vista-dueno-menu header{background:linear-gradient(120deg,#174e3c,#368c62)}.vista-dueno-menu .identidad-menu{border-left-color:#d39c35;background:#fff9eb}.vista-dueno-menu main{max-width:1000px}
 
 .editor-foto{border:1px solid #dce6e1;border-radius:16px;padding:18px;margin:16px 0;background:#f5f8f6}.editor-foto img{display:block;max-width:100%;width:260px;max-height:210px;object-fit:contain;border-radius:14px;margin:12px 0}.editor-foto img[hidden]{display:none}.editor-foto input{max-width:100%}.editor-foto .enlace-boton{display:inline-block;cursor:pointer}
+
+.editor-config{border:1px solid #cbded1;border-radius:16px;padding:16px;margin:16px 0;background:#f4f8f5}.editor-config button{margin:8px 6px 0 0}.opcion-editor{display:block}.opcion-editor>label{display:block;margin:12px 0 6px}.opcion-editor button{font-size:13px}.editor-config input[type=checkbox]{width:24px;height:24px}
