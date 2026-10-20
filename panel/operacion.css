@@ -9,3 +9,5 @@
 body:not(.sesion-autorizada) .recepcion-lateral{display:none!important}body.recepcion-independiente:not(.sesion-autorizada){padding-left:0}
 
 .tiempo-cotizacion{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}.tiempo-cotizacion label{margin:0!important}.tiempo-cotizacion input{grid-row:2}#lista-pedidos small{display:block;color:#61748a;margin:6px 0}#configurar-pago{max-width:650px}#fecha-historial{max-width:280px}
+
+.seguimiento-reparto{list-style:none;padding:16px 20px;background:#f3f8f5;border-radius:14px;border:1px solid #dbe8df}.seguimiento-reparto li{margin:8px 0}.seguimiento-reparto .completo{color:#206244;font-weight:650}.seguimiento-reparto .pendiente{color:#69767e}.fecha-recibida{color:#52667a;font-size:14px}
