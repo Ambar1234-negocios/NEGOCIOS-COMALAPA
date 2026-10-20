@@ -71,7 +71,8 @@
   function normalizarPedido(){
     for(const l of pedido.lineas)if(!l.negocio)l.negocio=pedido.negocio;
     pedido.negocio=pedido.lineas[0]?.negocio||null;
-    if(!pedido.lineas.length){pagoPedido='';entregaPedido='';}
+    if(!pedido.lineas.length){pagoPedido='';entregaPedido='';modoEntrega='domicilio';}
+    if(gruposPedido().length>1)modoEntrega='domicilio';
   }
   function incorporar(n,nueva,linea){
     if(pedido.lineas.length&&pedido.negocio?.id!==n.id&&!(esComida(n)&&pedido.lineas.every(l=>esComida(dueno(l)))))return 'Los servicios digitales y los pedidos de comida se realizan por separado.';
@@ -97,11 +98,16 @@
   }
   let pagoPedido='';
   let entregaPedido='';
-  const opcionesPago=n=>digital(n)?['Transferencia','Depósito']:['Efectivo','Transferencia'];
+  let modoEntrega='domicilio';
+  const opcionesPago=n=>digital(n)?['Transferencia','Depósito']:modoEntrega==='recoger'?['Transferencia']:['Efectivo','Transferencia'];
   function avisoPago(n,pago){
     if(pago==='Transferencia')return '\u2705 Aprovecha y paga por transferencia sin comisión.';
     if(pago==='Depósito')return 'Puedes depositar en OXXO, Farmacias del Ahorro o BBVA. Solicita los datos por WhatsApp. El establecimiento puede cobrar su propia comisión por el depósito.';
     return '\u2705 Aprovecha y paga por transferencia sin comisión.';
+  }
+  function selectorEntrega(){
+    const varios=gruposPedido().length>1;
+    return `<section class="pedido-pago"><label>¿Cómo quieres recibirlo?<select data-modo-entrega><option value="domicilio" ${modoEntrega==='domicilio'?'selected':''}>A domicilio</option><option value="recoger" ${modoEntrega==='recoger'?'selected':''} ${varios?'disabled':''}>Pasar a recoger · Sin envío</option></select></label>${varios?'<p>Para pasar a recoger, realiza un pedido por negocio. El pedido combinado se entrega a domicilio.</p>':modoEntrega==='recoger'?'<p class="pedido-pago-aviso">Recoge en el negocio sin pagar envío. Para confirmar la preparación se requiere el pago completo por transferencia. El negocio te confirma disponibilidad, total, datos de pago y hora de recogida por WhatsApp.</p>':'<p>Entrega: se confirma al solicitar.</p>'}</section>`;
   }
   function selectorPago(n){
     const opciones=opcionesPago(n);if(!opciones.includes(pagoPedido))pagoPedido='';
@@ -109,6 +115,7 @@
   }
   function textoPago(pago){return pago==='Transferencia'?'\u{1f4b3} Pagaré por transferencia bancaria.':pago==='Depósito'?'\u{1f3ea} Pagaré mediante depósito.':'\u{1f4b5} Pagaré en efectivo.';}
   document.addEventListener('change',e=>{
+    if(e.target.matches?.('[data-modo-entrega]')&&pedido.negocio&&!digital(pedido.negocio)){if(e.target.value==='recoger'&&gruposPedido().length>1)return;modoEntrega=e.target.value==='recoger'?'recoger':'domicilio';if(modoEntrega==='recoger')pagoPedido='Transferencia';pintarPedido();return;}
     if(!e.target.matches?.('[data-pago-pedido]')||!pedido.negocio)return;
     pagoPedido=opcionesPago(pedido.negocio).includes(e.target.value)?e.target.value:'';
     document.querySelectorAll('[data-pago-pedido]').forEach(select=>select.value=pagoPedido);
@@ -120,7 +127,7 @@
     const n=pedido.negocio;
     if(digital(n)) return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${l.cantidad} × ${escapar(l.producto.nombre)} — ${dinero(importe(l))}</strong><p>${escapar(condiciones(l.producto))}</p>${l.nota?`<p>${l.producto.nombre.includes(' + ')||l.cantidad>1?'Nombres de los perfiles':'Nombre del perfil'}: ${escapar(l.nota)}</p>`:''}</div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total: ${dinero(total())}</p><p>Entrega y soporte por WhatsApp.</p>${selectorPago(n)}<div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
     const agrupados=gruposPedido();
-    return `<h4>${agrupados.length>1?'Mi pedido · Varios negocios':'Mi pedido · '+escapar(n.nombre)}</h4>${agrupados.map(g=>`<section class="pedido-negocio-grupo"><h5>${escapar(g.negocio.nombre)}</h5>${g.lineas.map(l=>`<div class="pedido-linea"><div><strong>${escapar(l.producto.nombre)}</strong><p>${escapar(descripcionOpciones(l))}</p><p>${l.extras.length?l.extras.map(x=>`${escapar(x.nombre)} (${x.precio?'+ '+dinero(centavos(x.precio)):'sin costo'})`).join(' · '):'Sin extras'}</p>${l.nota?`<p class="pedido-nota">Indicación: ${escapar(l.nota)}</p>`:''}<p class="pedido-promo">${escapar(detallePromo(l))}</p><p>${dinero(unitario(l))} por unidad · <strong>${dinero(importe(l))}</strong></p></div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-subtotal-negocio">Subtotal: ${dinero(g.lineas.reduce((s,l)=>s+importe(l),0))}</p></section>`).join('')}<p class="pedido-total" role="status">Total de productos: ${dinero(total())}</p><p>Entrega: se confirma al solicitar.</p><label class="pedido-entrega">¿Dónde lo entregamos? (opcional)<textarea data-entrega-pedido maxlength="500" rows="2" placeholder="Dirección y referencias">${escapar(entregaPedido)}</textarea></label>${selectorPago(n)}<div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
+    return `<h4>${agrupados.length>1?'Mi pedido · Varios negocios':'Mi pedido · '+escapar(n.nombre)}</h4>${agrupados.map(g=>`<section class="pedido-negocio-grupo"><h5>${escapar(g.negocio.nombre)}</h5>${g.lineas.map(l=>`<div class="pedido-linea"><div><strong>${escapar(l.producto.nombre)}</strong><p>${escapar(descripcionOpciones(l))}</p><p>${l.extras.length?l.extras.map(x=>`${escapar(x.nombre)} (${x.precio?'+ '+dinero(centavos(x.precio)):'sin costo'})`).join(' · '):'Sin extras'}</p>${l.nota?`<p class="pedido-nota">Indicación: ${escapar(l.nota)}</p>`:''}<p class="pedido-promo">${escapar(detallePromo(l))}</p><p>${dinero(unitario(l))} por unidad · <strong>${dinero(importe(l))}</strong></p></div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-subtotal-negocio">Subtotal: ${dinero(g.lineas.reduce((s,l)=>s+importe(l),0))}</p></section>`).join('')}<p class="pedido-total" role="status">Total de productos: ${dinero(total())}</p>${selectorEntrega()}${modoEntrega==='domicilio'?`<label class="pedido-entrega">¿Dónde lo entregamos? (opcional)<textarea data-entrega-pedido maxlength="500" rows="2" placeholder="Dirección y referencias">${escapar(entregaPedido)}</textarea></label>`:''}${selectorPago(n)}<div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
   }
   function pintarPedido() {
     const el=document.getElementById('comida-pedido');
@@ -159,18 +166,24 @@
   function mensajeComida(){
     const gs=gruposPedido();
     const textoLinea=l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}${detallePromo(l)?'\n'+detallePromo(l):''}${l.opciones?.length?'\nOpciones: '+descripcionOpciones(l):''}${l.extras.length?'\nExtras: '+l.extras.map(x=>x.nombre+' ('+dinero(centavos(x.precio))+')').join(', '):''}${l.nota?'\nIndicación: '+l.nota:''}`;
-    return (gs.length>1?'Hola, quiero solicitar este pedido de varios negocios:':'Hola, quiero realizar este pedido de '+gs[0].negocio.nombre+':')+'\n\n'+gs.map(g=>'\u{1f37d} '+g.negocio.nombre+'\n'+g.lineas.map(textoLinea).join('\n\n')+'\nSubtotal: '+dinero(g.lineas.reduce((s,l)=>s+importe(l),0))).join('\n\n')+'\n\nTotal de productos: '+dinero(total())+(entregaPedido?'\n\u{1f3e0} Entregar en: '+entregaPedido:'')+'\n¿Me confirman disponibilidad y el total con el servicio de entrega?';
+    return (gs.length>1?'Hola, quiero solicitar este pedido de varios negocios:':'Hola, quiero realizar este pedido de '+gs[0].negocio.nombre+':')+'\n\n'+gs.map(g=>'\u{1f37d} '+g.negocio.nombre+'\n'+g.lineas.map(textoLinea).join('\n\n')+'\nSubtotal: '+dinero(g.lineas.reduce((s,l)=>s+importe(l),0))).join('\n\n')+'\n\nTotal de productos: '+dinero(total())+(modoEntrega==='recoger'?'\n\u{1f6cd} Pasaré a recoger en el negocio. Sin cargo de envío.\nConfirmaré el pago completo por transferencia antes de que preparen mi pedido.':entregaPedido?'\n\u{1f3e0} Entregar en: '+entregaPedido:'')+(modoEntrega==='recoger'?'\n¿Me confirman disponibilidad, el total, los datos para transferir y cuándo puedo recogerlo?':'\n¿Me confirman disponibilidad y el total con el servicio de entrega?');
   }
   function whatsapp(n,consulta) {
     if(!consulta&&!pedido.lineas.length)return;
     if(!consulta && (pedido.negocio?.id!==n?.id || pedido.lineas.some(l=>!dueno(l)?.productos?.some(p=>p.id===l.producto.id)|| (gruposPedido().length>1&&!esComida(dueno(l)))))){alert('El pedido no corresponde a este negocio. Revisa tu carrito antes de enviarlo.');return;}
     if(!consulta&&!opcionesPago(n).includes(pagoPedido)){alert('Elige cómo prefieres pagar antes de realizar el pedido.');return;}
-    const numero=String(!consulta&&!digital(n)&&(gruposPedido().length>1||(n.delivery===true&&n.tipoDelivery!=='gratis'))?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
+    const numero=String(!consulta&&!digital(n)&&modoEntrega!=='recoger'&&(gruposPedido().length>1||(n.delivery===true&&n.tipoDelivery!=='gratis'))?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
     const normal=window.ContactosExhibicion?.numero(numero)||(numero.length===10?'52'+numero:numero);
     if(!/^\d{11,15}$/.test(normal)){alert('Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.');return;}
     let mensaje=digital(n)?(consulta?`Hola, estoy viendo el catálogo de ${n.nombre}. Quiero información sobre sus servicios digitales.`:mensajeDigital(pedido.lineas,total())):consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:mensajeComida();
     if(!consulta)mensaje+='\n\n'+textoPago(pagoPedido)+(pagoPedido==='Transferencia'||pagoPedido==='Depósito'?'\n¿Me confirmas el total y los datos de pago?':'');
     if(mensaje.length>6000){alert('El pedido es demasiado largo para WhatsApp. Reduce las indicaciones o los productos distintos.');return;}
+    if(!consulta&&!digital(n)){
+      const solicitud={entrega:modoEntrega,pago:pagoPedido==='Transferencia'?'transferencia':'efectivo',direccion:entregaPedido,total_esperado:total(),lineas:pedido.lineas.map(l=>({negocio:dueno(l).slug,producto:l.producto.id,cantidad:l.cantidad,opciones:(l.opciones||[]).map(o=>({grupo:o.grupoId,opcion:o.id})),extras:l.extras.map(x=>x.id),nota:l.nota||''}))};
+      const abrir=()=>window.PedidosExhibicion.abrir({solicitud,numero:normal,mensaje});
+      if(window.PedidosExhibicion){abrir();return;}
+      const carga=document.createElement('script');carga.src='/pedidos-publicos.js?v=19';carga.onload=abrir;carga.onerror=()=>alert('No se pudo cargar el registro del pedido. Revisa tu conexión y vuelve a intentarlo.');document.head.append(carga);return;
+    }
     window.open('https://api.whatsapp.com/send?phone='+normal+'&text='+encodeURIComponent(mensaje),'_blank','noopener,noreferrer');
   }
   document.addEventListener('click',e=>{
