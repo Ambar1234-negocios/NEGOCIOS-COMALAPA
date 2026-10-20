@@ -10,7 +10,17 @@ function pesos(v){if(!/^\d+(\.\d{1,2})?$/.test(v))throw Error('Usa un precio pos
 async function api(ruta,{method='GET',datos,blob=false}={}){const headers={apikey:KEY,...(cuenta?{Authorization:'Bearer '+cuenta.access_token}:{}),...(datos?{'Content-Type':datos instanceof Blob?datos.type:'application/json'}:{})};if(ruta.startsWith('/rest/'))headers.Prefer='return=representation';const r=await fetch(BASE+ruta,{method,headers,body:datos?(datos instanceof Blob?datos:JSON.stringify(datos)):undefined});if(!r.ok){let d;try{d=await r.json()}catch{}const error=new Error(r.status===401?'La sesión venció. Cierra sesión y vuelve a entrar.':d?.message||d?.msg||d?.error_description||'No se pudo guardar. Revisa tu conexión.');error.estadoHTTP=r.status;throw error;}if(blob)return r.blob();const t=await r.text();return t?JSON.parse(t):null;}
 let trabajando=false;
 async function tarea(fn){if(trabajando)return;trabajando=true;const originales=Array.from(document.querySelectorAll('button'),b=>[b,b.disabled]);originales.forEach(([b])=>b.disabled=true);try{return await fn()}catch(e){aviso(e.message)}finally{originales.forEach(([b,deshabilitado])=>b.disabled=deshabilitado);trabajando=false;}}
-function mostrar(){el('acceso').hidden=!!cuenta;el('panel').hidden=!cuenta;el('usuario').textContent=cuenta?'Cuenta: '+cuenta.user.email:'';}
+let tokenVistaValidado=null,validacionVista=null;
+function cerrarVistaPrivada(){document.body?.classList?.remove('sesion-autorizada');el('panel').hidden=true;el('acceso').hidden=false;}
+function mostrar(){
+ const token=cuenta?.access_token;el('usuario').textContent=cuenta?'Cuenta: '+cuenta.user.email:'';
+ if(!token){tokenVistaValidado=null;validacionVista=null;cerrarVistaPrivada();return;}
+ if(token===tokenVistaValidado){el('acceso').hidden=true;el('panel').hidden=false;document.body?.classList?.add('sesion-autorizada');return;}
+ cerrarVistaPrivada();if(validacionVista?.token===token)return;
+ const requiereMaestro=document.body?.dataset?.acceso==='maestro';
+ validacionVista={token};
+ (async()=>{try{await api('/auth/v1/user');if(requiereMaestro){const permitido=await api('/rest/v1/rpc/piloto_es_admin',{method:'POST',datos:{}});if(permitido!==true)throw Error('Esta cuenta no tiene autorización para este panel.');}if(cuenta?.access_token!==token)return;tokenVistaValidado=token;el('acceso').hidden=true;el('panel').hidden=false;document.body?.classList?.add('sesion-autorizada');}catch(e){if(cuenta?.access_token!==token)return;cerrarVistaPrivada();aviso(e.message);}finally{if(validacionVista?.token===token)validacionVista=null;}})();
+}
 function liberarFotos(){for(const u of urls)URL.revokeObjectURL(u);urls=[];}
 async function fotoPrivada(ruta,img){if(!ruta)return;try{const b=await api('/storage/v1/object/authenticated/'+BUCKET+'/'+ruta,{blob:true});const u=URL.createObjectURL(b);urls.push(u);img.src=u;img.hidden=false;}catch{img.hidden=true;}}
 async function comprimir(archivo){if(!archivo||!['image/jpeg','image/png','image/webp'].includes(archivo.type))throw Error('Selecciona una foto JPG, PNG o WebP.');if(archivo.size>12*1024*1024)throw Error('La foto original debe pesar menos de 12 MB.');const img=await createImageBitmap(archivo);try{if(img.width*img.height>40000000)throw Error('La imagen tiene demasiados píxeles. Usa una foto más pequeña.');const escala=Math.min(1,1200/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*escala));c.height=Math.max(1,Math.round(img.height*escala));c.getContext('2d').drawImage(img,0,0,c.width,c.height);const b=await new Promise(ok=>c.toBlob(ok,'image/webp',.78));if(!b||b.size>1048576)throw Error('No pudimos reducir esta foto a menos de 1 MB. Prueba con otra.');return b;}finally{img.close();}}
