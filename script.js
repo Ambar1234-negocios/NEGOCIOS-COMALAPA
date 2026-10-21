@@ -118,9 +118,10 @@ async function cargarNegociosPublicados() {
       throw new Error(`HTTP ${respuesta.status}`);
     }
 
-    const negociosPublicados = await window.MenuPublicado.aplicar(await respuesta.json());
+    const negociosPublicados = await window.MenuPublicado.aplicar(await window.SitioPublicado.leer('negocios',await respuesta.json()));
     agregarNegociosDinamicos(negociosPublicados);
     window.MenuPublicado.actualizarExistentes(negocios);
+    await window.SitioPublicado.aplicarPerfiles(negocios);
 
     console.log(
       `Negocios publicados cargados: ${Array.isArray(negociosPublicados) ? negociosPublicados.length : 0}`
@@ -1421,7 +1422,7 @@ function actualizarOfertasDestacadas(){
 }
 window.actualizarOfertasDestacadas=actualizarOfertasDestacadas;
 async function cargarDestacadosPublicados(){
-  try{const respuesta=await fetch('destacados.json?v='+Date.now(),{cache:'no-store'});if(!respuesta.ok)throw Error('HTTP '+respuesta.status);const datos=await respuesta.json();destacadosPublicados=Array.isArray(datos)?datos:[];}
+  try{const respuesta=await fetch('destacados.json?v='+Date.now(),{cache:'no-store'});if(!respuesta.ok)throw Error('HTTP '+respuesta.status);const datos=await window.SitioPublicado.leer('destacados',await respuesta.json());destacadosPublicados=Array.isArray(datos)?datos:[];}
   catch(error){console.warn('No se pudo cargar destacados.json:',error);destacadosPublicados=[];}
   actualizarOfertasDestacadas();
 }
@@ -1504,7 +1505,7 @@ async function cargarAnuncioPrincipalPublicado() {
     if(vistaId){await window.ImagenesPrincipal?.lista;const guardados=JSON.parse(localStorage.getItem('exhibicionPrincipal')||'[]');lista=guardados.filter(item=>String(item.id)===vistaId).map(item=>({...item,imagen:window.ImagenesPrincipal?.url(item.imagen)||item.imagen}));const aviso=document.createElement('p');aviso.setAttribute('role','status');aviso.textContent=lista.length?'VISTA PREVIA DEL ANUNCIO GUARDADO EN ESTE NAVEGADOR. Se muestra aunque esté inactivo o fuera de fecha. Aún debes exportar principal.json y copiar su imagen para publicarlo.':'No se encontró este anuncio guardado. Abre la vista desde el mismo navegador y dirección del panel.';aviso.style.cssText='padding:16px;background:#fff0c2;color:#4b3700;border:2px solid #cf9c27;border-radius:10px';seccion.before(aviso);}
     else{
       lista=[];
-      try{const respuesta=await fetch('principal.json?v='+Date.now(),{cache:'no-store'});if(!respuesta.ok)throw Error('HTTP '+respuesta.status);const datos=await respuesta.json();lista=Array.isArray(datos)?datos:(datos?[datos]:[]);}catch(error){console.warn('No se pudieron cargar los anuncios manuales.',error);}
+      try{const respuesta=await fetch('principal.json?v='+Date.now(),{cache:'no-store'});if(!respuesta.ok)throw Error('HTTP '+respuesta.status);const datos=await window.SitioPublicado.leer('principal',await respuesta.json());lista=Array.isArray(datos)?datos:(datos?[datos]:[]);}catch(error){console.warn('No se pudieron cargar los anuncios manuales.',error);}
       await cargaNegociosPublicados;
       lista.push(...window.PropiedadesExhibicion.anuncios(Object.values(negocios).flat()));
     }

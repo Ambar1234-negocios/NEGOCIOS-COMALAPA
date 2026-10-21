@@ -48,7 +48,7 @@
     try {
       const r=await fetch('contactos.json',{cache:'no-store',signal:controller.signal});
       if(!r.ok)throw Error('No publicado');
-      api.actual=normalizar(await r.json());
+      const datos=await r.json();api.actual=normalizar(window.SitioPublicado?await window.SitioPublicado.leer('contactos',datos):datos);
     }catch{ /* Conservar Mandaditos si aún no se ha publicado la configuración. */ }
     finally{clearTimeout(timeout);}
     return api.actual;

@@ -117,7 +117,7 @@
     try {
       const respuesta = await fetch('categorias.json?v=' + Date.now(), {cache: 'no-store'});
       if (!respuesta.ok) throw Error('No disponible');
-      const datos = await respuesta.json();
+      const archivo = await respuesta.json();const datos=window.SitioPublicado?await window.SitioPublicado.leer('categorias',archivo):archivo;
       if (!Array.isArray(datos)) throw Error('Formato no válido');
       publicados = validar(datos);
       api.cargaPublicada = true;
