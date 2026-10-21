@@ -119,7 +119,7 @@
       if (!respuesta.ok) throw Error('No disponible');
       const archivo = await respuesta.json();const datos=window.SitioPublicado?await window.SitioPublicado.leer('categorias',archivo):archivo;
       if (!Array.isArray(datos)) throw Error('Formato no válido');
-      publicados = validar(datos);
+      publicados = validar(datos);if(window.SitioPublicado)locales=[];
       api.cargaPublicada = true;
     } catch { /* Se conservan las categorías base y los cambios locales. */ }
     window.dispatchEvent(new Event('categorias-actualizadas'));
