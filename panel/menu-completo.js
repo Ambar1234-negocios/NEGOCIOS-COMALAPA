@@ -1,6 +1,6 @@
 'use strict';
 let fotoNuevaMenu=null,fotoTemporalMenu=null,fotoSubidaMenu=null,fotoActualMenu='';
-let menuCompleto=null,productoEditado=null,versionEdicion=null,negocioActivo='forno-mexa',menusDisponibles=[];
+let menuCompleto=null,productoEditado=null,versionEdicion=null,negocioActivo=new URLSearchParams(location.search).get('negocio')||'forno-mexa',menusDisponibles=[];
 const dineroMenu=n=>'$'+new Intl.NumberFormat('es-MX',{maximumFractionDigits:2}).format(n);
 function categoriaProducto(p){if(p.seccion)return p.seccion;if(/pizza/i.test(p.id+' '+p.nombre))return '🍕 Pizzas';if(/refresco|alcohol|bebida|agua|cerveza/i.test(p.id+' '+p.nombre))return '🥤 Bebidas';if(/postre|pastel|flan/i.test(p.id+' '+p.nombre))return '🍰 Postres';return '🍽️ Especialidades';}
 async function cargarMenuCompleto(){liberarFotos();
