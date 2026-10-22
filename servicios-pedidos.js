@@ -182,7 +182,7 @@
         adaptarEncargo(Object.fromEntries(keys.map(k=>[k,form.elements[k]])),etiquetas,elegirLugar);
         const soloPago=form.elements.servicio.value==='Pagar algo'&&paradas.length===0;
         const recogerDinero=form.elements.servicio.value==='Pagar algo'||paradas.some(p=>p.campos.servicio.value==='Pagar algo');
-        const destinoCampo=form.elements.destino;destinoCampo.disabled=false;destinoCampo.parentElement.hidden=false;destinoCampo.required=recogerDinero;
+        const destinoCampo=form.elements.destino;destinoCampo.disabled=false;destinoCampo.parentElement.hidden=false;destinoCampo.required=recogerDinero;const ayudaDireccion=destinoCampo.parentElement.querySelector?.('small');if(ayudaDireccion)ayudaDireccion.textContent=recogerDinero?'Indica el domicilio donde pasaremos a recoger el dinero.':'Si prefieres, comparte tu dirección o ubicación después por WhatsApp.';
         etiquetas.destino.textContent=(recogerDinero?'¿En qué domicilio recogemos el dinero?':soloPago?'¿Dónde entregamos tu comprobante?':'¿Dónde lo entregamos?')+(recogerDinero?' *':' (opcional)');
       };
       for(const key of ['servicio','pagado','comprobante'])form.elements[key].addEventListener('change',actualizarPreguntas);
