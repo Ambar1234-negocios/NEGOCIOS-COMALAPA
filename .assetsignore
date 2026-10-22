@@ -1,0 +1,14 @@
+.git/**
+.github/**
+.vscode/**
+node_modules/**
+.wrangler/**
+.env*
+.dev.vars*
+wrangler.jsonc
+package*.json
+pnpm-lock.yaml
+CNAME
+*backup*
+*respaldo*
+*.js.txt

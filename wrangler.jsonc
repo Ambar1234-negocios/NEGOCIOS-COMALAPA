@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+  "name": "exhibicion-comalapa-pruebas",
+  "compatibility_date": "2026-10-21",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": { "directory": ".", "html_handling": "none", "not_found_handling": "none" },
+  "observability": { "enabled": false }
+}
