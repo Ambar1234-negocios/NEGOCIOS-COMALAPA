@@ -177,6 +177,11 @@
     const textoLinea=l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}${detallePromo(l)?'\n'+detallePromo(l):''}${l.opciones?.length?'\nOpciones: '+descripcionOpciones(l):''}${l.extras.length?'\nExtras: '+l.extras.map(x=>x.nombre+' ('+dinero(centavos(x.precio))+')').join(', '):''}${l.nota?'\nIndicación: '+l.nota:''}`;
     return (gs.length>1?'Hola, quiero solicitar este pedido de varios negocios:':'Hola, quiero realizar este pedido de '+gs[0].negocio.nombre+':')+'\n\n'+gs.map(g=>'\u{1f37d} '+g.negocio.nombre+'\n'+g.lineas.map(textoLinea).join('\n\n')+'\nSubtotal: '+dinero(g.lineas.reduce((s,l)=>s+importe(l),0))).join('\n\n')+'\n\nTotal de productos: '+dinero(total())+(modoEntrega==='recoger'?'\n\u{1f6cd} Pasaré a recoger en el negocio. Sin cargo de envío.\nConfirmaré el pago completo por transferencia antes de que preparen mi pedido.':entregaPedido?'\n\u{1f3e0} Entregar en: '+entregaPedido:'')+(modoEntrega==='recoger'?'\n¿Me confirman disponibilidad, el total, los datos para transferir y cuándo puedo recogerlo?':entregaPropia()?'\n¿Me confirman disponibilidad y entrega gratis dentro de Comalapa?':'\n¿Me confirman disponibilidad y el total con el servicio de entrega?');
   }
+  function mensajeEntregaPropia(n){
+    const lineas=pedido.lineas.map(l=>[l.cantidad+' × '+l.producto.nombre+' — '+dinero(importe(l)),l.opciones?.length?descripcionOpciones(l):'',l.extras.length?'Extras: '+l.extras.map(x=>x.nombre+' ('+dinero(centavos(x.precio))+')').join(', '):'',l.nota?'Nota: '+l.nota:''].filter(Boolean).join('\n'));
+    const pago=pagoPedido==='Efectivo'?'💵 Pago: efectivo al recibir.':pagoPedido==='Transferencia al recibir'?'📲 Pago: transferencia al recibir; el negocio confirma el pago.':'💳 Pago: transferencia. Compártanme sus datos de pago.';
+    return '🛍️ Pedido · '+n.nombre+'\n👤 Cliente: '+nombrePedido.trim()+'\nLo vi en Exhibición Frontera Comalapa.\n\n'+lineas.join('\n\n')+'\n\n💰 Total: '+dinero(total())+'\n📍 Entregar en: '+entregaPedido.trim()+'\n✨ Envío gratis dentro de Comalapa.\n'+pago+'\n\n¿Me confirman disponibilidad y horario de entrega?';
+  }
   function whatsapp(n,consulta,origen) {
     if(!consulta&&!pedido.lineas.length)return;
     if(!consulta && (pedido.negocio?.id!==n?.id || pedido.lineas.some(l=>!dueno(l)?.productos?.some(p=>p.id===l.producto.id)|| (gruposPedido().length>1&&!esComida(dueno(l)))))){alert('El pedido no corresponde a este negocio. Revisa tu carrito antes de enviarlo.');return;}
@@ -187,8 +192,8 @@
     const normal=window.ContactosExhibicion?.numero(numero)||(numero.length===10?'52'+numero:numero);
     if(!/^\d{11,15}$/.test(normal)){alert('Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.');return;}
     let mensaje=digital(n)?(consulta?`Hola, estoy viendo el catálogo de ${n.nombre}. Quiero información sobre sus servicios digitales.`:mensajeDigital(pedido.lineas,total())):consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:mensajeComida();
-    if(!consulta&&entregaPropia()){mensaje='👤 Cliente: '+nombrePedido.trim()+''+'\n\n'+mensaje+'\n✨ Envío gratis del negocio dentro de Comalapa. ¿Me confirman horario de entrega?';}
-    if(!consulta)mensaje+='\n\n'+textoPago(pagoPedido)+(pagoPedido==='Transferencia'||pagoPedido==='Depósito'?'\n¿Me confirmas el total y los datos de pago?':'');
+    if(!consulta&&entregaPropia())mensaje=mensajeEntregaPropia(n);
+    else if(!consulta)mensaje+='\n\n'+textoPago(pagoPedido)+(pagoPedido==='Transferencia'||pagoPedido==='Depósito'?'\n¿Me confirmas el total y los datos de pago?':'');
     if(mensaje.length>6000){alert('El pedido es demasiado largo para WhatsApp. Reduce las indicaciones o los productos distintos.');return;}
     if(!consulta&&!digital(n)&&!entregaPropia()){
       const solicitud={telefono:telefonoPedido,cliente:nombrePedido.trim(),entrega:modoEntrega==='mandaditos'?'domicilio':modoEntrega,pago:pagoPedido.startsWith('Transferencia')?'transferencia':'efectivo',pago_al_recibir:pagoPedido==='Transferencia al recibir',direccion:entregaPedido,total_esperado:total(),lineas:pedido.lineas.map(l=>({negocio:dueno(l).slug,producto:l.producto.id,cantidad:l.cantidad,opciones:(l.opciones||[]).map(o=>({grupo:o.grupoId,opcion:o.id})),extras:l.extras.map(x=>x.id),nota:l.nota||''}))};
