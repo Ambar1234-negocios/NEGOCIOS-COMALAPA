@@ -202,13 +202,14 @@ function coincideBusquedaNegocio(negocio, texto) {
   return contenidoBuscableNegocio(negocio).includes(texto);
 }
 
+function etiquetaEnvioGratis(negocio){return negocio.delivery===true&&negocio.tipoDelivery==='gratis'?'<span class="envio-gratis-dorado">✨ Envío gratis del negocio</span>':'';}
 function crearTarjetaNegocioListado(negocio, categoria) {
   const indexOriginal = negocios[categoria].indexOf(negocio);
   const clasePlan = `resultado-plan-${obtenerPlanNegocio(negocio)}`;
 
   return `
     <div class="card resultado-negocio ${clasePlan}">
-      ${etiquetaPromocionNegocio(negocio)}
+      ${etiquetaPromocionNegocio(negocio)}${etiquetaEnvioGratis(negocio)}
       <h3>${negocio.nombre}</h3>
       <p>${negocio.descripcion || ""}</p>
 
@@ -253,7 +254,7 @@ function crearTarjetaNegocioCategoria(negocio, categoria) {
           ${negocio.logo ? `<img src="${escapar(negocio.logo)}" alt="" loading="lazy" decoding="async" onerror="this.hidden=true">` : ""}
         </div>
         <h3><button type="button" class="categoria-negocio-enlace" onclick="${accion}">${escapar(nombre)}</button></h3>
-        <p class="categoria-negocio-descripcion">${escapar(negocio.descripcion || "Conoce sus servicios y datos de contacto.")}</p>
+        ${etiquetaEnvioGratis(negocio)}<p class="categoria-negocio-descripcion">${escapar(negocio.descripcion || "Conoce sus servicios y datos de contacto.")}</p>
         <div class="categoria-negocio-pie">
           <span class="categoria-negocio-estado estado-${estado}" title="${escapar(propiedad ? textoEstado : horario.texto)}"><span aria-hidden="true">●</span> ${escapar(textoEstado)}</span>
           <span class="categoria-negocio-cta" aria-hidden="true">${escapar(textoBoton)} <span>↗</span></span>
