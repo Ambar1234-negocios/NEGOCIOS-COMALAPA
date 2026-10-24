@@ -1284,7 +1284,7 @@ function iniciarCarruselDestacados() {
           irATarjetaDestacada(carrusel, 1, false);
         }, 650);
       }
-    }, 2500);
+    }, 1500);
   };
 
   const reanudarDespuesDeInteraccion = () => {
