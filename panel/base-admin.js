@@ -23,5 +23,25 @@ function mostrar(){
 }
 function liberarFotos(){for(const u of urls)URL.revokeObjectURL(u);urls=[];}
 async function fotoPrivada(ruta,img){if(!ruta)return;try{const b=await api('/storage/v1/object/authenticated/'+BUCKET+'/'+ruta,{blob:true});const u=URL.createObjectURL(b);urls.push(u);img.src=u;img.hidden=false;}catch{img.hidden=true;}}
-async function comprimir(archivo){if(!archivo||!['image/jpeg','image/png','image/webp'].includes(archivo.type))throw Error('Selecciona una foto JPG, PNG o WebP.');if(archivo.size>12*1024*1024)throw Error('La foto original debe pesar menos de 12 MB.');const img=await createImageBitmap(archivo);try{if(img.width*img.height>40000000)throw Error('La imagen tiene demasiados píxeles. Usa una foto más pequeña.');const escala=Math.min(1,1200/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*escala));c.height=Math.max(1,Math.round(img.height*escala));c.getContext('2d').drawImage(img,0,0,c.width,c.height);const b=await new Promise(ok=>c.toBlob(ok,'image/webp',.78));if(!b||b.size>1048576)throw Error('No pudimos reducir esta foto a menos de 1 MB. Prueba con otra.');return b;}finally{img.close();}}
+let codificadorWebP;
+async function esWebPReal(blob){if(!blob||blob.type!=='image/webp')return false;const b=new Uint8Array(await blob.slice(0,12).arrayBuffer());return b.length===12&&String.fromCharCode(...b.slice(0,4))==='RIFF'&&String.fromCharCode(...b.slice(8,12))==='WEBP';}
+async function decodificarFoto(archivo){
+ if(typeof createImageBitmap==='function'){try{return await createImageBitmap(archivo);}catch{}}
+ const url=URL.createObjectURL(archivo);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=()=>no(Error('No pudimos abrir esta foto. Usa una imagen JPG, PNG o WebP.'));img.src=url;});return img;}finally{URL.revokeObjectURL(url);}
+}
+async function comprimir(archivo){
+ if(!archivo||!['image/jpeg','image/png','image/webp'].includes(archivo.type))throw Error('Selecciona una foto JPG, PNG o WebP.');
+ if(archivo.size>12*1024*1024)throw Error('La foto original debe pesar menos de 12 MB.');
+ const img=await decodificarFoto(archivo);let c;
+ try{
+ const w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;if(!w||!h||w*h>40000000)throw Error('La imagen tiene demasiados píxeles. Usa una foto más pequeña.');
+ c=document.createElement('canvas');let escala=Math.min(1,1200/Math.max(w,h));let usarCompatibilidad=false;
+ for(let intento=0;intento<4;intento++){
+ c.width=Math.max(1,Math.round(w*escala));c.height=Math.max(1,Math.round(h*escala));const ctx=c.getContext('2d');if(!ctx)throw Error('No pudimos preparar la foto.');ctx.drawImage(img,0,0,c.width,c.height);const calidad=78-intento*8;let b;
+ if(!usarCompatibilidad){try{b=await new Promise(ok=>c.toBlob(ok,'image/webp',calidad/100));}catch{}if(!await esWebPReal(b))usarCompatibilidad=true;}
+ if(usarCompatibilidad){try{codificadorWebP??=import('./webp-encoder.js?v=42').catch(e=>{codificadorWebP=null;throw e;});const {default:codificar}=await codificadorWebP;b=await codificar(ctx.getImageData(0,0,c.width,c.height),calidad);}catch{throw Error('No se pudo cargar el conversor WebP. Revisa tu conexión y vuelve a elegir la foto.');}}
+ if(!await esWebPReal(b))throw Error('No pudimos convertir la foto a WebP. Vuelve a elegirla.');if(b.size<=1048576)return b;escala*=.85;
+ }throw Error('No pudimos reducir esta foto a menos de 1 MB. Prueba con otra.');
+ }finally{img.close?.();if(c){c.width=1;c.height=1;}}
+}
 async function subir(archivo){const b=await comprimir(archivo),ruta=cuenta.user.id+'/'+crypto.randomUUID()+'.webp';await api('/storage/v1/object/'+BUCKET+'/'+ruta,{method:'POST',datos:b});return{ruta,kb:Math.round(b.size/1024)};}
