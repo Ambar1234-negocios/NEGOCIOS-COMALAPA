@@ -105,8 +105,9 @@
   let modoEntrega='domicilio';
   const envioGratisNegocio=n=>n?.delivery===true&&n.tipoDelivery==='gratis';
   const entregaPropia=()=>gruposPedido().length===1&&envioGratisNegocio(pedido.negocio)&&modoEntrega==='domicilio';
-  const opcionesPago=n=>digital(n)?['Transferencia','Depósito']:modoEntrega==='recoger'?['Transferencia']:['Transferencia','Efectivo','Transferencia al recibir'];
+  const opcionesPago=n=>digital(n)?['Transferencia','Depósito']:modoEntrega==='recoger'?['Transferencia']:['Transferencia','Efectivo','Transferencia al recibir',...(n?.slug==='esenciales-decants'&&entregaPropia()?['Tarjeta al recibir']:[])];
   function avisoPago(n,pago){
+    if(pago==='Tarjeta al recibir')return 'Paga con tarjeta cuando recibas tu pedido.';
     if(!digital(n)&&pago==='Transferencia')return 'Adelanta tu pago para que al recibir solo disfrutes tu pedido. Solicita los datos y el total confirmado por WhatsApp.';
     if(pago==='Transferencia al recibir')return entregaPropia()?'Transfiere al recibir. El negocio confirmará tu pago y entrega.':'Transfiere cuando llegue tu pedido. Recepción confirmará el pago antes de que el repartidor entregue.';
     if(pago==='Efectivo')return 'Paga al repartidor cuando recibas tu pedido.';
@@ -120,7 +121,7 @@
   }
   function selectorPago(n){
     const opciones=opcionesPago(n);if(!opciones.includes(pagoPedido))pagoPedido='';
-    return `<section class="pedido-pago"><label>¿Cómo prefieres pagar?<select data-pago-pedido aria-label="Forma de pago del pedido"><option value="">Elige una opción</option>${opciones.map(p=>`<option value="${escapar(p)}" ${pagoPedido===p?'selected':''}>${escapar(digital(n)?(p==='Transferencia'?'Transferencia bancaria':p):p==='Transferencia'?'🏦 Transferir ahora y dejar mi pago listo':p==='Efectivo'?'💵 Pagar en efectivo al recibir':'📲 Transferir cuando llegue mi pedido')}</option>`).join('')}</select></label><p class="pedido-pago-aviso" role="status">${escapar(avisoPago(n,pagoPedido))}</p>${digital(n)?'<small>Transferencias mediante BBVA o Banamex. Los datos de pago se comparten por WhatsApp.</small>':''}</section>`;
+    return `<section class="pedido-pago"><label>¿Cómo prefieres pagar?<select data-pago-pedido aria-label="Forma de pago del pedido"><option value="">Elige una opción</option>${opciones.map(p=>`<option value="${escapar(p)}" ${pagoPedido===p?'selected':''}>${escapar(digital(n)?(p==='Transferencia'?'Transferencia bancaria':p):p==='Transferencia'?'🏦 Transferir ahora y dejar mi pago listo':p==='Efectivo'?'💵 Pagar en efectivo al recibir':p==='Tarjeta al recibir'?'💳 Pago con tarjeta al recibir':'📲 Transferir cuando llegue mi pedido')}</option>`).join('')}</select></label><p class="pedido-pago-aviso" role="status">${escapar(avisoPago(n,pagoPedido))}</p>${digital(n)?'<small>Transferencias mediante BBVA o Banamex. Los datos de pago se comparten por WhatsApp.</small>':''}</section>`;
   }
   function textoPago(pago){if(pago==='Transferencia al recibir')return entregaPropia()?'📲 Transferiré al negocio cuando llegue mi pedido. El negocio confirmará el pago.':'📲 Transferiré cuando llegue mi pedido. Recepción confirmará el pago antes de entregarlo.';return pago==='Transferencia'?'\u{1f4b3} Pagaré por transferencia bancaria.':pago==='Depósito'?'\u{1f3ea} Pagaré mediante depósito.':'\u{1f4b5} Pagaré en efectivo.';}
   document.addEventListener('change',e=>{
@@ -179,7 +180,7 @@
   }
   function mensajeEntregaPropia(n){
     const lineas=pedido.lineas.map(l=>[l.cantidad+' × '+l.producto.nombre+' — '+dinero(importe(l)),l.opciones?.length?descripcionOpciones(l):'',l.extras.length?'Extras: '+l.extras.map(x=>x.nombre+' ('+dinero(centavos(x.precio))+')').join(', '):'',l.nota?'Nota: '+l.nota:''].filter(Boolean).join('\n'));
-    const pago=pagoPedido==='Efectivo'?'💵 Pago: efectivo al recibir.':pagoPedido==='Transferencia al recibir'?'📲 Pago: transferencia al recibir; el negocio confirma el pago.':'💳 Pago: transferencia. Compártanme sus datos de pago.';
+    const pago=pagoPedido==='Tarjeta al recibir'?'💳 Pago con tarjeta al recibir.':pagoPedido==='Efectivo'?'💵 Pago: efectivo al recibir.':pagoPedido==='Transferencia al recibir'?'📲 Pago: transferencia al recibir; el negocio confirma el pago.':'💳 Pago: transferencia. Compártanme sus datos de pago.';
     return '🛍️ Pedido · '+n.nombre+'\n👤 Cliente: '+nombrePedido.trim()+'\nLo vi en Exhibición Frontera Comalapa.\n\n'+lineas.join('\n\n')+'\n\n💰 Total: '+dinero(total())+'\n📍 Entregar en: '+entregaPedido.trim()+'\n✨ Envío gratis dentro de Comalapa.\n'+pago+'\n\n¿Me confirman disponibilidad y horario de entrega?';
   }
   function whatsapp(n,consulta,origen) {
