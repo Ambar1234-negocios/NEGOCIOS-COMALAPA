@@ -756,8 +756,8 @@ function verPerfil(categoria, index, opciones = {}) {
       ${!negocio.propiedad && (negocio.horarios || negocio.horario) ? `
         <div class="detalle-card">
           <h4>🕒 Horario</h4>
-          <p><strong>${estadoHorario.texto}</strong></p>
-          ${estadoHorario.automatico && estadoHorario.horarioHoy
+          <p><strong>${window.ConsultoriosExhibicion.esDental(negocio) ? escapar(negocio.horario || "Consulta los horarios de atención y citas por WhatsApp.") : estadoHorario.texto}</strong></p>
+          ${!window.ConsultoriosExhibicion.esDental(negocio) && estadoHorario.automatico && estadoHorario.horarioHoy
             ? `<small>Hoy: ${estadoHorario.horarioHoy}</small>`
             : ""}
         </div>
