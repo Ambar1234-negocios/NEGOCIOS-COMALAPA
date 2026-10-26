@@ -731,7 +731,7 @@ function verPerfil(categoria, index, opciones = {}) {
   const logo = negocio.logo || "";
   const estadoHorario = obtenerEstadoHorario(negocio);
 
-  const serviciosHTML = !window.ConsultoriosExhibicion.esDental(negocio) && !negocio.propiedad && negocio.servicios && negocio.servicios.length > 0
+  const serviciosHTML = !window.ConsultoriosExhibicion.esEspecial(negocio) && !negocio.propiedad && negocio.servicios && negocio.servicios.length > 0
     ? `
       <section class="perfil-seccion">
         <h4>Servicios</h4>
@@ -756,8 +756,8 @@ function verPerfil(categoria, index, opciones = {}) {
       ${!negocio.propiedad && (negocio.horarios || negocio.horario) ? `
         <div class="detalle-card">
           <h4>🕒 Horario</h4>
-          <p><strong>${window.ConsultoriosExhibicion.esDental(negocio) ? escaparTarjetaCategoria(negocio.horario || "Consulta los horarios de atención y citas por WhatsApp.") : estadoHorario.texto}</strong></p>
-          ${!window.ConsultoriosExhibicion.esDental(negocio) && estadoHorario.automatico && estadoHorario.horarioHoy
+          <p><strong>${window.ConsultoriosExhibicion.esEspecial(negocio) ? escaparTarjetaCategoria(negocio.horario || "Consulta horarios y disponibilidad por WhatsApp.") : estadoHorario.texto}</strong></p>
+          ${!window.ConsultoriosExhibicion.esEspecial(negocio) && estadoHorario.automatico && estadoHorario.horarioHoy
             ? `<small>Hoy: ${estadoHorario.horarioHoy}</small>`
             : ""}
         </div>
@@ -979,7 +979,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
         ${window.PropiedadesExhibicion.renderizar(negocio)}
         ${window.ConsultoriosExhibicion.renderizar(negocio)}
-        ${negocio.propiedad || window.ConsultoriosExhibicion.esDental(negocio) ? "" : window.ComidaExhibicion.menu(negocio)}
+        ${negocio.propiedad || window.ConsultoriosExhibicion.esEspecial(negocio) ? "" : window.ComidaExhibicion.menu(negocio)}
         ${promocionesHTML}
         
         ${galeriaHTML}
