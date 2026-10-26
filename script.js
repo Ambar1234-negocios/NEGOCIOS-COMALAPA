@@ -731,7 +731,7 @@ function verPerfil(categoria, index, opciones = {}) {
   const logo = negocio.logo || "";
   const estadoHorario = obtenerEstadoHorario(negocio);
 
-  const serviciosHTML = !negocio.propiedad && negocio.servicios && negocio.servicios.length > 0
+  const serviciosHTML = !window.ConsultoriosExhibicion.esDental(negocio) && !negocio.propiedad && negocio.servicios && negocio.servicios.length > 0
     ? `
       <section class="perfil-seccion">
         <h4>Servicios</h4>
@@ -978,7 +978,8 @@ function verPerfil(categoria, index, opciones = {}) {
         ` : ""}
 
         ${window.PropiedadesExhibicion.renderizar(negocio)}
-        ${negocio.propiedad ? "" : window.ComidaExhibicion.menu(negocio)}
+        ${window.ConsultoriosExhibicion.renderizar(negocio)}
+        ${negocio.propiedad || window.ConsultoriosExhibicion.esDental(negocio) ? "" : window.ComidaExhibicion.menu(negocio)}
         ${promocionesHTML}
         
         ${galeriaHTML}
