@@ -74,8 +74,8 @@
   function normalizarPedido(){
     for(const l of pedido.lineas)if(!l.negocio)l.negocio=pedido.negocio;
     pedido.negocio=pedido.lineas[0]?.negocio||null;
-    if(!pedido.lineas.length){pagoPedido='';nombrePedido='';telefonoPedido='';entregaPedido='';modoEntrega='domicilio';}
-    if(gruposPedido().length>1)modoEntrega='domicilio';
+    if(!pedido.lineas.length){pagoPedido='';nombrePedido='';telefonoPedido='';entregaPedido='';modoEntrega=mesaDeEntrada?'mesa':'domicilio';}
+    if(gruposPedido().length>1||(modoEntrega==='mesa'&&pedido.negocio&&pedido.negocio.slug!=='forno-mexa'))modoEntrega='domicilio';
   }
   function incorporar(n,nueva,linea){
     if(pedido.lineas.length&&pedido.negocio?.id!==n.id&&!(esComida(n)&&pedido.lineas.every(l=>esComida(dueno(l)))))return 'Los servicios digitales y los pedidos de comida se realizan por separado.';
@@ -102,7 +102,8 @@
   let pagoPedido='';
   let nombrePedido='';let telefonoPedido='';
   let entregaPedido='';
-  let modoEntrega=new URLSearchParams(location.search).get('negocio')==='forno-mexa'&&new URLSearchParams(location.search).get('mesa')==='1'?'mesa':'domicilio';
+  const mesaDeEntrada=new URLSearchParams(location.search).get('negocio')==='forno-mexa'&&new URLSearchParams(location.search).get('mesa')==='1';
+  let modoEntrega=mesaDeEntrada?'mesa':'domicilio';
   const envioGratisNegocio=n=>n?.delivery===true&&n.tipoDelivery==='gratis';
   const entregaPropia=()=>gruposPedido().length===1&&envioGratisNegocio(pedido.negocio)&&modoEntrega==='domicilio';
   const opcionesPago=n=>digital(n)?['Transferencia','Depósito']:modoEntrega==='recoger'?['Transferencia']:['Transferencia','Efectivo','Transferencia al recibir',...(n?.slug==='esenciales-decants'&&entregaPropia()?['Tarjeta al recibir']:[])];
