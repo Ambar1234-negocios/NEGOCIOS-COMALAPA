@@ -524,6 +524,7 @@ function obtenerEstadoHorario(negocio) {
 // Compatible con botón Atrás del celular y flecha del navegador
 // ============================================================
 
+const mesaEntrada = new URLSearchParams(location.search).get("mesa");
 function construirURL(parametros = {}) {
   const url = new URL(window.location.href);
   url.search = "";
@@ -534,6 +535,7 @@ function construirURL(parametros = {}) {
     }
   });
 
+  if (parametros.negocio === "forno-mexa" && mesaEntrada === "1") url.searchParams.set("mesa", "1");
   return `${url.pathname}${url.search}`;
 }
 
