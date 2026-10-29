@@ -1,1 +1,23 @@
 body{padding:0 0 90px;background:#f3f6f5}body>header{padding:24px max(18px,calc((100% - 1080px)/2));background:#173f35;color:white}main{max-width:1120px;margin:auto;padding:18px}#dueno-tabs{display:flex;gap:10px;margin-bottom:20px}#dueno-tabs button{flex:1;border-radius:16px;background:white;color:#244b41;border:1px solid #cadbd4}#dueno-tabs [aria-current=page]{background:#205747;color:white}.acciones-dueno{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}#qr-dueno{max-width:340px;margin:28px auto;padding:20px;background:white;color:#17352b;text-align:center;border-radius:20px}#qr-dueno svg{width:100%;height:auto}.fila-menu{border-radius:12px}.dueno-oscuro{background:#141e24;color:#e7eeee}.dueno-oscuro .tarjeta,.dueno-oscuro dialog,.dueno-oscuro .grupo-menu,.dueno-oscuro .fila-menu{background:#203039;color:#e7eeee}.dueno-oscuro input,.dueno-oscuro textarea,.dueno-oscuro select{background:#16252e;color:#fff;border-color:#6f8589}.dueno-oscuro h2,.dueno-oscuro h3,.dueno-oscuro h4,.dueno-oscuro p,.dueno-oscuro label,.dueno-oscuro .precio-menu{color:inherit}#config-plan-menu[hidden]{display:none!important}@media(max-width:640px){#dueno-tabs{position:fixed;bottom:0;left:0;right:0;z-index:20;background:#fff;margin:0;padding:10px 8px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -3px 20px #0001}#dueno-tabs button{padding:12px 6px;font-size:13px;min-height:48px}.fila-menu{grid-template-columns:64px minmax(0,1fr)!important}.acciones-menu{grid-column:1/-1;display:flex;flex-wrap:wrap}.acciones-menu button{padding:10px 12px}.barra{align-items:flex-start}.barra>div:last-child{display:flex;flex-wrap:wrap;gap:8px}.barra a,.barra button{font-size:13px}main{padding:14px}.tarjeta{padding:18px}input,select,textarea{max-width:100%;box-sizing:border-box}dialog{max-width:calc(100vw - 28px)}}@media print{body>*{display:none!important}body>main{display:block!important}main>*{display:none!important}#panel{display:block!important}#panel>*{display:none!important}#vista-compartir{display:block!important}#vista-compartir>*{display:none!important}#qr-dueno{display:block!important;max-width:400px}body{padding:0;background:white}}
+/* v54: every editor surface carries its own readable dark palette. */
+.dueno-oscuro{color-scheme:dark;--borde:#536b76}
+.dueno-oscuro .menu-herramientas,.dueno-oscuro .grupo-menu>h3,.dueno-oscuro details,.dueno-oscuro .editor-foto,.dueno-oscuro .editor-config,.dueno-oscuro .opcion-editor,.dueno-oscuro .previa-edicion,.dueno-oscuro #previa-producto,.dueno-oscuro .vista-producto,.dueno-oscuro .producto{background:#203039;color:#e7eeee;border-color:#536b76}
+.dueno-oscuro .grupo-menu>h3,.dueno-oscuro .opcion-editor,.dueno-oscuro #previa-producto{background:#182830}
+.dueno-oscuro .menu-herramientas label,.dueno-oscuro #conteo-menu,.dueno-oscuro .nota,.dueno-oscuro small,.dueno-oscuro .opcion-editor .nota{color:#b8ccd3}
+.dueno-oscuro input::placeholder,.dueno-oscuro textarea::placeholder{color:#aabfc8;opacity:1}
+.dueno-oscuro .aviso{background:#3d321d;color:#ffdf9c;border-color:#95763a}
+.dueno-oscuro #estado{background:#203b35;color:#e6f5ec;border-color:#6c9b85}
+.dueno-oscuro .chip-menu{background:#244a3c;color:#b9f1cf}
+.dueno-oscuro .chip-menu.agotado{background:#522d36;color:#ffd4dc}
+.dueno-oscuro .mini-menu{background:#31434b;color:#e7eeee}
+.dueno-oscuro .grupo-menu,.dueno-oscuro .fila-menu,.dueno-oscuro .eleccion-previa,.dueno-oscuro .producto-eliminado{border-color:#536b76}
+.dueno-oscuro .secundario,.dueno-oscuro .enlace-boton{background:#304a43;color:#e5f4eb;border-color:#6e8e82}
+.dueno-oscuro #nombre-eliminar-menu{color:#e7eeee}
+.dueno-oscuro #error-eliminar-menu,.dueno-oscuro [role=alert]{color:#ffbdca!important}
+.dueno-oscuro .boton-eliminar{background:#4e2730!important;color:#ffd3da!important;border-color:#b9808c!important}
+.dueno-oscuro #dueno-tabs{background:#141e24}
+.dueno-oscuro #dueno-tabs button{background:#203039;color:#e7eeee;border-color:#6b858d}
+.dueno-oscuro #dueno-tabs [aria-current=page]{background:#286a51;color:#fff}
+.dueno-oscuro #qr-dueno{color-scheme:light;background:#fff;color:#17352b}
+.dueno-oscuro #qr-dueno h3{color:#17352b}
+.dueno-oscuro :focus-visible{outline:3px solid #8ed4bb;outline-offset:3px}
