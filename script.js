@@ -535,7 +535,7 @@ function construirURL(parametros = {}) {
     }
   });
 
-  if (parametros.negocio === "forno-mexa" && mesaEntrada === "1") url.searchParams.set("mesa", "1");
+  if (parametros.negocio === "forno-mexa" && ["1","2","3"].includes(mesaEntrada)) url.searchParams.set("mesa", mesaEntrada);
   return `${url.pathname}${url.search}`;
 }
 
