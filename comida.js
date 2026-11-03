@@ -339,6 +339,25 @@
     if(window.__listaOfertasProductos)window.MejorasExhibicion?.ofertas(window.__listaOfertasProductos);
   },30000);
   document.addEventListener('mesa-visita',()=>{if(pedido.lineas.length)pintarPedido();});
+  // Mantiene una sola sección abierta dentro de cada menú, sin tocar el carrito.
+  document.addEventListener('toggle', event => {
+    const abierta = event.target;
+    if (!(abierta instanceof HTMLDetailsElement) || !abierta.matches('.comida-seccion') || !abierta.open) return;
+    const menuActual = abierta.closest('.comida-menu');
+    if (!menuActual) return;
+    menuActual.querySelectorAll('.comida-seccion[open]').forEach(otra => {
+      if (otra !== abierta) otra.open = false;
+    });
+    requestAnimationFrame(() => {
+      if (!abierta.isConnected || !abierta.open) return;
+      const titulo = abierta.querySelector('summary');
+      if (!titulo) return;
+      const posicion = titulo.getBoundingClientRect();
+      if (posicion.top < 0 || posicion.bottom > window.innerHeight) {
+        titulo.scrollIntoView({block: 'start', behavior: 'instant'});
+      }
+    });
+  }, true);
   window.ComidaExhibicion={menu,conectar,carrusel,productos,dinero,imagen,mensajeDigital};
 })();
 
