@@ -193,13 +193,24 @@
   function mensajeDigital(lineas,importeTotal) {
     return `Hola, quiero realizar este pedido:\n\n${lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}\nDuración: ${duracion(l.producto)} ${duracion(l.producto)===1?'mes':'meses'}\nDispositivos: ${dispositivos(l.producto)}${l.nota?'\n'+(l.producto.nombre.includes(' + ')||l.cantidad>1?'Nombres de los perfiles':'Nombre del perfil')+': '+l.nota:''}`).join('\n\n')}\n\nTotal: ${dinero(importeTotal)}`;
   }
+  function textoLineaPedido(l) {
+    const extras=l.extras||[],cantidad=l.cantidad;
+    const costoExtras=extras.reduce((s,x)=>s+centavos(x.precio)*cantidad,0);
+    const partes=[`${cantidad} × ${l.producto.nombre} — ${dinero(importe(l)-costoExtras)}`];
+    if(detallePromo(l))partes.push(detallePromo(l));
+    if(l.opciones?.length)partes.push('Opciones: '+descripcionOpciones(l));
+    for(const x of extras)partes.push(`+ ${cantidad} × ${x.nombre}: ${dinero(centavos(x.precio)*cantidad)}`);
+    if(extras.length)partes.push('Total de este producto con extras: '+dinero(importe(l)));
+    if(l.nota)partes.push('Indicación: '+l.nota);
+    return partes.join('\n');
+  }
   function mensajeComida(){
     const gs=gruposPedido();
-    const textoLinea=l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}${detallePromo(l)?'\n'+detallePromo(l):''}${l.opciones?.length?'\nOpciones: '+descripcionOpciones(l):''}${l.extras.length?'\nExtras: '+l.extras.map(x=>x.nombre+' ('+dinero(centavos(x.precio))+')').join(', '):''}${l.nota?'\nIndicación: '+l.nota:''}`;
+    const textoLinea=textoLineaPedido;
     return (gs.length>1?'Hola, quiero solicitar este pedido de varios negocios:':'Hola, quiero realizar este pedido de '+gs[0].negocio.nombre+':')+'\n\n'+gs.map(g=>'\u{1f37d} '+g.negocio.nombre+'\n'+g.lineas.map(textoLinea).join('\n\n')+'\nSubtotal: '+dinero(g.lineas.reduce((s,l)=>s+importe(l),0))).join('\n\n')+'\n\nTotal de productos: '+dinero(total())+(modoEntrega==='recoger'?'\n\u{1f6cd} Pasaré a recoger en el negocio. Sin cargo de envío.\nConfirmaré el pago completo por transferencia antes de que preparen mi pedido.':entregaPedido?'\n\u{1f3e0} Entregar en: '+entregaPedido:'')+(modoEntrega==='recoger'?'\n¿Me confirman disponibilidad, el total, los datos para transferir y cuándo puedo recogerlo?':entregaPropia()?'\n¿Me confirman disponibilidad y entrega gratis dentro de Comalapa?':'\n¿Me confirman disponibilidad y el total con el servicio de entrega?');
   }
   function mensajeEntregaPropia(n){
-    const lineas=pedido.lineas.map(l=>[l.cantidad+' × '+l.producto.nombre+' — '+dinero(importe(l)),l.opciones?.length?descripcionOpciones(l):'',l.extras.length?'Extras: '+l.extras.map(x=>x.nombre+' ('+dinero(centavos(x.precio))+')').join(', '):'',l.nota?'Nota: '+l.nota:''].filter(Boolean).join('\n'));
+    const lineas=pedido.lineas.map(textoLineaPedido);
     const pago=pagoPedido==='Tarjeta al recibir'?'💳 Pago con tarjeta al recibir.':pagoPedido==='Efectivo'?'💵 Pago: efectivo al recibir.':pagoPedido==='Transferencia al recibir'?'📲 Pago: transferencia al recibir; el negocio confirma el pago.':'💳 Pago: transferencia. Compártanme sus datos de pago.';
     return '🛍️ Pedido · '+n.nombre+'\n👤 Cliente: '+nombrePedido.trim()+'\nLo vi en Exhibición Frontera Comalapa.\n\n'+lineas.join('\n\n')+'\n\n💰 Total: '+dinero(total())+'\n📍 Entregar en: '+entregaPedido.trim()+'\n✨ Envío gratis dentro de Comalapa.\n'+pago+'\n\n¿Me confirman disponibilidad y horario de entrega?';
   }
@@ -360,4 +371,3 @@
   }, true);
   window.ComidaExhibicion={menu,conectar,carrusel,productos,dinero,imagen,mensajeDigital};
 })();
-
