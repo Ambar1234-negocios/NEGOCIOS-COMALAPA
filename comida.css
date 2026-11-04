@@ -70,28 +70,22 @@
 /* Entrega propia gratuita, independiente de mandaditos. */
 .envio-gratis-dorado{display:inline-flex;align-items:center;position:relative;overflow:hidden;padding:7px 13px;margin:7px 0;border:1px solid #c5a34b;border-radius:999px;background:linear-gradient(115deg,#fff6d5,#efcf78,#fff8e4);color:#5a3b04;font-size:14px;font-weight:750;box-shadow:0 2px 7px #aa812522}.envio-gratis-dorado::after{content:'';position:absolute;inset:-30% auto -30% -65%;width:35%;background:linear-gradient(90deg,transparent,#ffffffb0,transparent);transform:skewX(-20deg);animation:brillo-envio 5s ease-in-out infinite;pointer-events:none}@keyframes brillo-envio{0%,65%{left:-65%}100%{left:140%}}@media(prefers-reduced-motion:reduce){.envio-gratis-dorado::after{animation:none}}.envio-gratis-aviso{padding:12px;background:#fff6d5;color:#5a3b04;border-radius:12px}
 
-/* Secciones temáticas: decoración local sin fotografías adicionales. */
-.comida-seccion{--seccion-a:#225b4e;--seccion-b:#173e38;border-color:#d8e2dd;border-radius:19px;box-shadow:0 5px 15px #163b2e08;margin:15px 0}
-.comida-seccion[data-tema="mariscos"]{--seccion-a:#244b68;--seccion-b:#172e4b}
-.comida-seccion[data-tema="bebidas"]{--seccion-a:#216d73;--seccion-b:#164d58}
-.comida-seccion[data-tema="compartir"]{--seccion-a:#98613f;--seccion-b:#6d4330}
-.comida-seccion[data-tema="exoticos"]{--seccion-a:#65506e;--seccion-b:#40364f}
-.comida-seccion[data-tema="cafe"]{--seccion-a:#795e46;--seccion-b:#493c30}
-.comida-seccion[data-tema="postres"]{--seccion-a:#8b4d67;--seccion-b:#60364d}
-.comida-seccion[data-tema="pizzas"]{--seccion-a:#9b543d;--seccion-b:#713e32}
-.comida-seccion>summary{position:relative;isolation:isolate;display:flex;align-items:center;gap:15px;min-height:94px;padding:18px 22px;list-style:none;overflow:hidden;color:#fff;background:linear-gradient(115deg,var(--seccion-a),var(--seccion-b));font-size:19px;line-height:1.25;transition:filter .15s ease}
-.comida-seccion>summary::-webkit-details-marker{display:none}
-.comida-seccion>summary::marker{content:''}
-.comida-seccion>summary::before{content:'';position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:.55;background:radial-gradient(ellipse at 75% 120%,transparent 0 22%,#ffffff15 22.5% 23%,transparent 23.5% 35%,#ffffff10 35.5% 36%,transparent 36.5%),repeating-linear-gradient(130deg,transparent 0 32px,#ffffff05 33px 34px,transparent 35px 65px)}
-.comida-seccion>summary:hover{filter:brightness(1.08)}
-.comida-seccion>summary:focus-visible{outline:3px solid #f0ca7d;outline-offset:-5px}
-.seccion-icono{display:flex;align-items:center;justify-content:center;width:47px;height:47px;flex:0 0 47px;border:1px solid #ffffff2b;border-radius:14px;background:#ffffff0f;color:#fff}
-.seccion-icono svg{width:29px;height:29px}
-.seccion-textos{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0;flex:1}
-.seccion-nombre{font-weight:750;overflow-wrap:anywhere;color:#fff}
-.comida-seccion>summary small{margin:0;color:#eef5f4;font-size:12px;font-weight:500;letter-spacing:.1px}
-.seccion-flecha{display:flex;align-items:center;justify-content:center;flex:0 0 33px;height:33px;border-radius:50%;background:#ffffff13;border:1px solid #ffffff24;transition:transform .2s ease}
-.seccion-flecha svg{width:21px;height:21px}
-.comida-seccion[open]>summary .seccion-flecha{transform:rotate(180deg)}
-@media(max-width:600px){.comida-seccion>summary{padding:17px 15px;gap:12px;min-height:91px;font-size:18px}.seccion-icono{width:42px;height:42px;flex-basis:42px;border-radius:12px}.seccion-icono svg{width:27px;height:27px}}
+/* Secciones claras: azul mar, celeste y detalles por tipo de comida. */
+.comida-seccion{--seccion-a:#edf8ff;--seccion-b:#d8edfb;--seccion-tinta:#173f64;--seccion-borde:#c4deee;border-color:var(--seccion-borde);border-radius:18px;box-shadow:0 4px 14px #163b620a;margin:14px 0}
+.comida-seccion[data-tema="mariscos"]{--seccion-a:#e4f7ff;--seccion-b:#bfe6f7;--seccion-tinta:#124565;--seccion-borde:#acd7eb}
+.comida-seccion[data-tema="bebidas"]{--seccion-a:#effaff;--seccion-b:#d4effa;--seccion-tinta:#174d6b}
+.comida-seccion[data-tema="compartir"]{--seccion-a:#eff5ff;--seccion-b:#dbe8fb;--seccion-tinta:#29496c}
+.comida-seccion[data-tema="exoticos"]{--seccion-a:#edf6ff;--seccion-b:#cfe5f8;--seccion-tinta:#234465}
+.comida-seccion[data-tema="cafe"]{--seccion-a:#faf6f1;--seccion-b:#ede3d8;--seccion-tinta:#594537;--seccion-borde:#e2d5c7}
+.comida-seccion[data-tema="postres"]{--seccion-a:#f5f3ff;--seccion-b:#e6e5fa;--seccion-tinta:#464675;--seccion-borde:#d8d9ef}
+.comida-seccion[data-tema="pizzas"]{--seccion-a:#edf3fb;--seccion-b:#d7e3f4;--seccion-tinta:#243f60}
+.comida-seccion>summary{position:relative;isolation:isolate;display:flex;align-items:center;gap:15px;min-height:82px;padding:16px 20px;list-style:none;overflow:hidden;color:var(--seccion-tinta);background:linear-gradient(115deg,var(--seccion-a),var(--seccion-b));font-size:19px;line-height:1.25;transition:filter .15s ease}
+.comida-seccion>summary::-webkit-details-marker{display:none}.comida-seccion>summary::marker{content:''}
+.comida-seccion>summary::before{content:'';position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:.7;background:radial-gradient(ellipse at 85% 135%,transparent 0 30%,#ffffffa6 30.5% 31.5%,transparent 32% 42%,#ffffff80 42.5% 43.5%,transparent 44%)}
+.comida-seccion[data-tema="mariscos"]>summary::before{background:radial-gradient(ellipse at 80% 140%,transparent 0 34%,#ffffffb3 34.5% 36%,transparent 36.5% 46%,#ffffff99 46.5% 48%,transparent 48.5% 60%,#ffffff80 60.5% 62%,transparent 62.5%)}
+.comida-seccion>summary:hover{filter:brightness(.97)}.comida-seccion>summary:focus-visible{outline:3px solid #397eaf;outline-offset:-4px}
+.seccion-icono{display:flex;align-items:center;justify-content:center;width:47px;height:47px;flex:0 0 47px;border:1px solid #ffffffc9;border-radius:14px;background:#ffffffa8;color:var(--seccion-tinta)}.seccion-icono svg{width:29px;height:29px}
+.seccion-textos{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;flex:1}.seccion-nombre{font-weight:750;overflow-wrap:anywhere;color:var(--seccion-tinta)}.comida-seccion>summary small{margin:0;color:var(--seccion-tinta);opacity:.85;font-size:12px;font-weight:500;letter-spacing:.1px}
+.seccion-flecha{display:flex;align-items:center;justify-content:center;flex:0 0 33px;height:33px;border-radius:50%;color:var(--seccion-tinta);background:#ffffffa8;border:1px solid #ffffffc9;transition:transform .2s ease}.seccion-flecha svg{width:21px;height:21px}.comida-seccion[open]>summary .seccion-flecha{transform:rotate(180deg)}
+@media(max-width:600px){.comida-seccion>summary{padding:15px;gap:12px;min-height:80px;font-size:18px}.seccion-icono{width:42px;height:42px;flex-basis:42px;border-radius:12px}.seccion-icono svg{width:27px;height:27px}}
 @media(prefers-reduced-motion:reduce){.comida-seccion>summary,.seccion-flecha{transition:none}}
