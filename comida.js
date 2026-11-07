@@ -121,6 +121,7 @@
   let nombrePedido='';let telefonoPedido='';
   let entregaPedido='';
   const menuLocal=document.documentElement.dataset.menuLocal==='true';
+  const menuDirecto=menuLocal&&Boolean(window.MenuDirectoExhibicion);
   const mesaNumero=window.MesasExhibicion.mesa();
   const mesaDeEntrada=new URLSearchParams(location.search).get('negocio')==='forno-mexa'&&['1','2','3'].includes(new URLSearchParams(location.search).get('mesa'));
   let modoEntrega=menuLocal||mesaDeEntrada?'mesa':'domicilio';
@@ -147,7 +148,7 @@
   }
   function textoPago(pago){if(pago==='Transferencia al recibir')return entregaPropia()?'📲 Transferiré al negocio cuando llegue mi pedido. El negocio confirmará el pago.':'📲 Transferiré cuando llegue mi pedido. Recepción confirmará el pago antes de entregarlo.';return pago==='Transferencia'?'\u{1f4b3} Pagaré por transferencia bancaria.':pago==='Depósito'?'\u{1f3ea} Pagaré mediante depósito.':'\u{1f4b5} Pagaré en efectivo.';}
   document.addEventListener('change',e=>{
-    if(e.target.matches?.('[data-modo-entrega]')&&pedido.negocio&&!digital(pedido.negocio)){if(e.target.value==='recoger'&&gruposPedido().length>1)return;modoEntrega=e.target.value==='mesa'&&gruposPedido().length===1&&pedido.negocio.slug==='forno-mexa'?'mesa':e.target.value==='recoger'?'recoger':e.target.value==='mandaditos'&&gruposPedido().length===1&&envioGratisNegocio(pedido.negocio)?'mandaditos':'domicilio';if(modoEntrega==='recoger')pagoPedido='Transferencia';pintarPedido();return;}
+    if(e.target.matches?.('[data-modo-entrega]')&&pedido.negocio&&!digital(pedido.negocio)){if(e.target.value==='recoger'&&gruposPedido().length>1)return;modoEntrega=e.target.value==='mesa'&&gruposPedido().length===1&&(menuDirecto||pedido.negocio.slug==='forno-mexa')?'mesa':e.target.value==='recoger'?'recoger':e.target.value==='mandaditos'&&gruposPedido().length===1&&envioGratisNegocio(pedido.negocio)?'mandaditos':'domicilio';if(modoEntrega==='recoger')pagoPedido='Transferencia';pintarPedido();return;}
     if(!e.target.matches?.('[data-pago-pedido]')||!pedido.negocio)return;
     pagoPedido=opcionesPago(pedido.negocio).includes(e.target.value)?e.target.value:'';
     document.querySelectorAll('[data-pago-pedido]').forEach(select=>select.value=pagoPedido);
@@ -156,6 +157,7 @@
   document.addEventListener('input',e=>{if(e.target.matches?.('[data-telefono-pedido]')){telefonoPedido=e.target.value.slice(0,20);document.querySelectorAll('[data-telefono-pedido]').forEach(i=>{if(i!==e.target)i.value=telefonoPedido;});}if(e.target.matches?.('[data-entrega-pedido]'))entregaPedido=e.target.value.slice(0,500);if(e.target.matches?.('[data-cliente-pedido]')){nombrePedido=e.target.value.slice(0,120);document.querySelectorAll('[data-cliente-pedido]').forEach(i=>{if(i!==e.target)i.value=nombrePedido;});}});
   function resumen() {
     if(!pedido.lineas.length)return '<p>Agrega productos para armar tu pedido.</p>';
+    if(menuDirecto&&gruposPedido().length===1)return window.MenuDirectoExhibicion.resumen(pedido,total(),selectorEntrega(),modoEntrega);
     if((modoEntrega==='mesa'||menuLocal&&modoEntrega==='recoger')&&gruposPedido().length===1&&pedido.negocio.slug==='forno-mexa')return window.MesasExhibicion.resumen(pedido,total(),selectorEntrega(),modoEntrega);
     const n=pedido.negocio;
     if(digital(n)) return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${l.cantidad} × ${escapar(l.producto.nombre)} — ${dinero(importe(l))}</strong><p>${escapar(condiciones(l.producto))}</p>${l.nota?`<p>${l.producto.nombre.includes(' + ')||l.cantidad>1?'Nombres de los perfiles':'Nombre del perfil'}: ${escapar(l.nota)}</p>`:''}</div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total: ${dinero(total())}</p><p>Entrega y soporte por WhatsApp.</p>${selectorPago(n)}<div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
@@ -221,6 +223,7 @@
   function whatsapp(n,consulta,origen) {
     if(!consulta&&!pedido.lineas.length)return;
     if(!consulta && (pedido.negocio?.id!==n?.id || pedido.lineas.some(l=>!dueno(l)?.productos?.some(p=>p.id===l.producto.id)|| (gruposPedido().length>1&&!esComida(dueno(l)))))){alert('El pedido no corresponde a este negocio. Revisa tu carrito antes de enviarlo.');return;}
+    if(!consulta&&menuDirecto&&gruposPedido().length===1){window.MenuDirectoExhibicion.enviar({negocio:n,origen,total:total(),modalidad:modoEntrega});return;}
     if(!consulta&&(modoEntrega==='mesa'||menuLocal&&modoEntrega==='recoger')&&gruposPedido().length===1&&n.slug==='forno-mexa'){window.MesasExhibicion.enviar({negocio:n,modalidad:modoEntrega,origen,total:total(),lineas:pedido.lineas.map(l=>({negocio:dueno(l).slug,producto:l.producto.id,cantidad:l.cantidad,opciones:(l.opciones||[]).map(o=>({grupo:o.grupoId,opcion:o.id})),extras:l.extras.map(x=>Number.isInteger(x.cantidad)?{id:x.id,cantidad:x.cantidad}:x.id),nota:l.nota||''})),limpiar:()=>{pedido.lineas=[];pintarPedido();}});return;}
     const contenedor=origen?.closest?.('.pedido-resumen-modal')||document.getElementById('comida-pedido');
     if(!consulta&&!digital(n)&&(!nombrePedido.trim()||modoEntrega!=='recoger'&&!entregaPedido.trim())){const campo=contenedor?.querySelector(!nombrePedido.trim()?'[data-cliente-pedido]':'[data-entrega-pedido]');campo?.focus();campo?.reportValidity();return;}
