@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded',async()=>{const root=document.getEl
  const r=await fetch('negocios.json',{cache:'no-cache'});if(!r.ok)throw Error('Catálogo no disponible');
  const perfiles=await window.SitioPublicado.leer('negocios',await r.json());const negocio=perfiles.find(n=>n.slug===slug&&n.activo!==false);if(!negocio)throw Error('Negocio no disponible');
  const [publicado]=await window.MenuPublicado.aplicar([negocio]);const n={...publicado};if(n?.slug!==slug||n.tipoCatalogo==='digital')throw Error('Menú no disponible');
+ if(!comida(n))document.querySelector('header>span').textContent='Consulta el catálogo y pide al negocio por WhatsApp';
  document.title=(comida(n)?'Menú':'Catálogo')+' · '+n.nombre;document.querySelector('header h1').textContent=n.nombre;document.getElementById('nombre-pie').textContent=(comida(n)?'Menú de ':'Catálogo de ')+n.nombre;
  const logo=document.querySelector('.local-logo');const ruta=String(n.logo||'');if(/^imagenes\/[a-zA-Z0-9_./-]+\.(webp|png|jpe?g)$/i.test(ruta)&&!ruta.includes('..')||/^https:\/\/gyvoyzxsgckpfkagzjtf\.supabase\.co\/storage\/v1\/object\/public\//.test(ruta)){logo.src=ruta;logo.alt='Logo de '+n.nombre;logo.hidden=false;}else logo.hidden=true;
  root.innerHTML=window.ComidaExhibicion.menu(n);window.ComidaExhibicion.conectar(n);
