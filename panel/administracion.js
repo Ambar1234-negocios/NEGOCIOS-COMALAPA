@@ -34,6 +34,40 @@ function actualizarValorPromoDirecta(){
   if(t==='porcentaje_envio'){v.max='100';v.placeholder='Ej. 50';}
   else{v.removeAttribute('max');v.placeholder='Ej. 20';}
 }
+let promocionDirectaEditando=null;
+function llenarFormularioPromoDirecta(p){
+  const select=el('promo-directa-negocio');
+  promocionDirectaEditando=p?.id||null;
+  if(p){
+    if([...select.options].some(o=>o.value===p.negocio_slug))select.value=p.negocio_slug;
+    el('promo-directa-titulo').value=p.titulo||'';
+    el('promo-directa-tipo').value=p.promo_tipo||'general';
+    el('promo-directa-valor').value=p.promo_valor??'';
+    el('promo-aporte-exhibicion').value=Number(p.aporte_exhibicion_centavos||0)/100;
+    el('promo-presupuesto-exhibicion').value=p.presupuesto_exhibicion_centavos==null?'':Number(p.presupuesto_exhibicion_centavos)/100;
+    el('promo-aporte-negocio').value=Number(p.aporte_negocio_centavos||0)/100;
+    el('promo-presupuesto-negocio').value=p.presupuesto_negocio_centavos==null?'':Number(p.presupuesto_negocio_centavos)/100;
+    el('promo-directa-max-usos').value=p.max_usos??'';
+    el('promo-directa-vigencia').value=p.vigencia_hasta||'';
+    el('promo-directa-local').checked=p.solo_zona_local!==false;
+    el('promo-directa-guardar').textContent='💾 Guardar cambios';
+    el('promo-directa-cancelar').hidden=false;
+    actualizarValorPromoDirecta();
+    el('form-promocion-directa').scrollIntoView({behavior:'smooth',block:'start'});
+  }else{
+    el('form-promocion-directa').reset();
+    el('promo-directa-tipo').value='porcentaje_envio';
+    el('promo-directa-valor').value='50';
+    el('promo-aporte-exhibicion').value='10';
+    el('promo-presupuesto-exhibicion').value='200';
+    el('promo-aporte-negocio').value='10';
+    el('promo-presupuesto-negocio').value='200';
+    el('promo-directa-local').checked=true;
+    el('promo-directa-guardar').textContent='🚀 Crear campaña';
+    el('promo-directa-cancelar').hidden=true;
+    actualizarValorPromoDirecta();
+  }
+}
 async function cargarPromocionesDirectasAdmin(){
   const select=el('promo-directa-negocio'),zona=el('lista-promociones-directas');if(!select||!zona)return;
   const [menus,promos]=await Promise.all([
@@ -58,7 +92,15 @@ async function cargarPromocionesDirectasAdmin(){
       nodo('p','✅ Servicios completados: '+Number(p.usos_completados||0)+' · ⏳ Reservados: '+Number(p.usos_reservados||0)),
       nodo('p','Exhibición: '+dineroPromo(gastEx)+(preEx!=null?' de '+dineroPromo(preEx):'')+' · Negocio: '+dineroPromo(gastNeg)+(preNeg!=null?' de '+dineroPromo(preNeg):'')),
       nodo('small',(p.activa?'🟢 Activa':'🔴 Inactiva')+(p.vigencia_hasta?' · Hasta '+p.vigencia_hasta:'')));
-    zona.append(card);
+    const acciones=nodo('div',undefined,'acciones-dueno');
+    const editar=nodo('button','✏️ Editar','secundario');editar.type='button';editar.onclick=()=>llenarFormularioPromoDirecta(p);
+    const estado=nodo('button',p.activa?'⏸️ Desactivar':'▶️ Reactivar','secundario');estado.type='button';
+    estado.onclick=()=>{if(!confirm((p.activa?'¿Desactivar':'¿Reactivar')+' esta promoción?'))return;tarea(async()=>{await api('/rest/v1/rpc/admin_promocion_directa_estado',{method:'POST',datos:{campana:p.id,activa:!p.activa}});await cargarPromocionesDirectasAdmin();aviso(p.activa?'Promoción desactivada.':'Promoción reactivada.');});};
+    const movimientos=Number(p.usos_completados||0)+Number(p.usos_reservados||0);
+    const eliminar=nodo('button','🗑️ Eliminar','secundario');eliminar.type='button';eliminar.disabled=movimientos>0;
+    if(movimientos>0)eliminar.title='Ya tiene movimientos; desactívala para conservar el historial.';
+    eliminar.onclick=()=>{if(!confirm('¿Eliminar definitivamente esta promoción?'))return;tarea(async()=>{await api('/rest/v1/rpc/admin_promocion_directa_eliminar',{method:'POST',datos:{campana:p.id}});if(promocionDirectaEditando===p.id)llenarFormularioPromoDirecta(null);await cargarPromocionesDirectasAdmin();aviso('Promoción eliminada.');});};
+    acciones.append(editar,estado,eliminar);card.append(acciones);zona.append(card);
   }
 }
 function dineroPromo(c){return '$'+new Intl.NumberFormat('es-MX',{minimumFractionDigits:0,maximumFractionDigits:2}).format(Number(c||0)/100);}
@@ -79,8 +121,11 @@ if(el('form-promocion-directa'))el('form-promocion-directa').onsubmit=e=>{e.prev
     vigencia_hasta:el('promo-directa-vigencia').value||null,
     solo_zona_local:el('promo-directa-local').checked
   };
-  if(!confirm('¿Crear esta campaña y dejarla disponible para Recepción?'))return;
-  await api('/rest/v1/rpc/admin_promocion_directa_guardar',{method:'POST',datos:{datos}});
-  el('promo-directa-titulo').value='';el('promo-directa-max-usos').value='';await cargarPromocionesDirectasAdmin();
-  aviso('Campaña creada. Recepción ya puede aplicarla al cotizar.');
+  const editando=promocionDirectaEditando;
+  if(!confirm(editando?'¿Guardar los cambios de esta promoción?':'¿Crear esta campaña y dejarla disponible para Recepción?'))return;
+  if(editando)await api('/rest/v1/rpc/admin_promocion_directa_actualizar',{method:'POST',datos:{campana:editando,datos}});
+  else await api('/rest/v1/rpc/admin_promocion_directa_guardar',{method:'POST',datos:{datos}});
+  llenarFormularioPromoDirecta(null);await cargarPromocionesDirectasAdmin();
+  aviso(editando?'Promoción actualizada.':'Campaña creada. Recepción ya puede aplicarla al cotizar.');
 });};
+if(el('promo-directa-cancelar'))el('promo-directa-cancelar').onclick=()=>{llenarFormularioPromoDirecta(null);aviso('Edición cancelada.');};
