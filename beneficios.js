@@ -5,10 +5,17 @@ const estado=document.getElementById('beneficios-estado'),form=document.getEleme
 for(let i=1;i<=31;i++){const o=document.createElement('option');o.value=String(i);o.textContent=String(i);dia.append(o);}
 const token=location.hash.slice(1).trim().toLowerCase();
 async function rpc(nombre,datos){
-  const r=await fetch(BASE+'/rest/v1/rpc/'+nombre,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify(datos),cache:'no-store'});
-  const j=await r.json().catch(()=>({}));
-  if(!r.ok)throw Error(j.message||'No se pudo completar la solicitud.');
-  return j;
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),12000);
+  try{
+    const r=await fetch(BASE+'/rest/v1/rpc/'+nombre,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify(datos),cache:'no-store',signal:controller.signal});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw Error(j.message||'No se pudo completar la solicitud.');
+    return j;
+  }catch(e){
+    if(e.name==='AbortError')throw Error('La conexión tardó demasiado. Estamos verificando si tu registro sí se guardó…');
+    throw e;
+  }finally{clearTimeout(timeout);}
 }
 async function cargar(){
   if(!/^[a-f0-9]{64}$/.test(token)){estado.textContent='Esta invitación no es válida.';return;}
@@ -29,7 +36,19 @@ form.addEventListener('submit',async e=>{
     form.hidden=true;
     location.hash='';
     estado.textContent='✅ Listo. Tu día y mes de cumpleaños quedaron registrados para beneficios y detalles especiales. Puedes retirar tu consentimiento cuando quieras contactándonos por el medio indicado en el Aviso de Privacidad.';
-  }catch(err){estado.textContent=err.message;boton.disabled=false;boton.textContent='Guardar mi participación';}
+  }catch(err){
+    try{
+      const verificacion=await rpc('cliente_beneficio_consultar',{token});
+      if(verificacion?.ya_activo){
+        form.hidden=true;
+        estado.textContent='✅ Listo. Tu participación quedó registrada correctamente.';
+        return;
+      }
+    }catch{}
+    estado.textContent=err.message;
+    boton.disabled=false;
+    boton.textContent='Guardar mi participación';
+  }
 });
 cargar();
 })();
