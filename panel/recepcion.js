@@ -2,6 +2,7 @@
 const enlacesListos=new Map();
 let configuracionPago=null,vistaHistorial=false,ultimoDiaOperacion=null;
 let pedidos=[],riders=[],clientes=[],campanas=[],promocionesOperativas=[],campanaSeleccionada=null,pedidoSeleccionado=null,ejemploPendiente=null,edicionPendiente=false;
+const invitacionesBeneficiosPreparadas=new Map();
 const estadosPedido={pendiente:'📥 Pendiente de cotizar',cotizado:'💰 Cotizado',propuesto:'🛵 Esperando repartidor',asignado:'👍 Aceptado por repartidor',recogido:'🛵 En camino',preparando:'👨‍🍳 Preparando para recoger',listo_recoger:'📦 Listo para recoger',entregado:'✅ Entregado',cancelado:'🔴 Cancelado'};
 const dineroOperacion=n=>'$'+new Intl.NumberFormat('es-MX',{minimumFractionDigits:0,maximumFractionDigits:2}).format(Number(n)/100),totalPedido=p=>p.productos_centavos+p.servicio_centavos;
 function tiempoOperacion(valor){const n=Number(valor),h=Math.floor(n/60),m=n%60;return h?(h+' '+(h===1?'hora':'horas')+(m?' y '+m+' '+(m===1?'minuto':'minutos'):'')):n+' '+(n===1?'minuto':'minutos');}
@@ -173,19 +174,32 @@ function pintarClientes(){
       card.append(nodo('p','🎁 Beneficios activos'+(c.cumple_dia&&c.cumple_mes?' · 🎂 '+c.cumple_dia+' de '+meses[Number(c.cumple_mes)]:'') ,'nota'));
     }else{
       card.append(nodo('p','🎁 Sin registro de beneficios/cumpleaños.','nota'));
-      const invitar=nodo('button','🎁 Invitar a beneficios','secundario');invitar.type='button';
-      invitar.disabled=!c.telefono_verificado||!c.telefono;
-      if(!c.telefono_verificado)invitar.title='Primero confirma que el teléfono del cliente sea correcto.';
-      invitar.onclick=()=>tarea(async()=>{
+      const puedeInvitar=!!c.telefono_verificado&&!!c.telefono;
+      const preparar=async()=>{
+        if(invitacionesBeneficiosPreparadas.has(c.id))return invitacionesBeneficiosPreparadas.get(c.id);
         const r=await api('/rest/v1/rpc/cliente_beneficio_enlace_crear_cliente',{method:'POST',datos:{cliente:c.id}});
-        if(r.ya_activo){await cargarClientes();aviso('Este cliente ya participa en beneficios.');return;}
+        if(r.ya_activo){invitacionesBeneficiosPreparadas.delete(c.id);await cargarClientes();aviso('Este cliente ya participa en beneficios.');return null;}
         const url=location.origin+'/beneficios.html#'+r.token;
         const mensaje='Hola, '+(c.nombre||'')+' 👋\n\nSi gustas, puedes participar voluntariamente en nuestros beneficios, promociones y detalles de cumpleaños 🎁\n\nSolo te pediremos el día y mes de tu cumpleaños. No necesitas crear cuenta ni contraseña.\n\n👉 '+url+'\n\nEs opcional y puedes dejar de participar cuando quieras.';
+        const preparada={mensaje,url};invitacionesBeneficiosPreparadas.set(c.id,preparada);return preparada;
+      };
+      const invitar=nodo('button','📲 Invitar por WhatsApp','secundario');invitar.type='button';invitar.disabled=!puedeInvitar;
+      const copiar=nodo('button','📋 Copiar mensaje','secundario');copiar.type='button';copiar.disabled=!puedeInvitar;
+      if(!c.telefono_verificado){invitar.title='Primero confirma que el teléfono del cliente sea correcto.';copiar.title=invitar.title;}
+      invitar.onclick=()=>tarea(async()=>{
+        const preparada=await preparar();if(!preparada)return;
         const tel=String(c.telefono||'').replace(/\D/g,'');const numero=tel.length===10?'52'+tel:tel;
-        const a=nodo('a');a.href='https://api.whatsapp.com/send?phone='+numero+'&text='+encodeURIComponent(mensaje);a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('data-contacto-cliente','');a.click();
+        const a=nodo('a');a.href='https://api.whatsapp.com/send?phone='+numero+'&text='+encodeURIComponent(preparada.mensaje);a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('data-contacto-cliente','');a.click();
         aviso('Invitación lista. Pulsa Enviar en WhatsApp.');
       });
-      card.append(invitar);
+      copiar.onclick=()=>tarea(async()=>{
+        const preparada=await preparar();if(!preparada)return;
+        try{await navigator.clipboard.writeText(preparada.mensaje);aviso('Mensaje de invitación copiado. Pégalo en el WhatsApp correcto.');}
+        catch{
+          const area=nodo('textarea');area.value=preparada.mensaje;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.select();document.execCommand('copy');area.remove();aviso('Mensaje de invitación copiado. Pégalo en el WhatsApp correcto.');
+        }
+      });
+      card.append(invitar,copiar);
     }
     zona.append(card);
   }
