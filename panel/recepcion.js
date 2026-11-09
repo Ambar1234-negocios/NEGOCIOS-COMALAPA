@@ -228,16 +228,36 @@ async function copiarCampana(c){
 function compartirCampanaWhatsApp(c){
   const a=nodo('a');a.href='https://wa.me/?text='+encodeURIComponent(textoCampanaCompartible(c));a.target='_blank';a.rel='noopener noreferrer';a.click();
 }
+function nombreBeneficioCampana(c){
+  if(c.promo_tipo==='envio_gratis')return 'Envío gratis';
+  if(c.promo_tipo==='porcentaje_envio')return Number(c.promo_valor||0)+'% en el mandadito';
+  if(c.promo_tipo==='monto_envio')return '$'+Number(c.promo_valor||0).toLocaleString('es-MX')+' de descuento en el mandadito';
+  if(c.promo_tipo==='regalo')return 'Regalo · '+c.titulo;
+  return c.titulo||'Promoción';
+}
+function tarjetaCampanaRecepcion(c){
+  const card=nodo('article',undefined,'tarjeta');
+  const negocio=c.negocio_nombre||c.negocio_filtro||'Campaña general';
+  card.append(nodo('h3',negocio+' · '+nombreBeneficioCampana(c)),
+    nodo('p',(c.vigencia_hasta?'Vigencia: '+c.vigencia_hasta+' · ':'')+'Marcados como enviados: '+Number(c.enviados||0),'nota'));
+  const copiar=nodo('button','📋 Copiar mensaje','secundario');copiar.type='button';copiar.onclick=()=>tarea(()=>copiarCampana(c));
+  const compartir=nodo('button','📲 Compartir por WhatsApp','secundario');compartir.type='button';compartir.onclick=()=>compartirCampanaWhatsApp(c);
+  const abrir=nodo('button','👥 Enviar a clientes','secundario');abrir.type='button';abrir.onclick=()=>{campanaSeleccionada=c.id;tarea(pintarDetallePromocion);};
+  card.append(copiar,compartir,abrir);return card;
+}
 function pintarPromociones(){
   const zona=el('lista-promociones');if(!zona)return;zona.replaceChildren();
   if(!campanas.length){zona.append(nodo('p','Todavía no hay promociones creadas.','nota'));return;}
-  for(const c of campanas){
-    const card=nodo('article',undefined,'tarjeta');
-    card.append(nodo('h3',c.titulo),nodo('p',(c.negocio_filtro?'Clientes que ya compraron en '+c.negocio_filtro+' · ':'')+'Mínimo completados: '+c.minimo_completados+(c.vigencia_hasta?' · Vigencia: '+c.vigencia_hasta:'')),nodo('p','Marcados como enviados: '+Number(c.enviados||0),'nota'));
-    const copiar=nodo('button','📋 Copiar mensaje','secundario');copiar.type='button';copiar.onclick=()=>tarea(()=>copiarCampana(c));
-    const compartir=nodo('button','📲 Compartir por WhatsApp','secundario');compartir.type='button';compartir.onclick=()=>compartirCampanaWhatsApp(c);
-    const abrir=nodo('button','👥 Ver clientes elegibles','secundario');abrir.type='button';abrir.onclick=()=>{campanaSeleccionada=c.id;tarea(pintarDetallePromocion);};
-    card.append(copiar,compartir,abrir);zona.append(card);
+  const operativas=campanas.filter(c=>c.negocio_slug||Number(c.aporte_exhibicion_centavos||0)>0||Number(c.aporte_negocio_centavos||0)>0||c.max_usos!=null);
+  const manuales=campanas.filter(c=>!operativas.includes(c));
+  if(operativas.length){
+    zona.append(nodo('h3','🏪 Promociones activas de negocios'));
+    for(const c of operativas)zona.append(tarjetaCampanaRecepcion(c));
+  }
+  if(manuales.length){
+    const bloque=nodo('details');bloque.append(nodo('summary','Campañas manuales anteriores · '+manuales.length));
+    for(const c of manuales)bloque.append(tarjetaCampanaRecepcion(c));
+    zona.append(bloque);
   }
 }
 async function pintarDetallePromocion(){
