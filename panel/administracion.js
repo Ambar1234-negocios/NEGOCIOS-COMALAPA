@@ -34,6 +34,14 @@ function actualizarValorPromoDirecta(){
   if(t==='porcentaje_envio'){v.max='100';v.placeholder='Ej. 50';}
   else{v.removeAttribute('max');v.placeholder='Ej. 20';}
 }
+function actualizarCondicionPromoDirecta(){
+  const t=el('promo-condicion-tipo')?.value,m=el('promo-condicion-monto-zona'),q=el('promo-condicion-cantidad-zona');
+  if(!m||!q)return;
+  m.hidden=t!=='monto_minimo';
+  q.hidden=!['cantidad_producto','cantidad_categoria'].includes(t);
+  if(el('promo-condicion-producto'))el('promo-condicion-producto').closest('label').hidden=t!=='cantidad_producto';
+  if(el('promo-condicion-categoria'))el('promo-condicion-categoria').closest('label').hidden=t!=='cantidad_categoria';
+}
 let promocionDirectaEditando=null;
 function llenarFormularioPromoDirecta(p){
   const select=el('promo-directa-negocio');
@@ -50,9 +58,17 @@ function llenarFormularioPromoDirecta(p){
     el('promo-directa-max-usos').value=p.max_usos??'';
     el('promo-directa-vigencia').value=p.vigencia_hasta||'';
     el('promo-directa-local').checked=p.solo_zona_local!==false;
+    el('promo-condicion-tipo').value=p.condicion_tipo||'ninguna';
+    el('promo-condicion-monto').value=p.condicion_monto_centavos==null?'':Number(p.condicion_monto_centavos)/100;
+    el('promo-condicion-cantidad').value=p.condicion_cantidad??'';
+    el('promo-condicion-producto').value=p.condicion_producto_id||'';
+    el('promo-condicion-categoria').value=p.condicion_categoria||'';
+    el('promo-premio-texto').value=p.premio_texto||'';
+    el('promo-terminos-publicos').value=p.terminos_publicos||'';
     el('promo-directa-guardar').textContent='💾 Guardar cambios';
     el('promo-directa-cancelar').hidden=false;
     actualizarValorPromoDirecta();
+    actualizarCondicionPromoDirecta();
     const detalle=el('form-promocion-directa').closest('details');if(detalle)detalle.open=true;
     el('form-promocion-directa').scrollIntoView({behavior:'smooth',block:'start'});
   }else{
@@ -64,9 +80,11 @@ function llenarFormularioPromoDirecta(p){
     el('promo-aporte-negocio').value='10';
     el('promo-presupuesto-negocio').value='200';
     el('promo-directa-local').checked=true;
+    el('promo-condicion-tipo').value='ninguna';
     el('promo-directa-guardar').textContent='🚀 Crear campaña';
     el('promo-directa-cancelar').hidden=true;
     actualizarValorPromoDirecta();
+    actualizarCondicionPromoDirecta();
   }
 }
 async function cargarPromocionesDirectasAdmin(){
@@ -106,6 +124,7 @@ async function cargarPromocionesDirectasAdmin(){
 }
 function dineroPromo(c){return '$'+new Intl.NumberFormat('es-MX',{minimumFractionDigits:0,maximumFractionDigits:2}).format(Number(c||0)/100);}
 if(el('promo-directa-tipo')){el('promo-directa-tipo').onchange=actualizarValorPromoDirecta;actualizarValorPromoDirecta();}
+if(el('promo-condicion-tipo')){el('promo-condicion-tipo').onchange=actualizarCondicionPromoDirecta;actualizarCondicionPromoDirecta();}
 if(el('form-promocion-directa'))el('form-promocion-directa').onsubmit=e=>{e.preventDefault();tarea(async()=>{
   const s=el('promo-directa-negocio'),op=s.options[s.selectedIndex],tipo=el('promo-directa-tipo').value;
   const datos={
@@ -124,8 +143,19 @@ if(el('form-promocion-directa'))el('form-promocion-directa').onsubmit=e=>{e.prev
   };
   const editando=promocionDirectaEditando;
   if(!confirm(editando?'¿Guardar los cambios de esta promoción?':'¿Crear esta campaña y dejarla disponible para Recepción?'))return;
-  if(editando)await api('/rest/v1/rpc/admin_promocion_directa_actualizar',{method:'POST',datos:{campana:editando,datos}});
-  else await api('/rest/v1/rpc/admin_promocion_directa_guardar',{method:'POST',datos:{datos}});
+  const guardada=editando
+    ? await api('/rest/v1/rpc/admin_promocion_directa_actualizar',{method:'POST',datos:{campana:editando,datos}})
+    : await api('/rest/v1/rpc/admin_promocion_directa_guardar',{method:'POST',datos:{datos}});
+  const condicionTipo=el('promo-condicion-tipo').value;
+  await api('/rest/v1/rpc/admin_promocion_reglas_actualizar',{method:'POST',datos:{campana:editando||guardada.id,datos:{
+    condicion_tipo:condicionTipo,
+    condicion_monto_centavos:condicionTipo==='monto_minimo'?pesosPromo(el('promo-condicion-monto').value):null,
+    condicion_cantidad:['cantidad_producto','cantidad_categoria'].includes(condicionTipo)?Number(el('promo-condicion-cantidad').value):null,
+    condicion_producto_id:condicionTipo==='cantidad_producto'?el('promo-condicion-producto').value.trim():'',
+    condicion_categoria:condicionTipo==='cantidad_categoria'?el('promo-condicion-categoria').value.trim():'',
+    premio_texto:el('promo-premio-texto').value.trim(),
+    terminos_publicos:el('promo-terminos-publicos').value.trim()
+  }}});
   llenarFormularioPromoDirecta(null);await cargarPromocionesDirectasAdmin();
   aviso(editando?'Promoción actualizada.':'Campaña creada. Recepción ya puede aplicarla al cotizar.');
 });};
