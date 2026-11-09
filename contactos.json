@@ -1,50 +1,50 @@
 {
   "version": 2,
   "shein": {
-    "numero": "529631865470",
-    "activo": true,
+    "numero": "",
+    "activo": false,
     "nombre": "SHEIN",
     "color": "#111111"
   },
   "tiktok": {
-    "numero": "529631865470",
-    "activo": true,
+    "numero": "",
+    "activo": false,
     "nombre": "TikTok Shop",
     "color": "#111111"
   },
   "temu": {
-    "numero": "529631865470",
-    "activo": true,
+    "numero": "",
+    "activo": false,
     "nombre": "Temu",
     "color": "#c84900"
   },
   "mercadolibre": {
-    "numero": "529631865470",
-    "activo": true,
+    "numero": "",
+    "activo": false,
     "nombre": "Mercado Libre",
     "color": "#ffe600"
   },
   "aliexpress": {
-    "numero": "529631865470",
-    "activo": true,
+    "numero": "",
+    "activo": false,
     "nombre": "AliExpress",
     "color": "#e43225"
   },
   "amazon": {
-    "numero": "529631865470",
-    "activo": true,
+    "numero": "",
+    "activo": false,
     "nombre": "Amazon",
     "color": "#232f3e"
   },
   "mandaditos": {
-    "numero": "529631891480"
+    "numero": ""
   },
   "paqueteria": {
-    "numero": "529631865470"
+    "numero": ""
   },
   "taxi": {
-    "numero": "529631181819",
-    "activo": true
+    "numero": "",
+    "activo": false
   },
-  "revisionContactos": "destinos-taxi-restaurado-20261014"
+  "revisionContactos": "telefonos-en-supabase-20261109"
 }

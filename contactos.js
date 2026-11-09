@@ -8,7 +8,7 @@
     return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2]>.179?'#111111':'#ffffff';
   }
   const clave = 'exhibicionContactosV1';
-  const inicial = () => ({version:2,...Object.fromEntries(Object.keys(plataformas).map(k=>[k,{numero:'',activo:false,nombre:plataformas[k],color:colores[k]}])),mandaditos:{numero:'529631891480'},paqueteria:{numero:'529631865470'},taxi:{numero:'',activo:false}});
+  const inicial = () => ({version:2,...Object.fromEntries(Object.keys(plataformas).map(k=>[k,{numero:'',activo:false,nombre:plataformas[k],color:colores[k]}])),mandaditos:{numero:''},paqueteria:{numero:''},taxi:{numero:'',activo:false}});
   function numero(valor) {
     const limpio=String(valor??'').replace(/[\s()+.-]/g,'');
     if(!/^\d+$/.test(limpio))return '';
