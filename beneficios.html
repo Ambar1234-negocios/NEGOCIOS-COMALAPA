@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Beneficios para clientes | Exhibición Frontera Comalapa</title>
+  <link rel="stylesheet" href="style.css?v=8">
+  <style>
+    .beneficios-contenido{max-width:680px;margin:40px auto;padding:0 18px 60px}
+    .beneficios-tarjeta{background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:22px;box-shadow:0 12px 35px rgba(0,0,0,.08)}
+    .beneficios-form{display:grid;gap:14px;margin-top:18px}
+    .beneficios-fecha{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .beneficios-form label{display:grid;gap:6px}
+    .beneficios-form select,.beneficios-form button{font:inherit;padding:11px;border-radius:10px}
+    .beneficios-form select{border:1px solid #cbd5e1;background:#fff}
+    .beneficios-form button{border:0;background:#111827;color:#fff;font-weight:700;cursor:pointer}
+    .beneficios-consentimiento{display:flex!important;grid-template-columns:auto 1fr!important;align-items:flex-start;gap:10px!important;line-height:1.45}
+    .beneficios-consentimiento input{margin-top:4px}
+    .beneficios-nota{color:#475569;line-height:1.55}
+  </style>
+</head>
+<body class="pagina-legal">
+  <main class="beneficios-contenido">
+    <a href="index.html">← Volver al inicio</a>
+    <section class="beneficios-tarjeta">
+      <h1>🎁 Beneficios para clientes</h1>
+      <div id="beneficios-estado" role="status" aria-live="polite">Verificando tu invitación…</div>
+      <form id="beneficios-form" class="beneficios-form" hidden>
+        <p class="beneficios-nota">Si deseas participar, registra únicamente el <strong>día y mes</strong> de tu cumpleaños. No pedimos el año. Podremos usarlo para beneficios, promociones o detalles de cumpleaños conforme a nuestro Aviso de Privacidad.</p>
+        <div class="beneficios-fecha">
+          <label>Día
+            <select id="beneficios-dia" required><option value="">Elige</option></select>
+          </label>
+          <label>Mes
+            <select id="beneficios-mes" required>
+              <option value="">Elige</option>
+              <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option><option value="4">Abril</option>
+              <option value="5">Mayo</option><option value="6">Junio</option><option value="7">Julio</option><option value="8">Agosto</option>
+              <option value="9">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+            </select>
+          </label>
+        </div>
+        <label class="beneficios-consentimiento">
+          <input id="beneficios-aceptar" type="checkbox" required>
+          <span>Acepto participar voluntariamente en promociones, beneficios y detalles de cumpleaños, y he leído el <a href="aviso-privacidad.html" target="_blank" rel="noopener">Aviso de Privacidad</a>.</span>
+        </label>
+        <button type="submit">Guardar mi participación</button>
+      </form>
+    </section>
+  </main>
+  <script src="beneficios.js?v=1"></script>
+</body>
+</html>
