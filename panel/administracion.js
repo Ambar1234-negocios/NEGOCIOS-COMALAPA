@@ -1,5 +1,5 @@
 'use strict';
-async function cargarResumenMaestro(){const zona=el('resumen-maestro');zona.replaceChildren();await api('/rest/v1/rpc/piloto_admin_listar',{method:'POST',datos:{}});const consultas=await Promise.allSettled([api('/rest/v1/piloto_menus_completos?select=slug'),api('/rest/v1/piloto_revision?estado=eq.pendiente&select=entidad_id'),api('/rest/v1/rpc/piloto_operacion_listar',{method:'POST',datos:{}}),api('/rest/v1/rpc/admin_promociones_negocio_listar',{method:'POST',datos:{}})]);const etiquetas=['Menús completos importados','Revisiones pendientes · piloto anterior','Solicitudes en proceso','🔔 Promociones de negocios pendientes'];consultas.forEach((r,i)=>{const card=nodo('section',undefined,'tarjeta');card.append(nodo('h3',etiquetas[i]));if(r.status==='fulfilled'){const n=i===2?r.value.pedidos.filter(p=>!['entregado','cancelado'].includes(p.estado)).length:i===3?r.value.filter(p=>p.estado==='pendiente').length:r.value.length;card.append(nodo('strong',String(n),'numero-maestro'));}else card.append(nodo('p','No se pudo consultar. Actualiza para reintentar.'));zona.append(card);});await Promise.all([cargarAccesos(),cargarPromocionesNegociosAdmin()]);aviso('Resumen actualizado desde Supabase.');}
+async function cargarResumenMaestro(){const zona=el('resumen-maestro');zona.replaceChildren();await api('/rest/v1/rpc/piloto_admin_listar',{method:'POST',datos:{}});const consultas=await Promise.allSettled([api('/rest/v1/piloto_menus_completos?select=slug'),api('/rest/v1/piloto_revision?estado=eq.pendiente&select=entidad_id'),api('/rest/v1/rpc/piloto_operacion_listar',{method:'POST',datos:{}}),api('/rest/v1/rpc/admin_promociones_negocio_listar',{method:'POST',datos:{}})]);const etiquetas=['Menús completos importados','Revisiones pendientes · piloto anterior','Solicitudes en proceso','🔔 Promociones de negocios pendientes'];consultas.forEach((r,i)=>{const card=nodo('section',undefined,'tarjeta');card.append(nodo('h3',etiquetas[i]));if(r.status==='fulfilled'){const n=i===2?r.value.pedidos.filter(p=>!['entregado','cancelado'].includes(p.estado)).length:i===3?r.value.filter(p=>p.estado==='pendiente').length:r.value.length;card.append(nodo('strong',String(n),'numero-maestro'));}else card.append(nodo('p','No se pudo consultar. Actualiza para reintentar.'));zona.append(card);});await Promise.all([cargarAccesos(),cargarPromocionesNegociosAdmin(),cargarPromocionesDirectasAdmin()]);aviso('Resumen actualizado desde Supabase.');}
 el('login').onsubmit=e=>{e.preventDefault();tarea(async()=>{cuenta=await api('/auth/v1/token?grant_type=password',{method:'POST',datos:{email:el('correo').value.trim(),password:el('clave').value}});el('clave').value='';sessionStorage.setItem('exhibicionPilotoSesion',JSON.stringify(cuenta));mostrar();await cargarResumenMaestro();});};el('recargar').onclick=()=>tarea(cargarResumenMaestro);el('salir').onclick=()=>tarea(async()=>{try{await api('/auth/v1/logout',{method:'POST'})}finally{cuenta=null;sessionStorage.removeItem('exhibicionPilotoSesion');el('resumen-maestro').replaceChildren();mostrar();aviso('Sesión cerrada.');}});try{const s=JSON.parse(sessionStorage.getItem('exhibicionPilotoSesion'));if(s?.expires_at*1000>Date.now())cuenta=s;}catch{}mostrar();if(cuenta)tarea(cargarResumenMaestro);
 
 async function cargarAccesos(){const lista=await api('/rest/v1/rpc/piloto_accesos_listar',{method:'POST',datos:{}}),zona=el('lista-accesos');zona.replaceChildren(nodo('h4','Cuentas de recepción'));if(!lista.length)zona.append(nodo('p','Todavía no hay cuentas autorizadas.'));for(const a of lista){const tarjeta=nodo('div',undefined,'tarjeta');tarjeta.append(nodo('strong',a.correo),nodo('p',a.activo?'🟢 Recepción autorizada':'🔴 Recepción desactivada'));const b=nodo('button',a.activo?'🔴 Desactivar acceso':'🟢 Reactivar acceso');b.type='button';b.onclick=()=>{el('correo-acceso').value=a.correo;el('estado-acceso').value=String(!a.activo);el('correo-acceso').focus();aviso('Revisa el correo y pulsa Guardar permiso para confirmar el cambio.');};tarjeta.append(b);zona.append(tarjeta);}}
@@ -23,3 +23,64 @@ async function cargarPromocionesNegociosAdmin(){
     acciones.append(aprobar,rechazar);card.append(acciones);zona.append(card);
   }
 }
+
+
+const pesosPromo=v=>Math.round(Number(v||0)*100);
+function actualizarValorPromoDirecta(){
+  const t=el('promo-directa-tipo')?.value,z=el('promo-directa-valor-zona'),v=el('promo-directa-valor');
+  if(!z||!v)return;
+  const requiere=t==='porcentaje_envio'||t==='monto_envio';
+  z.hidden=!requiere;v.required=requiere;
+  if(t==='porcentaje_envio'){v.max='100';v.placeholder='Ej. 50';}
+  else{v.removeAttribute('max');v.placeholder='Ej. 20';}
+}
+async function cargarPromocionesDirectasAdmin(){
+  const select=el('promo-directa-negocio'),zona=el('lista-promociones-directas');if(!select||!zona)return;
+  const [menus,promos]=await Promise.all([
+    api('/rest/v1/piloto_menus_completos?select=slug,borrador&order=slug.asc'),
+    api('/rest/v1/rpc/promociones_operativas_listar',{method:'POST',datos:{}})
+  ]);
+  const actual=select.value;
+  select.replaceChildren();
+  const m=nodo('option','🛵 Mandaditos');m.value='__mandaditos__';m.dataset.nombre='Mandaditos';select.append(m);
+  for(const x of menus){
+    const nombre=x.borrador?.nombre||x.slug,o=nodo('option',nombre);o.value=x.slug;o.dataset.nombre=nombre;select.append(o);
+  }
+  if([...select.options].some(o=>o.value===actual))select.value=actual;
+  zona.replaceChildren();
+  const lista=promos.filter(p=>p.negocio_slug||p.aporte_exhibicion_centavos||p.aporte_negocio_centavos);
+  if(!lista.length){zona.append(nodo('p','Todavía no hay campañas con control de presupuesto.','nota'));return;}
+  for(const p of lista){
+    const card=nodo('article',undefined,'tarjeta');
+    const gastEx=Number(p.exhibicion_gastado_centavos||0),gastNeg=Number(p.negocio_gastado_centavos||0);
+    const preEx=p.presupuesto_exhibicion_centavos,preNeg=p.presupuesto_negocio_centavos;
+    card.append(nodo('strong',(p.negocio_nombre||'Promoción')+' · '+p.titulo),
+      nodo('p','✅ Servicios completados: '+Number(p.usos_completados||0)+' · ⏳ Reservados: '+Number(p.usos_reservados||0)),
+      nodo('p','Exhibición: '+dineroPromo(gastEx)+(preEx!=null?' de '+dineroPromo(preEx):'')+' · Negocio: '+dineroPromo(gastNeg)+(preNeg!=null?' de '+dineroPromo(preNeg):'')),
+      nodo('small',(p.activa?'🟢 Activa':'🔴 Inactiva')+(p.vigencia_hasta?' · Hasta '+p.vigencia_hasta:'')));
+    zona.append(card);
+  }
+}
+function dineroPromo(c){return '$'+new Intl.NumberFormat('es-MX',{minimumFractionDigits:0,maximumFractionDigits:2}).format(Number(c||0)/100);}
+if(el('promo-directa-tipo')){el('promo-directa-tipo').onchange=actualizarValorPromoDirecta;actualizarValorPromoDirecta();}
+if(el('form-promocion-directa'))el('form-promocion-directa').onsubmit=e=>{e.preventDefault();tarea(async()=>{
+  const s=el('promo-directa-negocio'),op=s.options[s.selectedIndex],tipo=el('promo-directa-tipo').value;
+  const datos={
+    titulo:el('promo-directa-titulo').value.trim(),
+    negocio_slug:s.value,
+    negocio_nombre:op?.dataset?.nombre||op?.textContent||'',
+    promo_tipo:tipo,
+    promo_valor:(tipo==='porcentaje_envio'||tipo==='monto_envio')?Number(el('promo-directa-valor').value):null,
+    aporte_exhibicion_centavos:pesosPromo(el('promo-aporte-exhibicion').value),
+    aporte_negocio_centavos:pesosPromo(el('promo-aporte-negocio').value),
+    presupuesto_exhibicion_centavos:el('promo-presupuesto-exhibicion').value===''?null:pesosPromo(el('promo-presupuesto-exhibicion').value),
+    presupuesto_negocio_centavos:el('promo-presupuesto-negocio').value===''?null:pesosPromo(el('promo-presupuesto-negocio').value),
+    max_usos:el('promo-directa-max-usos').value===''?null:Number(el('promo-directa-max-usos').value),
+    vigencia_hasta:el('promo-directa-vigencia').value||null,
+    solo_zona_local:el('promo-directa-local').checked
+  };
+  if(!confirm('¿Crear esta campaña y dejarla disponible para Recepción?'))return;
+  await api('/rest/v1/rpc/admin_promocion_directa_guardar',{method:'POST',datos:{datos}});
+  el('promo-directa-titulo').value='';el('promo-directa-max-usos').value='';await cargarPromocionesDirectasAdmin();
+  aviso('Campaña creada. Recepción ya puede aplicarla al cotizar.');
+});};
