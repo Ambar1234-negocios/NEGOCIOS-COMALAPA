@@ -18,6 +18,25 @@ el('recuperar-dueno').onclick=()=>tarea(async()=>{const email=el('correo').value
 vistaDueno('menu');
 
 
+function textoPromoDueno(p){
+  let mensaje=String(p.mensaje||'').replace('{nombre}','').replace(/Hola,\s*👋/,'Hola 👋').replace(/Hola,\s+/,'Hola ');
+  if(p.vigencia_hasta){
+    const fecha=new Date(p.vigencia_hasta+'T12:00:00');
+    mensaje=mensaje.replace('{vigencia}',fecha.toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}));
+  }else mensaje=mensaje.replace('{vigencia}','');
+  return mensaje.replace(/\s+/g,' ').replace(/\s+([.,])/g,'$1').trim();
+}
+async function copiarPromoDueno(p){
+  const mensaje=textoPromoDueno(p);
+  try{await navigator.clipboard.writeText(mensaje);}
+  catch{
+    const area=nodo('textarea');area.value=mensaje;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.select();document.execCommand('copy');area.remove();
+  }
+  aviso('Mensaje de la promoción copiado.');
+}
+function compartirPromoDueno(p){
+  const a=nodo('a');a.href='https://wa.me/?text='+encodeURIComponent(textoPromoDueno(p));a.target='_blank';a.rel='noopener noreferrer';a.click();
+}
 async function cargarPromocionesNegocio(){
   const zona=el('promo-negocio-lista'),activasZona=el('promo-negocio-activas');if(!zona)return;
   const [lista,activas]=await Promise.all([
@@ -45,6 +64,9 @@ async function cargarPromocionesNegocio(){
       nodo('p','Aporte usado por servicios entregados: '+dinero(gastado)+(tope!=null?' de '+dinero(tope):'')),
       nodo('p','Comprometido contando pedidos en proceso: '+dinero(comprometido),'nota'),
       nodo('small',(p.activa?'🟢 Activa':'🔴 Inactiva')+(p.vigencia_hasta?' · Hasta '+p.vigencia_hasta:'')));
+    const copiar=nodo('button','📋 Copiar mensaje','secundario');copiar.type='button';copiar.onclick=()=>tarea(()=>copiarPromoDueno(p));
+    const compartir=nodo('button','📲 Compartir por WhatsApp','secundario');compartir.type='button';compartir.onclick=()=>compartirPromoDueno(p);
+    card.append(copiar,compartir);
     activasZona.append(card);
   }
 }
