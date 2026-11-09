@@ -209,14 +209,35 @@ async function cargarPromociones(){
   pintarPromociones();
   if(campanaSeleccionada)await pintarDetallePromocion();
 }
+function textoCampanaCompartible(c){
+  let mensaje=String(c.mensaje||'').replace('{nombre}','').replace(/Hola,\s*👋/,'Hola 👋').replace(/Hola,\s+/,'Hola ');
+  if(c.vigencia_hasta){
+    const fecha=new Date(c.vigencia_hasta+'T12:00:00');
+    mensaje=mensaje.replace('{vigencia}',fecha.toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}));
+  }else mensaje=mensaje.replace('{vigencia}','');
+  return mensaje.replace(/\s+/g,' ').replace(/\s+([.,])/g,'$1').trim();
+}
+async function copiarCampana(c){
+  const mensaje=textoCampanaCompartible(c);
+  try{await navigator.clipboard.writeText(mensaje);}
+  catch{
+    const area=nodo('textarea');area.value=mensaje;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.select();document.execCommand('copy');area.remove();
+  }
+  aviso('Mensaje de la promoción copiado.');
+}
+function compartirCampanaWhatsApp(c){
+  const a=nodo('a');a.href='https://wa.me/?text='+encodeURIComponent(textoCampanaCompartible(c));a.target='_blank';a.rel='noopener noreferrer';a.click();
+}
 function pintarPromociones(){
   const zona=el('lista-promociones');if(!zona)return;zona.replaceChildren();
   if(!campanas.length){zona.append(nodo('p','Todavía no hay promociones creadas.','nota'));return;}
   for(const c of campanas){
     const card=nodo('article',undefined,'tarjeta');
     card.append(nodo('h3',c.titulo),nodo('p',(c.negocio_filtro?'Clientes que ya compraron en '+c.negocio_filtro+' · ':'')+'Mínimo completados: '+c.minimo_completados+(c.vigencia_hasta?' · Vigencia: '+c.vigencia_hasta:'')),nodo('p','Marcados como enviados: '+Number(c.enviados||0),'nota'));
+    const copiar=nodo('button','📋 Copiar mensaje','secundario');copiar.type='button';copiar.onclick=()=>tarea(()=>copiarCampana(c));
+    const compartir=nodo('button','📲 Compartir por WhatsApp','secundario');compartir.type='button';compartir.onclick=()=>compartirCampanaWhatsApp(c);
     const abrir=nodo('button','👥 Ver clientes elegibles','secundario');abrir.type='button';abrir.onclick=()=>{campanaSeleccionada=c.id;tarea(pintarDetallePromocion);};
-    card.append(abrir);zona.append(card);
+    card.append(copiar,compartir,abrir);zona.append(card);
   }
 }
 async function pintarDetallePromocion(){
