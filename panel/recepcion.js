@@ -170,6 +170,20 @@ function pintarClientes(){
     const completos=Number(c.pedidos_completados||0),cancelados=Number(c.pedidos_cancelados||0),totales=Number(c.pedidos_totales||0);
     const estado=c.estado==='recurrente'?'✅ Recurrente':c.estado==='seguimiento'?'🟡 En seguimiento':'🆕 Nuevo';
     card.append(nodo('h3',c.nombre||'Cliente sin nombre'),nodo('p','📱 '+(c.telefono||'Sin teléfono')+(c.telefono_verificado?' · ✅ confirmado':' · ⚠️ sin confirmar')),nodo('strong',estado),nodo('p','Completados: '+completos+' · Totales: '+totales+(cancelados?' · Cancelados: '+cancelados:'')));
+    const editarTelefono=nodo('button','✏️ Editar teléfono','secundario');editarTelefono.type='button';
+    editarTelefono.onclick=()=>{
+      const actual=c.telefono||'';
+      const nuevo=prompt('Escribe el teléfono correcto. México: 10 dígitos. Otro país: incluye su código, por ejemplo +1.',actual);
+      if(nuevo===null)return;
+      const limpio=nuevo.trim();if(!limpio)return aviso('No se cambió el teléfono.');
+      tarea(async()=>{
+        await api('/rest/v1/rpc/cliente_telefono_corregir_cliente',{method:'POST',datos:{cliente:c.id,telefono:limpio}});
+        invitacionesBeneficiosPreparadas.delete(c.id);
+        await cargarClientes();
+        aviso('Teléfono actualizado y confirmado.');
+      });
+    };
+    card.append(editarTelefono);
     if(c.beneficios_activos){
       card.append(nodo('p','🎁 Beneficios activos'+(c.cumple_dia&&c.cumple_mes?' · 🎂 '+c.cumple_dia+' de '+meses[Number(c.cumple_mes)]:'') ,'nota'));
     }else{
@@ -210,7 +224,7 @@ async function cargarPromociones(){
   if(campanaSeleccionada)await pintarDetallePromocion();
 }
 function textoCampanaCompartible(c){
-  let mensaje=String(c.mensaje||'').replace('{nombre}','').replace(/Hola,\s*👋/,'Hola 👋').replace(/Hola,\s+/,'Hola ');
+  let mensaje=String(c.mensaje||'').replace('{nombre}','').replace(/Hola,\s*👋/,'Hola').replace(/👋|🎁|👉/g,'').replace(/Hola,\s+/,'Hola ');
   if(c.vigencia_hasta){
     const fecha=new Date(c.vigencia_hasta+'T12:00:00');
     mensaje=mensaje.replace('{vigencia}',fecha.toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}));
