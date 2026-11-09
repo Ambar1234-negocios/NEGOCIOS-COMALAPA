@@ -11,3 +11,13 @@ body:not(.sesion-autorizada) .recepcion-lateral{display:none!important}body.rece
 .tiempo-cotizacion{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}.tiempo-cotizacion label{margin:0!important}.tiempo-cotizacion input{grid-row:2}#lista-pedidos small{display:block;color:#61748a;margin:6px 0}#configurar-pago{max-width:650px}#fecha-historial{max-width:280px}
 
 .seguimiento-reparto{list-style:none;padding:16px 20px;background:#f3f8f5;border-radius:14px;border:1px solid #dbe8df}.seguimiento-reparto li{margin:8px 0}.seguimiento-reparto .completo{color:#206244;font-weight:650}.seguimiento-reparto .pendiente{color:#69767e}.fecha-recibida{color:#52667a;font-size:14px}
+
+.alertas-entrega{margin:0 0 16px;padding:14px;border:1px solid #f59e0b;border-radius:14px;background:#fff7ed}
+.alertas-entrega h3{margin:0 0 10px}
+.alertas-entrega button{display:block;width:100%;text-align:left;margin:7px 0;padding:11px 12px;border-radius:10px;border:1px solid #fdba74;background:#fff;cursor:pointer}
+.alertas-entrega .alerta-entrega-vencida{border-color:#ef4444;background:#fef2f2;font-weight:700}
+.alertas-entrega .alerta-entrega-proxima{background:#fffbeb;font-weight:700}
+.pedido-entrega-alerta{font-weight:700;color:#b45309}
+.pedido-entrega-programada{color:#475569}
+.programacion-entrega,.cierre-recepcion{margin-top:14px}
+.cierre-recepcion{padding:12px;border:1px solid #cbd5e1;border-radius:12px}
