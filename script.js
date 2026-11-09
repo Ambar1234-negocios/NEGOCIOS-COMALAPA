@@ -214,6 +214,20 @@ function textoBeneficioPublico(p){
   if(p.tipo==='monto_envio')return '$'+Number(p.valor||0).toLocaleString('es-MX')+' de descuento en mandadito';
   return p.titulo||'Promoción especial';
 }
+function textoCondicionPromocionPublica(p){
+  if(!p)return '';
+  if(p.condicionTipo==='monto_minimo'&&Number(p.condicionMontoCentavos)>0)return 'Compra mínima de $'+(Number(p.condicionMontoCentavos)/100).toLocaleString('es-MX');
+  if(p.condicionTipo==='cantidad_producto'&&Number(p.condicionCantidad)>0)return 'Compra '+Number(p.condicionCantidad)+' del producto participante';
+  if(p.condicionTipo==='cantidad_categoria'&&Number(p.condicionCantidad)>0)return 'Compra '+Number(p.condicionCantidad)+' productos de la categoría participante';
+  return 'Sin compra mínima';
+}
+function terminosPromocionPublica(p){
+  const partes=[textoCondicionPromocionPublica(p)];
+  if(p?.terminosPublicos)partes.push(p.terminosPublicos);
+  if(p?.vigenciaHasta)partes.push('Válida hasta '+p.vigenciaHasta);
+  if(p?.limitada)partes.push('Sujeta a disponibilidad');
+  return partes.join(' · ');
+}
 function etiquetaEnvioGratis(negocio){
   const promo=promocionOperativaPublicaNegocio(negocio);
   if(promo)return '<span class="envio-gratis-dorado">🎁 '+escaparTarjetaCategoria(textoBeneficioPublico(promo))+'</span>';
@@ -891,6 +905,7 @@ function verPerfil(categoria, index, opciones = {}) {
           href="https://wa.me/${negocio.whatsapp || obtenerWhatsappGeneral()}?text=${encodeURIComponent(
             `Hola, vi la promoción "${promocion.titulo || promocion.etiqueta || "Promoción"}" de ${negocio.nombre} en Exhibición Frontera Comalapa y quiero aprovecharla.`
           )}"
+          onclick="${promocion.origenOperativo ? "event.preventDefault();this.classList.toggle('terminos-abiertos')" : ""}"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -904,8 +919,9 @@ function verPerfil(categoria, index, opciones = {}) {
           </h4>
 
           ${promocion.texto ? `
-            <p>${promocion.texto}</p>
+            <p>${promocion.origenOperativo ? "Consulta términos ▾" : promocion.texto}</p>
           ` : ""}
+          ${promocion.origenOperativo ? `<div class="perfil-promocion-terminos">${escaparTarjetaCategoria(promocion.terminos || "")}</div>` : ""}
 
           ${(promocion.precioAnterior || promocion.precioActual || promocion.descuento || promocion.precio) ? `
             <div class="perfil-promocion-precios">
@@ -1075,6 +1091,7 @@ function obtenerPromocionesActivasNegocio(negocio) {
       etiqueta:'PROMOCIÓN',
       titulo:textoBeneficioPublico(p),
       texto:'Consulta términos',
+      terminos:terminosPromocionPublica(p),
       estilo:'dorado',
       origenOperativo:true
     }));

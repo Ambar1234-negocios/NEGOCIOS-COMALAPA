@@ -2323,3 +2323,18 @@ footer {
   }
   .perfil-promocion-card.promocion-operativa h4{font-size:20px}
 }
+
+
+/* Términos desplegables de promociones operativas */
+.perfil-promocion-card.promocion-operativa{cursor:pointer}
+.perfil-promocion-card.promocion-operativa .perfil-promocion-terminos{
+  display:none;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid rgba(47,34,0,.18);
+  color:#4d3908;
+  font-size:12px;
+  line-height:1.45;
+}
+.perfil-promocion-card.promocion-operativa.terminos-abiertos .perfil-promocion-terminos{display:block}
+.perfil-promocion-card.promocion-operativa.terminos-abiertos p span{display:inline-block;transform:rotate(180deg)}

@@ -89,3 +89,16 @@
 .seccion-flecha{display:flex;align-items:center;justify-content:center;flex:0 0 33px;height:33px;border-radius:50%;color:var(--seccion-tinta);background:#ffffffa8;border:1px solid #ffffffc9;transition:transform .2s ease}.seccion-flecha svg{width:21px;height:21px}.comida-seccion[open]>summary .seccion-flecha{transform:rotate(180deg)}
 @media(max-width:600px){.comida-seccion>summary{padding:15px;gap:12px;min-height:80px;font-size:18px}.seccion-icono{width:42px;height:42px;flex-basis:42px;border-radius:12px}.seccion-icono svg{width:27px;height:27px}}
 @media(prefers-reduced-motion:reduce){.comida-seccion>summary,.seccion-flecha{transition:none}}
+
+
+/* Metas de promociones dentro del carrito */
+.pedido-meta-promocion{
+  margin:12px 0;
+  padding:11px 13px;
+  border:1px solid #ead28b;
+  border-radius:12px;
+  background:#fff8df;
+  color:#624900;
+  font-weight:700;
+  line-height:1.35;
+}
