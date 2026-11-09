@@ -997,8 +997,8 @@ function verPerfil(categoria, index, opciones = {}) {
 
         ${window.PropiedadesExhibicion.renderizar(negocio)}
         ${window.ConsultoriosExhibicion.renderizar(negocio)}
-        ${negocio.propiedad || window.ConsultoriosExhibicion.esEspecial(negocio) ? "" : window.ComidaExhibicion.menu(negocio)}
         ${promocionesHTML}
+        ${negocio.propiedad || window.ConsultoriosExhibicion.esEspecial(negocio) ? "" : window.ComidaExhibicion.menu(negocio)}
         
         ${galeriaHTML}
 
