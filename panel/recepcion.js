@@ -224,7 +224,7 @@ async function cargarPromociones(){
   if(campanaSeleccionada)await pintarDetallePromocion();
 }
 function textoCampanaCompartible(c){
-  let mensaje=String(c.mensaje||'').replace('{nombre}','').replace(/Hola,\s*👋/,'Hola').replace(/👋|🎁|👉/g,'').replace(/Hola,\s+/,'Hola ');
+  let mensaje=String(c.mensaje||'').replace('{nombre}','').replace(/Hola,\s*👋/,'Hola 👋').replace(/Hola,\s+/,'Hola ');
   if(c.vigencia_hasta){
     const fecha=new Date(c.vigencia_hasta+'T12:00:00');
     mensaje=mensaje.replace('{vigencia}',fecha.toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}));
