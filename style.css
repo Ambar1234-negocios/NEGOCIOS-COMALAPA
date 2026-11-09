@@ -2284,3 +2284,42 @@ footer {
 .categoria-negocio-estado.estado-disponible{background:#e2f5e7;border-color:#b9dfc4;color:#195c33}
 .categoria-negocio-estado.estado-en-trato{background:#fff1c9;border-color:#e8d58b;color:#735500}
 .categoria-negocio-estado.estado-vendida{background:#eeeef1;border-color:#d4d4db;color:#51515f}
+
+
+/* Promoción operativa compacta dentro del perfil */
+.perfil-promocion-card.promocion-operativa{
+  flex:0 0 auto;
+  width:min(100%,420px);
+  min-height:0;
+  padding:14px 18px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#8a6200 0%,#d6a72a 45%,#f0d47a 100%) !important;
+  color:#2f2200;
+  box-shadow:0 8px 18px rgba(138,98,0,.18);
+}
+.perfil-promocion-card.promocion-operativa .perfil-promocion-etiqueta{
+  padding:4px 8px;
+  background:rgba(255,255,255,.72);
+  color:#6b4a00;
+  font-size:9px;
+}
+.perfil-promocion-card.promocion-operativa h4{
+  margin:6px 0 2px;
+  color:#2f2200;
+  font-size:22px;
+  line-height:1.05;
+}
+.perfil-promocion-card.promocion-operativa p{
+  margin:0;
+  color:#5f4608;
+  font-size:12px;
+  font-weight:600;
+}
+@media (max-width:600px){
+  .perfil-promocion-card.promocion-operativa{
+    width:100%;
+    padding:13px 16px;
+    border-radius:14px;
+  }
+  .perfil-promocion-card.promocion-operativa h4{font-size:20px}
+}
