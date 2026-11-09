@@ -169,8 +169,24 @@ function pintarClientes(){
     const completos=Number(c.pedidos_completados||0),cancelados=Number(c.pedidos_cancelados||0),totales=Number(c.pedidos_totales||0);
     const estado=c.estado==='recurrente'?'✅ Recurrente':c.estado==='seguimiento'?'🟡 En seguimiento':'🆕 Nuevo';
     card.append(nodo('h3',c.nombre||'Cliente sin nombre'),nodo('p','📱 '+(c.telefono||'Sin teléfono')+(c.telefono_verificado?' · ✅ confirmado':' · ⚠️ sin confirmar')),nodo('strong',estado),nodo('p','Completados: '+completos+' · Totales: '+totales+(cancelados?' · Cancelados: '+cancelados:'')));
-    if(c.beneficios_activos)card.append(nodo('p','🎁 Beneficios activos'+(c.cumple_dia&&c.cumple_mes?' · 🎂 '+c.cumple_dia+' de '+meses[Number(c.cumple_mes)]:'') ,'nota'));
-    else card.append(nodo('p','🎁 Sin registro de beneficios/cumpleaños.','nota'));
+    if(c.beneficios_activos){
+      card.append(nodo('p','🎁 Beneficios activos'+(c.cumple_dia&&c.cumple_mes?' · 🎂 '+c.cumple_dia+' de '+meses[Number(c.cumple_mes)]:'') ,'nota'));
+    }else{
+      card.append(nodo('p','🎁 Sin registro de beneficios/cumpleaños.','nota'));
+      const invitar=nodo('button','🎁 Invitar a beneficios','secundario');invitar.type='button';
+      invitar.disabled=!c.telefono_verificado||!c.telefono;
+      if(!c.telefono_verificado)invitar.title='Primero confirma que el teléfono del cliente sea correcto.';
+      invitar.onclick=()=>tarea(async()=>{
+        const r=await api('/rest/v1/rpc/cliente_beneficio_enlace_crear_cliente',{method:'POST',datos:{cliente:c.id}});
+        if(r.ya_activo){await cargarClientes();aviso('Este cliente ya participa en beneficios.');return;}
+        const url=location.origin+'/beneficios.html#'+r.token;
+        const mensaje='Hola, '+(c.nombre||'')+' 👋\n\nSi gustas, puedes participar voluntariamente en nuestros beneficios, promociones y detalles de cumpleaños 🎁\n\nSolo te pediremos el día y mes de tu cumpleaños. No necesitas crear cuenta ni contraseña.\n\n👉 '+url+'\n\nEs opcional y puedes dejar de participar cuando quieras.';
+        const tel=String(c.telefono||'').replace(/\D/g,'');const numero=tel.length===10?'52'+tel:tel;
+        const a=nodo('a');a.href='https://api.whatsapp.com/send?phone='+numero+'&text='+encodeURIComponent(mensaje);a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('data-contacto-cliente','');a.click();
+        aviso('Invitación lista. Pulsa Enviar en WhatsApp.');
+      });
+      card.append(invitar);
+    }
     zona.append(card);
   }
 }
