@@ -1,7 +1,7 @@
 'use strict';
 const enlacesListos=new Map();
 let configuracionPago=null,vistaHistorial=false,ultimoDiaOperacion=null;
-let pedidos=[],riders=[],clientes=[],pedidoSeleccionado=null,ejemploPendiente=null,edicionPendiente=false;
+let pedidos=[],riders=[],clientes=[],campanas=[],campanaSeleccionada=null,pedidoSeleccionado=null,ejemploPendiente=null,edicionPendiente=false;
 const estadosPedido={pendiente:'📥 Pendiente de cotizar',cotizado:'💰 Cotizado',propuesto:'🛵 Esperando repartidor',asignado:'👍 Aceptado por repartidor',recogido:'🛵 En camino',preparando:'👨‍🍳 Preparando para recoger',listo_recoger:'📦 Listo para recoger',entregado:'✅ Entregado',cancelado:'🔴 Cancelado'};
 const dineroOperacion=n=>'$'+new Intl.NumberFormat('es-MX',{minimumFractionDigits:0,maximumFractionDigits:2}).format(Number(n)/100),totalPedido=p=>p.productos_centavos+p.servicio_centavos;
 function tiempoOperacion(valor){const n=Number(valor),h=Math.floor(n/60),m=n%60;return h?(h+' '+(h===1?'hora':'horas')+(m?' y '+m+' '+(m===1?'minuto':'minutos'):'')):n+' '+(n===1?'minuto':'minutos');}
@@ -142,6 +142,43 @@ function pintarClientes(){
     zona.append(card);
   }
 }
+async function cargarPromociones(){
+  campanas=await api('/rest/v1/rpc/cliente_campanas_listar',{method:'POST',datos:{}});
+  pintarPromociones();
+  if(campanaSeleccionada)await pintarDetallePromocion();
+}
+function pintarPromociones(){
+  const zona=el('lista-promociones');if(!zona)return;zona.replaceChildren();
+  if(!campanas.length){zona.append(nodo('p','Todavía no hay promociones creadas.','nota'));return;}
+  for(const c of campanas){
+    const card=nodo('article',undefined,'tarjeta');
+    card.append(nodo('h3',c.titulo),nodo('p',(c.negocio_filtro?'Clientes que ya compraron en '+c.negocio_filtro+' · ':'')+'Mínimo completados: '+c.minimo_completados+(c.vigencia_hasta?' · Vigencia: '+c.vigencia_hasta:'')),nodo('p','Marcados como enviados: '+Number(c.enviados||0),'nota'));
+    const abrir=nodo('button','👥 Ver clientes elegibles','secundario');abrir.type='button';abrir.onclick=()=>{campanaSeleccionada=c.id;tarea(pintarDetallePromocion);};
+    card.append(abrir);zona.append(card);
+  }
+}
+async function pintarDetallePromocion(){
+  const zona=el('detalle-promocion');if(!zona||!campanaSeleccionada)return;
+  const c=campanas.find(x=>x.id===campanaSeleccionada);if(!c)return;
+  const lista=await api('/rest/v1/rpc/cliente_campana_elegibles',{method:'POST',datos:{campana:campanaSeleccionada}});
+  zona.hidden=false;zona.replaceChildren(nodo('h2',c.titulo),nodo('p',c.mensaje,'detalle-texto'),nodo('p','Clientes elegibles: '+lista.length,'nota'));
+  if(!lista.length){zona.append(nodo('p','No hay clientes elegibles con los filtros actuales.','aviso'));return;}
+  for(const cl of lista){
+    const card=nodo('article',undefined,'tarjeta');
+    card.append(nodo('strong',cl.nombre||'Cliente'),nodo('p','📱 '+cl.telefono+' · '+Number(cl.pedidos_completados||0)+' pedidos completados'));
+    if(cl.enviado_en)card.append(nodo('p','✅ Marcado como enviado '+new Date(cl.enviado_en).toLocaleString('es-MX'),'nota'));
+    const abrir=nodo('button',cl.enviado_en?'📲 Abrir WhatsApp otra vez':'📲 Preparar WhatsApp','secundario');abrir.type='button';
+    abrir.onclick=()=>tarea(async()=>{
+      const r=await api('/rest/v1/rpc/cliente_campana_preparar',{method:'POST',datos:{campana:c.id,cliente:cl.id}});
+      const tel=String(r.telefono||'').replace(/\D/g,'');const numero=tel.length===10?'52'+tel:tel;
+      const a=nodo('a');a.href='https://api.whatsapp.com/send?phone='+numero+'&text='+encodeURIComponent(r.mensaje);a.target='_blank';a.rel='noopener noreferrer';a.click();
+      aviso('Mensaje preparado. Después de enviarlo, marca el registro como enviado.');
+    });
+    const enviado=nodo('button','✅ Marcar como enviado');enviado.type='button';enviado.disabled=!!cl.enviado_en;
+    enviado.onclick=()=>tarea(async()=>{await api('/rest/v1/rpc/cliente_campana_marcar_enviado',{method:'POST',datos:{campana:c.id,cliente:cl.id}});await cargarPromociones();aviso('Envío registrado.');});
+    card.append(abrir,enviado);zona.append(card);
+  }
+}
 function pintarRiders(){const zona=el('lista-riders');zona.replaceChildren();for(const r of riders){const card=nodo('article',undefined,'tarjeta');const trabajo=pedidos.find(p=>p.repartidor_id===r.id&&['propuesto','asignado','recogido'].includes(p.estado));card.append(nodo('h3',r.nombre),nodo('p',trabajo?'Con trabajo activo':r.disponible?'Disponible':'Fuera de servicio'));const disponible=nodo('button',r.disponible?'Marcar fuera de servicio':'Marcar disponible','secundario');disponible.disabled=!!trabajo;disponible.onclick=()=>tarea(async()=>{await api('/rest/v1/rpc/piloto_repartidor_guardar',{method:'POST',datos:{repartidor:r.id,nombre:r.nombre,disponible:!r.disponible}});await cargarOperacion();});card.append(disponible,nodo('p',r.telefono?'📞 +'+r.telefono:'Sin WhatsApp registrado'));const editar=nodo('button','✏️ Editar nombre y WhatsApp','secundario');editar.onclick=()=>{el('rider-id').value=r.id;el('rider-nombre').value=r.nombre;el('rider-telefono').value=r.telefono||'';el('rider-nombre').closest('details').open=true;el('rider-nombre').focus();};card.append(editar);if(trabajo){card.append(nodo('strong',trabajo.folio),nodo('p',estadosPedido[trabajo.estado]),nodo('p',trabajo.detalle,'detalle-texto'));const actuar=(label,accion,datos={})=>{const b=nodo('button',label);b.onclick=()=>tarea(async()=>{await api('/rest/v1/rpc/piloto_pedido_operar',{method:'POST',datos:{pedido:trabajo.id,version:trabajo.revision,accion,datos:typeof datos==='function'?datos():datos}});await cargarOperacion();aviso('Simulación administrativa registrada.');});card.append(b);};if(document.body?.dataset?.simulador==='true'&&trabajo.estado==='propuesto'){actuar('👍 Aceptar · simulación','aceptar_reparto');actuar('✋ Rechazar · simulación','rechazar_reparto');}if(document.body?.dataset?.simulador==='true'&&trabajo.estado==='asignado')actuar('📦 Ya recogí · simulación','recoger');if(document.body?.dataset?.simulador==='true'&&trabajo.estado==='recogido'){const check=entrada(card,'efectivo-'+trabajo.id,'Confirmo entrega y recepción del efectivo completo','checkbox');check.hidden=trabajo.pago!=='efectivo';actuar('✅ Ya entregué · simulación','entregar',()=>({efectivo_recibido:check.checked}));}}zona.append(card);}}
 function pintarResumen(){const hoy=diaOperacion(Date.now()),entregados=pedidos.filter(p=>p.entregado_en&&diaOperacion(p.entregado_en)===hoy),cobrados=pedidos.filter(p=>(p.pago_verificado||p.efectivo_recibido)&&p.estado!=='cancelado'),canceladosConPago=pedidos.filter(p=>p.estado==='cancelado'&&(p.pago_verificado||p.efectivo_recibido));const zona=el('resumen-operacion');zona.replaceChildren(nodo('p','Día de operación: '+hoy+' · hora de Comalapa'));const grid=nodo('div',undefined,'metricas-operacion');for(const [label,valor]of [['Solicitudes recibidas hoy',pedidos.filter(p=>diaOperacion(p.creado_en)===hoy).length],['Entregadas hoy',entregados.length],['En proceso',pedidos.filter(p=>!['entregado','cancelado'].includes(p.estado)).length],['Canceladas con pago por resolver',canceladosConPago.length],['Productos cobrados · acumulado',dineroOperacion(cobrados.reduce((s,p)=>s+p.productos_centavos,0))],['Servicios cobrados · acumulado',dineroOperacion(cobrados.reduce((s,p)=>s+p.servicio_centavos,0))]]){const c=nodo('div',undefined,'tarjeta');c.append(nodo('p',label),nodo('strong',valor,'importe-operacion'));grid.append(c);}zona.append(grid,nodo('p','Los cobros son registros manuales del piloto. No descuentan costos, pagos al repartidor ni devoluciones.','nota'));for(const p of entregados)zona.append(nodo('p',p.folio+' · '+dineroOperacion(totalPedido(p))));}
 el('crear-ejemplo').onclick=()=>tarea(async()=>{if(!ejemploPendiente)ejemploPendiente={clave:crypto.randomUUID(),solicitud:{tipo:'mandadito',entrega:'domicilio',pago:'efectivo',cliente:'Cliente ficticio de prueba',direccion:'Dirección ficticia, no realizar entregas',detalle:'Comprar pan de prueba y recoger queso en una segunda parada. No es un pedido real.'}};const p=await api('/rest/v1/rpc/piloto_pedido_crear',{method:'POST',datos:ejemploPendiente});ejemploPendiente=null;pedidoSeleccionado=p.id;await cargarOperacion();aviso('Solicitud guardada con folio '+p.folio);});
@@ -189,3 +226,11 @@ if(el('recargar-clientes'))el('recargar-clientes').onclick=()=>tarea(async()=>{a
 if(el('buscar-clientes'))el('buscar-clientes').oninput=pintarClientes;
 
 setInterval(pintarAlertasEntrega,30000);
+
+if(el('abrir-promociones'))el('abrir-promociones').addEventListener('click',()=>tarea(cargarPromociones));
+if(el('recargar-promociones'))el('recargar-promociones').onclick=()=>tarea(cargarPromociones);
+if(el('form-promocion'))el('form-promocion').onsubmit=e=>{e.preventDefault();tarea(async()=>{
+  const datos={titulo:el('promo-titulo').value.trim(),mensaje:el('promo-mensaje').value.trim(),negocio_filtro:el('promo-negocio').value.trim(),minimo_completados:Number(el('promo-minimo').value||0),vigencia_hasta:el('promo-vigencia').value||null};
+  const c=await api('/rest/v1/rpc/cliente_campana_guardar',{method:'POST',datos:{datos}});
+  campanaSeleccionada=c.id;el('form-promocion').reset();el('promo-minimo').value='0';await cargarPromociones();aviso('Promoción creada.');
+});};
