@@ -19,16 +19,33 @@ vistaDueno('menu');
 
 
 async function cargarPromocionesNegocio(){
-  const zona=el('promo-negocio-lista');if(!zona)return;
-  const lista=await api('/rest/v1/rpc/dueno_promociones_listar',{method:'POST',datos:{}});
+  const zona=el('promo-negocio-lista'),activasZona=el('promo-negocio-activas');if(!zona)return;
+  const [lista,activas]=await Promise.all([
+    api('/rest/v1/rpc/dueno_promociones_listar',{method:'POST',datos:{}}),
+    api('/rest/v1/rpc/dueno_promociones_activas_listar',{method:'POST',datos:{}})
+  ]);
   zona.replaceChildren();
-  if(!lista.length){zona.append(nodo('p','Todavía no has enviado promociones a revisión.','nota'));return;}
+  if(!lista.length)zona.append(nodo('p','Todavía no has enviado promociones a revisión.','nota'));
   for(const p of lista){
     const card=nodo('article',undefined,'tarjeta');
     const estado=p.estado==='aprobada'?'✅ Aprobada':p.estado==='rechazada'?'🔴 Rechazada':'🟡 Pendiente de revisión';
     card.append(nodo('strong',p.titulo),nodo('p',estado),nodo('p',p.detalle),nodo('small',p.negocio_nombre+(p.vigencia_hasta?' · Hasta '+p.vigencia_hasta:'')));
     if(p.nota_admin)card.append(nodo('p','Nota de Exhibición: '+p.nota_admin,'nota'));
     zona.append(card);
+  }
+  if(!activasZona)return;
+  activasZona.replaceChildren();
+  if(!activas.length){activasZona.append(nodo('p','Todavía no hay campañas activas con seguimiento de servicios.','nota'));return;}
+  for(const p of activas){
+    const card=nodo('article',undefined,'tarjeta');
+    const gastado=Number(p.aporte_negocio_gastado_centavos||0),comprometido=Number(p.aporte_negocio_comprometido_centavos||0),tope=p.presupuesto_negocio_centavos;
+    const dinero=c=>'$'+new Intl.NumberFormat('es-MX',{minimumFractionDigits:0,maximumFractionDigits:2}).format(Number(c||0)/100);
+    card.append(nodo('strong',p.titulo),
+      nodo('p','✅ Servicios completados: '+Number(p.usos_completados||0)+' · ⏳ En proceso: '+Number(p.usos_reservados||0)),
+      nodo('p','Aporte usado por servicios entregados: '+dinero(gastado)+(tope!=null?' de '+dinero(tope):'')),
+      nodo('p','Comprometido contando pedidos en proceso: '+dinero(comprometido),'nota'),
+      nodo('small',(p.activa?'🟢 Activa':'🔴 Inactiva')+(p.vigencia_hasta?' · Hasta '+p.vigencia_hasta:'')));
+    activasZona.append(card);
   }
 }
 function actualizarValorPromoNegocio(){
