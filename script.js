@@ -9,7 +9,9 @@
 // CONFIGURACIÓN GENERAL
 // ============================================================
 
-const WHATSAPP_GENERAL = "529633106862";
+function obtenerWhatsappGeneral() {
+  return window.ContactosExhibicion?.actual?.mandaditos?.numero || "";
+}
 
 
 // ============================================================
@@ -147,7 +149,7 @@ let destacadosPublicados = [];
 
 function crearLinkWhatsapp(negocio) {
   const digitos = String(negocio.whatsapp || "").replace(/\D/g, "");
-  const numero = digitos.length === 10 ? "52" + digitos : negocio.whatsapp || WHATSAPP_GENERAL;
+  const numero = digitos.length === 10 ? "52" + digitos : negocio.whatsapp || obtenerWhatsappGeneral();
   const mensaje = `Hola, vi ${negocio.nombre} en Exhibición Frontera Comalapa y quiero información.`;
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
 }
@@ -285,7 +287,7 @@ Forma de pago:`;
 
   const numero = usaMandaditos
     ? window.ContactosExhibicion.actual.mandaditos.numero
-    : (negocio.whatsapp || WHATSAPP_GENERAL);
+    : (negocio.whatsapp || obtenerWhatsappGeneral());
 
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
 }
@@ -872,7 +874,7 @@ function verPerfil(categoria, index, opciones = {}) {
       ${promocionesActivas.map((promocion) => `
         <a
           class="perfil-promocion-card estilo-${promocion.estilo || "azul-verde"}"
-          href="https://wa.me/${negocio.whatsapp || WHATSAPP_GENERAL}?text=${encodeURIComponent(
+          href="https://wa.me/${negocio.whatsapp || obtenerWhatsappGeneral()}?text=${encodeURIComponent(
             `Hola, vi la promoción "${promocion.titulo || promocion.etiqueta || "Promoción"}" de ${negocio.nombre} en Exhibición Frontera Comalapa y quiero aprovecharla.`
           )}"
           target="_blank"
