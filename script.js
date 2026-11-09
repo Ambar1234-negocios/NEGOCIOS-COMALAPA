@@ -204,7 +204,21 @@ function coincideBusquedaNegocio(negocio, texto) {
   return contenidoBuscableNegocio(negocio).includes(texto);
 }
 
-function etiquetaEnvioGratis(negocio){return negocio.delivery===true&&negocio.tipoDelivery==='gratis'?'<span class="envio-gratis-dorado">✨ Envío gratis del negocio</span>':'';}
+function promocionOperativaPublicaNegocio(negocio){
+  return (window.PromocionesOperativasPublicas||[]).find(p=>p.negocioSlug===negocio?.slug)||null;
+}
+function textoBeneficioPublico(p){
+  if(!p)return '';
+  if(p.tipo==='envio_gratis')return 'Envío gratis';
+  if(p.tipo==='porcentaje_envio')return Number(p.valor||0)+'% en el mandadito';
+  if(p.tipo==='monto_envio')return '$'+Number(p.valor||0).toLocaleString('es-MX')+' de descuento en mandadito';
+  return p.titulo||'Promoción especial';
+}
+function etiquetaEnvioGratis(negocio){
+  const promo=promocionOperativaPublicaNegocio(negocio);
+  if(promo)return '<span class="envio-gratis-dorado">🎁 '+escaparTarjetaCategoria(textoBeneficioPublico(promo))+'</span>';
+  return negocio.delivery===true&&negocio.tipoDelivery==='gratis'?'<span class="envio-gratis-dorado">✨ Envío gratis del negocio</span>':'';
+}
 function crearTarjetaNegocioListado(negocio, categoria) {
   const indexOriginal = negocios[categoria].indexOf(negocio);
   const clasePlan = `resultado-plan-${obtenerPlanNegocio(negocio)}`;
@@ -1053,10 +1067,21 @@ function obtenerPromocionesActivasNegocio(negocio) {
   if (!negocio || !negocio.slug) return [];
 
   const fechaActual = obtenerFechaISOExhibicion();
-
-  return destacadosPublicados
+  const operativas=(window.PromocionesOperativasPublicas||[])
+    .filter(p=>p.negocioSlug===negocio.slug)
+    .map(p=>({
+      negocioSlug:p.negocioSlug,
+      negocioNombre:p.negocioNombre,
+      etiqueta:'PROMOCIÓN',
+      titulo:textoBeneficioPublico(p),
+      texto:(p.limitada?'Cupos limitados · ':'')+'Disponible hasta agotar la promoción'+(p.vigenciaHasta?' o hasta '+p.vigenciaHasta:'')+'.',
+      estilo:'azul-verde',
+      origenOperativo:true
+    }));
+  const destacadas=destacadosPublicados
     .filter((promocion) => promocion.negocioSlug === negocio.slug)
     .filter((promocion) => destacadoVigente(promocion, fechaActual));
+  return [...operativas,...destacadas];
 }
 
 function mezclarLista(lista) {
