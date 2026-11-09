@@ -1,5 +1,5 @@
 'use strict';
-const vistas=['menu','compartir','ajustes'];
+const vistas=['menu','promociones','compartir','ajustes'];
 function vistaDueno(v){for(const x of vistas)el('vista-'+x).hidden=x!==v;for(const b of document.querySelectorAll('[data-vista]'))b.setAttribute('aria-current',b.dataset.vista===v?'page':'false');if(v==='compartir')qrDueno();}
 for(const b of document.querySelectorAll('[data-vista]'))b.onclick=()=>vistaDueno(b.dataset.vista);
 let qrActual='',aparienciasDueno=null;
@@ -17,3 +17,38 @@ el('recuperar-dueno').onclick=()=>tarea(async()=>{const email=el('correo').value
 (async()=>{const h=new URLSearchParams(location.hash.slice(1));if(!h.has('access_token'))return;try{const token=h.get('access_token'),r=await fetch(BASE+'/auth/v1/user',{headers:{apikey:KEY,Authorization:'Bearer '+token}});if(!r.ok)throw Error('El enlace de acceso venció. Solicita otro.');cuenta={access_token:token,refresh_token:h.get('refresh_token'),expires_at:Math.floor(Date.now()/1000)+Number(h.get('expires_in')||3600),user:await r.json()};sessionStorage.setItem('exhibicionDuenoSesion',JSON.stringify(cuenta));const recovery=h.get('type')==='recovery';history.replaceState(null,'',location.pathname+location.search);if(recovery){const d=nodo('dialog'),f=nodo('form'),t=nodo('h2','Elige tu nueva contraseña'),i=nodo('input'),b=nodo('button','Guardar contraseña');i.type='password';i.minLength=12;i.required=true;i.autocomplete='new-password';f.append(t,i,b);f.onsubmit=e=>{e.preventDefault();tarea(async()=>{await api('/auth/v1/user',{method:'PUT',datos:{password:i.value}});i.value='';d.close();d.remove();mostrar();await cargarMenuCompleto();aviso('Contraseña actualizada.');});};d.append(f);document.body.append(d);d.showModal();}else{mostrar();await cargarMenuCompleto();}}catch(e){aviso(e.message);}})();
 vistaDueno('menu');
 
+
+async function cargarPromocionesNegocio(){
+  const zona=el('promo-negocio-lista');if(!zona)return;
+  const lista=await api('/rest/v1/rpc/dueno_promociones_listar',{method:'POST',datos:{}});
+  zona.replaceChildren();
+  if(!lista.length){zona.append(nodo('p','Todavía no has enviado promociones a revisión.','nota'));return;}
+  for(const p of lista){
+    const card=nodo('article',undefined,'tarjeta');
+    const estado=p.estado==='aprobada'?'✅ Aprobada':p.estado==='rechazada'?'🔴 Rechazada':'🟡 Pendiente de revisión';
+    card.append(nodo('strong',p.titulo),nodo('p',estado),nodo('p',p.detalle),nodo('small',p.negocio_nombre+(p.vigencia_hasta?' · Hasta '+p.vigencia_hasta:'')));
+    if(p.nota_admin)card.append(nodo('p','Nota de Exhibición: '+p.nota_admin,'nota'));
+    zona.append(card);
+  }
+}
+function actualizarValorPromoNegocio(){
+  const tipo=el('promo-negocio-tipo')?.value,zona=el('promo-negocio-valor-zona'),campo=el('promo-negocio-valor');
+  if(!zona||!campo)return;const requiere=tipo==='porcentaje'||tipo==='monto';zona.hidden=!requiere;campo.required=requiere;
+  if(tipo==='porcentaje'){campo.max='100';campo.placeholder='Ej. 25';}
+  else if(tipo==='monto'){campo.removeAttribute('max');campo.placeholder='Ej. 20';}
+}
+if(el('promo-negocio-tipo')){el('promo-negocio-tipo').onchange=actualizarValorPromoNegocio;actualizarValorPromoNegocio();}
+if(el('promo-negocio-form'))el('promo-negocio-form').onsubmit=e=>{e.preventDefault();tarea(async()=>{
+  if(!menuCompleto)throw Error('Primero carga tu negocio.');
+  const tipo=el('promo-negocio-tipo').value;
+  const valor=(tipo==='porcentaje'||tipo==='monto')?Number(el('promo-negocio-valor').value):null;
+  await api('/rest/v1/rpc/dueno_promocion_solicitar',{method:'POST',datos:{
+    negocio:menuCompleto.slug,tipo,valor,
+    titulo:el('promo-negocio-titulo').value.trim(),
+    detalle:el('promo-negocio-detalle').value.trim(),
+    vigencia_hasta:el('promo-negocio-vigencia').value||null
+  }});
+  el('promo-negocio-form').reset();actualizarValorPromoNegocio();await cargarPromocionesNegocio();aviso('Promoción enviada a revisión. Exhibición decidirá si se activa como campaña.');
+});};
+const vistaDuenoOriginal=vistaDueno;
+vistaDueno=function(v){vistaDuenoOriginal(v);if(v==='promociones')tarea(cargarPromocionesNegocio);};
