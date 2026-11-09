@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Preferencias de promociones | Exhibición Frontera Comalapa</title>
+  <link rel="stylesheet" href="style.css?v=8">
+  <style>
+    .preferencias-contenido{max-width:680px;margin:40px auto;padding:0 18px 60px}
+    .preferencias-tarjeta{background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:22px;box-shadow:0 12px 35px rgba(0,0,0,.08)}
+    .preferencias-tarjeta h1{margin-top:0}
+    .preferencias-nota{color:#475569;line-height:1.55}
+    .preferencias-acciones{display:grid;gap:12px;margin-top:20px}
+    .preferencias-acciones button{font:inherit;padding:12px 14px;border-radius:10px;cursor:pointer;font-weight:700}
+    .preferencias-baja{border:0;background:#991b1b;color:#fff}
+    .preferencias-volver{border:1px solid #cbd5e1;background:#fff;color:#111827}
+    .preferencias-acciones[hidden]{display:none!important}
+  </style>
+</head>
+<body class="pagina-legal">
+  <main class="preferencias-contenido">
+    <a href="index.html">← Volver al inicio</a>
+    <section class="preferencias-tarjeta">
+      <h1>⚙️ Preferencias de promociones</h1>
+      <div id="preferencias-estado" role="status" aria-live="polite">Verificando tu enlace…</div>
+      <div id="preferencias-acciones" class="preferencias-acciones" hidden>
+        <p class="preferencias-nota">Puedes dejar de recibir mensajes promocionales de Exhibición Frontera Comalapa. Esto no elimina tu historial de pedidos ni tu registro de beneficios o cumpleaños.</p>
+        <button id="preferencias-baja" class="preferencias-baja" type="button">Dejar de recibir promociones</button>
+        <button id="preferencias-volver" class="preferencias-volver" type="button">Seguir recibiendo promociones</button>
+      </div>
+    </section>
+  </main>
+  <script src="preferencias-promociones.js?v=1"></script>
+</body>
+</html>
