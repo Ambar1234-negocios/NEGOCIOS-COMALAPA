@@ -53,6 +53,7 @@ function llenarFormularioPromoDirecta(p){
     el('promo-directa-guardar').textContent='💾 Guardar cambios';
     el('promo-directa-cancelar').hidden=false;
     actualizarValorPromoDirecta();
+    const detalle=el('form-promocion-directa').closest('details');if(detalle)detalle.open=true;
     el('form-promocion-directa').scrollIntoView({behavior:'smooth',block:'start'});
   }else{
     el('form-promocion-directa').reset();
