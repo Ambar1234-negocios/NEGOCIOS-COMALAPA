@@ -887,7 +887,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
       ${promocionesActivas.map((promocion) => `
         <a
-          class="perfil-promocion-card estilo-${promocion.estilo || "azul-verde"}"
+          class="perfil-promocion-card estilo-${promocion.estilo || "azul-verde"}${promocion.origenOperativo ? " promocion-operativa" : ""}"
           href="https://wa.me/${negocio.whatsapp || obtenerWhatsappGeneral()}?text=${encodeURIComponent(
             `Hola, vi la promoción "${promocion.titulo || promocion.etiqueta || "Promoción"}" de ${negocio.nombre} en Exhibición Frontera Comalapa y quiero aprovecharla.`
           )}"
@@ -1074,8 +1074,8 @@ function obtenerPromocionesActivasNegocio(negocio) {
       negocioNombre:p.negocioNombre,
       etiqueta:'PROMOCIÓN',
       titulo:textoBeneficioPublico(p),
-      texto:(p.limitada?'Cupos limitados · ':'')+'Disponible hasta agotar la promoción'+(p.vigenciaHasta?' o hasta '+p.vigenciaHasta:'')+'.',
-      estilo:'azul-verde',
+      texto:'Consulta términos',
+      estilo:'dorado',
       origenOperativo:true
     }));
   const destacadas=destacadosPublicados
