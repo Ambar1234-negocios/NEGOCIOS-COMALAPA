@@ -820,7 +820,7 @@ function verPerfil(categoria, index, opciones = {}) {
         </a>
       ` : ""}
 
-      ${negocio.delivery === true ? `
+      ${negocio.delivery === true && !(Array.isArray(negocio.productos) && negocio.productos.some(p => p && p.disponible !== false && p.soloInformativo !== true)) ? `
         <a class="accion accion-delivery" href="${crearLinkPedido(negocio)}" target="_blank" rel="noopener noreferrer">
           <img class="perfil-moto-delivery" src="imagenes/moto-mandaditos.png" width="52" height="35" alt="" aria-hidden="true">
           <div>
