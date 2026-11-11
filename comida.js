@@ -258,15 +258,15 @@
     });
   }
   function mensajeDigital(lineas,importeTotal) {
-    return `Hola, quiero realizar este pedido:\n\n${lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${dinero(importe(l))}\nDuración: ${duracion(l.producto)} ${duracion(l.producto)===1?'mes':'meses'}\nDispositivos: ${dispositivos(l.producto)}${l.nota?'\n'+(l.producto.nombre.includes(' + ')||l.cantidad>1?'Nombres de los perfiles':'Nombre del perfil')+': '+l.nota:''}`).join('\n\n')}\n\nTotal: ${dinero(importeTotal)}`;
+    return `Hola, quiero realizar este pedido:\n\n${lineas.map(l=>`${l.cantidad} × ${l.producto.nombre} — ${PreciosPedido.texto(l.cantidad,unitario(l),importe(l),dinero)}\nDuración: ${duracion(l.producto)} ${duracion(l.producto)===1?'mes':'meses'}\nDispositivos: ${dispositivos(l.producto)}${l.nota?'\n'+(l.producto.nombre.includes(' + ')||l.cantidad>1?'Nombres de los perfiles':'Nombre del perfil')+': '+l.nota:''}`).join('\n\n')}\n\nTotal: ${dinero(importeTotal)}`;
   }
   function textoLineaPedido(l,mostrarTotal=true) {
     const extras=l.extras||[],cantidad=l.cantidad;
     const importeExtras=costoExtras(l);
-    const partes=[`${cantidad} × ${l.producto.nombre} — ${dinero(importe(l)-importeExtras)}`];
+    const partes=[`${cantidad} × ${l.producto.nombre} — ${PreciosPedido.texto(cantidad,unitario(l),importe(l)-importeExtras,dinero)}`];
     if(detallePromo(l))partes.push(detallePromo(l));
     if(l.opciones?.length)partes.push('Opciones: '+descripcionOpciones(l));
-    for(const x of extras)partes.push(`+ ${cantidadExtra(x,l)} × ${x.nombre}: ${dinero(centavos(x.precio)*cantidadExtra(x,l))}`);
+    for(const x of extras)partes.push(`+ ${cantidadExtra(x,l)} × ${x.nombre}: ${PreciosPedido.texto(cantidadExtra(x,l),centavos(x.precio),centavos(x.precio)*cantidadExtra(x,l),dinero)}`);
     if(extras.length&&mostrarTotal)partes.push('Total de este producto con extras: '+dinero(importe(l)));
     if(l.nota)partes.push('Indicación: '+l.nota);
     return partes.join('\n');
@@ -444,5 +444,5 @@
       }
     });
   }, true);
-  window.ComidaExhibicion={menu,conectar,carrusel,productos,dinero,imagen,mensajeDigital};
+  window.ComidaExhibicion={menu,conectar,carrusel,productos,dinero,imagen,mensajeDigital,textoLineaPedido};
 })();
