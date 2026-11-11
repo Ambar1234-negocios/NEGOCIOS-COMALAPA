@@ -224,7 +224,14 @@
       d.close();
     });
     form.addEventListener('input',ev=>ev.target.setCustomValidity?.(''));
-    d.append(cerrar,titulo,ayuda,form);const overflow=document.body.style.overflow;
+    d.append(cerrar,titulo,ayuda);
+    if(tipo==='mandaditos'){
+      const llamada=document.createElement('div');llamada.className='mandaditos-llamada';
+      const texto=document.createElement('span');texto.textContent='¿Prefieres hacerlo por llamada?';
+      const llamar=document.createElement('a');llamar.className='mandaditos-llamar';llamar.href='tel:+'+destino;llamar.textContent='Llamar a Mandaditos';
+      llamada.append(texto,llamar);d.append(llamada);
+    }
+    d.append(form);const overflow=document.body.style.overflow;
     d.addEventListener('close',()=>{document.body.style.overflow=overflow;d.remove();if(origen?.isConnected)origen.focus({preventScroll:true});},{once:true});
     d.addEventListener('click',ev=>{const r=d.getBoundingClientRect();if(ev.target===d&&(ev.clientX<r.left||ev.clientX>r.right||ev.clientY<r.top||ev.clientY>r.bottom))d.close();});
     document.body.append(d);d.showModal();document.body.style.overflow='hidden';
