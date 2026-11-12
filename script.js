@@ -763,12 +763,13 @@ function verPerfil(categoria, index, opciones = {}) {
   const logo = negocio.logo || "";
   const estadoHorario = obtenerEstadoHorario(negocio);
 
-  const serviciosHTML = !window.ConsultoriosExhibicion.esEspecial(negocio) && !negocio.propiedad && negocio.servicios && negocio.servicios.length > 0
+  const serviciosGenericos = window.ConsultoriosExhibicion.serviciosGenericos(negocio);
+  const serviciosHTML = !negocio.propiedad && serviciosGenericos.length > 0
     ? `
       <section class="perfil-seccion">
         <h4>Servicios</h4>
         <div class="servicios-pills">
-          ${negocio.servicios.map(ServiciosExhibicion.renderizar).join("")}
+          ${serviciosGenericos.map(ServiciosExhibicion.renderizar).join("")}
         </div>
       </section>
     `
