@@ -43,23 +43,23 @@
     return '<article class="pedido-especial comida-producto"><div class="pedido-especial-frase"><span class="especial-etiqueta">HECHO A TU GUSTO</span><span class="especial-ilustracion" aria-hidden="true">🍽️ ✨</span><h5>Crea tu pedido especial</h5><span class="especial-bajada">Tu combinación. Tu antojo.</span></div><div class="especial-ejemplos"><span>Combina ingredientes</span><span>Quita lo que no te gusta</span><span>Pídelo diferente</span></div><p>¿Quieres combinar ingredientes, quitar algo o pedirlo diferente? Escríbenos cómo lo quieres y te confirmamos disponibilidad y precio.</p><small>El precio puede variar según los cambios o ingredientes que solicites.</small><button type="button" data-pedido-especial>Solicitar pedido especial <span aria-hidden="true">↗</span></button></article>';
   }
   function enlacePedidoEspecial(n, instrucciones) {
-    const numero=String(n.whatsapp||'').replace(/\D/g,'');
+    const numero=String(window.ContactosExhibicion?.actual?.mandaditos?.numero||'').replace(/\D/g,'');
     const normal=window.ContactosExhibicion?.numero(numero)||(numero.length===10?'52'+numero:numero);
     if(!/^\d{11,15}$/.test(normal))return '';
-    const mensaje='Hola, estoy viendo '+n.nombre+' en Exhibición Frontera Comalapa. Quiero solicitar un pedido especial:\n\n'+instrucciones.trim()+'\n\n¿Me confirmas disponibilidad y precio?';
+    const mensaje='Hola, Mandaditos. Quiero solicitar un pedido especial de '+n.nombre+' en Exhibición Frontera Comalapa:\n\n'+instrucciones.trim()+'\n\n¿Me confirmas disponibilidad y precio?';
     return 'https://api.whatsapp.com/send?phone='+normal+'&text='+encodeURIComponent(mensaje);
   }
   function abrirPedidoEspecial(n, origen) {
     if(!pedidoEspecialActivo(n))return;
     const d=dialogo('Crea tu pedido especial','pedido-especial-dialogo',origen);
     const contenido=d.querySelector('.dialogo-contenido');
-    contenido.innerHTML='<div class="especial-intro"><span class="especial-insignia" aria-hidden="true">🍽️ ✨</span><p class="especial-negocio">'+escapar(n.nombre)+'</p><p>Combina ingredientes, quita algo o inventa tu combinación favorita.</p></div><div class="especial-pasos"><span><b>1</b> Cuéntanos tu idea</span><span><b>2</b> Confirma por WhatsApp</span></div><form><label for="especial-instrucciones">¿Cómo se te antoja?<span class="especial-ayuda">Dinos qué agregar, quitar o combinar.</span></label><textarea id="especial-instrucciones" name="instrucciones" rows="4" maxlength="2000" required placeholder="Ej. Quiero pedirlo con algunos cambios: agregar…, quitar… y servir aparte… ¿Se puede?"></textarea><div class="especial-aviso"><span aria-hidden="true">✦</span><div><strong>Te confirmamos antes de preparar</strong><small>El precio puede variar según los cambios o ingredientes que solicites.</small></div></div><p role="status"></p><button class="especial-enviar" type="submit"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a9 9 0 0 1-13.4 7.8L3 21l1.7-4.6A9 9 0 1 1 21 11.5Z"/><path d="M8 7c0 5 4 9 9 9l1-3-3-1-1 1c-2-1-3-2-4-4l1-1-1-2-2 1Z"/></svg>Enviar por WhatsApp<span aria-hidden="true">↗</span></button><p class="especial-pie">Sin cobro ahora · Disponibilidad y precio por confirmar</p></form>';
+    contenido.innerHTML='<div class="especial-intro"><span class="especial-insignia" aria-hidden="true">🍽️ ✨</span><p class="especial-negocio">'+escapar(n.nombre)+'</p><p>Combina ingredientes, quita algo o inventa tu combinación favorita.</p></div><div class="especial-pasos"><span><b>1</b> Cuéntanos tu idea</span><span><b>2</b> Confirma con Mandaditos</span></div><form><label for="especial-instrucciones">¿Cómo se te antoja?<span class="especial-ayuda">Dinos qué agregar, quitar o combinar.</span></label><textarea id="especial-instrucciones" name="instrucciones" rows="4" maxlength="2000" required placeholder="Ej. Quiero pedirlo con algunos cambios: agregar…, quitar… y servir aparte… ¿Se puede?"></textarea><div class="especial-aviso"><span aria-hidden="true">✦</span><div><strong>Te confirmamos antes de preparar</strong><small>El precio puede variar según los cambios o ingredientes que solicites.</small></div></div><p role="status"></p><button class="especial-enviar" type="submit"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a9 9 0 0 1-13.4 7.8L3 21l1.7-4.6A9 9 0 1 1 21 11.5Z"/><path d="M8 7c0 5 4 9 9 9l1-3-3-1-1 1c-2-1-3-2-4-4l1-1-1-2-2 1Z"/></svg>Enviar por WhatsApp<span aria-hidden="true">↗</span></button><p class="especial-pie">Tu solicitud llega a Mandaditos · Sin cobro ahora</p></form>';
     const form=contenido.querySelector('form'),campo=form.elements.instrucciones;
     form.addEventListener('submit',e=>{
       e.preventDefault();campo.setCustomValidity(campo.value.trim()?'':'Escribe cómo quieres tu pedido especial.');
       if(!form.reportValidity())return;
       const url=enlacePedidoEspecial(n,campo.value);
-      if(!url){form.querySelector('[role="status"]').textContent='Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.';return;}
+      if(!url){form.querySelector('[role="status"]').textContent='El WhatsApp de Mandaditos no está disponible en este momento. Actualiza la página y vuelve a intentarlo.';return;}
       window.open(url,'_blank','noopener,noreferrer');
     });
     campo.addEventListener('input',()=>campo.setCustomValidity(''));campo.focus();
