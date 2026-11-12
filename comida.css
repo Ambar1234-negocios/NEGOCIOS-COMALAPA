@@ -102,3 +102,6 @@
   font-weight:700;
   line-height:1.35;
 }
+
+/* Solicitudes sin precio: independientes del carrito. */
+.pedido-especial{margin:1.5rem 0;max-width:38rem;padding:1.25rem;box-sizing:border-box;overflow-wrap:anywhere}.pedido-especial-frase{padding:2rem 1rem;border-radius:12px;background:linear-gradient(135deg,#fff0cd,#f9dca5);color:#53370c;text-align:center;font-size:clamp(1.4rem,5vw,2rem);font-weight:800}.pedido-especial small{display:block;margin:1rem 0;line-height:1.5}.pedido-especial-dialogo textarea{display:block;box-sizing:border-box;width:100%;max-width:100%;margin-top:.75rem;padding:.75rem;font:inherit;resize:vertical}.pedido-especial-dialogo label{display:block}.pedido-especial-dialogo{box-sizing:border-box;max-width:min(38rem,94vw)}

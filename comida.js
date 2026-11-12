@@ -36,12 +36,41 @@
     const trazos={mariscos:'<path d="M3 12c4-7 11-7 16 0-5 7-12 7-16 0Zm16 0 3-5v10Z"/><circle cx="8" cy="11" r=".8"/>',bebidas:'<path d="M6 5h12l-2 16H8L6 5Zm2 7h8M13 5l2-3h4"/>',compartir:'<circle cx="8" cy="10" r="5"/><circle cx="16" cy="14" r="5"/><path d="M6 10h4m4 4h4"/>',exoticos:'<path d="M5 19C-2 8 5 2 8 6c1-5 7-5 8 0 5-4 10 3 3 13H5Zm7-13v13M8 7l2 12m6-12-2 12M4 11l4 8m12-8-4 8"/>',cafe:'<path d="M4 8h13v7a6 6 0 0 1-12 0V8Zm13 1h2a3 3 0 0 1 0 6h-2M3 22h16M8 2v3m5-3v3"/>',postres:'<path d="M4 12h16v9H4Zm0 4c2 2 3-2 5 0s3-2 5 0 4-2 6 0M6 12V8h12v4M12 8V4m0-2v1"/>',pizzas:'<path d="M4 4c6-3 12 0 16 5L6 21 4 4Zm0 0 2 4c5-2 8 0 11 3"/><circle cx="8" cy="12" r="1"/><circle cx="12" cy="10" r="1"/>',platillos:'<circle cx="13" cy="13" r="7"/><path d="M2 3v6m3-6v6M2 6h3M3.5 9v12M20 3v6"/>'};
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+trazos[tema]+'</svg>';
   }
+  // Activación por negocio: pedidoEspecial=true habilita; false deshabilita incluso el piloto.
+  const pilotosPedidoEspecial = new Set(['cenaduria-esteban']);
+  const pedidoEspecialActivo = n => !digital(n) && n?.categoria === 'comida' && (typeof n.pedidoEspecial === 'boolean' ? n.pedidoEspecial : pilotosPedidoEspecial.has(n.slug));
+  function tarjetaPedidoEspecial(n) {
+    if (!pedidoEspecialActivo(n)) return '';
+    return '<article class="pedido-especial comida-producto"><div class="pedido-especial-frase">Crea tu pedido especial</div><h5>Pedido especial</h5><p>¿Quieres combinar ingredientes, quitar algo o pedirlo diferente? Escríbenos cómo lo quieres y te confirmamos disponibilidad y precio.</p><small>El precio puede variar según los cambios o ingredientes que solicites.</small><button type="button" data-pedido-especial>Solicitar pedido especial</button></article>';
+  }
+  function enlacePedidoEspecial(n, instrucciones) {
+    const numero=String(n.whatsapp||'').replace(/\D/g,'');
+    const normal=window.ContactosExhibicion?.numero(numero)||(numero.length===10?'52'+numero:numero);
+    if(!/^\d{11,15}$/.test(normal))return '';
+    const mensaje='Hola, estoy viendo '+n.nombre+' en Exhibición Frontera Comalapa. Quiero solicitar un pedido especial:\n\n'+instrucciones.trim()+'\n\n¿Me confirmas disponibilidad y precio?';
+    return 'https://api.whatsapp.com/send?phone='+normal+'&text='+encodeURIComponent(mensaje);
+  }
+  function abrirPedidoEspecial(n, origen) {
+    if(!pedidoEspecialActivo(n))return;
+    const d=dialogo('Pedido especial · '+n.nombre,'pedido-especial-dialogo',origen);
+    const contenido=d.querySelector('.dialogo-contenido');
+    contenido.innerHTML='<form><label>Escríbenos cómo lo quieres<textarea name="instrucciones" rows="5" maxlength="2000" required placeholder="Describe los ingredientes, combinaciones o cambios que quieres"></textarea></label><p><small>El precio puede variar según los cambios o ingredientes que solicites.</small></p><p role="status"></p><button type="submit">Enviar por WhatsApp</button></form>';
+    const form=contenido.querySelector('form'),campo=form.elements.instrucciones;
+    form.addEventListener('submit',e=>{
+      e.preventDefault();campo.setCustomValidity(campo.value.trim()?'':'Escribe cómo quieres tu pedido especial.');
+      if(!form.reportValidity())return;
+      const url=enlacePedidoEspecial(n,campo.value);
+      if(!url){form.querySelector('[role="status"]').textContent='Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.';return;}
+      window.open(url,'_blank','noopener,noreferrer');
+    });
+    campo.addEventListener('input',()=>campo.setCustomValidity(''));campo.focus();
+  }
   function menu(n) {
-    if (!productos(n).length) return '';
+    if (!productos(n).length && !pedidoEspecialActivo(n)) return '';
     const tarjetas=ps=>ps.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p,digital(n))}<span>Ver foto e información</span></button>` : foto(p,digital(n))}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}<p>${dinero(Math.round(p.precio*100))}</p>${digital(n)?`<p class="digital-condiciones">${escapar(condiciones(p))}</p>`:""}${p.soloInformativo===true?'<p class="pedido-checkout-nota">Carta informativa · Sin pedido desde la plataforma</p>':`<button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button>`}</article>`).join('');
     const lista=productos(n);const nombres=[...new Set(lista.map(p=>String(p.seccion||'').trim()||'Otros productos'))];
     const contenido=digital(n)?nombres.map(nombre=>`<section class="digital-seccion"><h5>${escapar(nombre)}</h5><div class="comida-grid">${tarjetas(lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre))}</div></section>`).join(''):(n.menuConSecciones===true||(n.menuConSecciones===undefined&&lista.every(p=>String(p.seccion||'').trim())))?nombres.map(nombre=>{const ps=lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre);const tema=temaSeccion(nombre,n);return `<details class="comida-seccion" data-tema="${tema}"><summary><span class="seccion-icono" aria-hidden="true">${iconoSeccion(tema)}</span><span class="seccion-textos"><span class="seccion-nombre">${escapar(nombre)}</span><small>${ps.length} ${ps.length===1?'producto':'productos'}</small></span><span class="seccion-flecha" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="comida-grid">${tarjetas(ps)}</div></details>`;}).join(''): `<div class="comida-grid">${tarjetas(ordenarCategorias(lista))}</div>`;
-    return `<section class="comida-menu" aria-label="${digital(n)?'Catálogo de servicios':'Menú y productos'}"><h4>${digital(n)?'Catálogo de servicios':'Menú / Productos'}</h4>${envioGratisNegocio(n)?'<span class="envio-gratis-dorado">✨ Envío gratis del negocio</span><p>Dentro de Comalapa. Consulta horarios de entrega.</p>':''}<p>${digital(n)?'Elige tu servicio. Entrega y soporte por WhatsApp. Precios en MXN.':'Precios en MXN. Disponibilidad y entrega por confirmar.'}</p>${contenido}${digital(n)&&Array.isArray(n.metodosPago)&&n.metodosPago.length?`<section class="digital-pagos"><h4>Métodos de pago</h4><ul>${n.metodosPago.filter(x=>typeof x==='string').map(x=>`<li>${escapar(x)}</li>`).join('')}</ul><p>Pide los datos de pago por WhatsApp.</p></section>`:''}<div id="comida-pedido"></div></section>`;
+    return `<section class="comida-menu" aria-label="${digital(n)?'Catálogo de servicios':'Menú y productos'}"><h4>${digital(n)?'Catálogo de servicios':'Menú / Productos'}</h4>${envioGratisNegocio(n)?'<span class="envio-gratis-dorado">✨ Envío gratis del negocio</span><p>Dentro de Comalapa. Consulta horarios de entrega.</p>':''}<p>${digital(n)?'Elige tu servicio. Entrega y soporte por WhatsApp. Precios en MXN.':'Precios en MXN. Disponibilidad y entrega por confirmar.'}</p>${contenido}${tarjetaPedidoEspecial(n)}${digital(n)&&Array.isArray(n.metodosPago)&&n.metodosPago.length?`<section class="digital-pagos"><h4>Métodos de pago</h4><ul>${n.metodosPago.filter(x=>typeof x==='string').map(x=>`<li>${escapar(x)}</li>`).join('')}</ul><p>Pide los datos de pago por WhatsApp.</p></section>`:''}<div id="comida-pedido"></div></section>`;
   }
   const centavos = precio => Math.round(Number(precio) * 100);
   function extras(p) {
@@ -352,6 +381,7 @@
     const consulta=document.createElement('button');consulta.type='button';consulta.textContent='Preguntar qué más hay disponible';consulta.onclick=()=>whatsapp(n,true);el.append(consulta);
     el.addEventListener('click',e=>{
       const b=e.target.closest('button');if(!b)return;
+      if(b.hasAttribute('data-pedido-especial')){abrirPedidoEspecial(n,b);return;}
       if(b.dataset.verProducto){const p=productos(n).find(p=>p.id===b.dataset.verProducto);if(p)abrirFoto(p,b,digital(n));return;}
       if(b.dataset.agregarProducto){const p=productos(n).find(p=>p.id===b.dataset.agregarProducto);if(p)configurar(n,p,b);}
     });
