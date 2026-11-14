@@ -273,7 +273,7 @@ function crearTarjetaNegocioCategoria(negocio, categoria) {
   const textoBoton = propiedad ? "Ver " + (tipoBoton[propiedad.tipo] || "propiedad") : "Ver perfil";
   const accion = escapar('verPerfil(' + JSON.stringify(categoria) + ', ' + indice + ')');
   return `
-    <article class="categoria-negocio resultado-plan-${obtenerPlanNegocio(negocio)}">
+    <article class="categoria-negocio resultado-plan-${obtenerPlanNegocio(negocio)}" data-promo-negocio="${escapar(negocio.slug||'')}">
       <div class="categoria-negocio-portada" aria-hidden="true">
         ${banner ? `<img src="${escapar(banner)}" alt="" loading="lazy" decoding="async" onerror="this.hidden=true">` : ""}
         ${etiquetaPromocionNegocio(negocio)}
@@ -1948,3 +1948,5 @@ window.addEventListener('comida-abrir', evento => {
     }
   }
 });
+
+
