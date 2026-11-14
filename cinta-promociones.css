@@ -1,6 +1,17 @@
 .cinta-promos[hidden],.promo-mini[hidden]{display:none!important}
 .cinta-promos{display:flex;align-items:center;gap:10px;box-sizing:border-box;max-width:1180px;margin:10px auto 12px;padding:0;min-height:36px;border:1px solid #a80e30;border-radius:11px;background:#c4163c;color:#fff;overflow:hidden;font-size:14px;font-weight:750}
 .cinta-promos-ventana{flex:1;min-width:0;overflow:hidden;text-decoration:none;color:inherit;outline-offset:-3px}
+.cinta-promos-ventana{display:block;width:100%;border:0;border-radius:inherit;padding:0;background:transparent;font:inherit;text-align:inherit;cursor:pointer;min-height:44px}
+.cinta-promos-ventana:focus-visible{outline:3px solid #fff}
+.cinta-promos-ventana:hover .cinta-promos-pista,.cinta-promos-ventana:focus-visible .cinta-promos-pista{animation-play-state:paused}
+.promo-terminos{box-sizing:border-box;width:calc(100% - 32px);max-width:560px;max-height:calc(100dvh - 32px);margin:auto;padding:24px;border:0;border-radius:16px;background:#fff;color:#27272a;font:400 16px/1.55 system-ui,sans-serif;overflow:auto;overscroll-behavior:contain}
+.promo-terminos::backdrop{background:rgb(0 0 0 / .6)}
+.promo-terminos h2{margin:0 0 16px;font-size:22px;line-height:1.25;color:#a80e30}
+.promo-terminos ul{margin:0 0 20px;padding-left:22px}
+.promo-terminos li+li{margin-top:10px}
+.promo-terminos-cerrar{min-height:44px;padding:10px 24px;border:0;border-radius:9px;background:#c4163c;color:#fff;font:700 16px system-ui,sans-serif;cursor:pointer}
+.promo-terminos-cerrar:focus-visible{outline:3px solid #27272a;outline-offset:3px}
+@media(max-width:600px){.promo-terminos{padding:20px}.promo-terminos-cerrar{width:100%}}
 .cinta-promos-pista{display:flex;width:max-content;animation:cinta-promos-izquierda 24s linear infinite}
 .cinta-promos-grupo{display:flex;align-items:center;gap:8px;flex-shrink:0;padding:9px 14px;white-space:nowrap}
 .cinta-promos-grupo span+span:before{content:'✦';margin-right:8px;color:#fff}
