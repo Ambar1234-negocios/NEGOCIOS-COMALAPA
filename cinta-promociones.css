@@ -1,7 +1,7 @@
 .cinta-promos[hidden],.promo-mini[hidden]{display:none!important}
 .cinta-promos{display:flex;align-items:center;gap:10px;box-sizing:border-box;max-width:1180px;margin:10px auto 12px;padding:0;min-height:36px;border:1px solid #a80e30;border-radius:11px;background:#c4163c;color:#fff;overflow:hidden;font-size:14px;font-weight:750}
 .cinta-promos-ventana{flex:1;min-width:0;overflow:hidden;text-decoration:none;color:inherit;outline-offset:-3px}
-.cinta-promos-pista{display:flex;width:max-content;animation:cinta-promos-izquierda 32s linear infinite}
+.cinta-promos-pista{display:flex;width:max-content;animation:cinta-promos-izquierda 24s linear infinite}
 .cinta-promos-grupo{display:flex;align-items:center;gap:8px;flex-shrink:0;padding:9px 14px;white-space:nowrap}
 .cinta-promos-grupo span+span:before{content:'✦';margin-right:8px;color:#fff}
 
