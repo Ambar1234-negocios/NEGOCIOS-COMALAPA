@@ -14,11 +14,11 @@ function promoProducto(n){
  }
  return '';
 }
-function envio(n){return oferta.porcentaje>0&&oferta.negocios.includes(n?.slug)?oferta.porcentaje+'% en servicio':'';}
+function envio(n){return oferta.porcentaje>0&&oferta.negocios.includes(n?.slug)?oferta.porcentaje+'% de descuento en envío':'';}
 function etiqueta(contenedor,texto,producto=false){
  let e=contenedor.querySelector(':scope > .promo-mini');
  if(!texto){e?.remove();return;}
- if(!e){e=crear('span');e.className='promo-mini';contenedor.prepend(e);}
+ if(!e){e=crear('span');e.className='promo-mini';if(contenedor.classList.contains('categoria'))contenedor.append(e);else contenedor.prepend(e);}
  const valor='🎉 '+texto;if(e.textContent!==valor)e.textContent=valor;
  e.classList.toggle('producto',producto);
  const titulo=producto?texto:'Descuento en el servicio de Mandaditos para comida dentro de Frontera Comalapa. Sujeto a cotización y apoyo disponible; no descuenta productos.';
@@ -27,13 +27,13 @@ function etiqueta(contenedor,texto,producto=false){
 function pintar(){
  const ns=lista(),conOferta=ns.filter(n=>envio(n)),productos=ns.filter(n=>promoProducto(n));
  const categoria=document.querySelector('.categoria[data-categoria="comida"],.categoria[onclick="mostrarCategoria(\'comida\')"]');
- if(categoria)etiqueta(categoria,conOferta.length?oferta.porcentaje+'% en servicio':productos.some(n=>n.categoria==='comida')?'Promociones':'');
+ if(categoria)etiqueta(categoria,conOferta.length?oferta.porcentaje+'% en envío':productos.some(n=>n.categoria==='comida')?'Promociones':'');
  for(const tarjeta of document.querySelectorAll('[data-promo-negocio]')){
   const n=ns.find(n=>n.slug===tarjeta.dataset.promoNegocio),cuerpo=tarjeta.querySelector('.categoria-negocio-cuerpo');if(!cuerpo)continue;
   const servicio=envio(n),producto=promoProducto(n);etiqueta(cuerpo,servicio||producto,!servicio);
  }
  const textos=[];
- if(conOferta.length)textos.push('🎉 '+oferta.porcentaje+'% de descuento en el servicio de Mandaditos al pedir comida','📍 Dentro de Frontera Comalapa · Hasta agotar apoyo promocional','El servicio y la promoción se confirman al cotizar');
+ if(conOferta.length)textos.push('🎉 '+oferta.porcentaje+'% de descuento en envío de comida con Mandaditos','📍 Dentro de Frontera Comalapa · Hasta agotar apoyo promocional','El servicio y la promoción se confirman al cotizar');
  for(const n of productos.slice(0,6))textos.push('✨ '+n.nombre+' · '+promoProducto(n));
  const nueva=JSON.stringify(textos),cinta=document.getElementById('cinta-promos');if(!cinta)return;
  cinta.hidden=!textos.length;if(nueva===firma)return;firma=nueva;

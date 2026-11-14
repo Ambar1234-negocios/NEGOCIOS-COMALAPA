@@ -1,17 +1,17 @@
 .cinta-promos[hidden],.promo-mini[hidden]{display:none!important}
-.cinta-promos{display:flex;align-items:center;gap:10px;box-sizing:border-box;max-width:1180px;margin:10px auto 12px;padding:0 10px 0 0;min-height:36px;border:1px solid #d9ad50;border-radius:11px;background:#fff3cd;color:#65430b;overflow:hidden;font-size:12px;font-weight:650}
+.cinta-promos{display:flex;align-items:center;gap:10px;box-sizing:border-box;max-width:1180px;margin:10px auto 12px;padding:0 10px 0 0;min-height:36px;border:1px solid #a80e30;border-radius:11px;background:#c4163c;color:#fff;overflow:hidden;font-size:14px;font-weight:750}
 .cinta-promos-ventana{flex:1;min-width:0;overflow:hidden;text-decoration:none;color:inherit;outline-offset:-3px}
 .cinta-promos-pista{display:flex;width:max-content;animation:cinta-promos-izquierda 32s linear infinite}
 .cinta-promos-grupo{display:flex;align-items:center;gap:28px;flex-shrink:0;padding:9px 14px;white-space:nowrap}
-.cinta-promos-grupo span+span:before{content:'✦';margin-right:28px;color:#bc861e}
-.cinta-promos-pausa{flex:none;width:27px;height:27px;padding:0;border:1px solid #d9ad50;border-radius:50%;background:transparent;color:inherit;cursor:pointer;font-size:13px}
+.cinta-promos-grupo span+span:before{content:'✦';margin-right:28px;color:#fff}
+.cinta-promos-pausa{flex:none;width:27px;height:27px;padding:0;border:1px solid #ffffff90;border-radius:50%;background:#ffffff18;color:inherit;cursor:pointer;font-size:13px}
 .cinta-promos:hover .cinta-promos-pista,.cinta-promos:focus-within .cinta-promos-pista,.cinta-promos[data-pausa=true] .cinta-promos-pista{animation-play-state:paused}
 @keyframes cinta-promos-izquierda{to{transform:translateX(-50%)}}
 .categoria{position:relative}
-.promo-mini{display:inline-flex;align-items:center;gap:4px;max-width:100%;box-sizing:border-box;padding:5px 9px;border:1px solid #e7c76c;border-radius:999px;background:#fff1b8;color:#69440b;font:700 10px/1.25 system-ui,sans-serif;white-space:nowrap}
-.categoria>.promo-mini{position:absolute;right:7px;top:7px;font-size:9px;padding:4px 7px;pointer-events:none}
+.promo-mini{display:inline-flex;align-items:center;gap:4px;max-width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid #a80e30;border-radius:10px;background:#c4163c;color:#fff;font:750 13px/1.35 system-ui,sans-serif;white-space:nowrap}
+.categoria>.promo-mini{position:static;display:block;width:fit-content;margin:9px auto 0;font-size:12px;line-height:1.3;padding:6px 8px;white-space:normal;pointer-events:none}
 .categoria-negocio-cuerpo>.promo-mini{position:absolute;top:162px;right:14px;margin:0;max-width:calc(100% - 110px);white-space:normal;text-align:center}
 .promo-mini.producto{background:#e4f3ed;border-color:#add5c3;color:#185c45}
-@media(max-width:600px){.cinta-promos{margin:8px 16px 10px;min-height:34px;font-size:11px}.cinta-promos-grupo{gap:22px;padding:8px 12px}.categoria-negocio-cuerpo>.promo-mini{font-size:10px;max-width:calc(100% - 84px)}}
+@media(max-width:600px){.cinta-promos{margin:8px 16px 10px;min-height:38px;font-size:13px}.cinta-promos-grupo{gap:22px;padding:8px 12px}.categoria-negocio-cuerpo>.promo-mini{font-size:12px;max-width:calc(100% - 104px)}}
 @media(prefers-reduced-motion:reduce){.cinta-promos-pista{animation:none;width:auto}.cinta-promos-grupo{white-space:normal;flex-wrap:wrap;gap:5px;padding:8px 12px}.cinta-promos-grupo[aria-hidden=true]{display:none}.cinta-promos-grupo span+span:before{margin-right:5px}.cinta-promos-pausa{display:none}}
 
