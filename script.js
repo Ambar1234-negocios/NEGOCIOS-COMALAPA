@@ -268,7 +268,7 @@ function crearTarjetaNegocioCategoria(negocio, categoria) {
   const horario = propiedad ? null : obtenerEstadoHorario(negocio);
   const estadoVenta = ["Disponible", "En trato", "Vendida"].includes(propiedad?.estado) ? propiedad.estado : "Disponible";
   const estado = propiedad ? ({Disponible:"disponible", "En trato":"en-trato", Vendida:"vendida"}[estadoVenta]) : horario.automatico ? horario.estado : "sin-datos";
-  const avisoPedidos = propiedad ? "" : avisoPedidosAntesDeAbrir(negocio, horario);
+  const avisoPedidos = propiedad ? "" : categoria === 'comida' ? avisoAperturaComida(negocio, horario) : avisoPedidosAntesDeAbrir(negocio, horario);
   const textoEstado = avisoPedidos || (propiedad ? estadoVenta : estado === "abierto" ? "Abierto ahora" : estado === "descanso" ? "Cerrado temporalmente" : estado === "cerrado" ? "Cerrado" : "Horario por confirmar");
   const tipoBoton = {Lote:"lote", Terreno:"terreno", Casa:"casa", Departamento:"departamento", Edificio:"edificio", Parcela:"parcela", "Local comercial":"local"};
   const textoBoton = propiedad ? "Ver " + (tipoBoton[propiedad.tipo] || "propiedad") : "Ver perfil";
@@ -287,7 +287,7 @@ function crearTarjetaNegocioCategoria(negocio, categoria) {
         <h3><button type="button" class="categoria-negocio-enlace" onclick="${accion}">${escapar(nombre)}</button></h3>
         ${etiquetaEnvioGratis(negocio)}<p class="categoria-negocio-descripcion">${escapar(negocio.descripcion || "Conoce sus servicios y datos de contacto.")}</p>
         <div class="categoria-negocio-pie">
-          <span class="categoria-negocio-estado estado-${avisoPedidos ? 'descanso' : estado}" ${negocio.pedidosDesde ? `data-horario-pedidos="${escapar(negocio.slug)}"` : ''} title="${escapar(avisoPedidos || (propiedad ? textoEstado : horario.texto))}"><span aria-hidden="true">●</span> ${escapar(textoEstado)}</span>
+          <span class="categoria-negocio-estado estado-${avisoPedidos ? 'descanso' : estado}" ${!propiedad && categoria === 'comida' ? `data-horario-comida="${escapar(negocio.slug)}"` : negocio.pedidosDesde ? `data-horario-pedidos="${escapar(negocio.slug)}"` : ''} title="${escapar(avisoPedidos || (propiedad ? textoEstado : horario.texto))}"><span aria-hidden="true">●</span> ${escapar(textoEstado)}</span>
           <span class="categoria-negocio-cta" aria-hidden="true">${escapar(textoBoton)} <span>↗</span></span>
         </div>
       </div>
@@ -483,13 +483,27 @@ function avisoPedidosAntesDeAbrir(negocio, estado = obtenerEstadoHorario(negocio
   return `Abre en ${restantes} min · Ya puedes realizar tu pedido`;
 }
 
-// Actualiza únicamente las tarjetas con recepción anticipada configurada.
+function avisoAperturaComida(negocio, estado = obtenerEstadoHorario(negocio)) {
+  if (!estado.automatico || !['cerrado', 'descanso'].includes(estado.estado)) return '';
+  const { indiceDia, minutosActuales } = obtenerFechaLocalExhibicion();
+  const proxima = buscarProximaApertura(negocio.horarios, indiceDia, minutosActuales);
+  if (!proxima) return '';
+  const restantes = proxima.desplazamiento * 1440 + horaAMinutos(proxima.hora) - minutosActuales;
+  const anticipados = avisoPedidosAntesDeAbrir(negocio, estado);
+  if (restantes > 0 && restantes <= 30) {
+    return `Abre en ${restantes} min${anticipados ? ' · Ya puedes realizar tu pedido' : ''}`;
+  }
+  return textoProximaApertura(proxima).replace('Abre hoy a las', 'Abre a las') + (anticipados ? ' · Ya puedes realizar tu pedido' : '');
+}
+
+// Mantiene los minutos y el estado actualizados sin recargar las tarjetas.
 setInterval(() => {
-  for (const aviso of document.querySelectorAll('[data-horario-pedidos]')) {
-    const negocio = Object.values(negocios).flat().find(n => n.slug === aviso.dataset.horarioPedidos);
+  for (const aviso of document.querySelectorAll('[data-horario-pedidos], [data-horario-comida]')) {
+    const esComida = aviso.dataset.horarioComida !== undefined;
+    const negocio = Object.values(negocios).flat().find(n => n.slug === (esComida ? aviso.dataset.horarioComida : aviso.dataset.horarioPedidos));
     if (!negocio) continue;
     const horario = obtenerEstadoHorario(negocio);
-    const texto = avisoPedidosAntesDeAbrir(negocio, horario);
+    const texto = esComida ? avisoAperturaComida(negocio, horario) : avisoPedidosAntesDeAbrir(negocio, horario);
     const estado = texto ? 'descanso' : horario.estado;
     aviso.className = 'categoria-negocio-estado estado-' + estado;
     aviso.title = texto || horario.texto;
