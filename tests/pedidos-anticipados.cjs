@@ -1,0 +1,26 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),path=require('path');
+const source=fs.readFileSync(path.join(__dirname,'../script.js'),'utf8');
+let actualizar;
+const aviso={dataset:{horarioPedidos:'el-micheviche'}};
+const ctx=vm.createContext({Intl,Date,setInterval:fn=>actualizar=fn,document:{querySelectorAll:()=>[aviso]},obtenerPlanNegocio:()=> 'normal',etiquetaPromocionNegocio:()=>'',etiquetaEnvioGratis:()=>''});
+vm.runInContext(source.slice(source.indexOf('function escaparTarjetaCategoria'),source.indexOf('function crearLinkPedido')),ctx);
+vm.runInContext(source.slice(source.indexOf('const ZONA_HORARIA_EXHIBICION'),source.indexOf('// NAVEGACIÓN / HISTORIAL')),ctx);
+ctx.n={slug:'el-micheviche',nombre:'El Micheviche',pedidosDesde:'11:00',horarios:Object.fromEntries(['martes','miercoles','jueves','viernes','sabado','domingo'].map(d=>[d,{modo:'abierto',turnos:[{inicio:'11:30',fin:'19:00'}]}]))};
+ctx.negocios={comida:[ctx.n]};
+vm.runInContext('obtenerFechaLocalExhibicion=()=>clock',ctx);
+const before=JSON.stringify(ctx.n);
+function run(d,m){ctx.clock={indiceDia:d,minutosActuales:m};return vm.runInContext('({aviso:avisoPedidosAntesDeAbrir(n),horario:obtenerEstadoHorario(n),html:crearTarjetaNegocioCategoria(n,"comida")})',ctx);}
+assert.equal(run(6,659).aviso,'');
+assert.equal(run(6,660).aviso,'Abre en 30 min · Ya puedes realizar tu pedido');
+assert.equal(run(6,675).aviso,'Abre en 15 min · Ya puedes realizar tu pedido');
+assert.match(run(6,689).html,/Abre en 1 min · Ya puedes realizar tu pedido/);
+assert.equal(run(6,690).aviso,'');assert.equal(run(6,690).horario.estado,'abierto');
+assert.equal(run(6,1140).aviso,'');assert.equal(run(6,1140).horario.estado,'cerrado');
+assert.equal(run(1,675).aviso,'');
+for(const d of [0,2,3,4,5,6])assert.match(run(d,675).aviso,/15 min/);
+run(6,675);actualizar();assert.match(aviso.innerHTML,/Abre en 15 min/);
+run(6,676);actualizar();assert.match(aviso.innerHTML,/Abre en 14 min/);
+run(6,690);actualizar();assert.match(aviso.innerHTML,/Abierto ahora/);
+assert.equal(JSON.stringify(ctx.n),before);
+delete ctx.n.pedidosDesde;assert.equal(run(6,675).aviso,'');
+console.log('OK: inicio 11:00, cuenta regresiva, apertura 11:30, cierre 19:00, lunes cerrado, actualización y otros negocios sin cambios');

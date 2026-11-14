@@ -268,7 +268,8 @@ function crearTarjetaNegocioCategoria(negocio, categoria) {
   const horario = propiedad ? null : obtenerEstadoHorario(negocio);
   const estadoVenta = ["Disponible", "En trato", "Vendida"].includes(propiedad?.estado) ? propiedad.estado : "Disponible";
   const estado = propiedad ? ({Disponible:"disponible", "En trato":"en-trato", Vendida:"vendida"}[estadoVenta]) : horario.automatico ? horario.estado : "sin-datos";
-  const textoEstado = propiedad ? estadoVenta : estado === "abierto" ? "Abierto ahora" : estado === "descanso" ? "Cerrado temporalmente" : estado === "cerrado" ? "Cerrado" : "Horario por confirmar";
+  const avisoPedidos = propiedad ? "" : avisoPedidosAntesDeAbrir(negocio, horario);
+  const textoEstado = avisoPedidos || (propiedad ? estadoVenta : estado === "abierto" ? "Abierto ahora" : estado === "descanso" ? "Cerrado temporalmente" : estado === "cerrado" ? "Cerrado" : "Horario por confirmar");
   const tipoBoton = {Lote:"lote", Terreno:"terreno", Casa:"casa", Departamento:"departamento", Edificio:"edificio", Parcela:"parcela", "Local comercial":"local"};
   const textoBoton = propiedad ? "Ver " + (tipoBoton[propiedad.tipo] || "propiedad") : "Ver perfil";
   const accion = escapar('verPerfil(' + JSON.stringify(categoria) + ', ' + indice + ')');
@@ -286,7 +287,7 @@ function crearTarjetaNegocioCategoria(negocio, categoria) {
         <h3><button type="button" class="categoria-negocio-enlace" onclick="${accion}">${escapar(nombre)}</button></h3>
         ${etiquetaEnvioGratis(negocio)}<p class="categoria-negocio-descripcion">${escapar(negocio.descripcion || "Conoce sus servicios y datos de contacto.")}</p>
         <div class="categoria-negocio-pie">
-          <span class="categoria-negocio-estado estado-${estado}" title="${escapar(propiedad ? textoEstado : horario.texto)}"><span aria-hidden="true">●</span> ${escapar(textoEstado)}</span>
+          <span class="categoria-negocio-estado estado-${avisoPedidos ? 'descanso' : estado}" ${negocio.pedidosDesde ? `data-horario-pedidos="${escapar(negocio.slug)}"` : ''} title="${escapar(avisoPedidos || (propiedad ? textoEstado : horario.texto))}"><span aria-hidden="true">●</span> ${escapar(textoEstado)}</span>
           <span class="categoria-negocio-cta" aria-hidden="true">${escapar(textoBoton)} <span>↗</span></span>
         </div>
       </div>
@@ -467,6 +468,34 @@ function textoProximaApertura(proxima) {
 
   return `Abre el ${nombres[indice]} a las ${formatearHora(proxima.hora)}`;
 }
+
+// Aviso informativo: no cambia la apertura ni las reglas del pedido.
+function avisoPedidosAntesDeAbrir(negocio, estado = obtenerEstadoHorario(negocio)) {
+  const desde = horaAMinutos(negocio.pedidosDesde);
+  if (desde === null || estado.estado !== 'cerrado') return '';
+  const { indiceDia, minutosActuales } = obtenerFechaLocalExhibicion();
+  const dia = negocio.horarios?.[DIAS_HORARIO_PUBLICO[indiceDia]];
+  if (dia?.modo !== 'abierto' || !Array.isArray(dia.turnos)) return '';
+  const aperturas = dia.turnos.map(t => horaAMinutos(t.inicio)).filter(m => m !== null);
+  const apertura = Math.min(...aperturas);
+  if (!Number.isFinite(apertura) || minutosActuales < desde || minutosActuales >= apertura) return '';
+  const restantes = apertura - minutosActuales;
+  return `Abre en ${restantes} min · Ya puedes realizar tu pedido`;
+}
+
+// Actualiza únicamente las tarjetas con recepción anticipada configurada.
+setInterval(() => {
+  for (const aviso of document.querySelectorAll('[data-horario-pedidos]')) {
+    const negocio = Object.values(negocios).flat().find(n => n.slug === aviso.dataset.horarioPedidos);
+    if (!negocio) continue;
+    const horario = obtenerEstadoHorario(negocio);
+    const texto = avisoPedidosAntesDeAbrir(negocio, horario);
+    const estado = texto ? 'descanso' : horario.estado;
+    aviso.className = 'categoria-negocio-estado estado-' + estado;
+    aviso.title = texto || horario.texto;
+    aviso.innerHTML = '<span aria-hidden="true">●</span> ' + escaparTarjetaCategoria(texto || (estado === 'abierto' ? 'Abierto ahora' : estado === 'descanso' ? 'Cerrado temporalmente' : estado === 'cerrado' ? 'Cerrado' : 'Horario por confirmar'));
+  }
+}, 15000);
 
 function obtenerEstadoHorario(negocio) {
   const horarios = negocio.horarios;

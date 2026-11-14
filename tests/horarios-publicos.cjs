@@ -1,7 +1,7 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),path=require('path');
 const source=fs.readFileSync(path.join(__dirname,'../script.js'),'utf8');
 const hours=source.slice(source.indexOf('const ZONA_HORARIA_EXHIBICION'),source.indexOf('// NAVEGACIÓN / HISTORIAL'));
-const ctx=vm.createContext({Intl,Date,escaparTarjetaCategoria:s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;')});vm.runInContext(hours,ctx);
+const ctx=vm.createContext({Intl,Date,setInterval:()=>{},escaparTarjetaCategoria:s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;')});vm.runInContext(hours,ctx);
 const closed={modo:'cerrado'},day=(...turnos)=>({modo:'abierto',turnos:turnos.map(([inicio,fin])=>({inicio,fin}))});
 const schedule={domingo:closed,lunes:day(['07:30','17:00']),martes:day(['07:30','17:00']),miercoles:day(['07:30','12:00'],['15:00','17:00']),jueves:day(['07:30','17:00']),viernes:day(['07:30','17:00']),sabado:day(['07:30','14:00'])};
 function run(d,m,horarios=schedule){ctx.clock={indiceDia:d,minutosActuales:m};ctx.business={horarios};vm.runInContext('obtenerFechaLocalExhibicion=()=>clock',ctx);return vm.runInContext('({estado:obtenerEstadoHorario(business),html:renderizarHorarioPublico(business)})',ctx);}
