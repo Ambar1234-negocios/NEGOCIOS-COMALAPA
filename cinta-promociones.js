@@ -11,7 +11,7 @@ function etiqueta(contenedor,texto,producto=false){
  if(!e){e=crear('span');e.className='promo-mini';if(contenedor.classList.contains('categoria'))contenedor.append(e);else contenedor.prepend(e);}
  const valor='🎉 '+texto;if(e.textContent!==valor)e.textContent=valor;
  e.classList.toggle('producto',producto);
- const titulo=producto?texto:'Descuento en el servicio de Mandaditos para comida dentro de Frontera Comalapa. Sujeto a cotización y apoyo disponible; no descuenta productos.';
+ const titulo=producto?texto:'Descuento en el servicio de Mandaditos para comida dentro de Frontera Comalapa. Sujeto a cotización y saldo promocional disponible; no descuenta productos.';
  if(e.title!==titulo)e.title=titulo;
 }
 function pintar(){
@@ -23,7 +23,7 @@ function pintar(){
   etiqueta(cuerpo,envio(n));
  }
  const textos=[];
- if(conOferta.length)textos.push('🎉 '+(oferta.titulo?oferta.titulo+' · ':'')+oferta.porcentaje+'% de descuento en envío de comida con Mandaditos','📍 Dentro de Frontera Comalapa · Hasta agotar apoyo promocional','El servicio y la promoción se confirman al cotizar');
+ if(conOferta.length)textos.push('🎉 '+(oferta.titulo?oferta.titulo+' · ':'')+oferta.porcentaje+'% de descuento en envío de comida con Mandaditos','📍 Dentro de Frontera Comalapa · Hasta agotar el saldo promocional','El servicio y la promoción se confirman al cotizar');
  const nueva=JSON.stringify(textos),cinta=document.getElementById('cinta-promos');if(!cinta)return;
  cinta.hidden=!textos.length;if(nueva===firma)return;firma=nueva;
  const pista=cinta.querySelector('.cinta-promos-pista');pista.replaceChildren();
@@ -39,8 +39,6 @@ async function consultar(){
  try{const r=await fetch(BASE+'/rest/v1/rpc/exhibicion_promocion_publica',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:'{}',cache:'no-store',signal:AbortSignal.timeout(10000)});if(!r.ok)throw Error('Promociones no disponibles');const v=await r.json();if(!Number.isInteger(v.porcentaje)||v.porcentaje<0||v.porcentaje>100||!Array.isArray(v.negocios))throw Error('Respuesta inválida');oferta=v;}
  catch{oferta={porcentaje:0,negocios:[]};}finally{consultando=false;pintar();}
 }
-const cinta=document.getElementById('cinta-promos'),pausa=cinta?.querySelector('button');
-pausa?.addEventListener('click',()=>{const pausada=cinta.dataset.pausa!=='true';cinta.dataset.pausa=String(pausada);pausa.setAttribute('aria-pressed',String(pausada));pausa.setAttribute('aria-label',pausada?'Reanudar promociones':'Pausar promociones');pausa.textContent=pausada?'▶':'Ⅱ';});
 const observador=new MutationObserver(programar);
 for(const selector of ['.grid-categorias','#lista-negocios','#comida-inicio']){const n=document.querySelector(selector);if(n)observador.observe(n,{childList:true,subtree:true});}
 if(typeof cargaNegociosPublicados!=='undefined')cargaNegociosPublicados.finally(programar);
