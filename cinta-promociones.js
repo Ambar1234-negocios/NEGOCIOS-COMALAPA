@@ -14,9 +14,10 @@ const terminosPromocion=porcentaje=>[
  'No aplica al precio de los productos; únicamente al servicio de entrega.',
  'Exhibición puede suspender o finalizar la promoción cuando el fondo se agote.'
 ];
-let modalTerminos;
+let modalTerminos,ultimoDisparador;
 function abrirTerminos(disparador){
  if(!oferta.porcentaje||!lista().some(n=>envio(n)))return;
+ ultimoDisparador=disparador;
  if(!modalTerminos){
   modalTerminos=crear('dialog');modalTerminos.id='promo-terminos';modalTerminos.className='promo-terminos';
   modalTerminos.setAttribute('role','dialog');modalTerminos.setAttribute('aria-modal','true');modalTerminos.setAttribute('aria-labelledby','promo-terminos-titulo');
@@ -26,7 +27,7 @@ function abrirTerminos(disparador){
   modalTerminos.addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();cerrar.focus();}});
   modalTerminos.append(titulo,contenido,cerrar);document.body.append(modalTerminos);
   modalTerminos.addEventListener('click',e=>{if(e.target!==modalTerminos)return;const r=modalTerminos.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)modalTerminos.close();});
-  modalTerminos.addEventListener('close',()=>{if(!disparador.closest('[hidden]'))disparador.focus();});
+  modalTerminos.addEventListener('close',()=>{if(ultimoDisparador?.isConnected&&!ultimoDisparador.closest('[hidden]'))ultimoDisparador.focus();});
  }
  modalTerminos.querySelector('ul').replaceChildren(...terminosPromocion(oferta.porcentaje).map(t=>crear('li',t)));
  if(!modalTerminos.open)modalTerminos.showModal();
@@ -54,12 +55,15 @@ function pintar(){
   const valido=oferta.porcentaje>0&&oferta.negocios.includes(contexto.dataset.promoContexto);
   let aviso=contexto.querySelector(':scope > .promo-envio-contexto');
   if(!valido){aviso?.remove();continue;}
-  if(!aviso){aviso=crear('div');aviso.className='promo-envio-contexto';aviso.append(crear('strong'),crear('small'));const titulo=contexto.classList.contains('comida-menu')?contexto.querySelector(':scope > h4'):null;if(titulo)titulo.insertAdjacentElement('afterend',aviso);else contexto.append(aviso);}
+  if(!aviso){
+   aviso=crear('div');aviso.className='promo-envio-contexto';
+   const terminos=crear('button','Términos y condiciones');terminos.type='button';terminos.className='promo-terminos-enlace';
+   terminos.setAttribute('aria-haspopup','dialog');terminos.setAttribute('aria-controls','promo-terminos');terminos.onclick=()=>abrirTerminos(terminos);
+   aviso.append(crear('strong'),terminos);contexto.append(aviso);
+  }
   const texto='🎉 '+oferta.porcentaje+'% de descuento en envío';
-  const principal=aviso.querySelector('strong'),detalle=aviso.querySelector('small');
+  const principal=aviso.querySelector('strong');
   if(principal.textContent!==texto)principal.textContent=texto;
-  const condicion='Pidiendo desde Exhibición · Con Mandaditos en Comalapa';
-  if(detalle.textContent!==condicion)detalle.textContent=condicion;
  }
  const textos=[];
  if(conOferta.length)textos.push('🎉 '+oferta.porcentaje+'% de descuento en envío pidiendo desde Exhibición · Solo dentro de Comalapa · Aplican términos y condiciones');
@@ -69,8 +73,8 @@ function pintar(){
  if(!textos.length)return;
  const grupo=crear('span');grupo.className='cinta-promos-grupo';for(let repeticion=0;repeticion<3;repeticion++)for(const t of textos)grupo.append(crear('span',t));
  const copia=grupo.cloneNode(true);copia.setAttribute('aria-hidden','true');pista.append(grupo,copia);
- const enlace=cinta.querySelector('button');enlace.setAttribute('aria-label',oferta.porcentaje+'% de descuento en envío. Ver términos y condiciones');
- enlace.onclick=()=>abrirTerminos(enlace);
+ const enlace=cinta.querySelector('button');enlace.setAttribute('aria-label',oferta.porcentaje+'% de descuento en envío. Ir a Comida');
+ enlace.onclick=()=>mostrarCategoria('comida');
 }
 function programar(){if(programado)return;programado=true;requestAnimationFrame(()=>{programado=false;pintar();});}
 async function consultar(){
