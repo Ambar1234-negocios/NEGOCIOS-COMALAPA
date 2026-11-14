@@ -12,3 +12,6 @@ CNAME
 *backup*
 *respaldo*
 *.js.txt
+
+sql/**
+tests/**
