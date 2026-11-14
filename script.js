@@ -349,7 +349,7 @@ function formatearHora(hora) {
 
   const h24 = Math.floor(minutos / 60) % 24;
   const m = minutos % 60;
-  const periodo = h24 >= 12 ? "p.m." : "a.m.";
+  const periodo = h24 >= 12 ? "p. m." : "a. m.";
   const h12 = h24 % 12 || 12;
 
   return `${h12}:${String(m).padStart(2, "0")} ${periodo}`;
@@ -394,6 +394,26 @@ function formatearHorarioDia(horarioDia) {
   return turnos
     .map((turno) => `${formatearHora(turno.inicio)} – ${formatearHora(turno.fin)}`)
     .join(" · ");
+}
+
+// Solo lectura: usa el mismo horario semanal para cualquier giro.
+function renderizarHorarioPublico(negocio, estado = obtenerEstadoHorario(negocio)) {
+  const escapar = escaparTarjetaCategoria;
+  if (!estado.automatico) {
+    return '<p><strong>' + escapar(estado.texto) + '</strong></p>';
+  }
+  const { indiceDia } = obtenerFechaLocalExhibicion();
+  const horarios = negocio.horarios;
+  const nombres = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const manana = formatearHorarioDia(horarios[DIAS_HORARIO_PUBLICO[(indiceDia + 1) % 7]]);
+  const filas = [1, 2, 3, 4, 5, 6, 0].map(indice => {
+    const hoy = indice === indiceDia;
+    return '<div class="horario-dia' + (hoy ? ' horario-dia-hoy' : '') + '"><dt>' + nombres[indice] + (hoy ? ' · Hoy' : '') + '</dt><dd>' + escapar(formatearHorarioDia(horarios[DIAS_HORARIO_PUBLICO[indice]])) + '</dd></div>';
+  }).join('');
+  return '<div class="horario-publico"><p><strong>' + escapar(estado.texto) + '</strong></p>' +
+    '<p class="horario-manana">Mañana · ' + escapar(manana) + '</p>' +
+    '<button type="button" class="horario-toggle" aria-expanded="false" onclick="const semana=this.nextElementSibling;semana.hidden=!semana.hidden;this.setAttribute(\'aria-expanded\',String(!semana.hidden));this.textContent=semana.hidden?\'Ver horarios\':\'Ocultar horarios\'">Ver horarios</button>' +
+    '<dl class="horario-semana" hidden>' + filas + '</dl></div>';
 }
 
 function buscarProximaApertura(horarios, indiceDia, minutosActuales) {
@@ -468,7 +488,7 @@ function obtenerEstadoHorario(negocio) {
     return {
       automatico: true,
       estado: "abierto",
-      texto: "🟢 Abierto ahora",
+      texto: "Abierto hoy · 24 horas",
       horarioHoy: "Abierto 24 horas"
     };
   }
@@ -487,7 +507,7 @@ function obtenerEstadoHorario(negocio) {
         return {
           automatico: true,
           estado: "abierto",
-          texto: `🟢 Abierto ahora · Cierra a las ${formatearHora(turno.fin)}`,
+          texto: `Abierto hoy · cierra ${formatearHora(turno.fin)}`,
           horarioHoy: formatearHorarioDia(diaHoy)
         };
       }
@@ -514,7 +534,7 @@ function obtenerEstadoHorario(negocio) {
         return {
           automatico: true,
           estado: "abierto",
-          texto: `🟢 Abierto ahora · Cierra a las ${formatearHora(turno.fin)}`,
+          texto: `Abierto hoy · cierra ${formatearHora(turno.fin)}`,
           horarioHoy: formatearHorarioDia(diaHoy)
         };
       }
@@ -531,7 +551,7 @@ function obtenerEstadoHorario(negocio) {
       return {
         automatico: true,
         estado: yaHuboTurno ? "descanso" : "cerrado",
-        texto: `${yaHuboTurno ? "🟠 Cerrado temporalmente" : "🔴 Cerrado"} · Abre a las ${formatearHora(siguienteTurnoHoy.inicio)}`,
+        texto: `Cerrado ahora · abre hoy ${formatearHora(siguienteTurnoHoy.inicio)}`,
         horarioHoy: formatearHorarioDia(diaHoy)
       };
     }
@@ -542,7 +562,7 @@ function obtenerEstadoHorario(negocio) {
   return {
     automatico: true,
     estado: "cerrado",
-    texto: `🔴 Cerrado${proxima ? ` · ${textoProximaApertura(proxima)}` : ""}`,
+    texto: `Cerrado hoy${proxima ? ` · ${textoProximaApertura(proxima).replace(/^Abre/, "abre")}` : ""}`,
     horarioHoy: formatearHorarioDia(diaHoy)
   };
 }
@@ -789,10 +809,7 @@ function verPerfil(categoria, index, opciones = {}) {
       ${!negocio.propiedad && (negocio.horarios || negocio.horario) ? `
         <div class="detalle-card">
           <h4>🕒 Horario</h4>
-          <p><strong>${window.ConsultoriosExhibicion.esEspecial(negocio) ? escaparTarjetaCategoria(negocio.horario || "Consulta horarios y disponibilidad por WhatsApp.") : estadoHorario.texto}</strong></p>
-          ${!window.ConsultoriosExhibicion.esEspecial(negocio) && estadoHorario.automatico && estadoHorario.horarioHoy
-            ? `<small>Hoy: ${estadoHorario.horarioHoy}</small>`
-            : ""}
+          ${renderizarHorarioPublico(negocio, estadoHorario)}
         </div>
       ` : ""}
     </section>

@@ -2338,3 +2338,14 @@ footer {
 }
 .perfil-promocion-card.promocion-operativa.terminos-abiertos .perfil-promocion-terminos{display:block}
 .perfil-promocion-card.promocion-operativa.terminos-abiertos p span{display:inline-block;transform:rotate(180deg)}
+
+/* Horarios públicos: resumen compacto y semana dentro del perfil. */
+.horario-publico { min-width: 0; }
+.horario-publico .horario-manana { font-size: .875rem; margin: .35rem 0; }
+.horario-toggle { background: transparent; color: inherit; border: 0; padding: .5rem 0; text-decoration: underline; font: inherit; font-size: .875rem; cursor: pointer; }
+.horario-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 3px; }
+.horario-semana[hidden] { display: none; }
+.horario-semana { margin: .5rem 0 0; font-size: .875rem; }
+.horario-dia { display: grid; grid-template-columns: minmax(5.5rem, 1fr) minmax(0, 2fr); gap: .5rem; padding: .45rem; border-radius: .35rem; }
+.horario-dia dt, .horario-dia dd { margin: 0; overflow-wrap: anywhere; }
+.horario-dia-hoy { background: rgba(128, 128, 128, .12); font-weight: 600; }
