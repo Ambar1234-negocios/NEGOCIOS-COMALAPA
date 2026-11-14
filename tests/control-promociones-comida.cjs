@@ -11,7 +11,11 @@ await nodos.find(n=>n.textContent==='⏸ Apagar promoción').onclick();assert.eq
 await nodos.find(n=>n.textContent==='Ocultar anuncio').onclick();assert.equal(llamadas.at(-1).datos.datos.activa,true);assert.equal(llamadas.at(-1).datos.datos.mostrar_anuncio,false);
 nodos.find(n=>n.textContent==='✏️ Editar').onclick();mapa.get('global-comida-porcentaje').value='75';mapa.get('global-comida-titulo').value='Semana nueva';
 await todos(caja).find(n=>n.tag==='form').onsubmit({preventDefault(){}});assert.equal(llamadas.at(-1).datos.datos.porcentaje,75);assert.equal(llamadas.at(-1).datos.version,1);
-ctx.esMaestroRecepcion=false;ctx.pintarControlPromoComida();assert.equal(caja.removed,true);
+await new Promise(setImmediate);ctx.esMaestroRecepcion=false;ctx.pintarControlPromoComida();assert.equal(caja.removed,true);
+// Administration general uses the same renderer and RPC, without reception globals.
+delete ctx.esMaestroRecepcion;delete ctx.fondoGlobal;delete ctx.cargarOperacion;delete ctx.edicionPendiente;mapa.delete('control-promo-comida');mapa.set('general',new Nodo('section'));
+let recargas=0;ctx.pintarControlPromoComida({esAdmin:true,fondo:{saldo_centavos:12000,reservado_centavos:0,disponible_centavos:12000,promociones_comida:[{id:'promo',revision:1,titulo:'Apoyo de Exhibición',porcentaje:50,activa:true,mostrar_anuncio:true}]},contenedor:'general',mostrarSaldo:true,recargar:async()=>{recargas++;}});
+const general=todos(mapa.get('control-promo-comida'));assert(general.some(n=>n.textContent.includes('Saldo del fondo: $120.00')));await general.find(n=>n.textContent==='Ocultar anuncio').onclick();assert.equal(recargas,1);assert.equal(llamadas.at(-1).datos.datos.activa,true);
 console.log('PASS: admin can disable, hide independently and edit percentage with revision; reception receives no controls.');
 })().catch(e=>{console.error(e);process.exitCode=1;});
 
