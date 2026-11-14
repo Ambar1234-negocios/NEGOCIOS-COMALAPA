@@ -1,0 +1,19 @@
+/* Ficha de producto o servicio reutilizable, sin dependencias de giro comercial. */
+(()=>{'use strict';
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ let secuencia=0;
+ function html(p,imagen){
+  const f=p.fichaAvanzada;if(!f?.activa)return '';
+  const id='ficha-'+(++secuencia),fotos=(f.fotos||[]).filter(x=>imagen(x)).slice(0,4),secciones=(f.secciones||[]).filter(x=>x.titulo&&x.contenido);
+  return `<section class="ficha-avanzada" aria-label="Información de ${esc(p.nombre)}">${fotos.length?`<div class="ficha-galeria"><div class="ficha-pista" tabindex="0" aria-label="Fotos del producto">${fotos.map((src,i)=>`<button type="button" class="ficha-foto" data-ficha-ampliar="${esc(imagen(src))}" aria-label="Ampliar foto ${i+1} de ${fotos.length}"><img src="${esc(imagen(src))}" alt="${esc(p.nombre)} · foto ${i+1}" loading="lazy"></button>`).join('')}</div><div class="ficha-controles"><button type="button" data-ficha-paso="-1" aria-label="Foto anterior">‹</button><output aria-live="polite">1/${fotos.length}</output><button type="button" data-ficha-paso="1" aria-label="Foto siguiente">›</button></div></div>`:''}${secciones.length?`<div class="ficha-tabs" role="tablist" aria-label="Información del producto">${secciones.map((s,i)=>`<button type="button" role="tab" id="${id}-tab-${i}" aria-controls="${id}-contenido" aria-selected="${i===0}" tabindex="${i===0?0:-1}" data-ficha-tab="${i}">${esc(s.titulo)}</button>`).join('')}</div><div id="${id}-contenido" class="ficha-contenido" role="tabpanel" tabindex="0" aria-labelledby="${id}-tab-0">${esc(secciones[0].contenido)}</div><template class="ficha-datos">${esc(JSON.stringify(secciones))}</template>`:''}</section>`;
+ }
+ function seleccionar(f,index){const tabs=[...f.querySelectorAll('[role=tab]')],datos=JSON.parse(f.querySelector('template').content.textContent),panel=f.querySelector('[role=tabpanel]');tabs.forEach((t,i)=>{t.setAttribute('aria-selected',i===index);t.tabIndex=i===index?0:-1;});panel.textContent=datos[index].contenido;panel.setAttribute('aria-labelledby',tabs[index].id);tabs[index].scrollIntoView({block:'nearest',inline:'nearest'});}
+ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const f=b.closest('.ficha-avanzada');if(!f)return;
+  if(b.dataset.fichaTab!==undefined){e.stopPropagation();seleccionar(f,Number(b.dataset.fichaTab));}
+  if(b.dataset.fichaPaso){e.stopPropagation();const pista=f.querySelector('.ficha-pista'),i=Math.round(pista.scrollLeft/pista.clientWidth),n=pista.children.length;const destino=(i+Number(b.dataset.fichaPaso)+n)%n;pista.scrollTo({left:destino*pista.clientWidth,behavior:'smooth'});}
+  if(b.dataset.fichaAmpliar){e.stopPropagation();const d=document.createElement('dialog');d.className='ficha-ampliada';const cerrar=document.createElement('button');cerrar.type='button';cerrar.textContent='Cerrar ×';cerrar.onclick=()=>d.close();const img=document.createElement('img');img.src=b.dataset.fichaAmpliar;img.alt=b.querySelector('img').alt;d.append(cerrar,img);d.addEventListener('close',()=>{d.remove();if(b.isConnected)b.focus();},{once:true});document.body.append(d);d.showModal();}
+ });
+ document.addEventListener('scroll',e=>{if(!e.target.matches?.('.ficha-pista'))return;const p=e.target;p.closest('.ficha-galeria').querySelector('output').textContent=(Math.round(p.scrollLeft/p.clientWidth)+1)+'/'+p.children.length;},true);
+ document.addEventListener('keydown',e=>{const t=e.target.closest('[data-ficha-tab]');if(!t||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const f=t.closest('.ficha-avanzada'),tabs=[...f.querySelectorAll('[role=tab]')],i=tabs.indexOf(t),n=tabs.length,j=e.key==='Home'?0:e.key==='End'?n-1:(i+(e.key==='ArrowRight'?1:-1)+n)%n;seleccionar(f,j);tabs[j].focus();});
+ window.FichaAvanzada={html};
+})();

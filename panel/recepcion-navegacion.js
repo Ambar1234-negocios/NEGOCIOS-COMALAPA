@@ -6,3 +6,7 @@ if(botonesRecepcion.length)marcarRecepcion(botonesRecepcion[0]);
 
 // Un acceso de regreso solo para la cuenta maestra; recepción conserva su vista operativa.
 let revisionRegresoAdmin=0;const mostrarSinRegreso=mostrar;mostrar=function(){mostrarSinRegreso();const actual=++revisionRegresoAdmin;let a=document.getElementById('volver-administracion');if(!a){a=nodo('a','🛡️ Volver a administración','enlace-boton');a.id='volver-administracion';a.href='administracion.html';a.style.cssText='margin:12px;padding:12px;background:#fff;color:#173b30;border-radius:10px;text-decoration:none';document.querySelector('.recepcion-lateral')?.prepend(a);}a.hidden=true;a.style.display='none';if(!cuenta)return;api('/rest/v1/rpc/piloto_es_admin',{method:'POST',datos:{}}).then(ok=>{if(actual===revisionRegresoAdmin){a.hidden=ok!==true;a.style.display=ok===true?'block':'none';}}).catch(()=>{});};mostrar();
+
+aplicarPermisosRecepcion();
+
+async function abrirClientesMaestro(){if(location.hash==='#clientes'&&esMaestroRecepcion){activarPanel('operacion','vista-clientes');await cargarClientes();history.replaceState(null,'',location.pathname);}}
