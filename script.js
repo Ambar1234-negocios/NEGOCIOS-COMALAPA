@@ -1010,7 +1010,7 @@ function verPerfil(categoria, index, opciones = {}) {
           </div>
         ` : ""}
 
-        <div class="perfil-titulo-oficial">
+        <div class="perfil-titulo-oficial" data-promo-contexto="${escaparTarjetaCategoria(negocio.slug||'')}">
           <div class="perfil-titulo-linea">
             <h3>${negocio.nombre}</h3>
             

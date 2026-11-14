@@ -22,8 +22,19 @@ function pintar(){
   const n=ns.find(n=>n.slug===tarjeta.dataset.promoNegocio),cuerpo=tarjeta.querySelector('.categoria-negocio-cuerpo');if(!cuerpo)continue;
   etiqueta(cuerpo,envio(n));
  }
+ for(const contexto of document.querySelectorAll('[data-promo-contexto]')){
+  const valido=oferta.porcentaje>0&&oferta.negocios.includes(contexto.dataset.promoContexto);
+  let aviso=contexto.querySelector(':scope > .promo-envio-contexto');
+  if(!valido){aviso?.remove();continue;}
+  if(!aviso){aviso=crear('div');aviso.className='promo-envio-contexto';aviso.append(crear('strong'),crear('small'));const titulo=contexto.classList.contains('comida-menu')?contexto.querySelector(':scope > h4'):null;if(titulo)titulo.insertAdjacentElement('afterend',aviso);else contexto.append(aviso);}
+  const texto='🎉 '+oferta.porcentaje+'% de descuento en envío';
+  const principal=aviso.querySelector('strong'),detalle=aviso.querySelector('small');
+  if(principal.textContent!==texto)principal.textContent=texto;
+  const condicion='Pidiendo desde Exhibición · Con Mandaditos en Comalapa';
+  if(detalle.textContent!==condicion)detalle.textContent=condicion;
+ }
  const textos=[];
- if(conOferta.length)textos.push('🎉 '+(oferta.titulo?oferta.titulo+' · ':'')+oferta.porcentaje+'% de descuento en envío de comida con Mandaditos','📍 Dentro de Frontera Comalapa · Hasta agotar el saldo promocional','El servicio y la promoción se confirman al cotizar');
+ if(conOferta.length)textos.push('🎉 '+oferta.porcentaje+'% de descuento en envío pidiendo desde Exhibición','📍 Dentro de Frontera Comalapa · Hasta agotar el saldo promocional','Con Mandaditos · Solo pedidos desde nuestra plataforma');
  const nueva=JSON.stringify(textos),cinta=document.getElementById('cinta-promos');if(!cinta)return;
  cinta.hidden=!textos.length;if(nueva===firma)return;firma=nueva;
  const pista=cinta.querySelector('.cinta-promos-pista');pista.replaceChildren();

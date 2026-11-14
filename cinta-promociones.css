@@ -15,3 +15,8 @@
 @media(max-width:600px){.cinta-promos{margin:8px 16px 10px;min-height:38px;font-size:13px}.cinta-promos-grupo{gap:22px;padding:8px 12px}.categoria-negocio-cuerpo>.promo-mini{font-size:12px;max-width:calc(100% - 104px)}}
 @media(prefers-reduced-motion:reduce){.cinta-promos-pista{animation:none;width:auto}.cinta-promos-grupo{white-space:normal;flex-wrap:wrap;gap:5px;padding:8px 12px}.cinta-promos-grupo[aria-hidden=true]{display:none}.cinta-promos-grupo span+span:before{margin-right:5px}}
 
+
+.promo-envio-contexto{box-sizing:border-box;display:flex;flex-direction:column;gap:4px;margin:12px 0;padding:11px 14px;border-radius:12px;background:#c4163c;color:#fff;max-width:100%;text-align:left;}
+.promo-envio-contexto strong{color:#fff;font:750 15px/1.35 system-ui,sans-serif;}
+.promo-envio-contexto small{color:#fff;font:500 12px/1.4 system-ui,sans-serif;}
+@media(max-width:600px){.promo-envio-contexto{padding:10px 12px;}.promo-envio-contexto strong{font-size:14px;}}
