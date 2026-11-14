@@ -18,7 +18,7 @@ El fondo es compartido por todos los menús aprobados con categoría `comida`, `
 - Tablas: `exhibicion_fondo`, `exhibicion_fondo_apoyos`, `exhibicion_fondo_movimientos`.
 - RLS activado, sin permisos de acceso directo para clientes ni usuarios autenticados. RPC de estado exige operador; recarga exige administrador.
 - Funciones internas en `promocion_privada`, sin acceso para `anon`/`authenticated`. La consulta de disponibilidad también es privada para impedir inferir el fondo consultando importes.
-- No se publica el saldo en el checkout ni en WhatsApp. SQL y pruebas están excluidos de los archivos públicos por `.assetsignore`.
+- No se publica el saldo en el checkout ni en WhatsApp. SQL, pruebas y este documento están excluidos del sitio de clientes por `_config.yml` en GitHub Pages y `.assetsignore` en Cloudflare.
 - Avisos de seguridad revisados: RLS sin políticas es intencional para tablas accesibles exclusivamente por RPC; las RPC expuestas verifican autorización. No hay acceso anónimo al saldo o recargas.
 
 ## Migraciones aplicadas a negocios-comalapa

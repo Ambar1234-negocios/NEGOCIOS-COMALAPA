@@ -1,0 +1,11 @@
+# Keep technical verification and migration artifacts out of the customer site.
+exclude:
+  - sql
+  - tests
+  - FONDO-PROMOCIONAL.md
+  - FASE-OPERACION-FICHAS.md
+  - node_modules
+  - vendor
+  - Gemfile
+  - Gemfile.lock
+
