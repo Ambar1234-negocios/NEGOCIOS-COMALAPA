@@ -324,15 +324,26 @@
     if(!consulta&&!digital(n)&&(!nombrePedido.trim()||(!entregaPropia()&&!telefonoPedido.trim())||modoEntrega!=='recoger'&&!entregaPedido.trim())){const campo=contenedor?.querySelector(!nombrePedido.trim()?'[data-cliente-pedido]':(!entregaPropia()&&!telefonoPedido.trim())?'[data-telefono-pedido]':'[data-entrega-pedido]');campo?.focus();campo?.reportValidity();return;}
     if(!consulta&&!digital(n)&&!privacidadPedidoAceptada){alert('Confirma que leíste el Aviso de Privacidad para continuar.');contenedor?.querySelector('[data-privacidad-pedido]')?.focus();return;}
     if(!consulta&&!opcionesPago(n).includes(pagoPedido)){alert('Elige cómo prefieres pagar antes de realizar el pedido.');return;}
+    let solicitudApoyo='';
+    if(!consulta&&!digital(n)&&!entregaPropia()&&modoEntrega!=='recoger'){
+      try{
+        const r=await fetch('https://gyvoyzxsgckpfkagzjtf.supabase.co/rest/v1/rpc/exhibicion_promocion_publica',{method:'POST',headers:{apikey:'sb_publishable_i9NtjLajxExcefezErM2wQ_JDHUPvlD','Content-Type':'application/json'},body:'{}',cache:'no-store',signal:AbortSignal.timeout(10000)});
+        if(!r.ok)throw Error();const oferta=await r.json();
+        if(!Number.isInteger(oferta.porcentaje)||oferta.porcentaje<0||oferta.porcentaje>100||!Array.isArray(oferta.negocios))throw Error();
+        if(oferta.porcentaje>0&&pedido.lineas.every(l=>oferta.negocios.includes(dueno(l).slug)))solicitudApoyo='🎉 Quiero solicitar el '+oferta.porcentaje+'% de descuento en el servicio a domicilio con Mandaditos.\n📍 Dentro de Frontera Comalapa. Confírmenme el costo del servicio y el descuento antes de realizar el pedido.';
+      }catch{alert('No pudimos comprobar la promoción de Mandaditos. Vuelve a pulsar Realizar pedido para preparar tu WhatsApp con la promoción vigente.');return;}
+    }
     const numero=String(!consulta&&!digital(n)&&modoEntrega!=='recoger'&&(modoEntrega==='mandaditos'||gruposPedido().length>1||(n.delivery===true&&n.tipoDelivery!=='gratis'))?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
     const normal=window.ContactosExhibicion?.numero(numero)||(numero.length===10?'52'+numero:numero);
     if(!/^\d{11,15}$/.test(normal)){alert('Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.');return;}
     let mensaje=digital(n)?(consulta?`Hola, estoy viendo el catálogo de ${n.nombre}. Quiero información sobre sus servicios digitales.`:mensajeDigital(pedido.lineas,total())):consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:mensajeComida();
     if(!consulta&&entregaPropia())mensaje=mensajeEntregaPropia(n);
     else if(!consulta)mensaje+='\n\n'+textoPago(pagoPedido)+(pagoPedido==='Transferencia'||pagoPedido==='Depósito'?'\n¿Me confirmas el total y los datos de pago?':'');
+    if(solicitudApoyo)mensaje+='\n\n'+solicitudApoyo;
     if(mensaje.length>6000){alert('El pedido es demasiado largo para WhatsApp. Reduce las indicaciones o los productos distintos.');return;}
     if(!consulta&&!digital(n)&&!entregaPropia()){
       const solicitud={privacidad:{aviso:'2026-11-09',aceptado:true,aceptado_en:new Date().toISOString()},telefono:telefonoPedido,cliente:nombrePedido.trim(),entrega:modoEntrega==='mandaditos'?'domicilio':modoEntrega,pago:pagoPedido.startsWith('Transferencia')?'transferencia':'efectivo',pago_al_recibir:pagoPedido==='Transferencia al recibir',direccion:entregaPedido,cupon:cuponVigente()?.codigo||'',promociones:promocionesPedidoAplicadas(),total_esperado:total(),lineas:pedido.lineas.map(l=>({negocio:dueno(l).slug,producto:l.producto.id,cantidad:l.cantidad,opciones:(l.opciones||[]).map(o=>({grupo:o.grupoId,opcion:o.id})),extras:l.extras.map(x=>Number.isInteger(x.cantidad)?{id:x.id,cantidad:x.cantidad}:x.id),nota:l.nota||''}))};
+      if(solicitudApoyo)solicitud.apoyo_solicitado=solicitudApoyo;
       const abrir=()=>window.PedidosExhibicion.abrir({solicitud,numero:normal,mensaje,contenedor});
       if(window.PedidosExhibicion?.version===24){abrir();return;}
       const carga=document.createElement('script');carga.src='/pedidos-publicos.js?v=24';carga.onload=abrir;carga.onerror=()=>alert('No se pudo cargar el registro del pedido. Revisa tu conexión y vuelve a intentarlo.');document.head.append(carga);return;
@@ -475,3 +486,4 @@
   }, true);
   window.ComidaExhibicion={menu,conectar,carrusel,productos,dinero,imagen,mensajeDigital,textoLineaPedido};
 })();
+
