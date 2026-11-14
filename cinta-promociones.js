@@ -34,7 +34,7 @@ function pintar(){
   if(detalle.textContent!==condicion)detalle.textContent=condicion;
  }
  const textos=[];
- if(conOferta.length)textos.push('🎉 '+oferta.porcentaje+'% de descuento en envío pidiendo desde Exhibición');
+ if(conOferta.length)textos.push('🎉 '+oferta.porcentaje+'% de descuento en envío pidiendo desde Exhibición · Solo dentro de Comalapa · Aplican términos y condiciones');
  const nueva=JSON.stringify(textos),cinta=document.getElementById('cinta-promos');if(!cinta)return;
  cinta.hidden=!textos.length;if(nueva===firma)return;firma=nueva;
  const pista=cinta.querySelector('.cinta-promos-pista');pista.replaceChildren();
