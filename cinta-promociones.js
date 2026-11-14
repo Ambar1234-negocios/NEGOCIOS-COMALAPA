@@ -3,6 +3,34 @@
 const BASE='https://gyvoyzxsgckpfkagzjtf.supabase.co',KEY='sb_publishable_i9NtjLajxExcefezErM2wQ_JDHUPvlD';
 let oferta={porcentaje:0,negocios:[]},firma='',consultando=false,programado=false;
 const crear=(tag,texto)=>{const n=document.createElement(tag);if(texto!==undefined)n.textContent=texto;return n;};
+// Centralizado para poder trasladarlo a la configuración de la promoción.
+const terminosPromocion=porcentaje=>[
+ 'Aplica solo a pedidos de negocios de comida participantes dentro de Exhibición Frontera Comalapa.',
+ 'El beneficio es un '+porcentaje+'% de descuento en el costo del servicio a domicilio mediante Mandaditos.',
+ 'Válido únicamente para entregas dentro de Frontera Comalapa.',
+ 'Sujeto a disponibilidad del servicio de reparto.',
+ 'Disponible hasta agotar el fondo promocional.',
+ 'El descuento se valida al confirmar el pedido.',
+ 'No aplica al precio de los productos; únicamente al servicio de entrega.',
+ 'Exhibición puede suspender o finalizar la promoción cuando el fondo se agote.'
+];
+let modalTerminos;
+function abrirTerminos(disparador){
+ if(!oferta.porcentaje||!lista().some(n=>envio(n)))return;
+ if(!modalTerminos){
+  modalTerminos=crear('dialog');modalTerminos.id='promo-terminos';modalTerminos.className='promo-terminos';
+  modalTerminos.setAttribute('role','dialog');modalTerminos.setAttribute('aria-modal','true');modalTerminos.setAttribute('aria-labelledby','promo-terminos-titulo');
+  const titulo=crear('h2','Términos y condiciones');titulo.id='promo-terminos-titulo';
+  const contenido=crear('ul'),cerrar=crear('button','Cerrar');cerrar.type='button';cerrar.autofocus=true;cerrar.className='promo-terminos-cerrar';
+  cerrar.onclick=()=>modalTerminos.close();
+  modalTerminos.addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();cerrar.focus();}});
+  modalTerminos.append(titulo,contenido,cerrar);document.body.append(modalTerminos);
+  modalTerminos.addEventListener('click',e=>{if(e.target!==modalTerminos)return;const r=modalTerminos.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)modalTerminos.close();});
+  modalTerminos.addEventListener('close',()=>{if(!disparador.closest('[hidden]'))disparador.focus();});
+ }
+ modalTerminos.querySelector('ul').replaceChildren(...terminosPromocion(oferta.porcentaje).map(t=>crear('li',t)));
+ if(!modalTerminos.open)modalTerminos.showModal();
+}
 const lista=()=>typeof negocios==='undefined'?[]:Object.entries(negocios).flatMap(([categoria,ns])=>ns.map(n=>({...n,categoria:n.categoria||categoria})));
 function envio(n){return oferta.porcentaje>0&&oferta.negocios.includes(n?.slug)?oferta.porcentaje+'% de descuento en envío':'';}
 function etiqueta(contenedor,texto,producto=false){
@@ -36,13 +64,13 @@ function pintar(){
  const textos=[];
  if(conOferta.length)textos.push('🎉 '+oferta.porcentaje+'% de descuento en envío pidiendo desde Exhibición · Solo dentro de Comalapa · Aplican términos y condiciones');
  const nueva=JSON.stringify(textos),cinta=document.getElementById('cinta-promos');if(!cinta)return;
- cinta.hidden=!textos.length;if(nueva===firma)return;firma=nueva;
+ cinta.hidden=!textos.length;if(!textos.length&&modalTerminos?.open)modalTerminos.close();if(nueva===firma)return;firma=nueva;
  const pista=cinta.querySelector('.cinta-promos-pista');pista.replaceChildren();
  if(!textos.length)return;
  const grupo=crear('span');grupo.className='cinta-promos-grupo';for(let repeticion=0;repeticion<3;repeticion++)for(const t of textos)grupo.append(crear('span',t));
  const copia=grupo.cloneNode(true);copia.setAttribute('aria-hidden','true');pista.append(grupo,copia);
- const enlace=cinta.querySelector('a');enlace.setAttribute('aria-label',textos.join('. '));
- enlace.onclick=e=>{e.preventDefault();if(conOferta.length&&typeof mostrarCategoria==='function')mostrarCategoria('comida');};
+ const enlace=cinta.querySelector('button');enlace.setAttribute('aria-label',oferta.porcentaje+'% de descuento en envío. Ver términos y condiciones');
+ enlace.onclick=()=>abrirTerminos(enlace);
 }
 function programar(){if(programado)return;programado=true;requestAnimationFrame(()=>{programado=false;pintar();});}
 async function consultar(){
