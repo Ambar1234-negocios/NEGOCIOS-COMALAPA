@@ -34,12 +34,12 @@ function pintar(){
   if(detalle.textContent!==condicion)detalle.textContent=condicion;
  }
  const textos=[];
- if(conOferta.length)textos.push('🎉 '+oferta.porcentaje+'% de descuento en envío pidiendo desde Exhibición','📍 Dentro de Frontera Comalapa · Hasta agotar el saldo promocional','Con Mandaditos · Solo pedidos desde nuestra plataforma');
+ if(conOferta.length)textos.push('🎉 '+oferta.porcentaje+'% de descuento en envío pidiendo desde Exhibición');
  const nueva=JSON.stringify(textos),cinta=document.getElementById('cinta-promos');if(!cinta)return;
  cinta.hidden=!textos.length;if(nueva===firma)return;firma=nueva;
  const pista=cinta.querySelector('.cinta-promos-pista');pista.replaceChildren();
  if(!textos.length)return;
- const grupo=crear('span');grupo.className='cinta-promos-grupo';for(const t of textos)grupo.append(crear('span',t));
+ const grupo=crear('span');grupo.className='cinta-promos-grupo';for(let repeticion=0;repeticion<3;repeticion++)for(const t of textos)grupo.append(crear('span',t));
  const copia=grupo.cloneNode(true);copia.setAttribute('aria-hidden','true');pista.append(grupo,copia);
  const enlace=cinta.querySelector('a');enlace.setAttribute('aria-label',textos.join('. '));
  enlace.onclick=e=>{e.preventDefault();if(conOferta.length&&typeof mostrarCategoria==='function')mostrarCategoria('comida');};
