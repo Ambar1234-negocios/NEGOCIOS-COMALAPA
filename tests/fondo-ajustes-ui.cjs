@@ -52,7 +52,7 @@ try{
  await page.evaluate(()=>{esMaestroRecepcion=false;pintarFondoGlobal();});assert.equal(await page.locator('#fondo-global form').count(),0);
  if(process.env.FONDO_PREVIEW_PATH){
   await page.setViewportSize({width:390,height:844});
-  await page.evaluate(()=>{esMaestroRecepcion=true;fondoGlobal={saldo_centavos:8000,reservado_centavos:0,disponible_centavos:8000};pintarFondoGlobal();document.getElementById('estado').textContent='';document.getElementById('fondo-global').prepend(nodo('p','VISTA PREVIA · DATOS SIMULADOS'));});
+  await page.evaluate(()=>{esMaestroRecepcion=true;fondoGlobal={saldo_centavos:8000,reservado_centavos:0,disponible_centavos:8000};pintarFondoGlobal();document.getElementById('estado').style.display='none';document.getElementById('fondo-global').prepend(nodo('p','VISTA PREVIA · DATOS SIMULADOS'));});
   await action.selectOption('restar');await amount.fill('20');
   await page.locator('#fondo-global').screenshot({path:process.env.FONDO_PREVIEW_PATH});
  }
