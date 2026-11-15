@@ -66,18 +66,53 @@
   }
 
   const seccionesVisuales=['Vestidos','Blusas','Pantalones','Shorts','Conjuntos','Bolsas','Accesorios','Joyería'];
+  function fotosCatalogo(p) {
+    return (p.fichaAvanzada?.fotos?.length?p.fichaAvanzada.fotos:(p.foto?[p.foto]:[])).map(imagen).filter(Boolean).slice(0,4);
+  }
+  function consultaCatalogo(n,p) {
+    const numero=String(n.whatsapp||n.telefono||'').replace(/\D/g,''),telefono=numero.length===10?'52'+numero:numero;
+    const mensaje='Hola, quiero información sobre el '+p.nombre+' de '+n.nombre+'. ¿Qué precio y talla tiene disponible?';
+    return /^\d{11,15}$/.test(telefono)?'https://wa.me/'+telefono+'?text='+encodeURIComponent(mensaje):'';
+  }
+  function galeriaCatalogo(p,ampliada=false,inicio=0) {
+    const fotos=fotosCatalogo(p);
+    if(!fotos.length)return '<p class="catalogo-sin-foto">Fotos pendientes</p>';
+    return '<div class="catalogo-fotos"><div class="catalogo-pista" tabindex="0" aria-label="Fotos de '+escapar(p.nombre)+'" data-inicio="'+inicio+'">'+fotos.map((src,i)=>ampliada?'<div class="catalogo-foto"><img src="'+escapar(src)+'" alt="'+escapar(p.nombre)+' · foto '+(i+1)+'"></div>':'<button type="button" class="catalogo-foto" data-catalogo-abrir="'+i+'" aria-label="Ampliar '+escapar(p.nombre)+' · foto '+(i+1)+'"><img src="'+escapar(src)+'" alt="'+escapar(p.nombre)+' · foto '+(i+1)+'" loading="lazy"></button>').join('')+'</div>'+(fotos.length>1?'<div class="catalogo-controles"><button type="button" data-catalogo-foto="-1" aria-label="Foto anterior">‹</button><output aria-live="polite">'+(inicio+1)+' / '+fotos.length+'</output><button type="button" data-catalogo-foto="1" aria-label="Foto siguiente">›</button></div>':'')+'</div>';
+  }
   function catalogoVisual(n) {
     const ps=(Array.isArray(n.productos)?n.productos:[]).filter(p=>p&&p.id&&typeof p.nombre==='string'&&p.nombre.trim()&&p.disponible!==false&&!p.eliminado);
     const secciones=[...new Set([...seccionesVisuales,...ps.map(p=>p.seccion||'Otros productos')])];
-    const numero=String(n.whatsapp||n.telefono||'').replace(/\D/g,'');
-    const telefono=numero.length===10?'52'+numero:numero;
-    const tarjetas=ps=>ps.map(p=>{
-      const mensaje='Hola, me interesa esta prenda de '+n.nombre+(p.nombre?' ('+p.nombre+')':'')+'. ¿Me pueden informar el precio y las tallas disponibles?';
-      const ficha={...p,fichaAvanzada:{...p.fichaAvanzada,activa:true,fotos:p.fichaAvanzada?.fotos?.length?p.fichaAvanzada.fotos:(p.foto?[p.foto]:[]),secciones:p.fichaAvanzada?.secciones||[]}};
-      return '<article class="comida-producto" data-producto-id="'+escapar(p.id)+'"><h5>'+escapar(p.nombre)+'</h5>'+window.FichaAvanzada.html(ficha,imagen)+(p.ingredientes?'<p>'+escapar(p.ingredientes)+'</p>':'')+(/^\d{11,15}$/.test(telefono)?'<a class="accion accion-whatsapp" target="_blank" rel="noopener noreferrer" href="https://wa.me/'+telefono+'?text='+encodeURIComponent(mensaje)+'">Consultar precio y talla</a>':'')+'</article>';
+    const tarjetas=lista=>lista.map(p=>{
+      const enlace=consultaCatalogo(n,p);
+      return '<article class="catalogo-prenda" data-producto-id="'+escapar(p.id)+'">'+galeriaCatalogo(p)+'<h5><button type="button" data-catalogo-abrir="0">'+escapar(p.nombre)+'</button></h5><button type="button" class="catalogo-detalle" data-catalogo-abrir="0">Ver prenda</button><template class="catalogo-datos">'+escapar(JSON.stringify({nombre:p.nombre,ingredientes:p.ingredientes,fichaAvanzada:{fotos:fotosCatalogo(p)},enlace}))+'</template></article>';
     }).join('');
-    return '<section class="catalogo-visual" aria-label="Catálogo visual"><h4>Catálogo</h4><p><small>Disponibilidad sujeta a existencia</small></p>'+(!ps.length?'<p>Próximamente podrás ver las prendas y modelos disponibles. Consulta precio y talla por WhatsApp.</p>':'')+secciones.map(s=>'<details class="digital-seccion"><summary>'+escapar(s)+'</summary><div class="comida-grid">'+(tarjetas(ps.filter(p=>(p.seccion||'Otros productos')===s))||'<p>Aún no hay modelos publicados en esta sección.</p>')+'</div></details>').join('')+'</section>';
+    return '<section class="catalogo-visual" aria-label="Catálogo visual"><h4>Catálogo</h4><p><small>Disponibilidad sujeta a existencia</small></p>'+(!ps.length?'<p>Próximamente podrás ver las prendas y modelos disponibles. Consulta precio y talla por WhatsApp.</p>':'<p class="catalogo-ayuda">Desliza las prendas de cada sección. Toca una foto para ampliarla y consultar.</p>')+secciones.map(s=>{
+      const lista=ps.filter(p=>(p.seccion||'Otros productos')===s);
+      return '<section class="catalogo-seccion" aria-label="'+escapar(s)+'"><header><h5>'+escapar(s)+'</h5>'+(lista.length>1?'<div class="catalogo-controles"><button type="button" data-catalogo-prendas="-1" aria-label="Prendas anteriores de '+escapar(s)+'">‹</button><button type="button" data-catalogo-prendas="1" aria-label="Más prendas de '+escapar(s)+'">›</button></div>':'')+'</header>'+(lista.length?'<div class="catalogo-fila" tabindex="0" aria-label="Prendas de '+escapar(s)+'">'+tarjetas(lista)+'</div>':'<p class="catalogo-vacio">Aún no hay prendas publicadas en esta sección.</p>')+'</section>';
+    }).join('')+'</section>';
   }
+  function moverFotoCatalogo(pista,paso) {
+    const i=Math.round(pista.scrollLeft/pista.clientWidth),n=pista.children.length;
+    pista.scrollTo({left:((i+paso+n)%n)*pista.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  }
+  let gestoCatalogo=null;
+  document.addEventListener('pointerdown',e=>{const pista=e.target.closest('.catalogo-pista');if(pista)gestoCatalogo={pista,x:e.clientX,y:e.clientY,scroll:pista.scrollLeft,movido:false};});
+  document.addEventListener('pointermove',e=>{if(gestoCatalogo&&(Math.abs(e.clientX-gestoCatalogo.x)>8||Math.abs(e.clientY-gestoCatalogo.y)>8))gestoCatalogo.movido=true;},{passive:true});
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('button');
+    if(b?.hasAttribute('data-catalogo-foto')){moverFotoCatalogo(b.closest('.catalogo-fotos').querySelector('.catalogo-pista'),Number(b.dataset.catalogoFoto));return;}
+    if(b?.hasAttribute('data-catalogo-prendas')){const fila=b.closest('.catalogo-seccion').querySelector('.catalogo-fila');fila.scrollBy({left:Number(b.dataset.catalogoPrendas)*(fila.firstElementChild.getBoundingClientRect().width+16),behavior:'smooth'});return;}
+    const card=e.target.closest('.catalogo-prenda');if(!card||e.target.closest('a'))return;
+    if(gestoCatalogo&&e.target.closest('.catalogo-pista')===gestoCatalogo.pista&&(gestoCatalogo.movido||Math.abs(gestoCatalogo.scroll-gestoCatalogo.pista.scrollLeft)>8)){gestoCatalogo=null;return;}
+    gestoCatalogo=null;
+    const p=JSON.parse(card.querySelector('.catalogo-datos').content.textContent),inicio=Number(b?.dataset.catalogoAbrir||0);
+    const d=dialogo(p.nombre,'catalogo-ampliado',b||card.querySelector('button'));
+    d.querySelector('.dialogo-contenido').innerHTML=galeriaCatalogo(p,true,inicio)+(p.ingredientes?'<p>'+escapar(p.ingredientes)+'</p>':'')+'<p><small>Disponibilidad sujeta a existencia</small></p>'+(p.enlace?'<a class="accion accion-whatsapp" href="'+escapar(p.enlace)+'" target="_blank" rel="noopener noreferrer">Consultar precio y talla</a>':'<p>WhatsApp pendiente de configurar.</p>');
+    const pista=d.querySelector('.catalogo-pista');if(pista)pista.scrollLeft=inicio*pista.clientWidth;
+  });
+  document.addEventListener('scroll',e=>{const pista=e.target;if(!pista.matches?.('.catalogo-pista'))return;const out=pista.closest('.catalogo-fotos').querySelector('output');if(out&&pista.clientWidth)out.textContent=(Math.round(pista.scrollLeft/pista.clientWidth)+1)+' / '+pista.children.length;},true);
+  document.addEventListener('keydown',e=>{const pista=e.target.closest('.catalogo-pista');if(pista&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();moverFotoCatalogo(pista,e.key==='ArrowRight'?1:-1);}});
+
 
   function menu(n) {
     if(n.tipoCatalogo==='visual')return catalogoVisual(n);
