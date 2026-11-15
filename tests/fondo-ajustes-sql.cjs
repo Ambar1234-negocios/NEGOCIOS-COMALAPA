@@ -1,0 +1,60 @@
+// Isolated PostgreSQL (PGlite). Never connects to Supabase or production data.
+const fs=require('fs'),path=require('path'),assert=require('assert/strict');
+const {PGlite}=require(process.env.PGLITE_MODULE_PATH||'@electric-sql/pglite');
+(async()=>{
+ const db=new PGlite();
+ const admin='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
+ let seq=0;const key=()=>`00000000-0000-4000-8000-${String(++seq).padStart(12,'0')}`;
+ try{
+  await db.exec(`create role anon; create role authenticated; create schema auth;
+   create table auth.users(id uuid primary key); insert into auth.users values('${admin}'),('${other}');
+   create function auth.uid() returns uuid language sql as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+   grant usage on schema auth to authenticated; grant execute on function auth.uid() to authenticated;
+   create table public.piloto_administradores(usuario_id uuid); insert into public.piloto_administradores values('${admin}');
+   create function public.piloto_es_admin() returns boolean language sql security definer set search_path='' as $$select exists(select 1 from public.piloto_administradores where usuario_id=auth.uid())$$;
+   create function public.piloto_es_operador() returns boolean language sql as $$select auth.uid() is not null$$;
+   create table public.piloto_pedidos(id uuid primary key);`);
+  const base=fs.readFileSync(path.join(__dirname,'../sql/fondo-promocional-global.sql'),'utf8');
+  await db.exec(base.slice(base.indexOf('create schema'),base.indexOf('-- Deliberately')));
+  await db.exec(base.slice(base.indexOf('create function public.exhibicion_fondo_estado()'),base.indexOf('-- Availability only.')));
+  await db.exec(fs.readFileSync(path.join(__dirname,'../sql/fondo-ajustes-manuales.sql'),'utf8'));
+  await db.exec('insert into public.exhibicion_fondo values(true,8000,now());');
+  await db.exec(`set request.jwt.claim.sub='${admin}'; set role authenticated;`);
+  const call=(a,m,s,k=key())=>db.query('select public.exhibicion_fondo_ajustar($1,$2,$3,$4) as r',[a,m,k,s]).then(x=>x.rows[0].r);
+  const reject=async(a,m,s,regex,k)=>assert.rejects(call(a,m,s,k),regex);
+  const originalKey=key();assert.equal((await call('agregar',2000,8000,originalKey)).saldo_centavos,10000);
+  assert.equal((await call('agregar',2000,8000,originalKey)).repetido,true);
+  await reject('restar',2000,8000,/otra operación/,originalKey);
+  await reject('agregar',1000,8000,/otra operación/,originalKey);
+  await reject('agregar',2000,7000,/otra operación/,originalKey);
+  assert.equal((await call('restar',3000,10000)).saldo_centavos,7000);
+  assert.equal((await call('fijar',8500,7000)).saldo_centavos,8500);
+  assert.equal((await call('fijar',1000,8500)).saldo_centavos,1000);
+  assert.equal((await call('agregar',2000,8000,originalKey)).saldo_centavos,1000);
+  await reject('restar',1001,1000,/negativo/);
+  await reject('fijar',1000,1000,/ya es el actual/);
+  await reject('agregar',10,8000,/saldo cambió/);
+  for(const [a,m,s] of [['agregar',0,1000],['restar',-1,1000],['fijar',-1,1000],['fijar',10000001,1000],['otra',1,1000],[null,1,1000],['agregar',null,1000],['agregar',1,null]])await reject(a,m,s,/inválidos/);
+  await reject('agregar',1.5,1000,/integer/);
+  await db.exec(`reset role; insert into public.piloto_pedidos values('33333333-3333-4333-8333-333333333333');
+   insert into public.exhibicion_fondo_apoyos(pedido_id,servicio_base_centavos,descuento_centavos,estado,vence_en) values('33333333-3333-4333-8333-333333333333',1000,500,'reservada',now()+interval '30 minutes'); set role authenticated;`);
+  await reject('fijar',0,1000,/apoyos pendientes/);
+  await db.exec(`reset role; delete from public.exhibicion_fondo_apoyos;
+   create function public.fail_movement() returns trigger language plpgsql as $$begin raise exception 'injected insert failure'; end$$;
+   create trigger fail_movement before insert on public.exhibicion_fondo_movimientos for each row execute function public.fail_movement(); set role authenticated;`);
+  await reject('agregar',100,1000,/injected insert failure/);
+  await db.exec('reset role;');assert.equal((await db.query('select saldo_centavos from public.exhibicion_fondo')).rows[0].saldo_centavos,1000);
+  await db.exec('drop trigger fail_movement on public.exhibicion_fondo_movimientos; set role authenticated;');
+  assert.equal((await call('fijar',0,1000)).saldo_centavos,0);
+  await db.exec(`set request.jwt.claim.sub='${other}';`);
+  await reject('agregar',1,0,/Solo administración/);
+  await reject('agregar',2000,8000,/Solo administración/,originalKey);
+  await db.exec(`set request.jwt.claim.sub='';`);await reject('agregar',1,0,/Solo administración/);
+  await db.exec('reset role; set role anon;');await reject('agregar',1,0,/permission denied/);
+  await db.exec('reset role;');
+  const rows=(await db.query('select importe_centavos,saldo_despues_centavos,actor,motivo from public.exhibicion_fondo_movimientos order by creado_en,id')).rows;
+  assert.equal(rows.length,5);assert.deepEqual(rows.map(r=>r.importe_centavos).sort((a,b)=>a-b),[-7500,-3000,-1000,1500,2000]);
+  for(const r of rows){assert.equal(r.actor,admin);assert.match(r.motivo,/^Ajuste manual admin: (agregar|restar|fijar) saldo$/);assert(r.saldo_despues_centavos>=0);}
+  console.log('PASS: isolated SQL authorization, integer validation, signed ledger, add/subtract/set/zero, stale confirmation, idempotent replay and payload mismatch, reservation protection, atomic rollback on ledger failure.');
+ }finally{await db.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

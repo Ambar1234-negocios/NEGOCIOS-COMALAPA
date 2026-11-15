@@ -43,3 +43,35 @@ La carga inicial es 12000 centavos. No volver a ejecutar la migración para repo
 
 Archivos de aplicación modificados: `panel/recepcion.js`, `panel/recepcion.html`. No se cambia el primer WhatsApp del carrito porque aún no existe una cotización del servicio.
 
+## Ajustes manuales de administración (noviembre de 2026)
+
+El panel de recepción permite elegir **Agregar saldo**, **Restar saldo** y **Fijar saldo**, escribir un monto y revisar saldo actual, monto, diferencia y saldo final. Consulta el saldo antes de mostrar la confirmación; el servidor comprueba nuevamente ese saldo bajo bloqueo. Si cambió, rechaza el ajuste y el panel muestra el saldo actualizado para volver a revisar.
+
+`sql/fondo-ajustes-manuales.sql` es una migración aditiva, todavía pendiente de aplicar a producción. No modifica datos, RPCs automáticas, el saldo inicial ni las tablas existentes. No volver a ejecutar `fondo-promocional-global.sql`, que contiene la carga inicial histórica de $120. El saldo real comprobado para esta entrega es **8000 centavos ($80)**; las pruebas de este cambio no ejecutan ajustes contra producción.
+
+RPC: `exhibicion_fondo_ajustar(p_accion text, p_monto_centavos integer, p_clave uuid, p_saldo_esperado bigint)`. Acciones `agregar`, `restar`, `fijar`. El monto se envía en centavos enteros, hasta 10000000 ($100,000); agregar/restar exigen al menos un centavo. Fijar admite cero, siempre que cubra los apoyos reservados vigentes. Fijar el saldo que ya existe se rechaza como operación sin cambio, porque el historial exige importes distintos de cero. Se aceptan punto o coma decimal en el panel, máximo dos decimales; se rechazan negativos, notación científica y valores fuera del rango.
+
+La RPC pública es `SECURITY INVOKER`; delega en `promocion_privada.ajustar_fondo`, con `SECURITY DEFINER`, `search_path=''`, nombres calificados y autorización por `auth.uid()` y `piloto_es_admin()`. Se revoca EXECUTE a PUBLIC/anon y se concede solo a authenticated. Dar USAGE del esquema privado no concede ejecución de sus otras funciones; sus permisos permanecen revocados. Las tablas conservan RLS sin acceso directo de clientes. Esto sigue las [recomendaciones de funciones de Supabase](https://supabase.com/docs/guides/database/functions#secure-a-database-function).
+
+La operación bloquea la única fila del mismo fondo con `FOR UPDATE`, igual que las reservas, consumos y recargas existentes. La actualización y la inserción de movimiento ocurren en la misma transacción: un fallo de cualquiera revierte ambas. Protege saldo no negativo, rango seguro para JavaScript y apoyos reservados vigentes. No altera la lógica automática de pedidos/promociones.
+
+Cada ajuste agrega un movimiento en `exhibicion_fondo_movimientos` con `clave`, importe firmado (saldo final menos saldo anterior), `saldo_despues_centavos`, actor obtenido de la sesión y exactamente uno de estos motivos:
+
+- `Ajuste manual admin: agregar saldo`
+- `Ajuste manual admin: restar saldo`
+- `Ajuste manual admin: fijar saldo`
+
+La clave UUID única se verifica bajo el mismo bloqueo. Un reintento debe coincidir en actor, acción, monto y saldo revisado; devuelve el estado actual sin otro movimiento. Se conserva en memoria la petición completa si se pierde la respuesta o hay error de servidor, con edición bloqueada y botón para reintentar. No se cambia la clave al reintentar. Esta recuperación persiste durante la pestaña abierta, no después de recargar/cerrar: si se pierde una respuesta, reintentar antes de recargar. Una respuesta 4xx descarta la petición rechazada y vuelve a consultar el saldo. Tras éxito, el panel se vuelve a dibujar inmediatamente con el estado completo devuelto por la RPC, sin depender del refresco periódico de cinco segundos.
+
+Pruebas pasadas:
+
+- `tests/fondo-ajustes-sql.cjs`: PostgreSQL aislado con PGlite, validación, autorización/anon, firmas y actor del historial, las tres acciones, fijar cero, protección de reservas, saldo obsoleto, reintentos con clave/payload/actor y reversión atómica ante fallo de inserción. PGlite serializa peticiones: no constituye una prueba de concurrencia entre conexiones PostgreSQL independientes; la exclusión concurrente se apoya en el bloqueo de fila compartido y la restricción UNIQUE existente.
+- `tests/fondo-ajustes-ui.cjs`: Edge con todas las peticiones Supabase interceptadas; vista previa, confirmar/cancelar, importes inválidos, saldo inmediato, doble envío, respuesta perdida después de aplicar el ajuste simulado, reintento con clave idéntica, saldo cambiado y controles por rol.
+- `tests/fondo-promocional.cjs` y `tests/control-promociones-comida.cjs`: regresión del fondo, permisos, mensajes y controles de promoción existentes.
+
+Entorno: Node, Playwright/Edge (`PLAYWRIGHT_MODULE_PATH`) y PGlite 0.3.14 (`PGLITE_MODULE_PATH`). No se agregan dependencias al sitio de clientes.
+
+Activación después de revisión: comprobar main y saldo/historial actuales; aplicar únicamente la migración aditiva mediante Supabase; comprobar privilegios y asesores; integrar el cambio del panel. El archivo HTML renueva la versión de recepcion.js para evitar caché. Verificar la carga del panel publicado y consultar nuevamente saldo/historial sin ejecutar ningún ajuste real de prueba. No hay URL de staging verificada en esta entrega; la revisión actual es mediante la PR y las pruebas locales aisladas.
+
+Reversión del código: volver a la versión anterior del panel. La nueva RPC es aditiva y puede dejarse sin uso o retirar primero la función pública y luego la privada. Nunca revertir ni sobrescribir saldos/movimientos reales. El asesor de seguridad preexistente informa sobre RLS sin políticas (intencional para tablas solo RPC), funciones SECURITY DEFINER previas y protección de contraseñas filtradas deshabilitada; no se modificaron esos aspectos ajenos a esta entrega.
+
