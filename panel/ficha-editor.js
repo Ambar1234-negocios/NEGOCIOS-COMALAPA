@@ -12,7 +12,7 @@ function pintarFichaFotos(){const zona=el('ficha-fotos');zona.replaceChildren();
 async function leerFichaAvanzada(){
  const activa=el('ficha-activa').checked,secciones=[];for(let i=0;i<5;i++){const titulo=el('ficha-titulo-'+i).value.trim(),contenido=el('ficha-contenido-'+i).value.trim();if(contenido&&!titulo)throw Error('Escribe el nombre de cada pestaña con contenido.');if(contenido)secciones.push({titulo,contenido});}
  if(new Set(secciones.map(s=>s.titulo.toLowerCase())).size!==secciones.length)throw Error('Usa nombres de pestaña diferentes.');
- if(activa&&!fichaFotos.length&&!secciones.length)throw Error('Agrega fotos o contenido a la ficha.');
+ if(activa&&!fichaFotos.length&&!secciones.length&&!(typeof esCatalogoVisual==='function'&&esCatalogoVisual()))throw Error('Agrega fotos o contenido a la ficha.');
  for(const f of fichaFotos){if(f.blob&&!f.url){const ruta=cuenta.user.id+'/'+crypto.randomUUID()+'.webp';await api('/storage/v1/object/menu-publico/'+ruta,{method:'POST',datos:f.blob});f.url=BASE+'/storage/v1/object/public/menu-publico/'+ruta;}}
  return {activa,fotos:fichaFotos.map(f=>f.url),secciones};
 }

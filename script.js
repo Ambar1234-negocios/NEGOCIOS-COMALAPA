@@ -386,6 +386,7 @@ function obtenerFechaLocalExhibicion() {
 }
 
 function formatearHorarioDia(horarioDia) {
+  if (horarioDia?.modo === "sin_confirmar") return "Horario sin confirmar";
   if (!horarioDia || horarioDia.modo === "cerrado") return "Cerrado";
   if (horarioDia.modo === "24h") return "Abierto 24 horas";
 
@@ -400,7 +401,7 @@ function formatearHorarioDia(horarioDia) {
 // Solo lectura: usa el mismo horario semanal para cualquier giro.
 function renderizarHorarioPublico(negocio, estado = obtenerEstadoHorario(negocio)) {
   const escapar = escaparTarjetaCategoria;
-  if (!estado.automatico) {
+  if (!estado.automatico && estado.texto !== "Horario de hoy sin confirmar") {
     return '<p><strong>' + escapar(estado.texto) + '</strong></p>';
   }
   const { indiceDia } = obtenerFechaLocalExhibicion();
@@ -527,6 +528,7 @@ function obtenerEstadoHorario(negocio) {
   const claveHoy = DIAS_HORARIO_PUBLICO[indiceDia];
   const diaHoy = horarios[claveHoy] || { modo: "cerrado", turnos: [] };
 
+  if (diaHoy.modo === "sin_confirmar") return {automatico:false,estado:"sin-datos",texto:"Horario de hoy sin confirmar",horarioHoy:"Horario sin confirmar"};
   if (diaHoy.modo === "24h") {
     return {
       automatico: true,

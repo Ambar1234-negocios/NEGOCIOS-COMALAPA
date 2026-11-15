@@ -2,21 +2,22 @@
   'use strict';
   const form=document.getElementById('form-negocio');
   const bloque=document.createElement('section');bloque.className='tarjeta-formulario catalogo-editor';
-  bloque.innerHTML='<h2>Menú / Productos</h2><p class="comida-editor-nota">Configura tus productos y sus precios reales en MXN. La foto, los ingredientes y los extras son opcionales. Los extras se cobran por unidad; las opciones sin costo llevan precio 0. Guarda el negocio y genera negocios.json para publicar.</p><label>Tipo de catálogo<select id="tipo-catalogo"><option value="comida">Productos / comida</option><option value="digital">Streaming / Servicios digitales</option></select></label><label id="metodos-pago-label" hidden>Métodos de pago (uno por línea, sin números de cuenta)<textarea id="catalogo-metodos-pago" rows="6"></textarea></label><div id="productos-editor"></div><button type="button" id="producto-nuevo">+ Agregar producto</button>';
+  bloque.innerHTML='<h2>Menú / Productos</h2><p class="comida-editor-nota">Configura tus productos y sus precios reales en MXN. La foto, los ingredientes y los extras son opcionales. Los extras se cobran por unidad; las opciones sin costo llevan precio 0. Guarda el negocio y genera negocios.json para publicar.</p><label>Tipo de catálogo<select id="tipo-catalogo"><option value="comida">Productos / comida</option><option value="visual">Catálogo visual / Moda</option><option value="digital">Streaming / Servicios digitales</option></select></label><label id="metodos-pago-label" hidden>Métodos de pago (uno por línea, sin números de cuenta)<textarea id="catalogo-metodos-pago" rows="6"></textarea></label><div id="productos-editor"></div><button type="button" id="producto-nuevo">+ Agregar producto</button>';
   form.append(bloque);const lista=bloque.querySelector('#productos-editor');const originales=new WeakMap();
   const tipo=bloque.querySelector('#tipo-catalogo');
   const pagos=bloque.querySelector('#catalogo-metodos-pago');
   function actualizarTipo(){
-    const d=tipo.value==='digital';
-    bloque.querySelector('h2').textContent=d?'Catálogo de servicios':'Menú / Productos';
-    bloque.querySelector('.comida-editor-nota').textContent=d?'Cada servicio y combo lleva su propia tarjeta. Captura nombre, precio, duración, dispositivos y foto opcional. La entrega y el soporte se atienden por WhatsApp.':'Configura productos, precios, ingredientes, extras y opciones. Guarda el negocio y genera negocios.json para publicar.';
+    const d=tipo.value==='digital',v=tipo.value==='visual';
+    bloque.querySelector('h2').textContent=v?'Catálogo visual':d?'Catálogo de servicios':'Menú / Productos';
+    bloque.querySelector('.comida-editor-nota').textContent=v?'Modelos sin precio obligatorio. Para cargar varias fotos por modelo utiliza el editor de catálogo en el panel de administración o dueño.':d?'Cada servicio y combo lleva su propia tarjeta. Captura nombre, precio, duración, dispositivos y foto opcional. La entrega y el soporte se atienden por WhatsApp.':'Configura productos, precios, ingredientes, extras y opciones. Guarda el negocio y genera negocios.json para publicar.';
     bloque.querySelector('#metodos-pago-label').hidden=!d;
     bloque.querySelector('#producto-nuevo').textContent=d?'+ Agregar servicio o combo':'+ Agregar producto';
     for(const row of lista.children){
+      row.querySelector('[data-campo=precio]').required=!v;
       for(const key of ['duracionMeses','dispositivos'])row.querySelector('[data-campo='+key+']').parentElement.hidden=!d;
       for(const key of ['ingredientes','enCarrusel'])row.querySelector('[data-campo='+key+']').parentElement.hidden=d;
-      row.querySelectorAll('.producto-extras,.promocion-editor').forEach(el=>el.hidden=d);
-      const seccion=row.querySelector('[data-campo=seccion]');seccion.placeholder=d?'Ejemplo: Combos de 2 plataformas':'Ejemplo: Hamburguesas';
+      row.querySelectorAll('.producto-extras,.promocion-editor').forEach(el=>el.hidden=d||v);
+      const seccion=row.querySelector('[data-campo=seccion]');seccion.placeholder=v?'Vestidos, Blusas, Pantalones, Shorts, Conjuntos, Bolsas, Accesorios o Joyería':d?'Ejemplo: Combos de 2 plataformas':'Ejemplo: Hamburguesas';
       row.querySelector('[data-campo=nombre]').parentElement.firstChild.textContent=d?'Nombre del servicio o combo':'Nombre del producto';
       seccion.parentElement.firstChild.textContent=d?'Sección del catálogo (opcional)':'Sección del menú (opcional)';
     }
@@ -121,10 +122,10 @@
         return {...originales.get(g),id:g.dataset.id,nombre,obligatorio:getG('grupo-obligatorio').checked,seleccion,opciones};
       });
       if(gruposOpciones.filter(g=>g.opciones.some(o=>o.tipoPrecio==='propio')).length>1)throw Error('Usa precio propio en un solo grupo por producto; los demás deben usar adicionales.');
-      return {...originales.get(row),...row._leerPromocion(),id:row.dataset.id,nombre:get('nombre').value.trim(),seccion:get('seccion').value.trim(),precio:numero(get('precio')),foto,ingredientes:get('ingredientes').value.trim(),disponible:get('disponible').checked,enCarrusel:digital?false:get('enCarrusel').checked,...condiciones,extras:digital?[]:extras,...(digital?{gruposOpciones:[]}:(gruposOpciones.length||originales.get(row)?.gruposOpciones?{gruposOpciones}:{}))};
+      return {...originales.get(row),...row._leerPromocion(),id:row.dataset.id,nombre:get('nombre').value.trim(),seccion:get('seccion').value.trim(),precio:tipo.value==='visual'&&!get('precio').value.trim()?null:numero(get('precio')),foto,ingredientes:get('ingredientes').value.trim(),disponible:get('disponible').checked,enCarrusel:(digital||tipo.value==='visual')?false:get('enCarrusel').checked,...condiciones,extras:digital?[]:extras,...(digital?{gruposOpciones:[]}:(gruposOpciones.length||originales.get(row)?.gruposOpciones?{gruposOpciones}:{}))};
     });
   }
-  window.MenuEditor={leer,configuracion:()=>({tipoCatalogo:tipo.value,metodosPago:tipo.value==='digital'?pagos.value.split('\n').map(x=>x.trim()).filter(Boolean):[]}),configurar:n=>{tipo.value=n?.tipoCatalogo==='digital'?'digital':'comida';pagos.value=Array.isArray(n?.metodosPago)?n.metodosPago.join('\n'):'';actualizarTipo();},cargar:ps=>{lista.replaceChildren();(Array.isArray(ps)?ps:[]).forEach(agregar);}};
+  window.MenuEditor={leer,configuracion:()=>({tipoCatalogo:tipo.value,metodosPago:tipo.value==='digital'?pagos.value.split('\n').map(x=>x.trim()).filter(Boolean):[]}),configurar:n=>{tipo.value=['digital','visual'].includes(n?.tipoCatalogo)?n.tipoCatalogo:'comida';pagos.value=Array.isArray(n?.metodosPago)?n.metodosPago.join('\n'):'';actualizarTipo();},cargar:ps=>{lista.replaceChildren();(Array.isArray(ps)?ps:[]).forEach(agregar);}};
   bloque.querySelector('#producto-nuevo').onclick=()=>agregar();form.addEventListener('reset',()=>{lista.replaceChildren();queueMicrotask(()=>{tipo.value='comida';pagos.value='';actualizarTipo();});});
   // Revelar el campo inválido aunque su grupo esté plegado.
   bloque.addEventListener('invalid',e=>{let el=e.target.parentElement;while(el&&el!==bloque){if(el.tagName==='DETAILS')el.open=true;el=el.parentElement;}},true);

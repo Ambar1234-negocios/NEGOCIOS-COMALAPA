@@ -64,7 +64,23 @@
     });
     campo.addEventListener('input',()=>campo.setCustomValidity(''));campo.focus();
   }
+
+  const seccionesVisuales=['Vestidos','Blusas','Pantalones','Shorts','Conjuntos','Bolsas','Accesorios','Joyería'];
+  function catalogoVisual(n) {
+    const ps=(Array.isArray(n.productos)?n.productos:[]).filter(p=>p&&p.id&&typeof p.nombre==='string'&&p.nombre.trim()&&p.disponible!==false&&!p.eliminado);
+    const secciones=[...new Set([...seccionesVisuales,...ps.map(p=>p.seccion||'Otros productos')])];
+    const numero=String(n.whatsapp||n.telefono||'').replace(/\D/g,'');
+    const telefono=numero.length===10?'52'+numero:numero;
+    const tarjetas=ps=>ps.map(p=>{
+      const mensaje='Hola, me interesa esta prenda de '+n.nombre+(p.nombre?' ('+p.nombre+')':'')+'. ¿Me pueden informar el precio y las tallas disponibles?';
+      const ficha={...p,fichaAvanzada:{...p.fichaAvanzada,activa:true,fotos:p.fichaAvanzada?.fotos?.length?p.fichaAvanzada.fotos:(p.foto?[p.foto]:[]),secciones:p.fichaAvanzada?.secciones||[]}};
+      return '<article class="comida-producto" data-producto-id="'+escapar(p.id)+'"><h5>'+escapar(p.nombre)+'</h5>'+window.FichaAvanzada.html(ficha,imagen)+(p.ingredientes?'<p>'+escapar(p.ingredientes)+'</p>':'')+(/^\d{11,15}$/.test(telefono)?'<a class="accion accion-whatsapp" target="_blank" rel="noopener noreferrer" href="https://wa.me/'+telefono+'?text='+encodeURIComponent(mensaje)+'">Consultar precio y talla</a>':'')+'</article>';
+    }).join('');
+    return '<section class="catalogo-visual" aria-label="Catálogo visual"><h4>Catálogo</h4><p><small>Disponibilidad sujeta a existencia</small></p>'+(!ps.length?'<p>Próximamente podrás ver las prendas y modelos disponibles. Consulta precio y talla por WhatsApp.</p>':'')+secciones.map(s=>'<details class="digital-seccion"><summary>'+escapar(s)+'</summary><div class="comida-grid">'+(tarjetas(ps.filter(p=>(p.seccion||'Otros productos')===s))||'<p>Aún no hay modelos publicados en esta sección.</p>')+'</div></details>').join('')+'</section>';
+  }
+
   function menu(n) {
+    if(n.tipoCatalogo==='visual')return catalogoVisual(n);
     if (!productos(n).length && !pedidoEspecialActivo(n)) return '';
     const tarjetas=ps=>ps.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${p.fichaAvanzada?.activa ? '' : imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p,digital(n))}<span>Ver foto e información</span></button>` : foto(p,digital(n))}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}<p>${dinero(Math.round(p.precio*100))}</p>${p.fichaAvanzada?.activa ? window.FichaAvanzada.html(p,imagen) : ''}${digital(n)?`<p class="digital-condiciones">${escapar(condiciones(p))}</p>`:""}${p.soloInformativo===true?'<p class="pedido-checkout-nota">Carta informativa · Sin pedido desde la plataforma</p>':`<button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button>`}</article>`).join('');
     const lista=productos(n);const nombres=[...new Set(lista.map(p=>String(p.seccion||'').trim()||'Otros productos'))];
