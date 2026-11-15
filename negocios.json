@@ -5704,7 +5704,179 @@
   "verificado": false,
   "delivery": false,
   "mostrarGaleria": false,
-  "productos": [],
+  "productos": [
+    {
+      "id": "47b9d857-ecda-4d4a-9de8-e20ca9e55de4",
+      "nombre": "Ejemplo: Vestido rojo · No disponible",
+      "precio": null,
+      "seccion": "Vestidos",
+      "ingredientes": "Tarjeta de ejemplo editable. La imagen es ilustrativa y no representa mercancía disponible de Shopping Morales. Para publicar una prenda real, reemplaza el nombre y las fotos y elimina este texto.",
+      "disponible": true,
+      "enCarrusel": false,
+      "extras": [],
+      "gruposOpciones": [],
+      "foto": "imagenes/shopping-morales/ejemplos/vestidos-ejemplo.webp",
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [
+          "imagenes/shopping-morales/ejemplos/vestidos-ejemplo.webp"
+        ],
+        "secciones": []
+      }
+    },
+    {
+      "id": "012683ae-9a90-4c5f-96fa-9e96dc15a149",
+      "nombre": "Ejemplo: Blusa blanca · No disponible",
+      "precio": null,
+      "seccion": "Blusas",
+      "ingredientes": "Tarjeta de ejemplo editable. La imagen es ilustrativa y no representa mercancía disponible de Shopping Morales. Para publicar una prenda real, reemplaza el nombre y las fotos y elimina este texto.",
+      "disponible": true,
+      "enCarrusel": false,
+      "extras": [],
+      "gruposOpciones": [],
+      "foto": "imagenes/shopping-morales/ejemplos/blusas-ejemplo.webp",
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [
+          "imagenes/shopping-morales/ejemplos/blusas-ejemplo.webp"
+        ],
+        "secciones": []
+      }
+    },
+    {
+      "id": "4540a610-25bb-4267-b5b2-1e86c00a02b5",
+      "nombre": "Ejemplo: Pantalón de mezclilla · No disponible",
+      "precio": null,
+      "seccion": "Pantalones",
+      "ingredientes": "Tarjeta de ejemplo editable. La imagen es ilustrativa y no representa mercancía disponible de Shopping Morales. Para publicar una prenda real, reemplaza el nombre y las fotos y elimina este texto.",
+      "disponible": true,
+      "enCarrusel": false,
+      "extras": [],
+      "gruposOpciones": [],
+      "foto": "imagenes/shopping-morales/ejemplos/pantalones-ejemplo.webp",
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [
+          "imagenes/shopping-morales/ejemplos/pantalones-ejemplo.webp"
+        ],
+        "secciones": []
+      }
+    },
+    {
+      "id": "000b53b8-66a5-46f9-9df3-14a9948745dc",
+      "nombre": "Ejemplo: Short beige · No disponible",
+      "precio": null,
+      "seccion": "Shorts",
+      "ingredientes": "Tarjeta de ejemplo editable. La imagen es ilustrativa y no representa mercancía disponible de Shopping Morales. Para publicar una prenda real, reemplaza el nombre y las fotos y elimina este texto.",
+      "disponible": true,
+      "enCarrusel": false,
+      "extras": [],
+      "gruposOpciones": [],
+      "foto": "imagenes/shopping-morales/ejemplos/shorts-ejemplo.webp",
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [
+          "imagenes/shopping-morales/ejemplos/shorts-ejemplo.webp"
+        ],
+        "secciones": []
+      }
+    },
+    {
+      "id": "c8a53c18-15eb-44c9-9ecb-3018c59805af",
+      "nombre": "Ejemplo: Conjunto verde · No disponible",
+      "precio": null,
+      "seccion": "Conjuntos",
+      "ingredientes": "Tarjeta de ejemplo editable. La imagen es ilustrativa y no representa mercancía disponible de Shopping Morales. Para publicar una prenda real, reemplaza el nombre y las fotos y elimina este texto.",
+      "disponible": true,
+      "enCarrusel": false,
+      "extras": [],
+      "gruposOpciones": [],
+      "foto": "imagenes/shopping-morales/ejemplos/conjuntos-ejemplo.webp",
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [
+          "imagenes/shopping-morales/ejemplos/conjuntos-ejemplo.webp"
+        ],
+        "secciones": []
+      }
+    },
+    {
+      "id": "cdad69a0-bcd5-4455-8139-f7236d316bd2",
+      "nombre": "Ejemplo: Bolsa café · No disponible",
+      "precio": null,
+      "seccion": "Bolsas",
+      "ingredientes": "Tarjeta de ejemplo editable. La imagen es ilustrativa y no representa mercancía disponible de Shopping Morales. Para publicar una prenda real, reemplaza el nombre y las fotos y elimina este texto.",
+      "disponible": true,
+      "enCarrusel": false,
+      "extras": [],
+      "gruposOpciones": [],
+      "foto": "imagenes/shopping-morales/ejemplos/bolsas-ejemplo.webp",
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [
+          "imagenes/shopping-morales/ejemplos/bolsas-ejemplo.webp"
+        ],
+        "secciones": []
+      }
+    },
+    {
+      "id": "c7fedabb-21bb-4bc1-89f4-e634ab4e901d",
+      "nombre": "Ejemplo: Cinturón tejido · No disponible",
+      "precio": null,
+      "seccion": "Accesorios",
+      "ingredientes": "Tarjeta de ejemplo editable. La imagen es ilustrativa y no representa mercancía disponible de Shopping Morales. Para publicar una prenda real, reemplaza el nombre y las fotos y elimina este texto.",
+      "disponible": true,
+      "enCarrusel": false,
+      "extras": [],
+      "gruposOpciones": [],
+      "foto": "imagenes/shopping-morales/ejemplos/accesorios-ejemplo.webp",
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [
+          "imagenes/shopping-morales/ejemplos/accesorios-ejemplo.webp"
+        ],
+        "secciones": []
+      }
+    },
+    {
+      "id": "78f2d7af-7be3-448d-bb32-7128a80b10bf",
+      "nombre": "Ejemplo: Collar plateado · No disponible",
+      "precio": null,
+      "seccion": "Joyería",
+      "ingredientes": "Tarjeta de ejemplo editable. La imagen es ilustrativa y no representa mercancía disponible de Shopping Morales. Para publicar una prenda real, reemplaza el nombre y las fotos y elimina este texto.",
+      "disponible": true,
+      "enCarrusel": false,
+      "extras": [],
+      "gruposOpciones": [],
+      "foto": "imagenes/shopping-morales/ejemplos/joyeria-ejemplo.webp",
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [
+          "imagenes/shopping-morales/ejemplos/joyeria-ejemplo.webp"
+        ],
+        "secciones": []
+      }
+    },
+    {
+      "id": "a8a423ed-b46a-4547-a615-bda850c63d53",
+      "nombre": "Ejemplo: Camisa azul · No disponible",
+      "precio": null,
+      "seccion": "Camisas",
+      "ingredientes": "Tarjeta de ejemplo editable. La imagen es ilustrativa y no representa mercancía disponible de Shopping Morales. Para publicar una prenda real, reemplaza el nombre y las fotos y elimina este texto.",
+      "disponible": true,
+      "enCarrusel": false,
+      "extras": [],
+      "gruposOpciones": [],
+      "foto": "imagenes/shopping-morales/ejemplos/camisas-ejemplo.webp",
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [
+          "imagenes/shopping-morales/ejemplos/camisas-ejemplo.webp"
+        ],
+        "secciones": []
+      }
+    }
+  ],
   "galeria": [],
   "servicios": [],
   "horarios": {
