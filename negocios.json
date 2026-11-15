@@ -1885,8 +1885,13 @@
         ]
       },
       "domingo": {
-        "modo": "cerrado",
-        "turnos": []
+        "modo": "abierto",
+        "turnos": [
+          {
+            "inicio": "07:00",
+            "fin": "22:00"
+          }
+        ]
       }
     },
     "maps": "https://maps.app.goo.gl/FVVGpWtpj1X45qDFA?g_st=ac",
@@ -1913,7 +1918,52 @@
     "tipoDelivery": "",
     "verificado": false,
     "activo": true,
-    "fechaRegistro": "27/9/2026, 11:46:29 p.m."
+    "fechaRegistro": "27/9/2026, 11:46:29 p.m.",
+    "catalogoGaleria": {
+      "activa": true,
+      "elementos": {
+        "imagenes/elegans-floreria/foto-1.webp": {
+          "nombre": "",
+          "cotizacion": true
+        },
+        "imagenes/elegans-floreria/foto-2.webp": {
+          "nombre": "",
+          "cotizacion": true
+        },
+        "imagenes/elegans-floreria/foto-3.webp": {
+          "nombre": "",
+          "cotizacion": true
+        },
+        "imagenes/elegans-floreria/foto-4.webp": {
+          "nombre": "",
+          "cotizacion": true
+        },
+        "imagenes/elegans-floreria/foto-5.webp": {
+          "nombre": "",
+          "cotizacion": true
+        },
+        "imagenes/elegans-floreria/foto-6.webp": {
+          "nombre": "",
+          "cotizacion": true
+        },
+        "imagenes/elegans-floreria/foto-7.webp": {
+          "nombre": "",
+          "cotizacion": true
+        },
+        "imagenes/elegans-floreria/foto-8.webp": {
+          "nombre": "",
+          "cotizacion": true
+        },
+        "imagenes/elegans-floreria/foto-9.webp": {
+          "nombre": "",
+          "cotizacion": true
+        },
+        "imagenes/elegans-floreria/foto-10.webp": {
+          "nombre": "",
+          "cotizacion": true
+        }
+      }
+    }
   },
   {
     "mostrarGaleria": true,

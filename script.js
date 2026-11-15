@@ -1019,7 +1019,7 @@ function verPerfil(categoria, index, opciones = {}) {
   </section>
 ` : "";
   
-  const galeriaHTML = negocio.mostrarGaleria !== false && negocio.galeria && negocio.galeria.length > 0 ? `
+  const galeriaHTML = negocio.catalogoGaleria?.activa ? window.GaleriaCotizacion.html(negocio) : negocio.mostrarGaleria !== false && negocio.galeria && negocio.galeria.length > 0 ? `
   <section class="perfil-galeria-fotos">
     <h4>📷 Galería</h4>
     <div class="galeria-grid">
