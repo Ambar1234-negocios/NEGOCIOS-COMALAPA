@@ -1,25 +1,25 @@
 /* Cueto keeps the existing servicios/galeria JSON and owner authorization RPC. */
 (()=>{'use strict';
-let dirty=false,serial=0;
+let dirty=false,serial=0,ocultados=[];
+function restaurarControlesCueto(){for(const [e,hidden] of ocultados)e.hidden=hidden;ocultados=[];}
 const basePintar=pintarMenuCompleto;
-pintarMenuCompleto=function(){basePintar();pintarCueto();};
+pintarMenuCompleto=function(){restaurarControlesCueto();basePintar();pintarCueto();};
 const baseCarga=cargarMenuCompleto;
 cargarMenuCompleto=async function(){
- if(dirty&&!confirm('¿Descartar los cambios sin publicar de Cueto Sax?'))return;
+ if(dirty&&!confirm('¿Descartar los cambios sin publicar de Cueto Sax?')){negocioActivo=menuCompleto.slug;el('negocio-menu').value=negocioActivo;return;}
  await baseCarga();
 };
 function pintarCueto(){
  el('cueto-editor')?.remove();dirty=false;
  const fila=menuCompleto,esCueto=fila?.slug==='cueto-sax';
  if(!esCueto)return;
- const tab=document.querySelector('[data-vista="menu"]');if(tab)tab.textContent='Mi perfil especial';
- for(const selector of ['.menu-herramientas','#lista-completa','#papelera-menu','#vista-menu > .aviso']){const e=document.querySelector(selector);if(e)e.hidden=true;}
- document.querySelector('header h1').textContent='Mi perfil · Cueto Sax';
- document.querySelector('header p').textContent='Eventos, portafolio y datos de tu presentación.';
- el('ver-menu-publico').textContent='Ver perfil público';
+ // Keep the existing business selector visible in the administrator's screen.
+ for(const id of ['nuevo-producto','buscar-menu','categoria-menu','conteo-menu','lista-completa','papelera-menu']){
+  for(const e of [el(id),document.querySelector('label[for="'+id+'"]')])if(e){ocultados.push([e,e.hidden]);e.hidden=true;}
+ }
  const d=structuredClone(fila.original),z=nodo('section',undefined,'tarjeta');z.id='cueto-editor';
  z.append(nodo('h2','Administrar perfil de Cueto Sax'),nodo('p','Los cambios se publican juntos al pulsar Guardar y publicar perfil. Cotizar conserva el WhatsApp 9636357763.'));
- const form=nodo('form'),lectores=[],fotos=[];z.append(form);el('vista-menu').append(z);
+ const form=nodo('form'),lectores=[],fotos=[];z.append(form);(el('vista-menu')||el('panel')).append(z);
  form.addEventListener('input',()=>dirty=true);form.addEventListener('change',()=>dirty=true);
  function grupo(t){const g=nodo('section',undefined,'tarjeta');g.append(nodo('h3',t));form.append(g);return g;}
  function campo(g,obj,k,t,tipo='text'){
