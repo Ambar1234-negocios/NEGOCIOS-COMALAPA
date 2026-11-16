@@ -1,0 +1,2 @@
+[functions.gestionar-accesos]
+verify_jwt = false
