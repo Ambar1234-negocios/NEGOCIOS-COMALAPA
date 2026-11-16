@@ -1,0 +1,98 @@
+{
+  "nombre": "Cueto Sax",
+  "slug": "cueto-sax",
+  "categoria": "profesionales",
+  "slogan": "Saxofonista para todo tipo de eventos",
+  "descripcion": "Saxofonista para todo tipo de eventos",
+  "whatsapp": "9636357763",
+  "telefono": "",
+  "tipoCatalogo": "artista",
+  "activo": true,
+  "verificado": false,
+  "delivery": false,
+  "mostrarGaleria": true,
+  "productos": [],
+  "galeria": [],
+  "servicios": [
+    "Bodas",
+    "Bautizos",
+    "XV años",
+    "Serenatas",
+    "Cumpleaños",
+    "Otros eventos"
+  ],
+  "horarios": {
+    "lunes": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "06:00",
+          "fin": "23:00"
+        }
+      ]
+    },
+    "martes": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "06:00",
+          "fin": "23:00"
+        }
+      ]
+    },
+    "miercoles": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "06:00",
+          "fin": "23:00"
+        }
+      ]
+    },
+    "jueves": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "06:00",
+          "fin": "23:00"
+        }
+      ]
+    },
+    "viernes": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "06:00",
+          "fin": "23:00"
+        }
+      ]
+    },
+    "sabado": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "06:00",
+          "fin": "23:00"
+        }
+      ]
+    },
+    "domingo": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "06:00",
+          "fin": "23:00"
+        }
+      ]
+    }
+  },
+  "facebook": "",
+  "instagram": "",
+  "tiktok": "",
+  "direccion": "",
+  "maps": "",
+  "logo": "",
+  "banner": "",
+  "video": "",
+  "sitioWeb": ""
+}

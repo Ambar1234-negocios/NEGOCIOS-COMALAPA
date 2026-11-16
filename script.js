@@ -150,7 +150,7 @@ let destacadosPublicados = [];
 function crearLinkWhatsapp(negocio) {
   const digitos = String(negocio.whatsapp || "").replace(/\D/g, "");
   const numero = digitos.length === 10 ? "52" + digitos : negocio.whatsapp || obtenerWhatsappGeneral();
-  const mensaje = `Hola, vi ${negocio.nombre} en Exhibición Frontera Comalapa y quiero información.`;
+  const mensaje = negocio.tipoCatalogo === "artista" ? `Hola, me interesa cotizar una presentación de ${negocio.nombre} para un evento.` : `Hola, vi ${negocio.nombre} en Exhibición Frontera Comalapa y quiero información.`;
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
 }
 
@@ -832,7 +832,7 @@ function verPerfil(categoria, index, opciones = {}) {
   const serviciosHTML = !negocio.propiedad && serviciosGenericos.length > 0
     ? `
       <section class="perfil-seccion">
-        <h4>Servicios</h4>
+        <h4>${negocio.tipoCatalogo === "artista" ? "Ideal para" : "Servicios"}</h4>
         <div class="servicios-pills">
           ${serviciosGenericos.map(ServiciosExhibicion.renderizar).join("")}
         </div>
@@ -853,7 +853,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
       ${!negocio.propiedad && (negocio.horarios || negocio.horario) ? `
         <div class="detalle-card">
-          <h4>🕒 Horario</h4>
+          <h4>${negocio.tipoCatalogo === "artista" ? "Horario de atención" : "🕒 Horario"}</h4>
           ${renderizarHorarioPublico(negocio, estadoHorario)}
         </div>
       ` : ""}
@@ -874,10 +874,10 @@ function verPerfil(categoria, index, opciones = {}) {
       ` : ""}
 
       ${negocio.whatsapp ? `
-        <a class="accion accion-whatsapp" href="${crearLinkWhatsapp(negocio)}" target="_blank" rel="noopener noreferrer">
+        <a class="accion accion-whatsapp" ${negocio.tipoCatalogo === "artista" ? 'data-contacto-cliente="true"' : ""} href="${crearLinkWhatsapp(negocio)}" target="_blank" rel="noopener noreferrer">
           <svg class="perfil-icono-whatsapp" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.52 3.48A11.91 11.91 0 0 0 12.04 0C5.46 0 .1 5.35.1 11.93c0 2.1.55 4.16 1.6 5.98L0 24l6.24-1.64a11.94 11.94 0 0 0 5.8 1.48h.01c6.58 0 11.94-5.35 11.95-11.93a11.85 11.85 0 0 0-3.48-8.43ZM12.05 21.82a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.7.97.99-3.61-.24-.37a9.87 9.87 0 0 1-1.52-5.29c0-5.47 4.45-9.92 9.92-9.92a9.85 9.85 0 0 1 7.02 2.91 9.85 9.85 0 0 1 2.9 7.03c0 5.47-4.45 9.87-9.97 9.87Zm5.44-7.41c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.87 1.21 3.07c.15.2 2.1 3.2 5.09 4.49.71.3 1.26.48 1.69.62.71.22 1.35.19 1.86.11.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35Z"/></svg>
           <div>
-            <strong>${negocio.propiedad ? "Quiero más información" : "WhatsApp"}</strong>
+            <strong>${negocio.tipoCatalogo === "artista" ? "Cotizar presentación" : negocio.propiedad ? "Quiero más información" : "WhatsApp"}</strong>
             <small>Enviar mensaje</small>
           </div>
         </a>
@@ -908,7 +908,7 @@ function verPerfil(categoria, index, opciones = {}) {
           <span>▶️</span>
           <div>
             <strong>Ver video</strong>
-            <small>${negocio.propiedad ? "Recorrido de la propiedad" : "Video del negocio"}</small>
+            <small>${negocio.tipoCatalogo === "artista" ? "Video de presentación" : negocio.propiedad ? "Recorrido de la propiedad" : "Video del negocio"}</small>
           </div>
         </a>
       ` : ""}
@@ -1021,16 +1021,16 @@ function verPerfil(categoria, index, opciones = {}) {
   
   const galeriaHTML = negocio.catalogoGaleria?.activa ? window.GaleriaCotizacion.html(negocio) : negocio.mostrarGaleria !== false && negocio.galeria && negocio.galeria.length > 0 ? `
   <section class="perfil-galeria-fotos">
-    <h4>📷 Galería</h4>
+    <h4>${negocio.tipoCatalogo === "artista" ? "Portafolio de presentaciones" : "📷 Galería"}</h4>
     <div class="galeria-grid">
       ${negocio.galeria.map((foto, i) => `
         <img src="${foto}" alt="${negocio.nombre}" onclick="abrirLightbox('${categoria}', ${index}, ${i})">
       `).join("")}
     </div>
   </section>
-` : "";
+` : negocio.tipoCatalogo === "artista" && negocio.mostrarGaleria !== false ? '<section class="perfil-seccion"><h4>Portafolio de presentaciones</h4><p>Próximamente, fotos y videos de sus presentaciones.</p></section>' : "";
   lista.innerHTML = `
-    <article class="perfil-negocio perfil-oficial${negocio.propiedad ? " perfil-propiedad" : ""}">
+    <article class="perfil-negocio perfil-oficial${negocio.tipoCatalogo === "artista" ? " perfil-artista" : ""}${negocio.propiedad ? " perfil-propiedad" : ""}">
 
       <button class="btn-regresar-perfil" onclick="volverCategoriaDesdePerfil('${categoria}')">
         ← Volver a la categoría
@@ -1077,8 +1077,9 @@ function verPerfil(categoria, index, opciones = {}) {
         ${window.PropiedadesExhibicion.renderizar(negocio)}
         ${window.ConsultoriosExhibicion.renderizar(negocio)}
         ${promocionesHTML}
-        ${negocio.propiedad || window.ConsultoriosExhibicion.esEspecial(negocio) ? "" : window.ComidaExhibicion.menu(negocio)}
+        ${negocio.tipoCatalogo === "artista" || negocio.propiedad || window.ConsultoriosExhibicion.esEspecial(negocio) ? "" : window.ComidaExhibicion.menu(negocio)}
         
+        ${negocio.tipoCatalogo === "artista" ? serviciosHTML : ""}
         ${galeriaHTML}
 
         ${botonesHTML}
@@ -1086,7 +1087,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
         ${detallesHTML}
 
-        ${serviciosHTML}
+        ${negocio.tipoCatalogo === "artista" ? "" : serviciosHTML}
 
       </div>
 
