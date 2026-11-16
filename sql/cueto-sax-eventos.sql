@@ -8,6 +8,7 @@ BEGIN
  despues:=jsonb_set(m.original,'{servicios}',tarjetas);
  PERFORM public.sitio_validar(tarjetas);
  UPDATE public.piloto_menus_completos SET original=despues,borrador=jsonb_set(borrador,'{servicios}',tarjetas),revision=revision+1,actualizado_en=now() WHERE slug=m.slug;
- INSERT INTO public.sitio_historial(id,tipo,registro,anterior,nuevo) VALUES(gen_random_uuid(),'negocios',m.slug,m.original-'productos',despues-'productos');
+ INSERT INTO public.sitio_historial(tipo,registro,anterior,nuevo) VALUES('negocios',m.slug,m.original-'productos',despues-'productos');
  IF (m.original-'servicios') IS DISTINCT FROM (despues-'servicios') THEN RAISE EXCEPTION 'Cambio fuera del alcance'; END IF;
 END $patch$;
+
