@@ -36,3 +36,30 @@ configurarCatalogoVisual=function(){const promo=el('publicidad-producto');if(pro
 el('editar-producto').addEventListener('submit',()=>{if(esSayer()&&el('editar-precio').value==='')el('editar-precio').value='0';},true);
 const previaSayerOriginal=actualizarPreviaProducto;
 actualizarPreviaProducto=function(){previaSayerOriginal();if(!esSayer())return;if(!(Number(el('editar-precio').value)>0)){const precio=el('previa-producto').querySelector('.precio-menu');if(precio)precio.textContent='Consultar precio';}if(productoEditado?.soloInformativo){const estado=el('previa-producto').querySelector('.chip-menu');if(estado)estado.textContent='Ficha informativa';}};
+
+// Las fotos pertenecen al producto abierto; la ficha técnica sigue debajo.
+const prepararFotosSayerOriginal=prepararFichaAvanzada;
+prepararFichaAvanzada=function(p){
+ const anterior=el('sayer-fotos-producto'),fotoZona=el('editar-foto')?.closest('.editor-foto');
+ if(anterior){const campos=el('ficha-campos');campos.prepend(...anterior.children);anterior.remove();}
+ const titulo=fotoZona?.querySelector('h3');if(titulo?.dataset.sayerOriginal)titulo.textContent=titulo.dataset.sayerOriginal;
+ prepararFotosSayerOriginal(esSayer()?{...p,fichaAvanzada:{...p.fichaAvanzada,activa:true}}:p);
+ if(!esSayer()||!fotoZona)return;
+ titulo.dataset.sayerOriginal??=titulo.textContent;titulo.textContent='📷 Fotos de este producto';
+ const grupo=nodo('div');grupo.id='sayer-fotos-producto';
+ const nota=document.querySelector('#ficha-campos>p'),agregar=el('ficha-agregar'),label=document.querySelector('label[for="ficha-agregar"]'),lista=el('ficha-fotos');
+ nota.textContent='Sube hasta 4 fotos del mismo producto: «'+(p.nombre||'Nuevo producto')+'». La primera es la foto principal de su tarjeta; las otras muestran diferentes vistas o detalles de ese mismo producto. No crean productos separados.';
+ label.textContent='Elegir fotos de este producto (hasta 4)';
+ grupo.append(nota,label,agregar,lista);fotoZona.append(grupo);
+ const activar=el('ficha-activa');activar.hidden=true;activar.disabled=true;document.querySelector('label[for="ficha-activa"]').hidden=true;
+ el('ficha-editor').querySelector('h3').textContent='Información técnica de este producto';
+ pintarFichaFotos();actualizarFotoSimpleFicha();
+};
+const pintarFotosSayerOriginal=pintarFichaFotos;
+pintarFichaFotos=function(){pintarFotosSayerOriginal();if(!esSayer())return;
+ for(const [i,fila]of [...el('ficha-fotos').children].entries()){
+  fila.querySelector('p').textContent=i===0?'Foto principal de este producto':'Vista adicional '+(i+1)+' del mismo producto';
+  fila.querySelector('img').alt=(i===0?'Foto principal':'Vista adicional '+(i+1))+' de '+(productoEditado?.nombre||'este producto');
+ }
+};
+
