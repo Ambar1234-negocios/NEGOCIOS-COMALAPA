@@ -94,8 +94,8 @@
   // Conserva íntegra la ficha; solo cambia la puerta de entrada al catálogo.
   function catalogoSayer(n){
     const ps=(n.productos||[]).filter(p=>p&&p.id&&p.nombre&&!p.eliminado&&(p.disponible!==false||p.soloInformativo)).sort((a,b)=>(a.ordenCatalogo??0)-(b.ordenCatalogo??0));
-    const categorias=[...new Set(ps.map(p=>p.seccion?.trim()||'Otros productos'))];
-    return '<section class="catalogo-visual catalogo-sayer" aria-label="Catálogo Sayer"><h4>Catálogo de pinturas y herramientas</h4><p>Desliza para ver productos. Toca una tarjeta para consultar sus fotos e información.</p>'+categorias.map(c=>'<section class="catalogo-seccion"><header><h5>'+escapar(c)+'</h5></header><div class="catalogo-fila" tabindex="0" aria-label="Productos de '+escapar(c)+'">'+ps.filter(p=>(p.seccion?.trim()||'Otros productos')===c).map(p=>{
+    const categorias=[...new Set([...(n.seccionesCatalogo||[]),...ps.map(p=>p.seccion?.trim()||'Otros productos')])].filter(c=>!(n.seccionesOcultas||[]).includes(c));
+    return '<section class="catalogo-visual catalogo-sayer" aria-label="Catálogo de productos"><h4>Catálogo de productos</h4><p>Desliza para ver productos. Toca una tarjeta para consultar sus fotos e información.</p>'+categorias.map(c=>'<section class="catalogo-seccion"><header><h5>'+escapar(c)+'</h5></header><div class="catalogo-fila" tabindex="0" aria-label="Productos de '+escapar(c)+'">'+ps.filter(p=>(p.seccion?.trim()||'Otros productos')===c).map(p=>{
       const numero=String(n.whatsapp||n.telefono||'').replace(/\D/g,''),tel=numero.length===10?'52'+numero:numero;
       const enlace=/^\d{11,15}$/.test(tel)?'https://wa.me/'+tel+'?text='+encodeURIComponent('Hola, quiero información sobre '+p.nombre+' de '+n.nombre+'. ¿Me confirman precio y disponibilidad?'):'';
       return '<article class="catalogo-prenda" data-producto-id="'+escapar(p.id)+'">'+galeriaCatalogo(p)+'<h5><button type="button" data-catalogo-abrir="0">'+escapar(p.nombre)+'</button></h5>'+(Number.isFinite(p.precio)&&p.precio>0?'<p>'+dinero(Math.round(p.precio*100))+'</p>':'')+'<button type="button" class="catalogo-detalle" data-catalogo-abrir="0">Ver producto</button><template class="catalogo-datos">'+escapar(JSON.stringify({...p,sayer:true,enlace}))+'</template></article>';
@@ -129,7 +129,7 @@
 
 
   function menu(n) {
-    if(n.slug==='el-titan-de-las-pinturas')return catalogoSayer(n);
+    if(n.tipoCatalogo==='tecnico'||n.slug==='el-titan-de-las-pinturas')return catalogoSayer(n);
     if(n.tipoCatalogo==='visual')return catalogoVisual(n);
     if (!productos(n).length && !pedidoEspecialActivo(n)) return '';
     const tarjetas=ps=>ps.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${p.fichaAvanzada?.activa ? '' : imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p,digital(n))}<span>Ver foto e información</span></button>` : foto(p,digital(n))}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}<p>${dinero(Math.round(p.precio*100))}</p>${p.fichaAvanzada?.activa ? window.FichaAvanzada.html(p,imagen) : ''}${digital(n)?`<p class="digital-condiciones">${escapar(condiciones(p))}</p>`:""}${p.soloInformativo===true?'<p class="pedido-checkout-nota">Carta informativa · Sin pedido desde la plataforma</p>':`<button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button>`}</article>`).join('');
