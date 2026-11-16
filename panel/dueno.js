@@ -13,7 +13,17 @@ const cargaOriginalDueno=cargarMenuCompleto;cargarMenuCompleto=async()=>{await c
 // The server preserves carousel selection for owners. Hide this global administration control.
 el('editar-carrusel').hidden=true;document.querySelector('label[for="editar-carrusel"]').hidden=true;el('editar-carrusel').nextElementSibling.hidden=true;
 el('crear-cuenta-dueno').onclick=()=>tarea(async()=>{const email=el('correo').value.trim(),password=el('clave').value;if(!el('correo').checkValidity()||!email)throw Error('Escribe tu correo autorizado.');if(password.length<12)throw Error('Elige una contraseña de al menos 12 caracteres.');const r=await api('/auth/v1/signup?redirect_to='+encodeURIComponent(new URL('dueno.html',location.href).href),{method:'POST',datos:{email,password}});el('clave').value='';if(r?.access_token){cuenta=r;sessionStorage.setItem('exhibicionDuenoSesion',JSON.stringify(cuenta));mostrar();await cargarMenuCompleto();}else el('auth-dueno').textContent='Revisa tu correo para confirmar la cuenta. Si ya tenías cuenta, usa Entrar o Recuperar contraseña. Si no llega el correo, avisa al administrador.';});
-el('recuperar-dueno').onclick=()=>tarea(async()=>{const email=el('correo').value.trim();if(!email||!el('correo').checkValidity())throw Error('Escribe tu correo.');await api('/auth/v1/recover?redirect_to='+encodeURIComponent(new URL('restablecer-contrasena.html',location.href).href),{method:'POST',datos:{email}});el('auth-dueno').textContent='Si el correo está registrado, recibirás un enlace para cambiar tu contraseña.';});
+el('recuperar-dueno').onclick=()=>tarea(async()=>{
+ const email=el('correo').value.trim();if(!email||!el('correo').checkValidity())throw Error('Escribe tu correo.');
+ el('auth-dueno').textContent='Solicitando un nuevo correo de recuperación…';
+ try{
+  await api('/auth/v1/recover?redirect_to='+encodeURIComponent(new URL('restablecer-contrasena.html',location.href).href),{method:'POST',datos:{email}});
+  el('auth-dueno').textContent='Supabase aceptó la solicitud. Revisa entrada y spam y abre únicamente el correo más reciente. El enlace se usa una sola vez; mantén abierta la pantalla para elegir tu contraseña.';
+ }catch(e){
+  const mensaje=e.estadoHTTP===429?'Supabase bloqueó el envío por límite de correos. No se generó un correo nuevo. Espera antes de solicitar otro; volver a abrir un enlace usado no lo reactiva. Si persiste, avisa al administrador para revisar el servicio de correo.':'No se pudo solicitar la recuperación: '+e.message;
+  el('auth-dueno').textContent=mensaje;throw Error(mensaje);
+ }
+});
 // Old recovery links also use the dedicated page, before storing any session.
 (async()=>{const h=new URLSearchParams(location.hash.slice(1));if(!h.has('access_token'))return;if(h.get('type')==='recovery'){location.replace(new URL('restablecer-contrasena.html',location.href).href+location.hash);return;}try{const token=h.get('access_token'),r=await fetch(BASE+'/auth/v1/user',{headers:{apikey:KEY,Authorization:'Bearer '+token}});if(!r.ok)throw Error('El enlace de acceso venció. Solicita otro.');cuenta={access_token:token,refresh_token:h.get('refresh_token'),expires_at:Math.floor(Date.now()/1000)+Number(h.get('expires_in')||3600),user:await r.json()};sessionStorage.setItem('exhibicionDuenoSesion',JSON.stringify(cuenta));history.replaceState(null,'',location.pathname+location.search);mostrar();await cargarMenuCompleto();}catch(e){aviso(e.message);}})();
 vistaDueno('menu');
