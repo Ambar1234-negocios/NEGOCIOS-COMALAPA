@@ -62,3 +62,9 @@ Referencias de los avisos: [RLS sin políticas](https://supabase.com/docs/guides
 Modificados: `index.html`, `panel/administracion.html`, `panel/accesos-duenos.html`, `panel/accesos-duenos.js`, `panel/dueno.html`, `panel/dueno.js`.
 
 Nuevos: `panel/accesos-negocios.css`, `panel/restablecer-contrasena.html`, `panel/restablecer-contrasena.js`, `recuperacion-redireccion.js`, `supabase/config.toml`, `supabase/functions/gestionar-accesos/index.ts`, `supabase/functions/gestionar-accesos/handler.mjs`, `tests/accesos-negocios.mjs`, `tests/accesos-negocios-browser.cjs`, esta guía.
+
+## Corrección de recuperación por correo (16 de noviembre de 2026)
+
+La prueba real con la cuenta de recepción llegó a la pantalla propia, pero la validación inicial rechazó su sesión porque exigía `amr.method=recovery`. El flujo implícito de GoTrue emite estos tokens con `amr.method=otp`. Se corrigió para admitir `otp` o `recovery`, exigiendo además el callback explícito `type=recovery`, validación del token por Auth, identidad coincidente y expiración vigente. Las sesiones por contraseña continúan rechazadas. No se cambió ninguna contraseña para esta corrección.
+
+La captura aportada por el usuario confirma recepción del enlace y llegada a la pantalla propia. Falta repetir con un enlace nuevo para comprobar el formulario corregido y completar voluntariamente el cambio de contraseña. La regresión se ejecuta con `node --test tests/recuperacion-sesion.mjs`; prueba el método OTP real, contraseña normal, expiración, identidad, token inválido y token_hash.

@@ -38,11 +38,11 @@ const server=http.createServer((req,res)=>{const file=path.join(root,decodeURICo
    await page.route('**/gyvoyzxsgckpfkagzjtf.supabase.co/**',async route=>{
     const req=route.request(),url=new URL(req.url());
     if(scenario==='invalid')return route.fulfill({status:401,json:{}});
-    if(url.pathname.endsWith('/verify'))return route.fulfill({json:{access_token:token('recovery')}});
+    if(url.pathname.endsWith('/verify'))return route.fulfill({json:{access_token:token('otp')}});
     if(req.method()==='PUT'){updates++;assert.deepEqual(req.postDataJSON(),{password:'Personal-Prueba123'});}
     return route.fulfill({json:{id:'owner',email:'test@example.com'}});
    });
-   const suffix=scenario==='missing'?'':scenario==='expired'?'#error=access_denied&error_code=otp_expired':scenario==='token_hash'?'?type=recovery&token_hash=test-hash':'#type=recovery&access_token='+token(scenario==='normal'?'password':'recovery');
+   const suffix=scenario==='missing'?'':scenario==='expired'?'#error=access_denied&error_code=otp_expired':scenario==='token_hash'?'?type=recovery&token_hash=test-hash':'#type=recovery&access_token='+token(scenario==='normal'?'password':'otp');
    await page.goto('http://127.0.0.1:8774/panel/restablecer-contrasena.html'+suffix);
    await page.waitForFunction(()=>!document.getElementById('recuperacion-estado').textContent.includes('Validando'));
    assert.equal(new URL(page.url()).hash,'');assert.equal(new URL(page.url()).search,'');

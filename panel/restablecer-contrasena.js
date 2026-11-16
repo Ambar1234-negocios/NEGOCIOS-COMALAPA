@@ -20,7 +20,9 @@
   if(!token)throw Error('Abre el enlace de recuperación que recibiste por correo. Una sesión normal no habilita esta pantalla.');
   const user=await auth('user'); // Auth verifies the signature and expiry before claims are trusted.
   const part=token.split('.')[1];const claims=JSON.parse(atob(part.replace(/-/g,'+').replace(/_/g,'/')));
-  if(claims.sub!==user.id||claims.exp*1000<=Date.now()||!claims.amr?.some(a=>a.method==='recovery'))throw Error('Este enlace no corresponde a una sesión de recuperación válida. Solicita otro.');
+  // Implicit email recovery is issued by GoTrue with AMR otp, not recovery.
+  // The explicit recovery callback above and Auth-verified token are both required.
+  if(claims.sub!==user.id||!Number.isFinite(claims.exp)||claims.exp*1000<=Date.now()||!claims.amr?.some(a=>a.method==='otp'||a.method==='recovery'))throw Error('Este enlace no corresponde a una sesión de recuperación válida. Solicita otro.');
   estado.textContent='Enlace válido para '+user.email+'. Escribe tu nueva contraseña.';form.hidden=false;
  }catch(e){token=null;estado.textContent=e.message;}
  form.onsubmit=async e=>{
