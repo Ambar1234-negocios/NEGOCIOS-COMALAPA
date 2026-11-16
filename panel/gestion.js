@@ -41,7 +41,11 @@ function mostrarModoPruebaContactos(lista,fila){const d=fila.contenido,z=nodo('s
 function editorConsultorio(z,d){
 if(d.tipoCatalogo==='artista'){
 z.append(nodo('h3','Portafolio de artista'),nodo('p','Redes: Cueto Sax. Añade únicamente los enlaces exactos. Sube fotos en Galería y agrega el enlace de un video de presentación en Video. Este perfil no requiere menú ni productos.'));
-campoLista(z,d,'servicios','Ideal para');return;
+z.append(nodo('h4','Tarjetas de eventos'),nodo('p','Edita el título, la descripción opcional y la foto de cada evento. El botón Cotizar conserva el tipo de evento y el WhatsApp del artista. Las fotos se publican al guardar.'));
+const tarjetas=(d.servicios||[]).filter(s=>s&&typeof s==='object'&&s.tipo==='evento').map(s=>({...s}));
+for(const tarjeta of tarjetas){const b=nodo('section',undefined,'gestion-grupo');b.append(nodo('h4',tarjeta.nombre));campoGestion(b,tarjeta,'nombre','Título de la tarjeta').required=true;campoGestion(b,tarjeta,'descripcion','Descripción (opcional)','textarea');fotosGestion(b,tarjeta,'foto','Foto de '+tarjeta.nombre);z.append(b);}
+const generales={servicios:(d.servicios||[]).filter(s=>s?.tipo!=='evento')};campoLista(z,generales,'servicios','Servicios generales · se muestran al final del perfil');
+lectoresGestion.push(()=>d.servicios=[...tarjetas,...generales.servicios]);return;
 }
 
 const originalTipo=d.tipoCatalogo||'',clon=structuredClone(d.servicios||[]),tipo={valor:['dental','servicios'].includes(originalTipo)?originalTipo:'normal'};

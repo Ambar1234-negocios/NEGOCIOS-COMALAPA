@@ -5958,12 +5958,55 @@
     "productos": [],
     "galeria": [],
     "servicios": [
-      "Bodas",
-      "Bautizos",
-      "XV años",
-      "Serenatas",
-      "Cumpleaños",
-      "Otros eventos"
+      {
+        "tipo": "evento",
+        "evento": "bodas",
+        "nombre": "Bodas",
+        "foto": "",
+        "descripcion": ""
+      },
+      {
+        "tipo": "evento",
+        "evento": "bautizos",
+        "nombre": "Bautizos",
+        "foto": "",
+        "descripcion": ""
+      },
+      {
+        "tipo": "evento",
+        "evento": "xv",
+        "nombre": "XV años",
+        "foto": "",
+        "descripcion": ""
+      },
+      {
+        "tipo": "evento",
+        "evento": "serenatas",
+        "nombre": "Serenatas",
+        "foto": "",
+        "descripcion": ""
+      },
+      {
+        "tipo": "evento",
+        "evento": "cumpleanos",
+        "nombre": "Cumpleaños",
+        "foto": "",
+        "descripcion": ""
+      },
+      {
+        "tipo": "evento",
+        "evento": "especiales",
+        "nombre": "Eventos especiales",
+        "foto": "",
+        "descripcion": ""
+      },
+      {
+        "tipo": "evento",
+        "evento": "otro",
+        "nombre": "Otro tipo de evento",
+        "foto": "",
+        "descripcion": ""
+      }
     ],
     "horarios": {
       "lunes": {

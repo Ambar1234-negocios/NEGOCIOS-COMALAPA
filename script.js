@@ -832,7 +832,7 @@ function verPerfil(categoria, index, opciones = {}) {
   const serviciosHTML = !negocio.propiedad && serviciosGenericos.length > 0
     ? `
       <section class="perfil-seccion">
-        <h4>${negocio.tipoCatalogo === "artista" ? "Ideal para" : "Servicios"}</h4>
+        <h4>Servicios</h4>
         <div class="servicios-pills">
           ${serviciosGenericos.map(ServiciosExhibicion.renderizar).join("")}
         </div>
@@ -1075,11 +1075,11 @@ function verPerfil(categoria, index, opciones = {}) {
         ` : ""}
 
         ${window.PropiedadesExhibicion.renderizar(negocio)}
-        ${window.ConsultoriosExhibicion.renderizar(negocio)}
+        ${negocio.tipoCatalogo === "artista" ? "" : window.ConsultoriosExhibicion.renderizar(negocio)}
         ${promocionesHTML}
         ${negocio.tipoCatalogo === "artista" || negocio.propiedad || window.ConsultoriosExhibicion.esEspecial(negocio) ? "" : window.ComidaExhibicion.menu(negocio)}
         
-        ${negocio.tipoCatalogo === "artista" ? serviciosHTML : ""}
+        ${negocio.tipoCatalogo === "artista" ? window.ConsultoriosExhibicion.renderizar(negocio) : ""}
         ${galeriaHTML}
 
         ${botonesHTML}
@@ -1087,7 +1087,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
         ${detallesHTML}
 
-        ${negocio.tipoCatalogo === "artista" ? "" : serviciosHTML}
+        ${serviciosHTML}
 
       </div>
 
