@@ -91,6 +91,16 @@
       return '<section class="catalogo-seccion" aria-label="'+escapar(s)+'"><header><h5>'+escapar(s)+'</h5>'+(lista.length>1?'<div class="catalogo-controles"><button type="button" data-catalogo-prendas="-1" aria-label="Prendas anteriores de '+escapar(s)+'">‹</button><button type="button" data-catalogo-prendas="1" aria-label="Más prendas de '+escapar(s)+'">›</button></div>':'')+'</header>'+(lista.length?'<div class="catalogo-fila" tabindex="0" aria-label="Prendas de '+escapar(s)+'">'+tarjetas(lista)+'</div>':'<p class="catalogo-vacio">Aún no hay prendas publicadas en esta sección.</p>')+'</section>';
     }).join('')+'</section>';
   }
+  // Conserva íntegra la ficha; solo cambia la puerta de entrada al catálogo.
+  function catalogoSayer(n){
+    const ps=(n.productos||[]).filter(p=>p&&p.id&&p.nombre&&!p.eliminado&&(p.disponible!==false||p.soloInformativo)).sort((a,b)=>(a.ordenCatalogo??0)-(b.ordenCatalogo??0));
+    const categorias=[...new Set(ps.map(p=>p.seccion?.trim()||'Otros productos'))];
+    return '<section class="catalogo-visual catalogo-sayer" aria-label="Catálogo Sayer"><h4>Catálogo de pinturas y herramientas</h4><p>Desliza para ver productos. Toca una tarjeta para consultar sus fotos e información.</p>'+categorias.map(c=>'<section class="catalogo-seccion"><header><h5>'+escapar(c)+'</h5></header><div class="catalogo-fila" tabindex="0" aria-label="Productos de '+escapar(c)+'">'+ps.filter(p=>(p.seccion?.trim()||'Otros productos')===c).map(p=>{
+      const numero=String(n.whatsapp||n.telefono||'').replace(/\D/g,''),tel=numero.length===10?'52'+numero:numero;
+      const enlace=/^\d{11,15}$/.test(tel)?'https://wa.me/'+tel+'?text='+encodeURIComponent('Hola, quiero información sobre '+p.nombre+' de '+n.nombre+'. ¿Me confirman precio y disponibilidad?'):'';
+      return '<article class="catalogo-prenda" data-producto-id="'+escapar(p.id)+'">'+galeriaCatalogo(p)+'<h5><button type="button" data-catalogo-abrir="0">'+escapar(p.nombre)+'</button></h5>'+(Number.isFinite(p.precio)&&p.precio>0?'<p>'+dinero(Math.round(p.precio*100))+'</p>':'')+'<button type="button" class="catalogo-detalle" data-catalogo-abrir="0">Ver producto</button><template class="catalogo-datos">'+escapar(JSON.stringify({...p,sayer:true,enlace}))+'</template></article>';
+    }).join('')+'</div></section>').join('')+(!ps.length?'<p>Aún no hay productos publicados.</p>':'')+'</section>';
+  }
   function moverFotoCatalogo(pista,paso) {
     const i=Math.round(pista.scrollLeft/pista.clientWidth),n=pista.children.length;
     pista.scrollTo({left:((i+paso+n)%n)*pista.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
@@ -107,6 +117,10 @@
     gestoCatalogo=null;
     const p=JSON.parse(card.querySelector('.catalogo-datos').content.textContent),inicio=Number(b?.dataset.catalogoAbrir||0);
     const d=dialogo(p.nombre,'catalogo-ampliado',b||card.querySelector('button'));
+    if(p.sayer){
+      d.querySelector('.dialogo-contenido').innerHTML=galeriaCatalogo(p,true,inicio)+(Number.isFinite(p.precio)&&p.precio>0?'<p>'+dinero(Math.round(p.precio*100))+'</p>':'')+(p.ingredientes?'<p>'+escapar(p.ingredientes)+'</p>':'')+(p.fichaAvanzada?.secciones||[]).filter(s=>s.titulo&&s.contenido).map(s=>'<section class="sayer-informacion"><h4>'+escapar(s.titulo)+'</h4><p>'+escapar(s.contenido)+'</p></section>').join('')+(p.enlace?'<a class="accion accion-whatsapp" href="'+escapar(p.enlace)+'" target="_blank" rel="noopener noreferrer">Consultar producto por WhatsApp</a>':'');
+      const pista=d.querySelector('.catalogo-pista');if(pista)pista.scrollLeft=inicio*pista.clientWidth;return;
+    }
     d.querySelector('.dialogo-contenido').innerHTML=galeriaCatalogo(p,true,inicio)+(p.ingredientes?'<p>'+escapar(p.ingredientes)+'</p>':'')+'<p><small>Disponibilidad sujeta a existencia</small></p>'+(p.enlace?'<a class="accion accion-whatsapp" href="'+escapar(p.enlace)+'" target="_blank" rel="noopener noreferrer">Consultar precio y talla</a>':'<p>WhatsApp pendiente de configurar.</p>');
     const pista=d.querySelector('.catalogo-pista');if(pista)pista.scrollLeft=inicio*pista.clientWidth;
   });
@@ -115,6 +129,7 @@
 
 
   function menu(n) {
+    if(n.slug==='el-titan-de-las-pinturas')return catalogoSayer(n);
     if(n.tipoCatalogo==='visual')return catalogoVisual(n);
     if (!productos(n).length && !pedidoEspecialActivo(n)) return '';
     const tarjetas=ps=>ps.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${p.fichaAvanzada?.activa ? '' : imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p,digital(n))}<span>Ver foto e información</span></button>` : foto(p,digital(n))}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}<p>${dinero(Math.round(p.precio*100))}</p>${p.fichaAvanzada?.activa ? window.FichaAvanzada.html(p,imagen) : ''}${digital(n)?`<p class="digital-condiciones">${escapar(condiciones(p))}</p>`:""}${p.soloInformativo===true?'<p class="pedido-checkout-nota">Carta informativa · Sin pedido desde la plataforma</p>':`<button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button>`}</article>`).join('');
