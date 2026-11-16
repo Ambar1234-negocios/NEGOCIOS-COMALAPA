@@ -2350,9 +2350,6 @@ footer {
 .horario-dia dt, .horario-dia dd { margin: 0; overflow-wrap: anywhere; }
 .horario-dia-hoy { background: rgba(128, 128, 128, .12); font-weight: 600; }
 
-/* Portafolio de artista sin fotografía de relleno. */
-.perfil-artista .perfil-cabecera-oficial{background:linear-gradient(135deg,#182523,#30443e);color:#fff;padding:clamp(24px,6vw,56px);border-radius:20px}
-.perfil-artista .perfil-subtitulo{color:#e1d8bd}
-.perfil-artista .perfil-titulo-oficial h3{color:#fff;font-size:clamp(2rem,7vw,3.5rem)}
+/* El artista comparte la carcasa del perfil oficial; conserva sus secciones y CTA. */
 .perfil-artista .servicios-pills{display:flex;flex-wrap:wrap;gap:10px}
 .perfil-artista .accion-whatsapp{border:2px solid #8e7950}
