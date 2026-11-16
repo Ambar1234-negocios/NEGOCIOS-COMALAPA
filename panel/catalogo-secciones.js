@@ -9,9 +9,10 @@ function categoriasDelEditor(){
 
 function pintarAdministracionCategorias(nav){
  let zona=el('administrar-categorias');
- if(!zona){zona=nodo('section');zona.id='administrar-categorias';nav.after(zona);}
+ if(!zona){zona=nodo('details');zona.id='administrar-categorias';nav.after(zona);}
+ if(zona.dataset.negocio!==menuCompleto?.slug){zona.open=false;zona.dataset.negocio=menuCompleto?.slug||'';}
  zona.hidden=!categoriasDinamicas();zona.replaceChildren();if(zona.hidden)return;
- zona.append(nodo('h3','Categorías'),nodo('p','Ocultar una categoría oculta sus productos en el catálogo público. Solo puedes eliminar categorías sin productos, incluidos los de la papelera.'));
+ zona.append(nodo('summary','Administrar categorías'),nodo('p','Ocultar una categoría oculta sus productos en el catálogo público. Solo puedes eliminar categorías sin productos, incluidos los de la papelera.'));
  const categorias=categoriasDelEditor(),ocultas=menuCompleto.borrador.seccionesOcultas||[];
  const guardar=(accion,seccion,nombre=null,posicion=null)=>tarea(async()=>{
   await api('/rest/v1/rpc/catalogo_seccion_administrar',{method:'POST',datos:{negocio:menuCompleto.slug,version:menuCompleto.revision,accion,seccion,nombre,posicion}});
@@ -51,6 +52,7 @@ function pintarSeccionesCatalogo(){
  if(!filtro||!lista)return;
  let nav=el('catalogo-secciones');
  if(!nav){nav=nodo('nav',undefined,'catalogo-secciones');nav.id='catalogo-secciones';nav.setAttribute('aria-label','Editar prendas por sección');const cabecera=nodo('div',undefined,'catalogo-secciones-cabecera');const nueva=nodo('button','＋ Nueva sección','secundario');nueva.id='nueva-seccion-catalogo';nueva.type='button';nueva.onclick=abrirNuevaSeccionCatalogo;cabecera.append(nodo('p','Editar por sección'),nueva);nav.append(cabecera);const pista=nodo('div',undefined,'catalogo-secciones-pista');pista.setAttribute('role','group');pista.setAttribute('aria-label','Secciones del catálogo');nav.append(pista);lista.before(nav);}
+ if(!filtro.dataset.cierraAdministracion){filtro.addEventListener('change',()=>{const zona=el('administrar-categorias');if(zona)zona.open=false;});filtro.dataset.cierraAdministracion='true';}
  nav.hidden=!visual;
  pintarAdministracionCategorias(nav);
  const etiqueta=document.querySelector('label[for="categoria-menu"]');
