@@ -1593,7 +1593,23 @@
     "tipoDelivery": "",
     "verificado": false,
     "activo": true,
-    "fechaRegistro": "24/9/2026, 10:50:13 a.m."
+    "fechaRegistro": "24/9/2026, 10:50:13 a.m.",
+    "tipoCatalogo": "visual",
+    "seccionesCatalogo": [
+      "Ropa para dama",
+      "Ropa para caballero",
+      "Ropa infantil",
+      "Lencería",
+      "Calzado",
+      "Bolsos y accesorios",
+      "Perfumes"
+    ],
+    "mostrarGaleria": true,
+    "productos": [],
+    "telefono": "9631063887",
+    "whatsapp": "9631063887",
+    "categoriasDinamicas": true,
+    "seccionesOcultas": []
   },
   {
     "id": 1790474364293,

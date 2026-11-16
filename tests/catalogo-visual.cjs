@@ -1,6 +1,6 @@
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE_PATH||'playwright');
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
-const root=path.join(__dirname,'..'),perfil=JSON.parse(fs.readFileSync(path.join(root,'negocios.json'))).find(n=>n.slug==='shopping-morales');
+const root=path.join(__dirname,'..'),perfil={...JSON.parse(fs.readFileSync(path.join(root,'negocios.json'))).find(n=>n.slug==='shopping-morales'),productos:[]};
 const server=http.createServer((req,res)=>{const file=path.join(root,decodeURIComponent(req.url.split('?')[0])==='/'?'index.html':decodeURIComponent(req.url.split('?')[0]));try{res.setHeader('Content-Type',file.endsWith('.js')?'application/javascript':file.endsWith('.css')?'text/css':file.endsWith('.html')?'text/html':'application/json');res.end(fs.readFileSync(file));}catch{res.writeHead(404).end();}});
 const fixture={slug:perfil.slug,revision:1,plan:'normal',imagenes:{},original:perfil,borrador:perfil};
 (async()=>{await new Promise(ok=>server.listen(8766,'127.0.0.1',ok));const browser=await chromium.launch({executablePath:process.env.CHROME_PATH,headless:true});const page=await browser.newPage();let guardado;const errors=[];page.on('pageerror',e=>errors.push(e.message));

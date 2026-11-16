@@ -81,10 +81,10 @@
   }
   function catalogoVisual(n) {
     const ps=(Array.isArray(n.productos)?n.productos:[]).filter(p=>p&&p.id&&typeof p.nombre==='string'&&p.nombre.trim()&&p.disponible!==false&&!p.eliminado);
-    const secciones=[...new Set([...seccionesVisuales,...(Array.isArray(n.seccionesCatalogo)?n.seccionesCatalogo:[]),...ps.map(p=>p.seccion||'Otros productos')])];
+    const secciones=[...new Set([...(Array.isArray(n.seccionesCatalogo)?[]:seccionesVisuales),...(Array.isArray(n.seccionesCatalogo)?n.seccionesCatalogo:[]),...ps.map(p=>p.seccion||'Otros productos')])].filter(s=>!(n.seccionesOcultas||[]).includes(s));
     const tarjetas=lista=>lista.map(p=>{
       const enlace=consultaCatalogo(n,p);
-      return '<article class="catalogo-prenda" data-producto-id="'+escapar(p.id)+'">'+galeriaCatalogo(p)+'<h5><button type="button" data-catalogo-abrir="0">'+escapar(p.nombre)+'</button></h5><button type="button" class="catalogo-detalle" data-catalogo-abrir="0">Ver prenda</button><template class="catalogo-datos">'+escapar(JSON.stringify({nombre:p.nombre,ingredientes:p.ingredientes,fichaAvanzada:{fotos:fotosCatalogo(p)},enlace}))+'</template></article>';
+      return '<article class="catalogo-prenda" data-producto-id="'+escapar(p.id)+'">'+galeriaCatalogo(p)+'<h5><button type="button" data-catalogo-abrir="0">'+escapar(p.nombre)+'</button></h5><button type="button" class="catalogo-detalle" data-catalogo-abrir="0">Ver prenda</button><template class="catalogo-datos">'+escapar(JSON.stringify({nombre:p.nombre,ingredientes:p.ingredientes,fichaAvanzada:{fotos:fotosCatalogo(p)},enlace}))+'</template>'+(enlace?'<a class="catalogo-consultar" href="'+escapar(enlace)+'" target="_blank" rel="noopener">Consultar precio y talla</a>':'')+'</article>';
     }).join('');
     return '<section class="catalogo-visual" aria-label="Catálogo visual"><h4>Catálogo</h4><p><small>Disponibilidad sujeta a existencia</small></p>'+(!ps.length?'<p>Próximamente podrás ver las prendas y modelos disponibles. Consulta precio y talla por WhatsApp.</p>':'<p class="catalogo-ayuda">Desliza las prendas de cada sección. Toca una foto para ampliarla y consultar.</p>')+secciones.map(s=>{
       const lista=ps.filter(p=>(p.seccion||'Otros productos')===s);
