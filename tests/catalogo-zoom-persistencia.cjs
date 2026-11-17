@@ -1,0 +1,64 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE_PATH||'playwright');
+const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
+const root=path.join(__dirname,'..'),perfil={...JSON.parse(fs.readFileSync(path.join(root,'negocios.json'))).find(n=>n.slug==='shopping-morales'),productos:[]};
+const server=http.createServer((req,res)=>{const file=path.join(root,decodeURIComponent(req.url.split('?')[0])==='/'?'index.html':decodeURIComponent(req.url.split('?')[0]));try{res.setHeader('Content-Type',file.endsWith('.js')?'application/javascript':file.endsWith('.css')?'text/css':file.endsWith('.html')?'text/html':'application/json');res.end(fs.readFileSync(file));}catch{res.writeHead(404).end();}});
+const fixture={slug:perfil.slug,revision:1,plan:'normal',imagenes:{},original:perfil,borrador:perfil};
+(async()=>{await new Promise(ok=>server.listen(8766,'127.0.0.1',ok));const browser=await chromium.launch({executablePath:process.env.CHROME_PATH,headless:true});const page=await browser.newPage();let guardado;const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.route('**/imagenes/prueba/**',route=>route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="360" height="480"><rect width="360" height="480" fill="#e4e9e6"/><text x="90" y="240" fill="#52675b">Foto de prueba</text></svg>'}));
+await page.route('https://gyvoyzxsgckpfkagzjtf.supabase.co/**',async route=>{const u=route.request().url();if(u.includes('catalogo_visual_modelo_guardar')){guardado=route.request().postDataJSON();return route.fulfill({json:{revision:2}});}const data=u.includes('sitio_publicacion')?{perfiles:[perfil],documentos:{},promociones:[]}:u.includes('piloto_menus_completos')||u.includes('dueno_menus_listar')?[fixture]:u.includes('piloto_es_admin')?true:[];return route.fulfill({json:data});});
+for(const pagina of ['menu-completo.html','dueno.html']){await page.goto('http://127.0.0.1:8766/panel/'+pagina);await page.evaluate(f=>{cuenta={access_token:'prueba',user:{id:'11111111-1111-4111-8111-111111111111'}};menuCompleto=f;document.getElementById('panel').hidden=false;document.getElementById('nuevo-producto').click();},fixture);assert.equal(await page.locator('#editar-precio').getAttribute('required'),null);assert(await page.locator('#ficha-campos').isVisible());assert(await page.locator('#opciones-completas').isHidden());assert.equal(await page.locator('#seccion-elegida option').count(),10);await page.fill('#editar-nombre','Modelo transaccional de prueba');await page.click('#guardar-completo');await page.waitForFunction(()=>!document.getElementById('editor-menu').open);assert.equal(guardado.datos.precio,null);assert.equal(guardado.datos.seccion,'Vestidos');assert.equal(guardado.datos.fichaAvanzada.activa,true);}
+await page.goto('http://127.0.0.1:8766/?negocio=shopping-morales');await page.locator('.catalogo-visual').waitFor();assert.equal(await page.locator('.catalogo-seccion').count(),8);assert.equal(await page.locator('.catalogo-visual article').count(),0);assert((await page.locator('.horario-publico').textContent()).includes('Horario sin confirmar'));assert.equal(await page.locator('.perfil-hero-oficial,.perfil-logo-oficial').count(),0);
+const p={id:'prueba',nombre:'Vestido de prueba',seccion:'Vestidos',precio:null,disponible:true,fichaAvanzada:{activa:true,fotos:['imagenes/prueba/uno.webp','imagenes/prueba/dos.webp','imagenes/prueba/tres.webp'],secciones:[]}};
+await page.evaluate(({perfil,p})=>{document.querySelector('.catalogo-visual').outerHTML=ComidaExhibicion.menu({...perfil,productos:[p,{...p,id:'oculto',disponible:false}]});},{perfil,p});assert.equal(await page.locator('.catalogo-visual article').count(),1);await page.locator('.catalogo-prenda h5 button').click();
+const enlace=await page.locator('.catalogo-ampliado a').getAttribute('href');assert(enlace.startsWith('https://wa.me/529631858534?text='));assert(decodeURIComponent(enlace).includes('sobre el Vestido de prueba de Shopping Morales'));assert.equal(await page.locator('[data-agregar-producto]').count(),0);assert(!(await page.locator('.catalogo-visual').textContent()).includes('$'));
+for(const width of [320,390,768,1280]){await page.setViewportSize({width,height:850});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Desborde '+width);}
+await page.setViewportSize({width:390,height:850});await page.locator('.catalogo-ampliado [data-catalogo-foto="1"]').click();await page.waitForTimeout(500);assert.equal(await page.locator('.catalogo-ampliado output').textContent(),'2 / 3');await page.keyboard.press('Escape');await page.locator('.catalogo-ampliado').waitFor({state:'detached'});assert.equal(await page.locator('.catalogo-ampliado').count(),0);
+await page.locator('.catalogo-prenda .catalogo-foto').nth(1).click();
+assert.equal(await page.locator('.catalogo-ampliado output').textContent(),'2 / 3');
+await page.keyboard.press('Escape');await page.locator('.catalogo-ampliado').waitFor({state:'detached'});
+await page.evaluate(({perfil,p})=>{document.querySelector('.catalogo-visual').outerHTML=ComidaExhibicion.menu({...perfil,productos:Array.from({length:6},(_,i)=>({...p,id:'test-'+i,nombre:i?'Prenda de prueba '+i:p.nombre}))});},{perfil,p});
+await page.locator('[data-catalogo-prendas="1"]').click();await page.waitForTimeout(450);
+assert(await page.locator('.catalogo-fila').evaluate(e=>e.scrollLeft>0));
+await page.setViewportSize({width:390,height:850});
+await page.locator('.catalogo-prenda').first().locator('h5 button').click();
+const cdp=await page.context().newCDPSession(page);await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
+const box=await page.locator('.catalogo-ampliado .catalogo-pista').boundingBox(),y=box.y+box.height/2;
+await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:2});
+const cx=box.x+box.width/2;
+const touch=async(type,points)=>{await cdp.send('Input.dispatchTouchEvent',{type,touchPoints:points.map(([id,x,y])=>({id,x,y}))});await page.waitForTimeout(35);};
+await touch('touchStart',[[1,cx-35,y],[2,cx+35,y]]);
+for(let d=40;d<=80;d+=10)await touch('touchMove',[[1,cx-d,y],[2,cx+d,y]]);
+assert(await page.locator('.catalogo-ampliado .catalogo-pista').evaluate(e=>Number(e.dataset.zoom)>2),'Pinch directamente en foto');
+await touch('touchEnd',[[2,cx+80,y]]);
+const transform=await page.locator('.catalogo-ampliado img').first().evaluate(e=>e.style.transform);
+await touch('touchMove',[[1,cx-50,y+20]]);
+assert.notEqual(await page.locator('.catalogo-ampliado img').first().evaluate(e=>e.style.transform),transform,'Pan ampliado');
+await touch('touchEnd',[]);
+await touch('touchStart',[[1,cx-80,y],[2,cx+80,y]]);
+for(let d=70;d>=20;d-=10)await touch('touchMove',[[1,cx-d,y],[2,cx+d,y]]);
+await touch('touchEnd',[]);
+assert.equal(await page.locator('.catalogo-ampliado .catalogo-pista').getAttribute('data-zoom'),'1','Volver a 1x');
+assert.equal(await page.locator('.catalogo-ampliado .catalogo-pista').evaluate(e=>getComputedStyle(e).touchAction),'auto');
+await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:box.x+box.width-30,y}]});
+for(let x=box.width-50;x>30;x-=25){await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:box.x+x,y}]});await page.waitForTimeout(20);}
+await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForTimeout(600);
+assert.notEqual(await page.locator('.catalogo-ampliado output').textContent(),'1 / 3','Swipe debe cambiar la foto');
+const enlaceModal=await page.locator('.catalogo-ampliado a').getAttribute('href');assert.equal(new URL(enlaceModal).searchParams.get('text'),'Hola, quiero información sobre el Vestido de prueba de Shopping Morales. ¿Qué precio y talla tiene disponible?');
+await page.screenshot({path:require('path').join(root,'..','morales-modal-mobile.png')});
+await page.keyboard.press('Escape');await page.locator('.catalogo-ampliado').waitFor({state:'detached'});
+await page.setViewportSize({width:1280,height:900});await page.locator('.catalogo-visual').scrollIntoViewIfNeeded();await page.screenshot({path:require('path').join(root,'..','morales-catalogo-desktop.png')});
+// Persistent empty sections and hidden sections use the same renderer for all visual shops.
+for(const slug of ['shopping-morales','karen-shop']){
+ for(const estado of ['pausado','eliminado','activo']){
+ await page.evaluate(({perfil,p,slug,estado})=>{document.querySelector('.catalogo-visual').outerHTML=ComidaExhibicion.menu({...perfil,slug,categoriasDinamicas:true,seccionesCatalogo:['Única','Oculta'],seccionesOcultas:['Oculta'],productos:[{...p,seccion:'Única',disponible:estado!=='pausado',eliminado:estado==='eliminado'}]});},{perfil,p,slug,estado});
+ assert.equal(await page.locator('.catalogo-seccion').count(),1);
+ assert.equal(await page.locator('.catalogo-prenda').count(),estado==='activo'?1:0);
+ if(estado!=='activo')assert((await page.locator('.catalogo-vacio').textContent()).includes('Próximamente'));
+ }
+}
+await page.setViewportSize({width:390,height:850});
+await cdp.send('Emulation.setDeviceMetricsOverride',{width:390,height:850,deviceScaleFactor:1,mobile:true});
+await page.evaluate(()=>scrollTo(0,0));
+assert(!/user-scalable=no|maximum-scale=1/.test(await page.locator('meta[name="viewport"]').getAttribute('content')),'Viewport conserva zoom global');
+assert.equal(await page.locator('body').evaluate(e=>getComputedStyle(e).touchAction),'auto');
+assert.deepEqual(errors,[]);console.log(JSON.stringify({ok:true,checks:['pinch directo en imagen','pan al levantar un dedo','regreso a 1x y swipe nativo','viewport y CSS permiten zoom global','categoría única activa, pausada y eliminada en Morales y Karen','CTA conservado y anchos 320/390/768/1280'],errors}));await browser.close();server.close();})().catch(e=>{console.error(e);server.close();process.exit(1);});

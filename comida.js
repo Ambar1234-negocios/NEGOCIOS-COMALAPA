@@ -88,7 +88,7 @@
     }).join('');
     return '<section class="catalogo-visual" aria-label="Catálogo visual"><h4>Catálogo</h4><p><small>Disponibilidad sujeta a existencia</small></p>'+(!ps.length?'<p>Próximamente podrás ver las prendas y modelos disponibles. Consulta precio y talla por WhatsApp.</p>':'<p class="catalogo-ayuda">Desliza las prendas de cada sección. Toca una foto para ampliarla y consultar.</p>')+secciones.map(s=>{
       const lista=ps.filter(p=>(p.seccion||'Otros productos')===s);
-      return '<section class="catalogo-seccion" aria-label="'+escapar(s)+'"><header><h5>'+escapar(s)+'</h5>'+(lista.length>1?'<div class="catalogo-controles"><button type="button" data-catalogo-prendas="-1" aria-label="Prendas anteriores de '+escapar(s)+'">‹</button><button type="button" data-catalogo-prendas="1" aria-label="Más prendas de '+escapar(s)+'">›</button></div>':'')+'</header>'+(lista.length?'<div class="catalogo-fila" tabindex="0" aria-label="Prendas de '+escapar(s)+'">'+tarjetas(lista)+'</div>':'<p class="catalogo-vacio">Aún no hay prendas publicadas en esta sección.</p>')+'</section>';
+      return '<section class="catalogo-seccion" aria-label="'+escapar(s)+'"><header><h5>'+escapar(s)+'</h5>'+(lista.length>1?'<div class="catalogo-controles"><button type="button" data-catalogo-prendas="-1" aria-label="Prendas anteriores de '+escapar(s)+'">‹</button><button type="button" data-catalogo-prendas="1" aria-label="Más prendas de '+escapar(s)+'">›</button></div>':'')+'</header>'+(lista.length?'<div class="catalogo-fila" tabindex="0" aria-label="Prendas de '+escapar(s)+'">'+tarjetas(lista)+'</div>':'<p class="catalogo-vacio">Próximamente · Sin productos disponibles por el momento.</p>')+'</section>';
     }).join('')+'</section>';
   }
   // Conserva íntegra la ficha; solo cambia la puerta de entrada al catálogo.
@@ -102,7 +102,54 @@
       return '<article class="catalogo-prenda" data-producto-id="'+escapar(p.id)+'">'+galeriaCatalogo(p)+'<h5><button type="button" data-catalogo-abrir="0">'+escapar(p.nombre)+'</button></h5>'+(Number.isFinite(p.precio)&&p.precio>0?'<p>'+dinero(Math.round(p.precio*100))+'</p>':'')+'<button type="button" class="catalogo-detalle" data-catalogo-abrir="0">'+(servicio?'Ver servicio':'Ver producto')+'</button>'+(servicio&&enlace?'<a class="catalogo-consultar" href="'+escapar(enlace)+'" target="_blank" rel="noopener noreferrer">Solicitar cita</a>':'')+'<template class="catalogo-datos">'+escapar(JSON.stringify({...p,sayer:true,servicio,enlace}))+'</template></article>';
     }).join('')+'</div>'+(!ps.some(p=>(p.seccion?.trim()||'Otros productos')===c)?'<p class="catalogo-vacio">Próximamente</p>':'')+'</section>').join('')+(!ps.length?'<p>'+ (servicio?'Consulta disponibilidad por WhatsApp.':'Aún no hay productos publicados.')+'</p>':'')+'</section>';
   }
+  // Shared by every catalog: native swipe at 1x, image-only pinch and pan above 1x.
+  function prepararZoomCatalogo(pista) {
+    let escala=1,x=0,y=0,img=null,gesto=null;
+    const limitar=(v,min,max)=>Math.max(min,Math.min(max,v));
+    const pintar=()=>{
+      if(!img)return;
+      x=limitar(x,-img.clientWidth*(escala-1)/2,img.clientWidth*(escala-1)/2);
+      y=limitar(y,-img.clientHeight*(escala-1)/2,img.clientHeight*(escala-1)/2);
+      img.style.transform=`translate(${x}px,${y}px) scale(${escala})`;
+      pista.dataset.zoom=String(escala);
+      restablecer.hidden=escala===1;
+    };
+    const reset=()=>{if(img)img.style.transform='';escala=1;x=y=0;gesto=null;pista.dataset.zoom='1';restablecer.hidden=true;};
+    const restablecer=document.createElement('button');restablecer.type='button';restablecer.textContent='Restablecer zoom';restablecer.hidden=true;restablecer.onclick=reset;
+    const ayuda=document.createElement('p');ayuda.className='catalogo-ayuda';ayuda.textContent='Amplía con dos dedos y mueve la foto. A tamaño normal, desliza para ver las demás.';
+    pista.after(ayuda,restablecer);pista.catalogoRestablecer=reset;
+    const puntos=t=>{const a=t[0],b=t[1]||a;return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2,d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)};};
+    const iniciar=e=>{
+      if(e.touches.length>2){gesto=null;return;}
+      if(escala===1){
+        img=pista.children[Math.round(pista.scrollLeft/pista.clientWidth)]?.querySelector('img');
+      }
+      if(!img)return;
+      const p=puntos(e.touches),r=img.getBoundingClientRect();
+      gesto={px:p.x,py:p.y,d:p.d,escala,tx:x,ty:y,cx:r.left+r.width/2-x,cy:r.top+r.height/2-y,n:e.touches.length};
+      if(e.touches.length===2||escala>1)e.preventDefault();
+    };
+    pista.addEventListener('touchstart',iniciar,{passive:false});
+    pista.addEventListener('touchmove',e=>{
+      if(!gesto||!img||e.touches.length!==gesto.n)return;
+      if(e.touches.length===1&&escala===1)return;
+      e.preventDefault();const p=puntos(e.touches);
+      escala=e.touches.length===2?limitar(gesto.escala*p.d/Math.max(gesto.d,1),1,5):escala;
+      const ratio=escala/gesto.escala;
+      x=gesto.tx+(p.x-gesto.px)-(gesto.px-gesto.cx-gesto.tx)*(ratio-1);
+      y=gesto.ty+(p.y-gesto.py)-(gesto.py-gesto.cy-gesto.ty)*(ratio-1);
+      pintar();
+    },{passive:false});
+    pista.addEventListener('touchend',e=>{if(escala<1.03){reset();return;}if(e.touches.length)iniciar(e);else gesto=null;},{passive:false});
+    pista.addEventListener('touchcancel',reset);
+    pista.addEventListener('scroll',()=>{if(escala>1)reset();},{passive:true});
+    pista.addEventListener('dragstart',e=>e.preventDefault());
+    // Dialogs are removed on close; disconnect the observer with the dialog.
+    const observer=new ResizeObserver(reset);observer.observe(pista);
+    pista.closest('dialog').addEventListener('close',()=>observer.disconnect(),{once:true});
+  }
   function moverFotoCatalogo(pista,paso) {
+    pista.catalogoRestablecer?.();
     const i=Math.round(pista.scrollLeft/pista.clientWidth),n=pista.children.length;
     pista.scrollTo({left:((i+paso+n)%n)*pista.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
   }
@@ -120,10 +167,10 @@
     const d=dialogo(p.nombre,'catalogo-ampliado',b||card.querySelector('button'));
     if(p.sayer){
       d.querySelector('.dialogo-contenido').innerHTML=galeriaCatalogo(p,true,inicio)+(Number.isFinite(p.precio)&&p.precio>0?'<p>'+dinero(Math.round(p.precio*100))+'</p>':'')+(p.ingredientes?'<p>'+escapar(p.ingredientes)+'</p>':'')+(p.fichaAvanzada?.secciones||[]).filter(s=>s.titulo&&s.contenido).map(s=>'<section class="sayer-informacion"><h4>'+escapar(s.titulo)+'</h4><p>'+escapar(s.contenido)+'</p></section>').join('')+(p.enlace?'<a class="accion accion-whatsapp" href="'+escapar(p.enlace)+'" target="_blank" rel="noopener noreferrer">'+(p.servicio?'Solicitar cita':'Consultar producto por WhatsApp')+'</a>':'');
-      const pista=d.querySelector('.catalogo-pista');if(pista)pista.scrollLeft=inicio*pista.clientWidth;return;
+      const pista=d.querySelector('.catalogo-pista');if(pista){pista.scrollLeft=inicio*pista.clientWidth;prepararZoomCatalogo(pista);}return;
     }
     d.querySelector('.dialogo-contenido').innerHTML=galeriaCatalogo(p,true,inicio)+(p.ingredientes?'<p>'+escapar(p.ingredientes)+'</p>':'')+'<p><small>Disponibilidad sujeta a existencia</small></p>'+(p.enlace?'<a class="accion accion-whatsapp" href="'+escapar(p.enlace)+'" target="_blank" rel="noopener noreferrer">Consultar precio y talla</a>':'<p>WhatsApp pendiente de configurar.</p>');
-    const pista=d.querySelector('.catalogo-pista');if(pista)pista.scrollLeft=inicio*pista.clientWidth;
+    const pista=d.querySelector('.catalogo-pista');if(pista){pista.scrollLeft=inicio*pista.clientWidth;prepararZoomCatalogo(pista);}
   });
   document.addEventListener('scroll',e=>{const pista=e.target;if(!pista.matches?.('.catalogo-pista'))return;const out=pista.closest('.catalogo-fotos').querySelector('output');if(out&&pista.clientWidth)out.textContent=(Math.round(pista.scrollLeft/pista.clientWidth)+1)+' / '+pista.children.length;},true);
   document.addEventListener('keydown',e=>{const pista=e.target.closest('.catalogo-pista');if(pista&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();moverFotoCatalogo(pista,e.key==='ArrowRight'?1:-1);}});

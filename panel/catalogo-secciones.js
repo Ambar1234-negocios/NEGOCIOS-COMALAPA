@@ -12,7 +12,7 @@ function pintarAdministracionCategorias(nav){
  if(!zona){zona=nodo('details');zona.id='administrar-categorias';nav.after(zona);}
  if(zona.dataset.negocio!==menuCompleto?.slug){zona.open=false;zona.dataset.negocio=menuCompleto?.slug||'';}
  zona.hidden=!categoriasDinamicas();zona.replaceChildren();if(zona.hidden)return;
- zona.append(nodo('summary','Administrar categorías'),nodo('p','Ocultar una categoría oculta sus productos en el catálogo público. Solo puedes eliminar categorías sin productos, incluidos los de la papelera.'));
+ zona.append(nodo('summary','Administrar categorías'),nodo('p','Ocultar una categoría oculta sus productos en el catálogo público. Puedes eliminar categorías sin prendas activas o pausadas; las prendas de la papelera se conservan.'));
  const categorias=categoriasDelEditor(),ocultas=menuCompleto.borrador.seccionesOcultas||[];
  const guardar=(accion,seccion,nombre=null,posicion=null)=>tarea(async()=>{
   await api('/rest/v1/rpc/catalogo_seccion_administrar',{method:'POST',datos:{negocio:menuCompleto.slug,version:menuCompleto.revision,accion,seccion,nombre,posicion}});
@@ -25,7 +25,7 @@ function pintarAdministracionCategorias(nav){
   boton('Subir',()=>guardar('ordenar',c,null,i-1),i===0);
   boton('Bajar',()=>guardar('ordenar',c,null,i+1),i===categorias.length-1);
   boton(ocultas.includes(c)?'Mostrar':'Ocultar',()=>guardar(ocultas.includes(c)?'mostrar':'ocultar',c));
-  const usada=menuCompleto.borrador.productos.some(p=>(p.seccion||'Otros productos')===c)||menuCompleto.original.productos.some(p=>(p.seccion||'Otros productos')===c);
+  const usada=menuCompleto.borrador.productos.some(p=>!p.eliminado&&(p.seccion||'Otros productos')===c)||menuCompleto.original.productos.some(p=>!p.eliminado&&(p.seccion||'Otros productos')===c);
   boton('Eliminar categoría',()=>{if(confirm('¿Eliminar la categoría vacía «'+c+'»?'))guardar('eliminar',c);},usada);
   zona.append(fila);
  }
@@ -64,3 +64,5 @@ function pintarSeccionesCatalogo(){
  if(nav.dataset.firma!==firma){pista.replaceChildren();nav.dataset.firma=firma;for(const opcion of opciones){const b=nodo('button',opcion.nombre+' ('+opcion.cantidad+')','secundario');b.type='button';b.dataset.seccion=opcion.valor;b.onclick=()=>{filtro.value=opcion.valor;el('buscar-menu').value='';filtro.dispatchEvent(new Event('change',{bubbles:true}));b.scrollIntoView({block:'nearest',inline:'nearest'});};pista.append(b);}}
  for(const b of pista.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.seccion===filtro.value));
 }
+
+function agregarControlPausaCatalogo(acciones,p){if(esCatalogoVisual()||categoriasDinamicas()){const pausa=nodo('button',p.disponible===false?'Reactivar':'Pausar / Ocultar temporalmente','secundario');pausa.type='button';pausa.setAttribute('aria-label',(p.disponible===false?'Reactivar ':'Pausar ')+p.nombre);pausa.onclick=()=>tarea(async()=>{await api('/rest/v1/rpc/catalogo_producto_visibilidad',{method:'POST',datos:{negocio:menuCompleto.slug,version:menuCompleto.revision,producto:p.id,visible:p.disponible===false}});await cargarMenuCompleto();aviso(p.disponible===false?'Prenda reactivada.':'Prenda pausada. Conserva sus datos y fotos.');});acciones.append(pausa);}}
