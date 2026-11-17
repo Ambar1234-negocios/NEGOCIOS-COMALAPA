@@ -381,19 +381,59 @@ function pintarApoyoFondo(zona,p){
  caja.append(nodo('strong',estado+dineroOperacion(a.descuento_centavos)),nodo('p',a.estado==='consumida'?'Descuento registrado una sola vez al confirmar el pedido.':'Reserva hasta '+new Date(a.vence_en).toLocaleString('es-MX',{timeZone:'America/Mexico_City'})+'. Si venció, vuelve a cotizar.'));
  zona.append(caja);
 }
-let cargaFondoPendiente=null;
+let cargaFondoPendiente=null,ajustandoFondo=false;
+function centavosAjusteFondo(valor){
+ const texto=valor.trim().replace(',','.');
+ if(!/^\d{1,6}(\.\d{1,2})?$/.test(texto))return null;
+ const [pesos,decimales='']=texto.split('.');
+ const monto=Number(pesos)*100+Number(decimales.padEnd(2,'0'));
+ return Number.isSafeInteger(monto)&&monto<=10000000?monto:null;
+}
 function pintarFondoGlobal(){
+ if(ajustandoFondo)return;
  let caja=el('fondo-global');if(!caja){caja=nodo('section',undefined,'tarjeta');caja.id='fondo-global';el('vista-solicitudes').prepend(caja);}
  caja.replaceChildren();if(!fondoGlobal)return;
  caja.append(nodo('h3','🎉 Fondo promocional de Exhibición'),nodo('p','Saldo restante: '+dineroOperacion(fondoGlobal.saldo_centavos)+' · Descuento pendiente: '+dineroOperacion(fondoGlobal.reservado_centavos)+' · Disponible: '+dineroOperacion(fondoGlobal.disponible_centavos)));
  if(!esMaestroRecepcion)return;
  if(typeof pintarControlPromoComida==='function')pintarControlPromoComida();
  const gestionar=nodo('button','🎉 Administrar promoción de envío');gestionar.type='button';gestionar.onclick=()=>{activarPanel('operacion','vista-promociones');el('control-promo-comida')?.scrollIntoView({behavior:'smooth',block:'start'});};caja.append(gestionar);
- const form=nodo('form'),monto=entrada(form,'fondo-monto','Reponer saldo (MXN)','number');monto.min='.01';monto.max='100000';monto.step='.01';monto.required=true;
- for(const valor of [100,120]){const b=nodo('button','+'+dineroOperacion(valor*100));b.type='button';b.onclick=()=>{monto.value=String(valor);};form.append(b);}
- const guardar=nodo('button','Cargar saldo');form.append(guardar);
- form.onsubmit=e=>{e.preventDefault();const centavos=pesos(monto.value);if(!Number.isSafeInteger(centavos)||centavos<=0)return;
- if(!cargaFondoPendiente||cargaFondoPendiente.monto_centavos!==centavos)cargaFondoPendiente={monto_centavos:centavos,clave:crypto.randomUUID()};
- guardar.disabled=true;tarea(async()=>{try{await api('/rest/v1/rpc/exhibicion_fondo_cargar',{method:'POST',datos:cargaFondoPendiente});cargaFondoPendiente=null;await cargarOperacion();aviso('Saldo repuesto.');}finally{guardar.disabled=false;}});};caja.append(form);
+ const form=nodo('form'),label=nodo('label','Acción manual'),accion=document.createElement('select');
+ accion.id='fondo-accion';label.htmlFor=accion.id;
+ for(const [valor,texto] of [['agregar','Agregar saldo'],['restar','Restar saldo'],['fijar','Fijar saldo']]){const o=nodo('option',texto);o.value=valor;accion.append(o);}
+ form.append(label,accion);
+ const monto=entrada(form,'fondo-monto','Monto (MXN)','text');monto.inputMode='decimal';monto.maxLength=9;monto.required=true;
+ const resumen=nodo('p');resumen.id='fondo-confirmacion';resumen.setAttribute('aria-live','polite');
+ const guardar=nodo('button','Revisar y confirmar ajuste');form.append(resumen,guardar);
+ if(cargaFondoPendiente){accion.value=cargaFondoPendiente.p_accion;monto.value=String(cargaFondoPendiente.p_monto_centavos/100);accion.disabled=monto.disabled=true;guardar.textContent='Reintentar ajuste pendiente';}
+ function revisar(){
+  const centavos=centavosAjusteFondo(monto.value),saldo=cargaFondoPendiente?.p_saldo_esperado??Number(fondoGlobal.saldo_centavos);
+  const final=centavos===null?null:accion.value==='fijar'?centavos:saldo+(accion.value==='restar'?-centavos:centavos);
+  const error=centavos===null?'Escribe un monto de hasta $100,000 con máximo dos decimales.':centavos===0&&accion.value!=='fijar'?'El monto debe ser mayor que cero.':final<0?'Saldo insuficiente.':final===saldo?'El saldo final ya es el actual.':!cargaFondoPendiente&&final<Number(fondoGlobal.reservado_centavos)?'El saldo final no cubre los apoyos pendientes.':null;
+  resumen.textContent='Saldo actual: '+dineroOperacion(saldo)+' · Monto ingresado: '+(centavos===null?'—':dineroOperacion(centavos))+' · Diferencia: '+(final===null?'—':(final-saldo>0?'+':'')+dineroOperacion(final-saldo))+' · Saldo final: '+(final===null?'—':dineroOperacion(final))+(error?' · '+error:'');
+  guardar.disabled=!!error;
+  return error?null:{p_accion:accion.value,p_monto_centavos:centavos,p_saldo_esperado:saldo};
+ }
+ accion.onchange=monto.oninput=revisar;revisar();
+ form.onsubmit=e=>{e.preventDefault();if(ajustandoFondo||trabajando||!esMaestroRecepcion)return;
+  tarea(async()=>{
+   ajustandoFondo=true;
+   try{
+    if(!cargaFondoPendiente){
+     fondoGlobal=await api('/rest/v1/rpc/exhibicion_fondo_estado',{method:'POST',datos:{}});
+     const datos=revisar();if(!datos){aviso(resumen.textContent);return;}
+     if(!window.confirm(accion.selectedOptions[0].textContent+'\n'+resumen.textContent+'\n¿Confirmar este ajuste manual?'))return;
+     cargaFondoPendiente={...datos,p_clave:crypto.randomUUID()};
+    }else if(!window.confirm('Reintentar la misma operación pendiente, sin duplicarla.\n'+resumen.textContent+'\n¿Confirmar?'))return;
+    accion.disabled=monto.disabled=true;
+    const estado=await api('/rest/v1/rpc/exhibicion_fondo_ajustar',{method:'POST',datos:cargaFondoPendiente});
+    cargaFondoPendiente=null;fondoGlobal=estado;
+    aviso('Saldo actualizado: '+dineroOperacion(estado.saldo_centavos));
+   }catch(error){
+    // A lost response may have committed. Retain the exact key and payload for retry.
+    if(error.estadoHTTP>=400&&error.estadoHTTP<500){cargaFondoPendiente=null;try{fondoGlobal=await api('/rest/v1/rpc/exhibicion_fondo_estado',{method:'POST',datos:{}});}catch{}}
+    aviso(error.message+(cargaFondoPendiente?' Reintenta el ajuste pendiente; se usará la misma clave para evitar duplicados.':''));
+   }finally{ajustandoFondo=false;pintarFondoGlobal();}
+  });
+ };caja.append(form);
 }
 
