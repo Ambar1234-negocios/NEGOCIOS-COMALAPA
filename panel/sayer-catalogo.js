@@ -24,7 +24,9 @@ configurarCatalogoVisual=function(){const promo=el('publicidad-producto');if(pro
  const etiquetaFicha=document.querySelector('label[for="ficha-activa"]');if(etiquetaFicha)etiquetaFicha.textContent=esCatalogoTecnico()?'Usar galería y ficha técnica':'Usar galería y pestañas';
  for(let i=0;i<5;i++){const l=document.querySelector('label[for="ficha-titulo-'+i+'"]');if(l)l.textContent=(esCatalogoTecnico()?'Título de información ':'Nombre de pestaña ')+(i+1);}
  if(!esCatalogoTecnico())return;
- const h=document.querySelector('body>header h1');if(h){h.textContent='Mi catálogo · '+menuCompleto.borrador.nombre;if(h.nextElementSibling)h.nextElementSibling.textContent='Productos, categorías y fichas técnicas de tu negocio.';}
+ const servicios=menuCompleto.borrador.catalogoServicios===true;
+ if(servicios){el('nuevo-producto').textContent='＋ Nuevo servicio';const l=document.querySelector('label[for="editar-disponible"]');if(l)l.textContent='Servicio activo / visible';}
+ const h=document.querySelector('body>header h1');if(h){h.textContent='Mi catálogo · '+menuCompleto.borrador.nombre;if(h.nextElementSibling)h.nextElementSibling.textContent=servicios?'Servicios, categorías, fotos y citas por WhatsApp.':'Productos, categorías y fichas técnicas de tu negocio.';}
  const tab=document.querySelector('[data-vista="menu"]');if(tab)tab.textContent='Catálogo';
  for(const foto of document.querySelectorAll('#lista-completa .mini-menu'))if(foto.tagName!=='IMG')foto.textContent='Sin foto';
  el('editar-precio').required=false;document.querySelector('label[for="editar-precio"]').textContent='Precio (opcional; vacío o 0 se oculta)';
@@ -45,14 +47,14 @@ prepararFichaAvanzada=function(p){
  const titulo=fotoZona?.querySelector('h3');if(titulo?.dataset.sayerOriginal)titulo.textContent=titulo.dataset.sayerOriginal;
  prepararFotosSayerOriginal(esCatalogoTecnico()?{...p,fichaAvanzada:{...p.fichaAvanzada,activa:true}}:p);
  if(!esCatalogoTecnico()||!fotoZona)return;
- titulo.dataset.sayerOriginal??=titulo.textContent;titulo.textContent='📷 Fotos de este producto';
+ titulo.dataset.sayerOriginal??=titulo.textContent;titulo.textContent=menuCompleto.borrador.catalogoServicios?'📷 Fotos de este servicio':'📷 Fotos de este producto';
  const grupo=nodo('div');grupo.id='sayer-fotos-producto';
  const nota=document.querySelector('#ficha-campos>p'),agregar=el('ficha-agregar'),label=document.querySelector('label[for="ficha-agregar"]'),lista=el('ficha-fotos');
  nota.textContent='Sube hasta 4 fotos del mismo producto: «'+(p.nombre||'Nuevo producto')+'». La primera es la foto principal de su tarjeta; las otras muestran diferentes vistas o detalles de ese mismo producto. No crean productos separados.';
  label.textContent='Elegir fotos de este producto (hasta 4)';
  grupo.append(nota,label,agregar,lista);fotoZona.append(grupo);
  const activar=el('ficha-activa');activar.hidden=true;activar.disabled=true;document.querySelector('label[for="ficha-activa"]').hidden=true;
- el('ficha-editor').querySelector('h3').textContent='Información técnica de este producto';
+ el('ficha-editor').querySelector('h3').textContent=menuCompleto.borrador.catalogoServicios?'Información de este servicio (opcional)':'Información técnica de este producto';
  pintarFichaFotos();actualizarFotoSimpleFicha();
 };
 const pintarFotosSayerOriginal=pintarFichaFotos;

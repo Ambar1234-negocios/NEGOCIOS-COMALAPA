@@ -1,0 +1,18 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),path=require('path');
+const root=path.join(__dirname,'..'),n=require('../medussa-tatto-studio.json');
+const window={MesasExhibicion:{mesa:()=>null}},document={addEventListener(){},documentElement:{dataset:{}}};
+vm.runInNewContext(fs.readFileSync(path.join(root,'comida.js'),'utf8'),{window,document,Intl,console,URLSearchParams,location:{search:''},setInterval(){}});
+const render=x=>window.ComidaExhibicion.menu(x),html=render(n);
+assert.equal(n.nombre,'Medussa Tatto Studio');assert.equal(n.productos.length,8);
+assert.equal(n.telefono,'9631509370');assert.equal(n.whatsapp,n.telefono);
+assert.equal(n.horarios.lunes.turnos[0].fin,'19:00');assert.equal(n.horarios.domingo.turnos[0].fin,'16:00');
+assert.equal((html.match(/data-producto-id=/g)||[]).length,8);
+assert(html.includes('Atención únicamente con cita previa'));assert(html.includes('Solicitar cita'));
+assert(html.includes('https://wa.me/529631509370?text='));assert(decodeURIComponent(html).includes('cita para Covers en Medussa Tatto Studio'));
+assert(!html.includes('$0'));assert(!html.includes('Ver producto'));assert(!html.includes('talla'));
+assert(!html.includes('<img'));assert(html.includes('Fotos pendientes'));
+assert(!render({...n,seccionesOcultas:['Tatuajes']}).includes('data-producto-id="medussa-covers"'));
+assert(!render({...n,productos:n.productos.map(p=>({...p,disponible:false,soloInformativo:true}))}).includes('data-producto-id='));
+const empty=render({...n,productos:[]});for(const c of n.seccionesCatalogo)assert(empty.includes(c));assert(empty.includes('Próximamente'));
+const ordered=render({...n,productos:[{...n.productos[0],ordenCatalogo:50},{...n.productos[1],ordenCatalogo:1}]});assert(ordered.indexOf('data-producto-id="medussa-covers"')<ordered.indexOf('data-producto-id="medussa-tatuajes"'));
+console.log('Medussa: ocho servicios, citas, horarios, sin precios/fotos inventados, pausa, categorías persistentes y orden OK');

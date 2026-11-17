@@ -1,0 +1,269 @@
+{
+  "id": 1794866400001,
+  "slug": "medussa-tatto-studio",
+  "nombre": "Medussa Tatto Studio",
+  "categoria": "belleza",
+  "tipoCatalogo": "tecnico",
+  "catalogoServicios": true,
+  "categoriasDinamicas": true,
+  "seccionesCatalogo": [
+    "Tatuajes",
+    "Perforaciones",
+    "Joyería para perforaciones"
+  ],
+  "seccionesOcultas": [],
+  "activo": true,
+  "verificado": false,
+  "plan": "normal",
+  "telefono": "9631509370",
+  "whatsapp": "9631509370",
+  "descripcion": "Tatuajes, covers, línea fina, puntillismo, tatuajes a color, perforaciones, tatuajes temporales y joyería para perforaciones. Atención únicamente con cita previa.",
+  "horario": "Atención únicamente con cita previa. Lunes a viernes: 8:00 a.m. a 7:00 p.m. Sábados y domingos: 8:00 a.m. a 4:00 p.m.",
+  "horarios": {
+    "lunes": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "08:00",
+          "fin": "19:00"
+        }
+      ]
+    },
+    "martes": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "08:00",
+          "fin": "19:00"
+        }
+      ]
+    },
+    "miercoles": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "08:00",
+          "fin": "19:00"
+        }
+      ]
+    },
+    "jueves": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "08:00",
+          "fin": "19:00"
+        }
+      ]
+    },
+    "viernes": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "08:00",
+          "fin": "19:00"
+        }
+      ]
+    },
+    "sabado": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "08:00",
+          "fin": "16:00"
+        }
+      ]
+    },
+    "domingo": {
+      "modo": "abierto",
+      "turnos": [
+        {
+          "inicio": "08:00",
+          "fin": "16:00"
+        }
+      ]
+    }
+  },
+  "servicios": [
+    "Tatuajes",
+    "Covers",
+    "Línea fina",
+    "Puntillismo",
+    "Tatuajes a color",
+    "Tatuajes temporales",
+    "Perforaciones",
+    "Joyería para perforaciones"
+  ],
+  "delivery": false,
+  "tipoDelivery": "",
+  "metodosPago": [],
+  "logo": "",
+  "banner": "",
+  "galeria": [],
+  "direccion": "",
+  "maps": "",
+  "facebook": "",
+  "instagram": "",
+  "tiktok": "",
+  "correo": "",
+  "sitioWeb": "",
+  "video": "",
+  "slogan": "",
+  "palabrasClave": [
+    "Medussa Tatto Studio",
+    "Tatuajes",
+    "Covers",
+    "Línea fina",
+    "Puntillismo",
+    "Tatuajes a color",
+    "Tatuajes temporales",
+    "Perforaciones",
+    "Joyería para perforaciones"
+  ],
+  "productos": [
+    {
+      "id": "medussa-tatuajes",
+      "nombre": "Tatuajes",
+      "seccion": "Tatuajes",
+      "precio": 0,
+      "foto": "",
+      "ingredientes": "",
+      "disponible": true,
+      "enCarrusel": false,
+      "ordenCatalogo": 0,
+      "extras": [],
+      "gruposOpciones": [],
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [],
+        "secciones": []
+      }
+    },
+    {
+      "id": "medussa-covers",
+      "nombre": "Covers",
+      "seccion": "Tatuajes",
+      "precio": 0,
+      "foto": "",
+      "ingredientes": "",
+      "disponible": true,
+      "enCarrusel": false,
+      "ordenCatalogo": 10,
+      "extras": [],
+      "gruposOpciones": [],
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [],
+        "secciones": []
+      }
+    },
+    {
+      "id": "medussa-linea-fina",
+      "nombre": "Línea fina",
+      "seccion": "Tatuajes",
+      "precio": 0,
+      "foto": "",
+      "ingredientes": "",
+      "disponible": true,
+      "enCarrusel": false,
+      "ordenCatalogo": 20,
+      "extras": [],
+      "gruposOpciones": [],
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [],
+        "secciones": []
+      }
+    },
+    {
+      "id": "medussa-puntillismo",
+      "nombre": "Puntillismo",
+      "seccion": "Tatuajes",
+      "precio": 0,
+      "foto": "",
+      "ingredientes": "",
+      "disponible": true,
+      "enCarrusel": false,
+      "ordenCatalogo": 30,
+      "extras": [],
+      "gruposOpciones": [],
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [],
+        "secciones": []
+      }
+    },
+    {
+      "id": "medussa-tatuajes-a-color",
+      "nombre": "Tatuajes a color",
+      "seccion": "Tatuajes",
+      "precio": 0,
+      "foto": "",
+      "ingredientes": "",
+      "disponible": true,
+      "enCarrusel": false,
+      "ordenCatalogo": 40,
+      "extras": [],
+      "gruposOpciones": [],
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [],
+        "secciones": []
+      }
+    },
+    {
+      "id": "medussa-tatuajes-temporales",
+      "nombre": "Tatuajes temporales",
+      "seccion": "Tatuajes",
+      "precio": 0,
+      "foto": "",
+      "ingredientes": "",
+      "disponible": true,
+      "enCarrusel": false,
+      "ordenCatalogo": 50,
+      "extras": [],
+      "gruposOpciones": [],
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [],
+        "secciones": []
+      }
+    },
+    {
+      "id": "medussa-perforaciones",
+      "nombre": "Perforaciones",
+      "seccion": "Perforaciones",
+      "precio": 0,
+      "foto": "",
+      "ingredientes": "",
+      "disponible": true,
+      "enCarrusel": false,
+      "ordenCatalogo": 60,
+      "extras": [],
+      "gruposOpciones": [],
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [],
+        "secciones": []
+      }
+    },
+    {
+      "id": "medussa-joyeria-para-perforaciones",
+      "nombre": "Joyería para perforaciones",
+      "seccion": "Joyería para perforaciones",
+      "precio": 0,
+      "foto": "",
+      "ingredientes": "",
+      "disponible": true,
+      "enCarrusel": false,
+      "ordenCatalogo": 70,
+      "extras": [],
+      "gruposOpciones": [],
+      "fichaAvanzada": {
+        "activa": true,
+        "fotos": [],
+        "secciones": []
+      }
+    }
+  ]
+}
