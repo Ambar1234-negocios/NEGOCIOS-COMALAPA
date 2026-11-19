@@ -79,7 +79,7 @@ function mensajeRepartidor(p){
 }
 function enlaceChat(zona,telefono,texto,titulo){if(!telefono)return;const a=nodo('a',titulo,'enlace-boton'),movil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');a.href=(movil?'https://api.whatsapp.com/send?':'https://web.whatsapp.com/send?')+'phone='+telefono+'&text='+encodeURIComponent(texto);a.target='_blank';a.rel='noopener noreferrer';zona.append(a);const detalles=nodo('details');detalles.append(nodo('summary','👀 Ver mensaje del repartidor y copiar con emojis'));const campo=entrada(detalles,'mensaje-repartidor-'+crypto.randomUUID(),'Mensaje del repartidor','textarea');campo.value=texto;campo.readOnly=true;campo.style.minHeight='320px';const copiar=nodo('button','📋 Copiar mensaje con emojis','secundario');copiar.type='button';copiar.onclick=async()=>{try{await navigator.clipboard.writeText(texto);aviso('Mensaje copiado con sus emojis. Pégalo en el chat del repartidor.');}catch{campo.focus();campo.select();aviso('Seleccionamos el mensaje. Cópialo y pégalo en el chat.');}};detalles.append(copiar,nodo('p','Si WhatsApp cambia un emoji por un símbolo raro, copia este mensaje y pégalo en el chat.','nota'));zona.append(detalles);}
 function controlAccion(zona,texto,accion,datos={},permitido=true){const b=nodo('button',texto);b.disabled=!permitido;b.onclick=()=>{let ventana=null;const p=seleccionado(),d=typeof datos==='function'?datos():datos;if(accion==='proponer'){const r=riders.find(r=>r.id===d.repartidor_id);if(!r?.telefono){aviso('Selecciona un repartidor con WhatsApp registrado.');return;}ventana=window.open('about:blank','_blank');}tarea(async()=>{try{if(!p)throw Error('Selecciona una solicitud.');const actualizado=await api('/rest/v1/rpc/piloto_pedido_operar',{method:'POST',datos:{pedido:p.id,version:p.revision,accion,datos:d}});if(accion==='proponer'){borrarEnlaceReparto(p.id);const r=riders.find(r=>r.id===d.repartidor_id);await abrirRepartidor(actualizado,r,ventana);ventana=null;}await cargarOperacion();aviso(accion==='proponer'?'Pedido asignado. Pulsa Enviar en WhatsApp.':'Acción registrada.');}finally{if(ventana&&!ventana.closed)ventana.close();}});};zona.append(b);return b;}
-async function cargarOperacion(){esMaestroRecepcion=await api('/rest/v1/rpc/piloto_es_admin',{method:'POST',datos:{}});aplicarPermisosRecepcion();await api('/rest/v1/rpc/piloto_cierre_diario_operador',{method:'POST',datos:{}});configuracionPago=await api('/rest/v1/rpc/piloto_config_pago_leer',{method:'POST',datos:{}});pintarConfiguracionPago();const [r,pr]=await Promise.all([api('/rest/v1/rpc/piloto_operacion_listar',{method:'POST',datos:{}}),api('/rest/v1/rpc/promociones_operativas_listar',{method:'POST',datos:{}})]);fondoGlobal=r.fondo;pedidos=r.pedidos;riders=r.repartidores;pintarFondoGlobal();promocionesOperativas=pr;if(!pedidoSeleccionado&&pedidos.length)pedidoSeleccionado=pedidos[0].id;await seleccionarPrimeroVisible();pintarRiders();pintarResumen();pintarAlertasEntrega();edicionPendiente=false;if(typeof abrirClientesMaestro==='function')await abrirClientesMaestro();}
+async function cargarOperacion(){esMaestroRecepcion=await api('/rest/v1/rpc/piloto_es_admin',{method:'POST',datos:{}});aplicarPermisosRecepcion();configuracionPago=await api('/rest/v1/rpc/piloto_config_pago_leer',{method:'POST',datos:{}});pintarConfiguracionPago();const [r,pr]=await Promise.all([api('/rest/v1/rpc/piloto_operacion_listar',{method:'POST',datos:{}}),api('/rest/v1/rpc/promociones_operativas_listar',{method:'POST',datos:{}})]);fondoGlobal=r.fondo;pedidos=r.pedidos;riders=r.repartidores;pintarFondoGlobal();promocionesOperativas=pr;if(!pedidoSeleccionado&&pedidos.length)pedidoSeleccionado=pedidos[0].id;await seleccionarPrimeroVisible();pintarRiders();pintarResumen();pintarAlertasEntrega();edicionPendiente=false;if(typeof abrirClientesMaestro==='function')await abrirClientesMaestro();}
 function pintarLista(){pintarContadores();pintarCierreMandaditos();const zona=el('lista-pedidos');zona.replaceChildren();const filtro=el('filtro-pedidos').value||'activas';const lista=pedidos.filter(p=>coincideFiltroPedido(p,filtro));for(const p of lista){const b=nodo('button',undefined,'pedido-lista estado-'+p.estado);b.setAttribute('aria-pressed',String(p.id===pedidoSeleccionado));b.append(nodo('strong',p.cliente+' · '+dineroOperacion(totalPedido(p))),nodo('small',p.folio+' · 🕒 '+fechaRecibida(p,true)),nodo('span',p.tipo+' · '+(p.requiere_whatsapp&&!p.whatsapp_confirmado?'💬 Esperando WhatsApp':estadosPedido[p.estado])),nodo('small',estadoCierreMandaditos(p)));if(p.entrega_programada_en)b.append(nodo('small',textoAlertaEntrega(p),minutosHasta(p.entrega_programada_en)<=5?'pedido-entrega-alerta':'pedido-entrega-programada'));b.onclick=()=>tarea(async()=>{pedidoSeleccionado=p.id;pintarLista();await pintarDetalle();});zona.append(b);}if(!lista.length)zona.append(nodo('p',vistaHistorial?'0 pedidos en esta fecha.':'0 pedidos en esta sección.'));}
 function pintarClientePedido(zona,p){
   const c=p.cliente_info;if(!esMaestroRecepcion){if(c)zona.append(nodo('p','Historial operativo: '+c.pedidos_completados+' entregados · '+c.pedidos_cancelados+' cancelados.','nota'));return;}const card=nodo('section',undefined,'tarjeta cliente-recepcion');
@@ -322,13 +322,13 @@ async function pintarDetallePromocion(){
   }
 }
 function pintarRiders(){const zona=el('lista-riders');zona.replaceChildren();for(const r of riders){const card=nodo('article',undefined,'tarjeta');const trabajo=pedidos.find(p=>p.repartidor_id===r.id&&['propuesto','asignado','recogido'].includes(p.estado));card.append(nodo('h3',r.nombre),nodo('p',trabajo?'Con trabajo activo':r.disponible?'Disponible':'Fuera de servicio'));const disponible=nodo('button',r.disponible?'Marcar fuera de servicio':'Marcar disponible','secundario');disponible.disabled=!!trabajo;disponible.onclick=()=>tarea(async()=>{await api('/rest/v1/rpc/piloto_repartidor_guardar',{method:'POST',datos:{repartidor:r.id,nombre:r.nombre,disponible:!r.disponible}});await cargarOperacion();});card.append(disponible,nodo('p',r.telefono?'📞 +'+r.telefono:'Sin WhatsApp registrado'));const editar=nodo('button','✏️ Editar nombre y WhatsApp','secundario');editar.hidden=!esMaestroRecepcion;editar.onclick=()=>{el('rider-id').value=r.id;el('rider-nombre').value=r.nombre;el('rider-telefono').value=r.telefono||'';el('rider-nombre').closest('details').open=true;el('rider-nombre').focus();};card.append(editar);if(trabajo){card.append(nodo('strong',trabajo.folio),nodo('p',estadosPedido[trabajo.estado]),nodo('p',trabajo.detalle,'detalle-texto'));const actuar=(label,accion,datos={})=>{const b=nodo('button',label);b.onclick=()=>tarea(async()=>{await api('/rest/v1/rpc/piloto_pedido_operar',{method:'POST',datos:{pedido:trabajo.id,version:trabajo.revision,accion,datos:typeof datos==='function'?datos():datos}});await cargarOperacion();aviso('Simulación administrativa registrada.');});card.append(b);};if(document.body?.dataset?.simulador==='true'&&trabajo.estado==='propuesto'){actuar('👍 Aceptar · simulación','aceptar_reparto');actuar('✋ Rechazar · simulación','rechazar_reparto');}if(document.body?.dataset?.simulador==='true'&&trabajo.estado==='asignado')actuar('📦 Ya recogí · simulación','recoger');if(document.body?.dataset?.simulador==='true'&&trabajo.estado==='recogido'){const check=entrada(card,'efectivo-'+trabajo.id,'Confirmo entrega y recepción del efectivo completo','checkbox');check.hidden=trabajo.pago!=='efectivo';actuar('✅ Ya entregué · simulación','entregar',()=>({efectivo_recibido:check.checked}));}}zona.append(card);}}
-function pintarResumen(){const hoy=diaOperacion(Date.now()),entregados=pedidos.filter(p=>p.entregado_en&&diaOperacion(p.entregado_en)===hoy),cobrados=pedidos.filter(p=>(p.pago_verificado||p.efectivo_recibido)&&p.estado!=='cancelado'),canceladosConPago=pedidos.filter(p=>p.estado==='cancelado'&&(p.pago_verificado||p.efectivo_recibido));const zona=el('resumen-operacion');zona.replaceChildren(nodo('p','Día de operación: '+hoy+' · hora de Comalapa'));const grid=nodo('div',undefined,'metricas-operacion');for(const [label,valor]of [['Solicitudes recibidas hoy',pedidos.filter(p=>diaOperacion(p.creado_en)===hoy).length],['Entregadas hoy',entregados.length],['En proceso',pedidos.filter(p=>!['entregado','cancelado'].includes(p.estado)).length],['Canceladas con pago por resolver',canceladosConPago.length],['Productos cobrados · acumulado',dineroOperacion(cobrados.reduce((s,p)=>s+p.productos_centavos,0))],['Servicios cobrados · acumulado',dineroOperacion(cobrados.reduce((s,p)=>s+p.servicio_centavos,0))]]){const c=nodo('div',undefined,'tarjeta');c.append(nodo('p',label),nodo('strong',valor,'importe-operacion'));grid.append(c);}zona.append(grid,nodo('p','Los cobros son registros manuales del piloto. No descuentan costos, pagos al repartidor ni devoluciones.','nota'));for(const p of entregados)zona.append(nodo('p',p.folio+' · '+dineroOperacion(totalPedido(p))));}
+function pintarResumen(){const hoy=diaOperacion(Date.now()),entregados=pedidos.filter(p=>p.entregado_en&&diaOperacion(p.entregado_en)===hoy),cobrados=pedidos.filter(p=>(p.pago_verificado||p.efectivo_recibido)&&p.estado!=='cancelado'),canceladosConPago=pedidos.filter(p=>p.estado==='cancelado'&&(p.pago_verificado||p.efectivo_recibido));const zona=el('resumen-operacion');zona.replaceChildren(nodo('p','Día de operación: '+hoy+' · hora de Comalapa'));const grid=nodo('div',undefined,'metricas-operacion');for(const [label,valor]of [['Solicitudes recibidas hoy',pedidos.filter(p=>diaOperacion(p.creado_en)===hoy).length],['Entregadas hoy',entregados.length],['En proceso hoy',pedidos.filter(p=>diaOperacion(p.creado_en)===hoy&&!cerrado(p)).length],['Canceladas con pago por resolver',canceladosConPago.length],['Productos cobrados · acumulado',dineroOperacion(cobrados.reduce((s,p)=>s+p.productos_centavos,0))],['Servicios cobrados · acumulado',dineroOperacion(cobrados.reduce((s,p)=>s+p.servicio_centavos,0))]]){const c=nodo('div',undefined,'tarjeta');c.append(nodo('p',label),nodo('strong',valor,'importe-operacion'));grid.append(c);}zona.append(grid,nodo('p','Los cobros son registros manuales del piloto. No descuentan costos, pagos al repartidor ni devoluciones.','nota'));for(const p of entregados)zona.append(nodo('p',p.folio+' · '+dineroOperacion(totalPedido(p))));}
 el('crear-ejemplo').onclick=()=>tarea(async()=>{if(!ejemploPendiente)ejemploPendiente={clave:crypto.randomUUID(),solicitud:{tipo:'mandadito',entrega:'domicilio',pago:'efectivo',cliente:'Cliente ficticio de prueba',direccion:'Dirección ficticia, no realizar entregas',detalle:'Comprar pan de prueba y recoger queso en una segunda parada. No es un pedido real.'}};const p=await api('/rest/v1/rpc/piloto_pedido_crear',{method:'POST',datos:ejemploPendiente});ejemploPendiente=null;pedidoSeleccionado=p.id;await cargarOperacion();aviso('Solicitud guardada con folio '+p.folio);});
 el('nuevo-rider').onsubmit=e=>{e.preventDefault();tarea(async()=>{const id=el('rider-id').value;await api('/rest/v1/rpc/piloto_repartidor_contacto_guardar',{method:'POST',datos:{repartidor:id||null,nombre:el('rider-nombre').value.trim(),telefono:el('rider-telefono').value,disponible:id?riders.find(r=>r.id===id).disponible:true}});el('nuevo-rider').reset();await cargarOperacion();});};
 el('filtro-pedidos').onchange=()=>tarea(async()=>{await seleccionarPrimeroVisible();});
 el('login').onsubmit=e=>{e.preventDefault();tarea(async()=>{cuenta=await api('/auth/v1/token?grant_type=password',{method:'POST',datos:{email:el('correo').value.trim(),password:el('clave').value}});el('clave').value='';sessionStorage.setItem('exhibicionPilotoSesion',JSON.stringify(cuenta));mostrar();await cargarOperacion();aviso('Recepción conectada.');});};
 el('recargar').onclick=()=>tarea(async()=>{await cargarOperacion();aviso('Solicitudes actualizadas desde Supabase.');});
-el('salir').onclick=()=>tarea(async()=>{try{await api('/auth/v1/logout',{method:'POST'})}finally{cuenta=null;esMaestroRecepcion=false;aplicarPermisosRecepcion();sessionStorage.removeItem('exhibicionPilotoSesion');pedidos=[];riders=[];pedidoSeleccionado=null;el('detalle-pedido').replaceChildren();el('lista-pedidos').replaceChildren();el('lista-riders').replaceChildren();mostrar();aviso('Sesión cerrada.');}});
+el('salir').onclick=()=>tarea(async()=>{try{await api('/auth/v1/logout',{method:'POST'})}finally{cuenta=null;esMaestroRecepcion=false;aplicarPermisosRecepcion();sessionStorage.removeItem('exhibicionPilotoSesion');sessionStorage.removeItem(claveEnlacesCierre);if(el('enviar-cierre-mandaditos'))ocultarEnvioCierre();pedidos=[];riders=[];pedidoSeleccionado=null;el('detalle-pedido').replaceChildren();el('lista-pedidos').replaceChildren();el('lista-riders').replaceChildren();mostrar();aviso('Sesión cerrada.');}});
 try{const s=JSON.parse(sessionStorage.getItem('exhibicionPilotoSesion'));if(s?.expires_at*1000>Date.now())cuenta=s;}catch{}mostrar();activarPanel('operacion',document.body?.dataset?.simulador==='true'?'vista-riders':'vista-solicitudes');if(cuenta)tarea(cargarOperacion);
 
 
@@ -346,53 +346,72 @@ function estadoCierreMandaditos(p){
   })[p.cierre_mandaditos]||'Cancelado';
   return p.cierre_mandaditos==='incidencia'?'Incidencia · requiere revisión':'Confirmación pendiente';
 }
+const claveEnlacesCierre='exhibicionEnlacesCierreMandaditos';
+function fechaCierreMandaditos(){
+  return vistaHistorial?el('fecha-historial').value:diaOperacion(Date.now());
+}
+function ocultarEnvioCierre(){
+  const enlace=el('enviar-cierre-mandaditos');
+  enlace.hidden=true;
+  enlace.removeAttribute('href');
+  delete enlace.dataset.fecha;
+  delete enlace.dataset.vence;
+}
 function pintarCierreMandaditos(){
-  if(!el('resumen-cierre-mandaditos'))return;
-  const dia=diaOperacion(Date.now());
-  const hoy=pedidos.filter(p=>diaOperacion(p.creado_en)===dia);
-  const entregados=hoy.filter(p=>p.estado==='entregado');
-  const cancelados=hoy.filter(p=>p.estado==='cancelado');
-  const incidencias=hoy.filter(p=>!cerrado(p)&&p.cierre_mandaditos==='incidencia');
-  const pendientes=hoy.length-entregados.length-cancelados.length-incidencias.length;
+  const resumen=el('resumen-cierre-mandaditos');
+  if(!resumen)return;
+  const fecha=fechaCierreMandaditos();
+  const enlace=el('enviar-cierre-mandaditos');
+  if(enlace.dataset.fecha!==fecha||Date.parse(enlace.dataset.vence)<=Date.now())ocultarEnvioCierre();
+  el('crear-cierre-mandaditos').textContent=vistaHistorial?'Preparar enlace de esta fecha':'Cerrar jornada';
+  const deLaFecha=pedidos.filter(p=>diaOperacion(p.creado_en)===fecha);
+  const entregados=deLaFecha.filter(p=>p.estado==='entregado');
+  const cancelados=deLaFecha.filter(p=>p.estado==='cancelado');
+  const incidencias=deLaFecha.filter(p=>!cerrado(p)&&p.cierre_mandaditos==='incidencia');
+  const pendientes=deLaFecha.length-entregados.length-cancelados.length-incidencias.length;
   const servicios=entregados.filter(p=>p.entrega==='domicilio'&&p.servicio_centavos>0);
   const texto=[
-    hoy.length+' total',entregados.length+' entregados',cancelados.length+' cancelados o no realizados',
+    fecha,deLaFecha.length+' total',entregados.length+' entregados',cancelados.length+' cancelados o no realizados',
     incidencias.length+' incidencias',pendientes+' pendientes'
   ];
   if(servicios.length)texto.push('Servicios de entrega confirmados '+dineroOperacion(
     servicios.reduce((total,p)=>total+p.servicio_centavos,0)
   ));
-  el('resumen-cierre-mandaditos').textContent=texto.join(' · ');
+  resumen.textContent=texto.join(' · ');
 }
 el('crear-cierre-mandaditos')?.addEventListener('click',()=>tarea(async()=>{
-  const enlace=el('enviar-cierre-mandaditos');
-  enlace.hidden=true;
-  enlace.removeAttribute('href');
-  const lote=await api('/rest/v1/rpc/piloto_cierre_mandaditos_crear',{method:'POST',datos:{}});
+  const fecha=fechaCierreMandaditos();
+  ocultarEnvioCierre();
+  if(!fecha){aviso('Elige la fecha de la jornada.');return;}
+  let guardados={};
+  try{
+    const registros=JSON.parse(sessionStorage.getItem(claveEnlacesCierre)||'{}');
+    guardados=Object.fromEntries(Object.entries(registros).filter(([,lote])=>Date.parse(lote.vence_en)>Date.now()));
+  }catch{}
+  const lote=await api('/rest/v1/rpc/piloto_cierre_mandaditos_crear',{
+    method:'POST',datos:{fecha,token_anterior:guardados[fecha]?.token||null}
+  });
   if(!lote.cantidad){
     await cargarOperacion();
-    aviso('No quedan pedidos pendientes de confirmación en esta jornada.');
+    aviso('No quedan pedidos pendientes de confirmación en esta fecha.');
     return;
   }
+  guardados[fecha]={token:lote.token,vence_en:lote.vence_en};
+  try{sessionStorage.setItem(claveEnlacesCierre,JSON.stringify(guardados));}catch{}
+  if(fecha!==fechaCierreMandaditos())return;
+
   const confirmar=new URL('cierre-mandaditos.html',location.href);
   confirmar.hash=lote.token;
   const mensaje=[
-    '*Cierre de jornada | Exhibición Frontera Comalapa*',
-    '',
-    'Hola, querido equipo de Mandaditos. \u{1F44B} Les envío este enlace para que me ayuden a confirmar el estado final de cada servicio en nuestro panel.',
-    '',
-    'Abran el enlace, revisen el nombre del cliente, el negocio y la dirección de cada pedido, y marquen una opción:',
-    '- *Sí se entregó*: el pedido se entregó. Si fue en efectivo, confirmen también que cobraron el total acordado.',
-    '- *No se hizo la entrega*: elijan esta opción si el pedido no se entregó, cualquiera que haya sido el motivo.',
-    '',
-    'Con sus respuestas se actualiza el panel de Recepción. El enlace vence en 24 horas.',
-    '',
-    confirmar.href,
-    '',
-    'Gracias por ayudarnos con el cierre. \u{1F64F}'
-  ].join('\n');
+    'Hola, querido equipo de Mandaditos. Les envío el enlace para que me ayuden a confirmar el estado final de cada servicio en nuestro panel.',
+    'Con sus respuestas se actualiza el panel de Recepción.',
+    confirmar.href
+  ].join('\n\n');
+  const enlace=el('enviar-cierre-mandaditos');
   enlace.href='https://wa.me/529632708883?text='+encodeURIComponent(mensaje);
-  enlace.textContent='Abrir WhatsApp · '+lote.cantidad+' pedidos';
+  enlace.textContent='Abrir WhatsApp · '+lote.cantidad+' pedidos pendientes';
+  enlace.dataset.fecha=fecha;
+  enlace.dataset.vence=lote.vence_en;
   enlace.hidden=false;
   enlace.focus();
 }));
@@ -408,7 +427,7 @@ function prepararEnvioRepartidor(zona,p,r){const opciones=nodo('details');opcion
 document.addEventListener('input',e=>{if(e.target.closest?.('#panel')&&!e.target.readOnly&&!['fecha-historial','filtro-pedidos'].includes(e.target.id))edicionPendiente=true;});
 document.addEventListener('change',e=>{if(e.target.id==='repartidor-pedido')edicionPendiente=true;});
 let consultandoAvances=false,ultimaFirmaEquipo=null;
-async function actualizarAvances(){if(!cuenta||trabajando||document.hidden||consultandoAvances)return;consultandoAvances=true;try{await api('/rest/v1/rpc/piloto_cierre_diario_operador',{method:'POST',datos:{}});const nuevoFondo=await api('/rest/v1/rpc/exhibicion_fondo_estado',{method:'POST',datos:{}}),cambioFondo=JSON.stringify(nuevoFondo)!==JSON.stringify(fondoGlobal)||pedidos.some(p=>p.fondo?.vigente&&new Date(p.fondo.vence_en).getTime()<=Date.now());const sello=await api('/rest/v1/rpc/piloto_operacion_sello',{method:'POST',datos:{}}),dia=diaOperacion(Date.now());const cambio=sello.equipo!==ultimaFirmaEquipo||Number(sello.cantidad)!==pedidos.length||Number(sello.version)!==pedidos.reduce((n,p)=>n+Number(p.revision),0);if(!cambio&&!cambioFondo&&ultimoDiaOperacion===dia)return;if(trabajando)return;if(edicionPendiente){configuracionPago=await api('/rest/v1/rpc/piloto_config_pago_leer',{method:'POST',datos:{}});const r=await api('/rest/v1/rpc/piloto_operacion_listar',{method:'POST',datos:{}});pedidos=r.pedidos;riders=r.repartidores;pintarLista();pintarRiders();pintarResumen();actualizarDisponibilidadSelect();aviso('🟢 Lista y repartidores actualizados. Conservamos tu edición; al terminar pulsa Actualizar para renovar el detalle.');}else await tarea(async()=>{await cargarOperacion();aviso('🟢 Pedidos y repartidores actualizados automáticamente.');});ultimoDiaOperacion=dia;ultimaFirmaEquipo=sello.equipo;}catch(e){aviso(e.message);}finally{consultandoAvances=false;}}
+async function actualizarAvances(){if(!cuenta||trabajando||document.hidden||consultandoAvances)return;consultandoAvances=true;try{const nuevoFondo=await api('/rest/v1/rpc/exhibicion_fondo_estado',{method:'POST',datos:{}}),cambioFondo=JSON.stringify(nuevoFondo)!==JSON.stringify(fondoGlobal)||pedidos.some(p=>p.fondo?.vigente&&new Date(p.fondo.vence_en).getTime()<=Date.now());const sello=await api('/rest/v1/rpc/piloto_operacion_sello',{method:'POST',datos:{}}),dia=diaOperacion(Date.now());const cambio=sello.equipo!==ultimaFirmaEquipo||Number(sello.cantidad)!==pedidos.length||Number(sello.version)!==pedidos.reduce((n,p)=>n+Number(p.revision),0);if(!cambio&&!cambioFondo&&ultimoDiaOperacion===dia)return;if(trabajando)return;if(edicionPendiente){configuracionPago=await api('/rest/v1/rpc/piloto_config_pago_leer',{method:'POST',datos:{}});const r=await api('/rest/v1/rpc/piloto_operacion_listar',{method:'POST',datos:{}});pedidos=r.pedidos;riders=r.repartidores;pintarLista();pintarRiders();pintarResumen();actualizarDisponibilidadSelect();aviso('🟢 Lista y repartidores actualizados. Conservamos tu edición; al terminar pulsa Actualizar para renovar el detalle.');}else await tarea(async()=>{await cargarOperacion();aviso('🟢 Pedidos y repartidores actualizados automáticamente.');});ultimoDiaOperacion=dia;ultimaFirmaEquipo=sello.equipo;}catch(e){aviso(e.message);}finally{consultandoAvances=false;}}
 setInterval(actualizarAvances,5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)actualizarAvances();});window.addEventListener('focus',actualizarAvances);
 function datosTransferencia(p){const c=configuracionPago;if(p.pago!=='transferencia'||!c?.numero)return [];return ['','🏦 *Datos para transferencia*',...(c.prueba?['🧪 DATOS FICTICIOS · NO REALICES PAGOS']:[]),'Banco: '+c.banco,'Cuenta / tarjeta / CLABE: '+c.numero,'Titular: '+c.titular,p.pago_al_recibir?'Cuando llegue tu pedido, comparte tu comprobante (captura o PDF) para verificar el pago antes de entregar.':'Comparte tu comprobante (captura o PDF) para verificar el pago y continuar con tu pedido.','Recepción comprobará que el dinero llegó a la cuenta.'];}
 function pintarConfiguracionPago(){const c=configuracionPago;if(!c||!el('pago-banco'))return;el('pago-banco').value=c.banco||'';el('pago-numero').value=c.numero||'';el('pago-titular').value=c.titular||'';el('pago-prueba').checked=c.prueba!==false;}
