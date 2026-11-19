@@ -555,7 +555,10 @@
     window.MejorasExhibicion?.ofertas(lista);
     window.__listaOfertasProductos=lista;
     const seccion=document.getElementById('comida-inicio');if(!seccion)return;
-    const grupos=lista.filter(n=>n.categoria==='comida' && n.activo!==false).map(n=>productos(n).filter(p=>p.enCarrusel!==false).map(p=>({n,p})));
+    // Pausa temporal de Shangai en el carrusel hasta contar con fotos de sus platos.
+    const grupos=lista
+      .filter(n=>n.categoria==='comida' && n.activo!==false && n.slug!=='restaurante-shangai')
+      .map(n=>productos(n).filter(p=>p.enCarrusel!==false).map(p=>({n,p})));
     const items=[];for(let i=0;grupos.some(g=>g[i]);i++)grupos.forEach(g=>{if(g[i])items.push(g[i]);});
     seccion.hidden=!items.length;if(!items.length)return;
     const tarjetas=items.map(({n,p})=>`<a href="?negocio=${encodeURIComponent(n.slug)}&producto=${encodeURIComponent(p.id)}" class="comida-producto comida-carrusel-producto" data-slug="${escapar(n.slug)}" data-producto="${escapar(p.id)}">${foto(p,digital(n))}<strong>${escapar(p.nombre)}</strong><span>${escapar(n.nombre)} · ${dinero(Math.round(p.precio*100))}</span></a>`).join('');
