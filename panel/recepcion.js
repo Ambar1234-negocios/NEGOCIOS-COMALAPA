@@ -125,10 +125,10 @@ function pintarClientePedido(zona,p){
   }
   card.append(acciones);zona.append(card);
 }
-async function pintarDetalle(){const zona=el('detalle-pedido'),p=seleccionado();zona.replaceChildren();if(!p){zona.append(nodo('p','Selecciona un pedido.'));return;}if(esMaestroRecepcion&&['pendiente','cotizado','cancelado'].includes(p.estado)&&!p.repartidor_id&&!p.pago_verificado&&!p.efectivo_recibido&&!p.transferencia_reportada&&p.fondo?.estado!=='consumida'){
+async function pintarDetalle(){const zona=el('detalle-pedido'),p=seleccionado();zona.replaceChildren();if(!p){zona.append(nodo('p','Selecciona un pedido.'));return;}if(esMaestroRecepcion&&(p.estado==='entregado'||(['pendiente','cotizado','cancelado'].includes(p.estado)&&!p.repartidor_id&&!p.pago_verificado&&!p.efectivo_recibido&&!p.transferencia_reportada&&p.fondo?.estado!=='consumida'))){
   const prueba=nodo('button','Quitar pedido de prueba','secundario');
   prueba.type='button';
-  prueba.onclick=()=>{if(!confirm('¿Quitar '+p.folio+' por ser un pedido de prueba? Desaparecerá de Recepción y de los enlaces de Mandaditos.'))return;
+  prueba.onclick=()=>{if(!confirm('¿Quitar '+p.folio+' por ser un pedido de prueba? Desaparecerá de Recepción y de los enlaces de Mandaditos.'+(p.estado==='entregado'?' Se conservarán la entrega y el cobro registrados.':'')))return;
     tarea(async()=>{
       await api('/rest/v1/rpc/piloto_pedido_marcar_prueba',{method:'POST',datos:{pedido:p.id,version:p.revision}});
       if(el('enviar-cierre-mandaditos'))ocultarEnvioCierre();
