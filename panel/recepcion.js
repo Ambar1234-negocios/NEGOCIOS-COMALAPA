@@ -376,7 +376,22 @@ el('crear-cierre-mandaditos')?.addEventListener('click',()=>tarea(async()=>{
   }
   const confirmar=new URL('cierre-mandaditos.html',location.href);
   confirmar.hash=lote.token;
-  const mensaje='Hola 👋 Te comparto los servicios pendientes por confirmar de hoy. Por favor revisa cada uno en este enlace:\n'+confirmar.href;
+  const mensaje=[
+    '*Cierre de jornada | Exhibición Frontera Comalapa*',
+    '',
+    'Hola, equipo de Mandaditos. Les enviamos este enlace para confirmar qué pasó con cada pedido que sigue pendiente en nuestro panel.',
+    '',
+    'Abran el enlace, identifiquen cada pedido por su folio y marquen lo que ocurrió:',
+    '- *Sí, entregado*: el pedido se entregó. Si fue en efectivo, confirmen también que cobraron el total acordado.',
+    '- *Cliente canceló*, *Negocio cerrado* o *No se realizó*: elijan el motivo que corresponda.',
+    '- *Reportar problema*: si hubo un problema con la entrega o el cobro, o si no pueden confirmar qué pasó.',
+    '',
+    'Con sus respuestas se actualiza el panel de Recepción. El enlace vence en 24 horas.',
+    '',
+    confirmar.href,
+    '',
+    'Gracias por ayudarnos con el cierre.'
+  ].join('\n');
   enlace.href='https://wa.me/529632708883?text='+encodeURIComponent(mensaje);
   enlace.textContent='Abrir WhatsApp · '+lote.cantidad+' pedidos';
   enlace.hidden=false;
