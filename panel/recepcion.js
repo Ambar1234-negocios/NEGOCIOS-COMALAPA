@@ -6,7 +6,7 @@ let fondoGlobal=null;
 let pedidos=[],riders=[],clientes=[],campanas=[],promocionesOperativas=[],campanaSeleccionada=null,pedidoSeleccionado=null,ejemploPendiente=null,edicionPendiente=false;
 const invitacionesBeneficiosPreparadas=new Map();
 function mensajeInvitacionBeneficios(nombre, url) {
-  return `Hola, ${nombre} 👋 Somos Administración de Exhibición Frontera Comalapa.\n\nSi gustas, puedes registrarte voluntariamente para recibir beneficios, promociones y detalles de cumpleaños 🎁\n\n👉 ${url}\n\nEs opcional. Puedes dejar de participar cuando quieras. Aplican términos y condiciones.`;
+  return `Hola, ${nombre} 👋 Somos Administración de Exhibición Frontera Comalapa.\n\nSi gustas, puedes registrarte voluntariamente para recibir beneficios, promociones y detalles de cumpleaños 🎁\n\nSolo te pediremos el día y mes de tu cumpleaños; no necesitas crear cuenta ni contraseña.\n\n👉 ${url}\n\nEs opcional y puedes dejar de participar cuando quieras.`;
 }
 function aplicarPermisosRecepcion(){document.body.classList.toggle("recepcion-maestra",esMaestroRecepcion);
  document.querySelectorAll('#abrir-clientes,#abrir-promociones,[data-seccion-recepcion="vista-ajustes"],#crear-ejemplo,#nuevo-rider').forEach(n=>{n.hidden=!esMaestroRecepcion;n.style.display=esMaestroRecepcion?'':'none';});
