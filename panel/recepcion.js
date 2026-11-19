@@ -475,7 +475,7 @@ function pintarApoyoFondo(zona,p){
 }
 let cargaFondoPendiente=null;
 function pintarFondoGlobal(){
- let caja=el('fondo-global');if(!caja){caja=nodo('section',undefined,'tarjeta');caja.id='fondo-global';el('vista-solicitudes').prepend(caja);}
+ let caja=el('fondo-global');if(!caja){caja=nodo('section',undefined,'tarjeta');caja.id='fondo-global';el('vista-promociones').prepend(caja);}
  caja.replaceChildren();if(!fondoGlobal)return;
  caja.append(nodo('h3','🎉 Fondo promocional de Exhibición'),nodo('p','Saldo restante: '+dineroOperacion(fondoGlobal.saldo_centavos)+' · Descuento pendiente: '+dineroOperacion(fondoGlobal.reservado_centavos)+' · Disponible: '+dineroOperacion(fondoGlobal.disponible_centavos)));
  if(!esMaestroRecepcion)return;
