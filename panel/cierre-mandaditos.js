@@ -6,16 +6,15 @@
   const estado = document.getElementById('estado-lote');
   const reintentar = document.getElementById('reintentar-lote');
   const opciones = {
-    entregado: 'Sí, entregado',
-    cliente_cancelo: 'Cliente canceló',
-    negocio_cerrado: 'Negocio cerrado',
-    no_realizado: 'No se realizó',
-    incidencia: 'Reportar problema'
+    entregado: 'Sí se entregó',
+    no_realizado: 'No se hizo la entrega'
   };
   const resultados = {
-    ...opciones,
     entregado: 'Entregado confirmado',
-    cancelado: 'Cancelado',
+    cliente_cancelo: opciones.no_realizado,
+    negocio_cerrado: opciones.no_realizado,
+    no_realizado: opciones.no_realizado,
+    cancelado: opciones.no_realizado,
     incidencia: 'Incidencia enviada a recepción'
   };
   const tarjetas = new Map();
@@ -32,8 +31,18 @@
     if (anterior?.resultado === pedido.resultado) return;
     const tarjeta = nodo('article', '', 'tarjeta');
     tarjeta.append(nodo('h2', pedido.folio));
-    tarjeta.append(nodo('p', [pedido.cliente, pedido.telefono, pedido.negocio].filter(Boolean).join(' · ')));
-    tarjeta.append(nodo('p', pedido.pago === 'efectivo' ? 'Efectivo' : 'Transferencia'));
+    const referencia = nodo('dl', '', 'referencia-pedido');
+    const destino = pedido.entrega === 'recoger'
+      ? 'Recoge en el negocio' : pedido.direccion || 'Dirección no disponible en este enlace';
+    for (const [label, valor] of [
+      ['Cliente', pedido.cliente || 'Sin nombre registrado'],
+      ['Restaurante o negocio', pedido.negocio || 'Sin negocio registrado'],
+      ['Dirección de entrega', destino],
+      ['Forma de pago', pedido.pago === 'efectivo' ? 'Efectivo' : 'Transferencia']
+    ]) {
+      referencia.append(nodo('dt', label), nodo('dd', valor));
+    }
+    tarjeta.append(referencia);
     const respuesta = nodo('p', resultados[pedido.resultado] || '', 'resultado');
     respuesta.setAttribute('role', 'status');
     if (!pedido.resultado) {
