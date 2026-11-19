@@ -4353,7 +4353,7 @@
     "productos": [
       {
         "id": "tacubayo-hamburguesas-tradicional-legado",
-        "nombre": "Tradicional Legado",
+        "nombre": "Hamburguesa Tradicional Legado",
         "seccion": "Hamburguesas",
         "precio": 70,
         "foto": "",
@@ -4391,7 +4391,7 @@
       },
       {
         "id": "tacubayo-hamburguesas-hawaiana-aloha",
-        "nombre": "Hawaiana Aloha",
+        "nombre": "Hamburguesa Hawaiana Aloha",
         "seccion": "Hamburguesas",
         "precio": 75,
         "foto": "",
@@ -4410,7 +4410,7 @@
       },
       {
         "id": "tacubayo-hamburguesas-doble-carne-imperial",
-        "nombre": "Doble Carne Imperial",
+        "nombre": "Hamburguesa Doble Carne Imperial",
         "seccion": "Hamburguesas",
         "precio": 90,
         "foto": "",
@@ -4429,7 +4429,7 @@
       },
       {
         "id": "tacubayo-hamburguesas-3-quesos-mega",
-        "nombre": "3 Quesos Mega",
+        "nombre": "Hamburguesa 3 Quesos Mega",
         "seccion": "Hamburguesas",
         "precio": 105,
         "foto": "",
@@ -4448,7 +4448,7 @@
       },
       {
         "id": "tacubayo-hamburguesas-cheese-melt",
-        "nombre": "Cheese Melt",
+        "nombre": "Hamburguesa Cheese Melt",
         "seccion": "Hamburguesas",
         "precio": 100,
         "foto": "imagenes/casa-tacubayo/hamburguesa-cheese-melt.png",
@@ -4486,7 +4486,7 @@
       },
       {
         "id": "tacubayo-sincronizadas-tradicional-house",
-        "nombre": "Tradicional House",
+        "nombre": "Sincronizada Tradicional House",
         "seccion": "Sincronizadas",
         "precio": 50,
         "foto": "",
@@ -4505,7 +4505,7 @@
       },
       {
         "id": "tacubayo-sincronizadas-especial",
-        "nombre": "Especial",
+        "nombre": "Sincronizada Especial",
         "seccion": "Sincronizadas",
         "precio": 60,
         "foto": "",
@@ -4524,7 +4524,7 @@
       },
       {
         "id": "tacubayo-sincronizadas-3-quesos-mega",
-        "nombre": "3 Quesos Mega",
+        "nombre": "Sincronizada 3 Quesos Mega",
         "seccion": "Sincronizadas",
         "precio": 75,
         "foto": "",
@@ -4543,7 +4543,7 @@
       },
       {
         "id": "tacubayo-sincronizadas-cheese-melt",
-        "nombre": "Cheese Melt",
+        "nombre": "Sincronizada Cheese Melt",
         "seccion": "Sincronizadas",
         "precio": 75,
         "foto": "",
@@ -4562,7 +4562,7 @@
       },
       {
         "id": "tacubayo-tortas-tradicional-legado",
-        "nombre": "Tradicional Legado",
+        "nombre": "Torta Tradicional Legado",
         "seccion": "Tortas",
         "precio": 70,
         "foto": "",
@@ -4581,7 +4581,7 @@
       },
       {
         "id": "tacubayo-tortas-hawaiana-aloha",
-        "nombre": "Hawaiana Aloha",
+        "nombre": "Torta Hawaiana Aloha",
         "seccion": "Tortas",
         "precio": 75,
         "foto": "",
@@ -4600,7 +4600,7 @@
       },
       {
         "id": "tacubayo-tortas-doble-carne-imperial",
-        "nombre": "Doble Carne Imperial",
+        "nombre": "Torta Doble Carne Imperial",
         "seccion": "Tortas",
         "precio": 90,
         "foto": "",
@@ -4657,7 +4657,7 @@
       },
       {
         "id": "tacubayo-hot-dogs-tradicional",
-        "nombre": "Tradicional",
+        "nombre": "Hot Dog Tradicional",
         "seccion": "Hot dogs",
         "precio": 25,
         "foto": "",
@@ -4676,7 +4676,7 @@
       },
       {
         "id": "tacubayo-hot-dogs-especial",
-        "nombre": "Especial",
+        "nombre": "Hot Dog Especial",
         "seccion": "Hot dogs",
         "precio": 30,
         "foto": "",
