@@ -207,7 +207,7 @@
     if (n.servicios?.length) {
       lista.push(seccionMenu(n, 'Servicios especiales', `<ul class="perfil-seccion">${n.servicios.map(s => `<li>${escapar(window.ServiciosExhibicion.nombre(s))}</li>`).join('')}</ul>`));
     }
-    return `<section class="comida-menu" aria-label="Menú y productos"><h4>Menú / Productos</h4><p>Precios en MXN. Disponibilidad y entrega por confirmar.</p>${lista.join('')}<div id="comida-pedido"></div></section>`;
+    return `<section class="comida-menu" aria-label="Menú y productos"><h4>Menú / Productos</h4><p>Precios en MXN. Disponibilidad y entrega por confirmar.</p>${lista.join('')}${n.pedidoEspecial === true ? tarjetaPedidoEspecial(n) : ''}<div id="comida-pedido"></div></section>`;
   }
 
   function menu(n) {

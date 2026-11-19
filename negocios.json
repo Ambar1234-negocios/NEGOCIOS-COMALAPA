@@ -6382,7 +6382,7 @@
     "delivery": true,
     "tipoDelivery": "mandaditos",
     "soloMandaditos": true,
-    "pedidoEspecial": false,
+    "pedidoEspecial": true,
     "servicios": [
       "Charolas",
       "Reservación de mesa para eventos",
@@ -6395,11 +6395,69 @@
     "productos": [
       {
         "id": "shangai-desayunos-huevos-al-gusto-chorizo-jamon-salchicha-tocino-a-la-mexicana-revueltos-estrellados",
-        "nombre": "Huevos al gusto: Chorizo, jamón, salchicha, tocino, a la mexicana, revueltos, estrellados",
+        "nombre": "Huevos al gusto",
         "precio": 90,
         "seccion": "Desayunos",
         "extras": [],
-        "gruposOpciones": []
+        "gruposOpciones": [
+          {
+            "id": "shangai-huevos-preparacion",
+            "nombre": "Preparación",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "shangai-huevos-preparacion-chorizo",
+                "nombre": "Chorizo",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-huevos-preparacion-jamon",
+                "nombre": "Jamón",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-huevos-preparacion-salchicha",
+                "nombre": "Salchicha",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-huevos-preparacion-tocino",
+                "nombre": "Tocino",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-huevos-preparacion-mexicana",
+                "nombre": "A la mexicana",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-huevos-preparacion-revueltos",
+                "nombre": "Revueltos",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-huevos-preparacion-estrellados",
+                "nombre": "Estrellados",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              }
+            ]
+          }
+        ]
       },
       {
         "id": "shangai-desayunos-huevos-motulenos",
@@ -6443,11 +6501,41 @@
       },
       {
         "id": "shangai-desayunos-chilaquiles-con-pollo-huevo-o-combinados",
-        "nombre": "Chilaquiles con pollo, huevo o combinados",
+        "nombre": "Chilaquiles",
         "precio": 120,
         "seccion": "Desayunos",
         "extras": [],
-        "gruposOpciones": []
+        "gruposOpciones": [
+          {
+            "id": "shangai-chilaquiles-variante",
+            "nombre": "Presentación",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "shangai-chilaquiles-variante-pollo",
+                "nombre": "Pollo",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-chilaquiles-variante-huevo",
+                "nombre": "Huevo",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-chilaquiles-variante-combinado",
+                "nombre": "Combinado",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              }
+            ]
+          }
+        ]
       },
       {
         "id": "shangai-desayunos-chilaquiles-con-carne-asada",
