@@ -379,7 +379,7 @@ el('crear-cierre-mandaditos')?.addEventListener('click',()=>tarea(async()=>{
   const mensaje=[
     '*Cierre de jornada | Exhibición Frontera Comalapa*',
     '',
-    'Hola, equipo de Mandaditos. Les enviamos este enlace para confirmar qué pasó con cada pedido que sigue pendiente en nuestro panel.',
+    'Hola, querido equipo de Mandaditos. \u{1F44B} Les envío este enlace para que me ayuden a confirmar el estado final de cada servicio en nuestro panel.',
     '',
     'Abran el enlace, identifiquen cada pedido por su folio y marquen lo que ocurrió:',
     '- *Sí, entregado*: el pedido se entregó. Si fue en efectivo, confirmen también que cobraron el total acordado.',
@@ -390,7 +390,7 @@ el('crear-cierre-mandaditos')?.addEventListener('click',()=>tarea(async()=>{
     '',
     confirmar.href,
     '',
-    'Gracias por ayudarnos con el cierre.'
+    'Gracias por ayudarnos con el cierre. \u{1F64F}'
   ].join('\n');
   enlace.href='https://wa.me/529632708883?text='+encodeURIComponent(mensaje);
   enlace.textContent='Abrir WhatsApp · '+lote.cantidad+' pedidos';
