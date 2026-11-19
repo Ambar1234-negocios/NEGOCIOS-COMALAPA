@@ -176,6 +176,10 @@
   document.addEventListener('keydown',e=>{const pista=e.target.closest('.catalogo-pista');if(pista&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();moverFotoCatalogo(pista,e.key==='ArrowRight'?1:-1);}});
 
 
+  function tarjetasProductos(n, lista) {
+    return lista.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${p.fichaAvanzada?.activa ? '' : imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p,digital(n))}<span>Ver foto e información</span></button>` : foto(p,digital(n))}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}${n.tipoCatalogo === 'carta' && p.ingredientes ? `<p>${escapar(p.ingredientes)}</p>` : ''}<p>${dinero(Math.round(p.precio*100))}</p>${p.fichaAvanzada?.activa ? window.FichaAvanzada.html(p,imagen) : ''}${digital(n)?`<p class="digital-condiciones">${escapar(condiciones(p))}</p>`:""}${p.soloInformativo===true?'<p class="pedido-checkout-nota">Carta informativa · Sin pedido desde la plataforma</p>':`<button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button>`}</article>`).join('');
+  }
+
   function carta(n) {
     const secciones = new Map();
     for (const p of productos(n)) {
@@ -192,16 +196,14 @@
     const lista = [...secciones].map(([seccion, grupos]) => {
       const nota = n.notasCarta?.[seccion];
       const platillos = [...grupos].map(([grupo, lista]) =>
-        `${grupo ? `<h5>${escapar(grupo)}</h5>` : ''}<ul>${lista.map(p =>
-          `<li>${escapar(p.nombre)} · <strong>${dinero(Math.round(p.precio * 100))}</strong>${p.ingredientes ? `<br><small>${escapar(p.ingredientes)}</small>` : ''}</li>`
-        ).join('')}</ul>`
+        `${grupo ? `<h5>${escapar(grupo)}</h5>` : ''}<div class="comida-grid">${tarjetasProductos(n, lista)}</div>`
       ).join('');
       return detalle(seccion, `${nota ? `<p><small>* ${escapar(nota)}</small></p>` : ''}${platillos}`);
     });
     if (n.servicios?.length) {
       lista.push(detalle('Servicios especiales', `<ul>${n.servicios.map(s => `<li>${escapar(window.ServiciosExhibicion.nombre(s))}</li>`).join('')}</ul>`));
     }
-    return `<section class="comida-menu" aria-label="Menú digital"><h4>Menú digital</h4><p>Precios en MXN.</p>${lista.join('')}</section>`;
+    return `<section class="comida-menu" aria-label="Menú digital"><h4>Menú digital</h4><p>Precios en MXN.</p>${lista.join('')}<div id="comida-pedido"></div></section>`;
   }
 
   function menu(n) {
@@ -209,7 +211,7 @@
     if(n.tipoCatalogo==='tecnico'||n.slug==='el-titan-de-las-pinturas')return catalogoSayer(n);
     if(n.tipoCatalogo==='visual')return catalogoVisual(n);
     if (!productos(n).length && !pedidoEspecialActivo(n)) return '';
-    const tarjetas=ps=>ps.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${p.fichaAvanzada?.activa ? '' : imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p,digital(n))}<span>Ver foto e información</span></button>` : foto(p,digital(n))}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}<p>${dinero(Math.round(p.precio*100))}</p>${p.fichaAvanzada?.activa ? window.FichaAvanzada.html(p,imagen) : ''}${digital(n)?`<p class="digital-condiciones">${escapar(condiciones(p))}</p>`:""}${p.soloInformativo===true?'<p class="pedido-checkout-nota">Carta informativa · Sin pedido desde la plataforma</p>':`<button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button>`}</article>`).join('');
+    const tarjetas=ps=>tarjetasProductos(n,ps);
     const lista=productos(n);const nombres=[...new Set(lista.map(p=>String(p.seccion||'').trim()||'Otros productos'))];
     const contenido=digital(n)?nombres.map(nombre=>`<section class="digital-seccion"><h5>${escapar(nombre)}</h5><div class="comida-grid">${tarjetas(lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre))}</div></section>`).join(''):(n.menuConSecciones===true||(n.menuConSecciones===undefined&&lista.every(p=>String(p.seccion||'').trim())))?nombres.map(nombre=>{const ps=lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre);const tema=temaSeccion(nombre,n);return `<details class="comida-seccion" data-tema="${tema}"><summary><span class="seccion-icono" aria-hidden="true">${iconoSeccion(tema)}</span><span class="seccion-textos"><span class="seccion-nombre">${escapar(nombre)}</span><small>${ps.length} ${ps.length===1?'producto':'productos'}</small></span><span class="seccion-flecha" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="comida-grid">${tarjetas(ps)}</div></details>`;}).join(''): `<div class="comida-grid">${tarjetas(ordenarCategorias(lista))}</div>`;
     return `<section class="comida-menu" aria-label="${digital(n)?'Catálogo de servicios':'Menú y productos'}"><h4>${digital(n)?'Catálogo de servicios':'Menú / Productos'}</h4>${envioGratisNegocio(n)?'<span class="envio-gratis-dorado">✨ Envío gratis del negocio</span><p>Dentro de Comalapa. Consulta horarios de entrega.</p>':''}<p>${digital(n)?'Elige tu servicio. Entrega y soporte por WhatsApp. Precios en MXN.':'Precios en MXN. Disponibilidad y entrega por confirmar.'}</p>${contenido}${tarjetaPedidoEspecial(n)}${digital(n)&&Array.isArray(n.metodosPago)&&n.metodosPago.length?`<section class="digital-pagos"><h4>Métodos de pago</h4><ul>${n.metodosPago.filter(x=>typeof x==='string').map(x=>`<li>${escapar(x)}</li>`).join('')}</ul><p>Pide los datos de pago por WhatsApp.</p></section>`:''}<div id="comida-pedido"></div></section>`;
@@ -531,7 +533,9 @@
     negocioVisible=n;
     window.MejorasExhibicion?.perfil(n);
     const el=document.querySelector('.comida-menu');pintarPedido();if(!el)return;
-    const consulta=document.createElement('button');consulta.type='button';consulta.textContent='Preguntar qué más hay disponible';consulta.onclick=()=>whatsapp(n,true);el.append(consulta);
+    if (n.tipoCatalogo !== 'carta' || n.whatsapp) {
+      const consulta=document.createElement('button');consulta.type='button';consulta.textContent='Preguntar qué más hay disponible';consulta.onclick=()=>whatsapp(n,true);el.append(consulta);
+    }
     el.addEventListener('click',e=>{
       const b=e.target.closest('button');if(!b)return;
       if(b.hasAttribute('data-pedido-especial')){abrirPedidoEspecial(n,b);return;}

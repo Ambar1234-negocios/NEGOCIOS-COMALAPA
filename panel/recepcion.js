@@ -5,6 +5,9 @@ let configuracionPago=null,vistaHistorial=false,ultimoDiaOperacion=null;
 let fondoGlobal=null;
 let pedidos=[],riders=[],clientes=[],campanas=[],promocionesOperativas=[],campanaSeleccionada=null,pedidoSeleccionado=null,ejemploPendiente=null,edicionPendiente=false;
 const invitacionesBeneficiosPreparadas=new Map();
+function mensajeInvitacionBeneficios(nombre, url) {
+  return `Hola, ${nombre} 👋 Somos Administración de Exhibición Frontera Comalapa.\n\nSi gustas, puedes registrarte voluntariamente para recibir beneficios, promociones y detalles de cumpleaños 🎁\n\n👉 ${url}\n\nEs opcional. Puedes dejar de participar cuando quieras. Aplican términos y condiciones.`;
+}
 function aplicarPermisosRecepcion(){document.body.classList.toggle("recepcion-maestra",esMaestroRecepcion);
  document.querySelectorAll('#abrir-clientes,#abrir-promociones,[data-seccion-recepcion="vista-ajustes"],#crear-ejemplo,#nuevo-rider').forEach(n=>{n.hidden=!esMaestroRecepcion;n.style.display=esMaestroRecepcion?'':'none';});
  if(!esMaestroRecepcion)for(const id of ['vista-clientes','vista-promociones','vista-ajustes'])if(el(id))el(id).hidden=true;
@@ -112,7 +115,7 @@ function pintarClientePedido(zona,p){
       const r=await api('/rest/v1/rpc/cliente_beneficio_enlace_crear',{method:'POST',datos:{pedido:p.id}});
       if(r.ya_activo){await cargarOperacion();aviso('Este cliente ya participa en beneficios.');return;}
       const url=location.origin+'/beneficios.html#'+r.token;
-      const mensaje='Hola, '+p.cliente+' 👋\n\nSi gustas, puedes participar voluntariamente en nuestros beneficios, promociones y detalles de cumpleaños 🎁\n\nSolo te pediremos el día y mes de tu cumpleaños. No necesitas crear cuenta ni contraseña.\n\n👉 '+url+'\n\nEs opcional y puedes dejar de participar cuando quieras.';
+      const mensaje=mensajeInvitacionBeneficios(c.nombre || p.cliente,url);
       const tel=String(c.telefono).replace(/\D/g,'');
       const numero=tel.length===10?'52'+tel:tel;
       const a=nodo('a');a.href='https://api.whatsapp.com/send?phone='+numero+'&text='+encodeURIComponent(mensaje);a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('data-contacto-cliente','');a.click();
@@ -216,7 +219,7 @@ function pintarClientes(){
         const r=await api('/rest/v1/rpc/cliente_beneficio_enlace_crear_cliente',{method:'POST',datos:{cliente:c.id}});
         if(r.ya_activo){invitacionesBeneficiosPreparadas.delete(c.id);await cargarClientes();aviso('Este cliente ya participa en beneficios.');return null;}
         const url=location.origin+'/beneficios.html#'+r.token;
-        const mensaje='Hola, '+(c.nombre||'')+' 👋\n\nSi gustas, puedes participar voluntariamente en nuestros beneficios, promociones y detalles de cumpleaños 🎁\n\nSolo te pediremos el día y mes de tu cumpleaños. No necesitas crear cuenta ni contraseña.\n\n👉 '+url+'\n\nEs opcional y puedes dejar de participar cuando quieras.';
+        const mensaje=mensajeInvitacionBeneficios(c.nombre || '',url);
         const preparada={mensaje,url};invitacionesBeneficiosPreparadas.set(c.id,preparada);return preparada;
       };
       const invitar=nodo('button','📲 Invitar por WhatsApp','secundario');invitar.type='button';invitar.disabled=!puedeInvitar;
