@@ -89,7 +89,17 @@
     return '<section class="catalogo-visual" aria-label="Catálogo visual"><h4>Catálogo</h4><p><small>Disponibilidad sujeta a existencia</small></p>'+(!ps.length?'<p>Próximamente podrás ver las prendas y modelos disponibles. Consulta precio y talla por WhatsApp.</p>':'<p class="catalogo-ayuda">Desliza las prendas de cada sección. Toca una foto para ampliarla y consultar.</p>')+secciones.map(s=>{
       const lista=ps.filter(p=>(p.seccion||'Otros productos')===s);
       return '<section class="catalogo-seccion" aria-label="'+escapar(s)+'"><header><h5>'+escapar(s)+'</h5>'+(lista.length>1?'<div class="catalogo-controles"><button type="button" data-catalogo-prendas="-1" aria-label="Prendas anteriores de '+escapar(s)+'">‹</button><button type="button" data-catalogo-prendas="1" aria-label="Más prendas de '+escapar(s)+'">›</button></div>':'')+'</header>'+(lista.length?'<div class="catalogo-fila" tabindex="0" aria-label="Prendas de '+escapar(s)+'">'+tarjetas(lista)+'</div>':'<p class="catalogo-vacio">Próximamente · Sin productos disponibles por el momento.</p>')+'</section>';
-    }).join('')+'</section>';
+    }).join('')+(n.slug === 'abazarlo-boutique' ? `
+      <div class="perfil-acciones-oficial">
+        <a class="accion accion-web accion-catalogo-externo" href="https://abazarlo-boutique.kyte.site" target="_blank" rel="noopener noreferrer">
+          <div>
+            <strong>Ver catálogo completo de Abazarlo Boutique</strong>
+            <small>Consulta todos los productos disponibles en su catálogo.</small>
+          </div>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    ` : '')+'</section>';
   }
   // Conserva íntegra la ficha; solo cambia la puerta de entrada al catálogo.
   function catalogoSayer(n){
