@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Cierre de jornada · Mandaditos</title>
+  <link rel="stylesheet" href="panel.css">
+  <style>
+    main { max-width: 640px; }
+    article { margin-bottom: 16px; }
+    .decisiones { display: grid; gap: 8px; }
+    .decisiones button { width: 100%; min-height: 48px; margin: 0; }
+    .resultado { font-weight: bold; }
+  </style>
+  <script src="cierre-mandaditos.js" defer></script>
+</head>
+<body>
+  <header><h1>Cierre de jornada · Mandaditos</h1></header>
+  <main>
+    <p id="estado-lote" role="status">Consultando enlace…</p>
+    <button id="reintentar-lote" class="secundario" type="button" hidden>Volver a consultar</button>
+    <div id="pedidos-lote"></div>
+  </main>
+</body>
+</html>
