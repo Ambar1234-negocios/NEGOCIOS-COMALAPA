@@ -43,7 +43,7 @@
         boton.type = 'button';
         boton.addEventListener('click', async () => {
           const pregunta = decision === 'entregado' && pedido.pago === 'efectivo'
-            ? '¿Confirmas que entregaste el pedido y recibiste el efectivo completo?'
+            ? '¿Confirmas que el pedido se entregó y que Mandaditos cobró al cliente el total acordado?'
             : '¿Registrar «' + texto + '» para ' + pedido.folio + '?';
           if (!window.confirm(pregunta)) return;
           const botones = acciones.querySelectorAll('button');

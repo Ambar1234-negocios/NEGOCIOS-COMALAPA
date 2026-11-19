@@ -363,7 +363,6 @@ function pintarCierreMandaditos(){
     servicios.reduce((total,p)=>total+p.servicio_centavos,0)
   ));
   el('resumen-cierre-mandaditos').textContent=texto.join(' · ');
-  el('crear-cierre-mandaditos').disabled=!pendientes;
 }
 el('crear-cierre-mandaditos')?.addEventListener('click',()=>tarea(async()=>{
   const enlace=el('enviar-cierre-mandaditos');
