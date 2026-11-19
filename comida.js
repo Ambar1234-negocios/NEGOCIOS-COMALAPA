@@ -180,6 +180,11 @@
     return lista.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${p.fichaAvanzada?.activa ? '' : imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p,digital(n))}<span>Ver foto e información</span></button>` : foto(p,digital(n))}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}${n.tipoCatalogo === 'carta' && p.ingredientes ? `<p>${escapar(p.ingredientes)}</p>` : ''}<p>${dinero(Math.round(p.precio*100))}</p>${p.fichaAvanzada?.activa ? window.FichaAvanzada.html(p,imagen) : ''}${digital(n)?`<p class="digital-condiciones">${escapar(condiciones(p))}</p>`:""}${p.soloInformativo===true?'<p class="pedido-checkout-nota">Carta informativa · Sin pedido desde la plataforma</p>':`<button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button>`}</article>`).join('');
   }
 
+  function seccionMenu(n, nombre, contenido, cantidad) {
+    const tema = temaSeccion(nombre,n);
+    return `<details class="comida-seccion" data-tema="${tema}"><summary><span class="seccion-icono" aria-hidden="true">${iconoSeccion(tema)}</span><span class="seccion-textos"><span class="seccion-nombre">${escapar(nombre)}</span>${cantidad == null ? '' : `<small>${cantidad} ${cantidad===1?'producto':'productos'}</small>`}</span><span class="seccion-flecha" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary>${contenido}</details>`;
+  }
+
   function carta(n) {
     const secciones = new Map();
     for (const p of productos(n)) {
@@ -191,19 +196,18 @@
       grupos.get(grupo).push(p);
     }
 
-    const detalle = (nombre, contenido) =>
-      `<details class="comida-seccion"><summary><span class="seccion-nombre">${escapar(nombre)}</span></summary><div class="perfil-seccion">${contenido}</div></details>`;
+
     const lista = [...secciones].map(([seccion, grupos]) => {
       const nota = n.notasCarta?.[seccion];
       const platillos = [...grupos].map(([grupo, lista]) =>
         `${grupo ? `<h5>${escapar(grupo)}</h5>` : ''}<div class="comida-grid">${tarjetasProductos(n, lista)}</div>`
       ).join('');
-      return detalle(seccion, `${nota ? `<p><small>* ${escapar(nota)}</small></p>` : ''}${platillos}`);
+      return seccionMenu(n, seccion, `${nota ? `<p class="perfil-seccion"><small>* ${escapar(nota)}</small></p>` : ''}${platillos}`, [...grupos.values()].flat().length);
     });
     if (n.servicios?.length) {
-      lista.push(detalle('Servicios especiales', `<ul>${n.servicios.map(s => `<li>${escapar(window.ServiciosExhibicion.nombre(s))}</li>`).join('')}</ul>`));
+      lista.push(seccionMenu(n, 'Servicios especiales', `<ul class="perfil-seccion">${n.servicios.map(s => `<li>${escapar(window.ServiciosExhibicion.nombre(s))}</li>`).join('')}</ul>`));
     }
-    return `<section class="comida-menu" aria-label="Menú digital"><h4>Menú digital</h4><p>Precios en MXN.</p>${lista.join('')}<div id="comida-pedido"></div></section>`;
+    return `<section class="comida-menu" aria-label="Menú y productos"><h4>Menú / Productos</h4><p>Precios en MXN. Disponibilidad y entrega por confirmar.</p>${lista.join('')}<div id="comida-pedido"></div></section>`;
   }
 
   function menu(n) {
@@ -213,7 +217,7 @@
     if (!productos(n).length && !pedidoEspecialActivo(n)) return '';
     const tarjetas=ps=>tarjetasProductos(n,ps);
     const lista=productos(n);const nombres=[...new Set(lista.map(p=>String(p.seccion||'').trim()||'Otros productos'))];
-    const contenido=digital(n)?nombres.map(nombre=>`<section class="digital-seccion"><h5>${escapar(nombre)}</h5><div class="comida-grid">${tarjetas(lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre))}</div></section>`).join(''):(n.menuConSecciones===true||(n.menuConSecciones===undefined&&lista.every(p=>String(p.seccion||'').trim())))?nombres.map(nombre=>{const ps=lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre);const tema=temaSeccion(nombre,n);return `<details class="comida-seccion" data-tema="${tema}"><summary><span class="seccion-icono" aria-hidden="true">${iconoSeccion(tema)}</span><span class="seccion-textos"><span class="seccion-nombre">${escapar(nombre)}</span><small>${ps.length} ${ps.length===1?'producto':'productos'}</small></span><span class="seccion-flecha" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="comida-grid">${tarjetas(ps)}</div></details>`;}).join(''): `<div class="comida-grid">${tarjetas(ordenarCategorias(lista))}</div>`;
+    const contenido=digital(n)?nombres.map(nombre=>`<section class="digital-seccion"><h5>${escapar(nombre)}</h5><div class="comida-grid">${tarjetas(lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre))}</div></section>`).join(''):(n.menuConSecciones===true||(n.menuConSecciones===undefined&&lista.every(p=>String(p.seccion||'').trim())))?nombres.map(nombre=>{const ps=lista.filter(p=>(String(p.seccion||'').trim()||'Otros productos')===nombre);return seccionMenu(n,nombre,`<div class="comida-grid">${tarjetas(ps)}</div>`,ps.length);}).join(''): `<div class="comida-grid">${tarjetas(ordenarCategorias(lista))}</div>`;
     return `<section class="comida-menu" aria-label="${digital(n)?'Catálogo de servicios':'Menú y productos'}"><h4>${digital(n)?'Catálogo de servicios':'Menú / Productos'}</h4>${envioGratisNegocio(n)?'<span class="envio-gratis-dorado">✨ Envío gratis del negocio</span><p>Dentro de Comalapa. Consulta horarios de entrega.</p>':''}<p>${digital(n)?'Elige tu servicio. Entrega y soporte por WhatsApp. Precios en MXN.':'Precios en MXN. Disponibilidad y entrega por confirmar.'}</p>${contenido}${tarjetaPedidoEspecial(n)}${digital(n)&&Array.isArray(n.metodosPago)&&n.metodosPago.length?`<section class="digital-pagos"><h4>Métodos de pago</h4><ul>${n.metodosPago.filter(x=>typeof x==='string').map(x=>`<li>${escapar(x)}</li>`).join('')}</ul><p>Pide los datos de pago por WhatsApp.</p></section>`:''}<div id="comida-pedido"></div></section>`;
   }
   const centavos = precio => Math.round(Number(precio) * 100);
@@ -320,11 +324,12 @@
   function gruposPedido(){
     const mapa=new Map();for(const l of pedido.lineas){const n=dueno(l);if(!n)continue;if(!mapa.has(n.id))mapa.set(n.id,{negocio:n,lineas:[]});mapa.get(n.id).lineas.push(l);}return [...mapa.values()];
   }
+  const pedidoSoloMandaditos = () => pedido.lineas.some(l => dueno(l)?.soloMandaditos === true);
   function normalizarPedido(){
     for(const l of pedido.lineas)if(!l.negocio)l.negocio=pedido.negocio;
     pedido.negocio=pedido.lineas[0]?.negocio||null;
     if(!pedido.lineas.length){pagoPedido='';nombrePedido='';telefonoPedido='';entregaPedido='';privacidadPedidoAceptada=false;modoEntrega=menuLocal||mesaDeEntrada?'mesa':'domicilio';}
-    if(gruposPedido().length>1||(modoEntrega==='mesa'&&pedido.negocio&&pedido.negocio.slug!=='forno-mexa'))modoEntrega='domicilio';
+    if(pedidoSoloMandaditos()||gruposPedido().length>1||(modoEntrega==='mesa'&&pedido.negocio&&pedido.negocio.slug!=='forno-mexa'))modoEntrega='domicilio';
   }
   function incorporar(n,nueva,linea){
     if(pedido.lineas.length&&pedido.negocio?.id!==n.id&&!(esComida(n)&&pedido.lineas.every(l=>esComida(dueno(l)))))return 'Los servicios digitales y los pedidos de comida se realizan por separado.';
@@ -370,6 +375,7 @@
     return '\u2705 Aprovecha y paga por transferencia sin comisión.';
   }
   function selectorEntrega(){
+    if (pedidoSoloMandaditos()) return '<section class="pedido-pago"><p>Entrega a domicilio por Mandaditos. Costo y disponibilidad por confirmar.</p></section>';
     const varios=gruposPedido().length>1;
     if(menuLocal)return `<section class="pedido-pago"><label>¿Cómo lo quieres?<select data-modo-entrega><option value="mesa" ${modoEntrega==='mesa'?'selected':''}>Para comer aquí · Mesa ${mesaNumero}</option><option value="recoger" ${modoEntrega==='recoger'?'selected':''}>Para llevar</option></select></label></section>`;
     return `<section class="pedido-pago"><label>¿Cómo quieres recibirlo?<select data-modo-entrega><option value="domicilio" ${modoEntrega==='domicilio'?'selected':''}>${!varios&&envioGratisNegocio(pedido.negocio)?'Envío gratis · Lo entrega el negocio':'A domicilio'}</option>${!varios&&envioGratisNegocio(pedido.negocio)?`<option value="mandaditos" ${modoEntrega==='mandaditos'?'selected':''}>Servicio de mandaditos · Costo por confirmar</option>`:''}${!varios&&pedido.negocio?.slug==='forno-mexa'?`<option value="mesa" ${modoEntrega==='mesa'?'selected':''}>Para comer aquí · Mesa ${mesaNumero}</option>`:''}<option value="recoger" ${modoEntrega==='recoger'?'selected':''} ${varios?'disabled':''}>Pasar a recoger · Sin envío</option></select></label>${modoEntrega==='mesa'?'<p>Pedido para comer aquí. Pide al personal el código de tu visita.</p>':varios?'<p>Para pasar a recoger, realiza un pedido por negocio. El pedido combinado se entrega a domicilio.</p>':modoEntrega==='recoger'?'<p class="pedido-pago-aviso">Recoge en el negocio sin pagar envío. Para confirmar la preparación se requiere el pago completo por transferencia. El negocio te confirma disponibilidad, total, datos de pago y hora de recogida por WhatsApp.</p>':entregaPropia()?'<p class="envio-gratis-aviso">✨ Envío gratis del negocio dentro de Comalapa. Consulta horarios de entrega.</p>':'<p>Entrega por mandaditos: costo y disponibilidad por confirmar.</p>'}</section>`;
@@ -381,7 +387,7 @@
   function textoPago(pago){if(pago==='Transferencia al recibir')return entregaPropia()?'📲 Transferiré al negocio cuando llegue mi pedido. El negocio confirmará el pago.':'📲 Transferiré cuando llegue mi pedido. Recepción confirmará el pago antes de entregarlo.';return pago==='Transferencia'?'\u{1f4b3} Pagaré por transferencia bancaria.':pago==='Depósito'?'\u{1f3ea} Pagaré mediante depósito.':'\u{1f4b5} Pagaré en efectivo.';}
   document.addEventListener('change',e=>{
     if(e.target.matches?.('[data-privacidad-pedido]')){privacidadPedidoAceptada=e.target.checked;return;}
-    if(e.target.matches?.('[data-modo-entrega]')&&pedido.negocio&&!digital(pedido.negocio)){if(!menuDirecto&&e.target.value==='mesa'){codigoCupon='';cotizacionCupon=null;estadoCupon='';}if(menuDirecto){modoEntrega=window.MenuDirectoExhibicion.modalidad(pedido.negocio,e.target.value);pintarPedido();return;}if(e.target.value==='recoger'&&gruposPedido().length>1)return;modoEntrega=e.target.value==='mesa'&&gruposPedido().length===1&&(menuDirecto||pedido.negocio.slug==='forno-mexa')?'mesa':e.target.value==='recoger'?'recoger':e.target.value==='mandaditos'&&gruposPedido().length===1&&envioGratisNegocio(pedido.negocio)?'mandaditos':'domicilio';if(modoEntrega==='recoger')pagoPedido='Transferencia';pintarPedido();return;}
+    if(e.target.matches?.('[data-modo-entrega]')&&pedido.negocio&&!digital(pedido.negocio)&&!pedidoSoloMandaditos()){if(!menuDirecto&&e.target.value==='mesa'){codigoCupon='';cotizacionCupon=null;estadoCupon='';}if(menuDirecto){modoEntrega=window.MenuDirectoExhibicion.modalidad(pedido.negocio,e.target.value);pintarPedido();return;}if(e.target.value==='recoger'&&gruposPedido().length>1)return;modoEntrega=e.target.value==='mesa'&&gruposPedido().length===1&&(menuDirecto||pedido.negocio.slug==='forno-mexa')?'mesa':e.target.value==='recoger'?'recoger':e.target.value==='mandaditos'&&gruposPedido().length===1&&envioGratisNegocio(pedido.negocio)?'mandaditos':'domicilio';if(modoEntrega==='recoger')pagoPedido='Transferencia';pintarPedido();return;}
     if(!e.target.matches?.('[data-pago-pedido]')||!pedido.negocio)return;
     pagoPedido=opcionesPago(pedido.negocio).includes(e.target.value)?e.target.value:'';
     document.querySelectorAll('[data-pago-pedido]').forEach(select=>select.value=pagoPedido);
@@ -390,7 +396,7 @@
   document.addEventListener('input',e=>{if(e.target.matches?.('[data-telefono-pedido]')){telefonoPedido=e.target.value.slice(0,20);document.querySelectorAll('[data-telefono-pedido]').forEach(i=>{if(i!==e.target)i.value=telefonoPedido;});}if(e.target.matches?.('[data-entrega-pedido]'))entregaPedido=e.target.value.slice(0,500);if(e.target.matches?.('[data-cliente-pedido]')){nombrePedido=e.target.value.slice(0,120);document.querySelectorAll('[data-cliente-pedido]').forEach(i=>{if(i!==e.target)i.value=nombrePedido;});}});
   function resumen() {
     if(!pedido.lineas.length)return '<p>Agrega productos para armar tu pedido.</p>';
-    if(menuDirecto&&gruposPedido().length===1){modoEntrega=window.MenuDirectoExhibicion.modalidad(pedido.negocio,modoEntrega);return window.MenuDirectoExhibicion.resumen(pedido,total(),'',modoEntrega,htmlCupon(),textoCupon());}
+    if(menuDirecto&&!pedidoSoloMandaditos()&&gruposPedido().length===1){modoEntrega=window.MenuDirectoExhibicion.modalidad(pedido.negocio,modoEntrega);return window.MenuDirectoExhibicion.resumen(pedido,total(),'',modoEntrega,htmlCupon(),textoCupon());}
     if((modoEntrega==='mesa'||menuLocal&&modoEntrega==='recoger')&&gruposPedido().length===1&&pedido.negocio.slug==='forno-mexa')return window.MesasExhibicion.resumen(pedido,total(),selectorEntrega(),modoEntrega);
     const n=pedido.negocio;
     if(digital(n)) return `<h4>Mi pedido · ${escapar(n.nombre)}</h4>${pedido.lineas.map(l=>`<div class="pedido-linea"><div><strong>${l.cantidad} × ${escapar(l.producto.nombre)} — ${dinero(importe(l))}</strong><p>${escapar(condiciones(l.producto))}</p>${l.nota?`<p>${l.producto.nombre.includes(' + ')||l.cantidad>1?'Nombres de los perfiles':'Nombre del perfil'}: ${escapar(l.nota)}</p>`:''}</div><div class="pedido-controles"><button type="button" data-pedido-accion="menos" data-linea="${l.id}" aria-label="Quitar una unidad de ${escapar(l.producto.nombre)}">−</button><span>${l.cantidad}</span><button type="button" data-pedido-accion="mas" data-linea="${l.id}" aria-label="Agregar una unidad de ${escapar(l.producto.nombre)}" ${l.cantidad>=99?'disabled':''}>+</button><button type="button" data-pedido-accion="editar" data-linea="${l.id}">Editar</button><button type="button" data-pedido-accion="quitar" data-linea="${l.id}">Quitar</button></div></div>`).join('')}<p class="pedido-total" role="status">Total: ${dinero(total())}</p><p>Entrega y soporte por WhatsApp.</p>${selectorPago(n)}<div class="comida-acciones"><button type="button" data-pedido-accion="enviar">Realizar pedido</button><button type="button" data-pedido-accion="vaciar">Vaciar pedido</button></div>`;
@@ -463,8 +469,9 @@
 
     if(!consulta&&!pedido.lineas.length)return;
     if(!consulta && (pedido.negocio?.id!==n?.id || pedido.lineas.some(l=>!dueno(l)?.productos?.some(p=>p.id===l.producto.id)|| (gruposPedido().length>1&&!esComida(dueno(l)))))){alert('El pedido no corresponde a este negocio. Revisa tu carrito antes de enviarlo.');return;}
-    if(!consulta&&menuDirecto&&gruposPedido().length===1){window.MenuDirectoExhibicion.enviar({negocio:n,origen,total:total(),modalidad:modoEntrega});return;}
+    if(!consulta&&menuDirecto&&!pedidoSoloMandaditos()&&gruposPedido().length===1){window.MenuDirectoExhibicion.enviar({negocio:n,origen,total:total(),modalidad:modoEntrega});return;}
     if(!consulta&&(modoEntrega==='mesa'||menuLocal&&modoEntrega==='recoger')&&gruposPedido().length===1&&n.slug==='forno-mexa'){window.MesasExhibicion.enviar({negocio:n,modalidad:modoEntrega,origen,total:total(),lineas:pedido.lineas.map(l=>({negocio:dueno(l).slug,producto:l.producto.id,cantidad:l.cantidad,opciones:(l.opciones||[]).map(o=>({grupo:o.grupoId,opcion:o.id})),extras:l.extras.map(x=>Number.isInteger(x.cantidad)?{id:x.id,cantidad:x.cantidad}:x.id),nota:l.nota||''})),limpiar:()=>{pedido.lineas=[];pintarPedido();}});return;}
+    if (!consulta && pedidoSoloMandaditos()) modoEntrega = 'domicilio';
     const contenedor=origen?.closest?.('.pedido-resumen-modal')||document.getElementById('comida-pedido');
     if(!consulta&&!digital(n)&&(!nombrePedido.trim()||(!entregaPropia()&&!telefonoPedido.trim())||modoEntrega!=='recoger'&&!entregaPedido.trim())){const campo=contenedor?.querySelector(!nombrePedido.trim()?'[data-cliente-pedido]':(!entregaPropia()&&!telefonoPedido.trim())?'[data-telefono-pedido]':'[data-entrega-pedido]');campo?.focus();campo?.reportValidity();return;}
     if(!consulta&&!digital(n)&&!privacidadPedidoAceptada){alert('Confirma que leíste el Aviso de Privacidad para continuar.');contenedor?.querySelector('[data-privacidad-pedido]')?.focus();return;}
@@ -478,9 +485,10 @@
         if(oferta.porcentaje>0&&pedido.lineas.every(l=>oferta.negocios.includes(dueno(l).slug)))solicitudApoyo='🎉 Quiero solicitar el '+oferta.porcentaje+'% de descuento en el servicio a domicilio con Mandaditos.\n📍 Dentro de Frontera Comalapa. Confírmenme el costo del servicio y el descuento antes de realizar el pedido.';
       }catch{alert('No pudimos comprobar la promoción de Mandaditos. Vuelve a pulsar Realizar pedido para preparar tu WhatsApp con la promoción vigente.');return;}
     }
-    const numero=String(!consulta&&!digital(n)&&modoEntrega!=='recoger'&&(modoEntrega==='mandaditos'||gruposPedido().length>1||(n.delivery===true&&n.tipoDelivery!=='gratis'))?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
+    if (!consulta && pedidoSoloMandaditos()) await window.ContactosExhibicion?.lista;
+    const numero=String(!consulta&&!digital(n)&&modoEntrega!=='recoger'&&(pedidoSoloMandaditos()||modoEntrega==='mandaditos'||gruposPedido().length>1||(n.delivery===true&&n.tipoDelivery!=='gratis'))?window.ContactosExhibicion?.actual?.mandaditos?.numero||'':n.whatsapp||'').replace(/\D/g,'');
     const normal=window.ContactosExhibicion?.numero(numero)||(numero.length===10?'52'+numero:numero);
-    if(!/^\d{11,15}$/.test(normal)){alert('Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.');return;}
+    if(!/^\d{11,15}$/.test(normal)){alert(!consulta && pedidoSoloMandaditos() ? 'No pudimos cargar el WhatsApp de Mandaditos. Actualiza la página e inténtalo de nuevo.' : 'Este negocio todavía no tiene un WhatsApp válido configurado. Usa su botón de llamada.');return;}
     let mensaje=digital(n)?(consulta?`Hola, estoy viendo el catálogo de ${n.nombre}. Quiero información sobre sus servicios digitales.`:mensajeDigital(pedido.lineas,total())):consulta?`Hola, estoy viendo ${n.nombre} en Exhibición Frontera Comalapa. ¿Qué más tienen disponible hoy?`:mensajeComida();
     if(!consulta&&entregaPropia())mensaje=mensajeEntregaPropia(n);
     else if(!consulta)mensaje+='\n\n'+textoPago(pagoPedido)+(pagoPedido==='Transferencia'||pagoPedido==='Depósito'?'\n¿Me confirmas el total y los datos de pago?':'');

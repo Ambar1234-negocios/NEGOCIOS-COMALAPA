@@ -6379,6 +6379,9 @@
     "direccion": "Plaza del Ángel Centro",
     "activo": true,
     "tipoCatalogo": "carta",
+    "delivery": true,
+    "tipoDelivery": "mandaditos",
+    "soloMandaditos": true,
     "pedidoEspecial": false,
     "servicios": [
       "Charolas",
@@ -6395,7 +6398,6 @@
         "nombre": "Huevos al gusto: Chorizo, jamón, salchicha, tocino, a la mexicana, revueltos, estrellados",
         "precio": 90,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6404,7 +6406,6 @@
         "nombre": "Huevos motuleños",
         "precio": 110,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6413,7 +6414,6 @@
         "nombre": "Huevos rancheros",
         "precio": 110,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6422,7 +6422,6 @@
         "nombre": "Huevos con machaca",
         "precio": 110,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6431,7 +6430,6 @@
         "nombre": "Omelet",
         "precio": 110,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6440,7 +6438,6 @@
         "nombre": "Omelete al albañil",
         "precio": 120,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6449,7 +6446,6 @@
         "nombre": "Chilaquiles con pollo, huevo o combinados",
         "precio": 120,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6458,7 +6454,6 @@
         "nombre": "Chilaquiles con carne asada",
         "precio": 140,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6467,7 +6462,6 @@
         "nombre": "Chilaquiles Shangai",
         "precio": 160,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6476,7 +6470,6 @@
         "nombre": "Enchiladas Suizas",
         "precio": 120,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6485,7 +6478,6 @@
         "nombre": "Enfrijoladas",
         "precio": 120,
         "seccion": "Desayunos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6495,7 +6487,6 @@
         "precio": 150,
         "seccion": "Comida china",
         "subgrupo": "Chow Mein (Pasta)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6505,7 +6496,6 @@
         "precio": 150,
         "seccion": "Comida china",
         "subgrupo": "Chow Mein (Pasta)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6515,7 +6505,6 @@
         "precio": 180,
         "seccion": "Comida china",
         "subgrupo": "Chow Mein (Pasta)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6525,7 +6514,6 @@
         "precio": 190,
         "seccion": "Comida china",
         "subgrupo": "Chow Mein (Pasta)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6535,7 +6523,6 @@
         "precio": 160,
         "seccion": "Comida china",
         "subgrupo": "Chop Suey (Germinado de Soya)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6545,7 +6532,6 @@
         "precio": 160,
         "seccion": "Comida china",
         "subgrupo": "Chop Suey (Germinado de Soya)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6555,7 +6541,6 @@
         "precio": 180,
         "seccion": "Comida china",
         "subgrupo": "Chop Suey (Germinado de Soya)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6565,7 +6550,6 @@
         "precio": 190,
         "seccion": "Comida china",
         "subgrupo": "Chop Suey (Germinado de Soya)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6575,7 +6559,6 @@
         "precio": 150,
         "seccion": "Comida china",
         "subgrupo": "Chow Fan (Arroz Chino)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6585,7 +6568,6 @@
         "precio": 150,
         "seccion": "Comida china",
         "subgrupo": "Chow Fan (Arroz Chino)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6595,7 +6577,6 @@
         "precio": 180,
         "seccion": "Comida china",
         "subgrupo": "Chow Fan (Arroz Chino)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6605,7 +6586,6 @@
         "precio": 190,
         "seccion": "Comida china",
         "subgrupo": "Chow Fan (Arroz Chino)",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6614,7 +6594,6 @@
         "nombre": "Cantonés Especial",
         "precio": 170,
         "seccion": "Comida china",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6623,7 +6602,6 @@
         "nombre": "Pollo Cantonés",
         "precio": 170,
         "seccion": "Comida china",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6632,7 +6610,6 @@
         "nombre": "Camarón Cantonés",
         "precio": 180,
         "seccion": "Comida china",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6641,7 +6618,6 @@
         "nombre": "Filete de Pescado Cantonés",
         "precio": 180,
         "seccion": "Comida china",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6650,7 +6626,6 @@
         "nombre": "Bistec Cantonés",
         "precio": 180,
         "seccion": "Comida china",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6659,7 +6634,6 @@
         "nombre": "Pollo Agridulce",
         "precio": 180,
         "seccion": "Comida china",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6668,7 +6642,6 @@
         "nombre": "Sopa Ramen",
         "precio": 120,
         "seccion": "Comida china",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6677,7 +6650,6 @@
         "nombre": "Sopa de Hongos",
         "precio": 150,
         "seccion": "Comida china",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6687,7 +6659,6 @@
         "precio": 100,
         "seccion": "Comida china",
         "subgrupo": "Aperitivos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6697,7 +6668,6 @@
         "precio": 140,
         "seccion": "Comida china",
         "subgrupo": "Aperitivos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6707,7 +6677,6 @@
         "precio": 150,
         "seccion": "Comida china",
         "subgrupo": "Aperitivos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6717,7 +6686,6 @@
         "precio": 180,
         "seccion": "Comida china",
         "subgrupo": "Aperitivos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6726,7 +6694,6 @@
         "nombre": "Pechuga a la plancha",
         "precio": 130,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6735,7 +6702,6 @@
         "nombre": "Pechuga Cordon Bleu",
         "precio": 160,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6744,7 +6710,6 @@
         "nombre": "Carne Asada",
         "precio": 150,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6753,7 +6718,6 @@
         "nombre": "Bistec a la Mexicana",
         "precio": 150,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6762,7 +6726,6 @@
         "nombre": "Milanesa de Pollo",
         "precio": 140,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6771,7 +6734,6 @@
         "nombre": "Milanesa de Res",
         "precio": 150,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6780,7 +6742,6 @@
         "nombre": "Fajitas de Pollo",
         "precio": 130,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6789,7 +6750,6 @@
         "nombre": "Fajitas de Res",
         "precio": 150,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6798,7 +6758,6 @@
         "nombre": "Fajitas Mar y Tierra",
         "precio": 160,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6807,7 +6766,6 @@
         "nombre": "Fajitas Especiales",
         "precio": 160,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6816,7 +6774,6 @@
         "nombre": "Tampiqueña",
         "precio": 170,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6825,7 +6782,6 @@
         "nombre": "Fettuccini boloñés",
         "precio": 130,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6834,7 +6790,6 @@
         "nombre": "Ensalada Shangai",
         "precio": 130,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6843,7 +6798,6 @@
         "nombre": "Verduras al vapor",
         "precio": 60,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6852,7 +6806,6 @@
         "nombre": "Caldo Tlalpeño",
         "precio": 120,
         "seccion": "Comida mexicana",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6861,7 +6814,6 @@
         "nombre": "Camarones empanizados",
         "precio": 160,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6870,7 +6822,6 @@
         "nombre": "Camarones al ajo jugosos-secos",
         "precio": 160,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6879,7 +6830,6 @@
         "nombre": "Camarones a la plancha",
         "precio": 160,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6888,7 +6838,6 @@
         "nombre": "Camarones enchilados",
         "precio": 160,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6897,7 +6846,6 @@
         "nombre": "Camarones Shangai (Rellenos)",
         "precio": 190,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6906,7 +6854,6 @@
         "nombre": "Camarones a la boston",
         "precio": 190,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6915,7 +6862,6 @@
         "nombre": "Filete de pescado al ajo",
         "precio": 160,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6924,7 +6870,6 @@
         "nombre": "Filete de pescado al vapor",
         "precio": 160,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6933,7 +6878,6 @@
         "nombre": "Filete de pescado empanizado",
         "precio": 160,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6942,7 +6886,6 @@
         "nombre": "Coctel de camarón chico",
         "precio": 100,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6951,7 +6894,6 @@
         "nombre": "Coctel de camarón mediano",
         "precio": 140,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6960,7 +6902,6 @@
         "nombre": "Coctel de camarón grande",
         "precio": 170,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6969,7 +6910,6 @@
         "nombre": "Ensalada de camarón",
         "precio": 160,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6978,7 +6918,6 @@
         "nombre": "Ensalada de camarón Shangai",
         "precio": 160,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6987,7 +6926,6 @@
         "nombre": "Aguachiles rojos (12 pzas.)",
         "precio": 190,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -6996,7 +6934,6 @@
         "nombre": "Consomé de camarón",
         "precio": 160,
         "seccion": "Mariscos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7005,7 +6942,6 @@
         "nombre": "Hamburguesa clásica c/papas",
         "precio": 90,
         "seccion": "Snacks",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7014,7 +6950,6 @@
         "nombre": "Hamburguesa hawaiana c/papas",
         "precio": 110,
         "seccion": "Snacks",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7023,7 +6958,6 @@
         "nombre": "Club sandwich c/papas",
         "precio": 90,
         "seccion": "Snacks",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7032,7 +6966,6 @@
         "nombre": "Sincronizada especial c/papas",
         "precio": 90,
         "seccion": "Snacks",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7041,7 +6974,6 @@
         "nombre": "Dedos de queso c/papas",
         "precio": 80,
         "seccion": "Snacks",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7050,7 +6982,6 @@
         "nombre": "Nachos Shangai",
         "precio": 140,
         "seccion": "Snacks",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7059,7 +6990,6 @@
         "nombre": "Plátanos fritos",
         "precio": 60,
         "seccion": "Snacks",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7068,7 +6998,6 @@
         "nombre": "Salchipapas",
         "precio": 65,
         "seccion": "Snacks",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7077,7 +7006,6 @@
         "nombre": "Papas a la francesa",
         "precio": 65,
         "seccion": "Snacks",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7087,7 +7015,6 @@
         "precio": 130,
         "seccion": "Snacks",
         "ingredientes": "BBQ, BBQ PICANTES, MIEL MOSTAZA, MANGO HABANERO, BÚFALO, VALENTINA C/papas",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7096,7 +7023,6 @@
         "nombre": "Aguas frescas de temporada",
         "precio": 35,
         "seccion": "Bebidas",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7105,7 +7031,6 @@
         "nombre": "Licuados: Chocomilk, tascalate, fresa, avena, granola",
         "precio": 60,
         "seccion": "Bebidas",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7114,7 +7039,6 @@
         "nombre": "Licuados combinados",
         "precio": 70,
         "seccion": "Bebidas",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7123,7 +7047,6 @@
         "nombre": "Salsa Shangai ½ Lt.",
         "precio": 75,
         "seccion": "Complementos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7132,7 +7055,6 @@
         "nombre": "Salsa Shangai 1 Lt.",
         "precio": 140,
         "seccion": "Complementos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7141,7 +7063,6 @@
         "nombre": "Ensalada de pepino Shangai",
         "precio": 50,
         "seccion": "Complementos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7150,7 +7071,6 @@
         "nombre": "Totopos bolsa grande",
         "precio": 30,
         "seccion": "Complementos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       },
@@ -7159,7 +7079,6 @@
         "nombre": "Sopa fría",
         "precio": 90,
         "seccion": "Complementos",
-        "soloInformativo": true,
         "extras": [],
         "gruposOpciones": []
       }
