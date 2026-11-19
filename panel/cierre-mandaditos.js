@@ -14,7 +14,7 @@
     cliente_cancelo: opciones.no_realizado,
     negocio_cerrado: opciones.no_realizado,
     no_realizado: opciones.no_realizado,
-    cancelado: opciones.no_realizado,
+    cancelado: 'Cancelado en el panel',
     incidencia: 'Incidencia enviada a recepción'
   };
   const tarjetas = new Map();
@@ -111,7 +111,7 @@
         return;
       }
       const pendientes = datos.pedidos.filter(p => !p.resultado).length;
-      estado.textContent = datos.jornada + ' · ' + pendientes + ' pendientes de ' + datos.pedidos.length;
+      estado.textContent = datos.jornada + ' · ' + pendientes + ' de ' + datos.pedidos.length + ' por confirmar';
       datos.pedidos.forEach(mostrarPedido);
     } catch (error) {
       respuesta.textContent = error.message.startsWith('Recepción debe verificar')

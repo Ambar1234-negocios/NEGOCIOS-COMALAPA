@@ -393,7 +393,7 @@ el('crear-cierre-mandaditos')?.addEventListener('click',()=>tarea(async()=>{
   });
   if(!lote.cantidad){
     await cargarOperacion();
-    aviso('No quedan pedidos pendientes de confirmación en esta fecha.');
+    aviso('No hay pedidos registrados en esta fecha.');
     return;
   }
   guardados[fecha]={token:lote.token,vence_en:lote.vence_en};
@@ -409,7 +409,7 @@ el('crear-cierre-mandaditos')?.addEventListener('click',()=>tarea(async()=>{
   ].join('\n\n');
   const enlace=el('enviar-cierre-mandaditos');
   enlace.href='https://wa.me/529632708883?text='+encodeURIComponent(mensaje);
-  enlace.textContent='Abrir WhatsApp · '+lote.cantidad+' pedidos pendientes';
+  enlace.textContent='Abrir WhatsApp · '+lote.cantidad+(lote.cantidad===1?' pedido':' pedidos');
   enlace.dataset.fecha=fecha;
   enlace.dataset.vence=lote.vence_en;
   enlace.hidden=false;
