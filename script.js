@@ -1089,6 +1089,19 @@ function verPerfil(categoria, index, opciones = {}) {
 
         ${serviciosHTML}
 
+        ${negocio.slug === "abazarlo-boutique" ? `
+          <div class="perfil-acciones-oficial">
+            <a class="accion accion-web accion-catalogo-externo" href="https://abazarlo-boutique.kyte.site" target="_blank" rel="noopener noreferrer">
+              <div>
+                <strong>Ver catálogo completo de Abazarlo Boutique</strong>
+                <small>Consulta todos los productos disponibles en su catálogo.</small>
+              </div>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        ` : ""}
+
+
       </div>
 
     </article>
