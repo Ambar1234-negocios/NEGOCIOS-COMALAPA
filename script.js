@@ -829,7 +829,7 @@ function verPerfil(categoria, index, opciones = {}) {
   const estadoHorario = obtenerEstadoHorario(negocio);
 
   const serviciosGenericos = window.ConsultoriosExhibicion.serviciosGenericos(negocio);
-  const serviciosHTML = !negocio.propiedad && serviciosGenericos.length > 0
+  const serviciosHTML = negocio.tipoCatalogo !== 'carta' && !negocio.propiedad && serviciosGenericos.length > 0
     ? `
       <section class="perfil-seccion">
         <h4>Servicios</h4>

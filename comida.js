@@ -176,7 +176,36 @@
   document.addEventListener('keydown',e=>{const pista=e.target.closest('.catalogo-pista');if(pista&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();moverFotoCatalogo(pista,e.key==='ArrowRight'?1:-1);}});
 
 
+  function carta(n) {
+    const secciones = new Map();
+    for (const p of productos(n)) {
+      if (p.eliminado) continue;
+      if (!secciones.has(p.seccion)) secciones.set(p.seccion, new Map());
+      const grupos = secciones.get(p.seccion);
+      const grupo = p.subgrupo || '';
+      if (!grupos.has(grupo)) grupos.set(grupo, []);
+      grupos.get(grupo).push(p);
+    }
+
+    const detalle = (nombre, contenido) =>
+      `<details class="comida-seccion"><summary><span class="seccion-nombre">${escapar(nombre)}</span></summary><div class="perfil-seccion">${contenido}</div></details>`;
+    const lista = [...secciones].map(([seccion, grupos]) => {
+      const nota = n.notasCarta?.[seccion];
+      const platillos = [...grupos].map(([grupo, lista]) =>
+        `${grupo ? `<h5>${escapar(grupo)}</h5>` : ''}<ul>${lista.map(p =>
+          `<li>${escapar(p.nombre)} · <strong>${dinero(Math.round(p.precio * 100))}</strong>${p.ingredientes ? `<br><small>${escapar(p.ingredientes)}</small>` : ''}</li>`
+        ).join('')}</ul>`
+      ).join('');
+      return detalle(seccion, `${nota ? `<p><small>* ${escapar(nota)}</small></p>` : ''}${platillos}`);
+    });
+    if (n.servicios?.length) {
+      lista.push(detalle('Servicios especiales', `<ul>${n.servicios.map(s => `<li>${escapar(window.ServiciosExhibicion.nombre(s))}</li>`).join('')}</ul>`));
+    }
+    return `<section class="comida-menu" aria-label="Menú digital"><h4>Menú digital</h4><p>Precios en MXN.</p>${lista.join('')}</section>`;
+  }
+
   function menu(n) {
+    if (n.tipoCatalogo === 'carta') return carta(n);
     if(n.tipoCatalogo==='tecnico'||n.slug==='el-titan-de-las-pinturas')return catalogoSayer(n);
     if(n.tipoCatalogo==='visual')return catalogoVisual(n);
     if (!productos(n).length && !pedidoEspecialActivo(n)) return '';

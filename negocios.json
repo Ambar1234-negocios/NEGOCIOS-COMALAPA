@@ -6368,5 +6368,801 @@
       }
     }
   ]
-}
+},
+  {
+    "id": 1795066482887,
+    "nombre": "Restaurante Shangai",
+    "slug": "restaurante-shangai",
+    "categoria": "comida",
+    "descripcion": "Desde 2009. Comida china, mexicana, mariscos y snacks.",
+    "telefono": "963 236 2016",
+    "direccion": "Plaza del Ángel Centro",
+    "activo": true,
+    "tipoCatalogo": "carta",
+    "pedidoEspecial": false,
+    "servicios": [
+      "Charolas",
+      "Reservación de mesa para eventos",
+      "Servicio de banquetes",
+      "Facturamos tu consumo"
+    ],
+    "notasCarta": {
+      "Desayunos": "Acompañado de chilaquiles, plátanos fritos, frijoles y Café/té"
+    },
+    "productos": [
+      {
+        "id": "shangai-desayunos-huevos-al-gusto-chorizo-jamon-salchicha-tocino-a-la-mexicana-revueltos-estrellados",
+        "nombre": "Huevos al gusto: Chorizo, jamón, salchicha, tocino, a la mexicana, revueltos, estrellados",
+        "precio": 90,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-desayunos-huevos-motulenos",
+        "nombre": "Huevos motuleños",
+        "precio": 110,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-desayunos-huevos-rancheros",
+        "nombre": "Huevos rancheros",
+        "precio": 110,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-desayunos-huevos-con-machaca",
+        "nombre": "Huevos con machaca",
+        "precio": 110,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-desayunos-omelet",
+        "nombre": "Omelet",
+        "precio": 110,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-desayunos-omelete-al-albanil",
+        "nombre": "Omelete al albañil",
+        "precio": 120,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-desayunos-chilaquiles-con-pollo-huevo-o-combinados",
+        "nombre": "Chilaquiles con pollo, huevo o combinados",
+        "precio": 120,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-desayunos-chilaquiles-con-carne-asada",
+        "nombre": "Chilaquiles con carne asada",
+        "precio": 140,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-desayunos-chilaquiles-shangai",
+        "nombre": "Chilaquiles Shangai",
+        "precio": 160,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-desayunos-enchiladas-suizas",
+        "nombre": "Enchiladas Suizas",
+        "precio": 120,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-desayunos-enfrijoladas",
+        "nombre": "Enfrijoladas",
+        "precio": 120,
+        "seccion": "Desayunos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chow-mein-pasta-especial-pollo-y-camaron",
+        "nombre": "Especial <Pollo y Camarón>",
+        "precio": 150,
+        "seccion": "Comida china",
+        "subgrupo": "Chow Mein (Pasta)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chow-mein-pasta-pollo",
+        "nombre": "Pollo",
+        "precio": 150,
+        "seccion": "Comida china",
+        "subgrupo": "Chow Mein (Pasta)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chow-mein-pasta-res",
+        "nombre": "Res",
+        "precio": 180,
+        "seccion": "Comida china",
+        "subgrupo": "Chow Mein (Pasta)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chow-mein-pasta-camaron",
+        "nombre": "Camarón",
+        "precio": 190,
+        "seccion": "Comida china",
+        "subgrupo": "Chow Mein (Pasta)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chop-suey-germinado-de-soya-especial-pollo-y-camaron",
+        "nombre": "Especial <Pollo y Camarón>",
+        "precio": 160,
+        "seccion": "Comida china",
+        "subgrupo": "Chop Suey (Germinado de Soya)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chop-suey-germinado-de-soya-pollo",
+        "nombre": "Pollo",
+        "precio": 160,
+        "seccion": "Comida china",
+        "subgrupo": "Chop Suey (Germinado de Soya)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chop-suey-germinado-de-soya-res",
+        "nombre": "Res",
+        "precio": 180,
+        "seccion": "Comida china",
+        "subgrupo": "Chop Suey (Germinado de Soya)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chop-suey-germinado-de-soya-camaron",
+        "nombre": "Camarón",
+        "precio": 190,
+        "seccion": "Comida china",
+        "subgrupo": "Chop Suey (Germinado de Soya)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chow-fan-arroz-chino-especial-pollo-y-camaron",
+        "nombre": "Especial <Pollo y Camarón>",
+        "precio": 150,
+        "seccion": "Comida china",
+        "subgrupo": "Chow Fan (Arroz Chino)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chow-fan-arroz-chino-pollo",
+        "nombre": "Pollo",
+        "precio": 150,
+        "seccion": "Comida china",
+        "subgrupo": "Chow Fan (Arroz Chino)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chow-fan-arroz-chino-res",
+        "nombre": "Res",
+        "precio": 180,
+        "seccion": "Comida china",
+        "subgrupo": "Chow Fan (Arroz Chino)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-chow-fan-arroz-chino-camaron",
+        "nombre": "Camarón",
+        "precio": 190,
+        "seccion": "Comida china",
+        "subgrupo": "Chow Fan (Arroz Chino)",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-china-cantones-especial",
+        "nombre": "Cantonés Especial",
+        "precio": 170,
+        "seccion": "Comida china",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-china-pollo-cantones",
+        "nombre": "Pollo Cantonés",
+        "precio": 170,
+        "seccion": "Comida china",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-china-camaron-cantones",
+        "nombre": "Camarón Cantonés",
+        "precio": 180,
+        "seccion": "Comida china",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-china-filete-de-pescado-cantones",
+        "nombre": "Filete de Pescado Cantonés",
+        "precio": 180,
+        "seccion": "Comida china",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-china-bistec-cantones",
+        "nombre": "Bistec Cantonés",
+        "precio": 180,
+        "seccion": "Comida china",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-china-pollo-agridulce",
+        "nombre": "Pollo Agridulce",
+        "precio": 180,
+        "seccion": "Comida china",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-china-sopa-ramen",
+        "nombre": "Sopa Ramen",
+        "precio": 120,
+        "seccion": "Comida china",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-china-sopa-de-hongos",
+        "nombre": "Sopa de Hongos",
+        "precio": 150,
+        "seccion": "Comida china",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-aperitivos-rollitos-primavera",
+        "nombre": "Rollitos Primavera",
+        "precio": 100,
+        "seccion": "Comida china",
+        "subgrupo": "Aperitivos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-aperitivos-rollitos-primavera-especiales",
+        "nombre": "Rollitos Primavera Especiales",
+        "precio": 140,
+        "seccion": "Comida china",
+        "subgrupo": "Aperitivos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-aperitivos-ravioles-de-pollo",
+        "nombre": "Ravioles de Pollo",
+        "precio": 150,
+        "seccion": "Comida china",
+        "subgrupo": "Aperitivos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-aperitivos-ravioles-de-camaron",
+        "nombre": "Ravioles de Camarón",
+        "precio": 180,
+        "seccion": "Comida china",
+        "subgrupo": "Aperitivos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-pechuga-a-la-plancha",
+        "nombre": "Pechuga a la plancha",
+        "precio": 130,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-pechuga-cordon-bleu",
+        "nombre": "Pechuga Cordon Bleu",
+        "precio": 160,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-carne-asada",
+        "nombre": "Carne Asada",
+        "precio": 150,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-bistec-a-la-mexicana",
+        "nombre": "Bistec a la Mexicana",
+        "precio": 150,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-milanesa-de-pollo",
+        "nombre": "Milanesa de Pollo",
+        "precio": 140,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-milanesa-de-res",
+        "nombre": "Milanesa de Res",
+        "precio": 150,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-fajitas-de-pollo",
+        "nombre": "Fajitas de Pollo",
+        "precio": 130,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-fajitas-de-res",
+        "nombre": "Fajitas de Res",
+        "precio": 150,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-fajitas-mar-y-tierra",
+        "nombre": "Fajitas Mar y Tierra",
+        "precio": 160,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-fajitas-especiales",
+        "nombre": "Fajitas Especiales",
+        "precio": 160,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-tampiquena",
+        "nombre": "Tampiqueña",
+        "precio": 170,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-fettuccini-bolones",
+        "nombre": "Fettuccini boloñés",
+        "precio": 130,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-ensalada-shangai",
+        "nombre": "Ensalada Shangai",
+        "precio": 130,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-verduras-al-vapor",
+        "nombre": "Verduras al vapor",
+        "precio": 60,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-comida-mexicana-caldo-tlalpeno",
+        "nombre": "Caldo Tlalpeño",
+        "precio": 120,
+        "seccion": "Comida mexicana",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-camarones-empanizados",
+        "nombre": "Camarones empanizados",
+        "precio": 160,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-camarones-al-ajo-jugosos-secos",
+        "nombre": "Camarones al ajo jugosos-secos",
+        "precio": 160,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-camarones-a-la-plancha",
+        "nombre": "Camarones a la plancha",
+        "precio": 160,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-camarones-enchilados",
+        "nombre": "Camarones enchilados",
+        "precio": 160,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-camarones-shangai-rellenos",
+        "nombre": "Camarones Shangai (Rellenos)",
+        "precio": 190,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-camarones-a-la-boston",
+        "nombre": "Camarones a la boston",
+        "precio": 190,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-filete-de-pescado-al-ajo",
+        "nombre": "Filete de pescado al ajo",
+        "precio": 160,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-filete-de-pescado-al-vapor",
+        "nombre": "Filete de pescado al vapor",
+        "precio": 160,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-filete-de-pescado-empanizado",
+        "nombre": "Filete de pescado empanizado",
+        "precio": 160,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-coctel-de-camaron-chico",
+        "nombre": "Coctel de camarón chico",
+        "precio": 100,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-coctel-de-camaron-mediano",
+        "nombre": "Coctel de camarón mediano",
+        "precio": 140,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-coctel-de-camaron-grande",
+        "nombre": "Coctel de camarón grande",
+        "precio": 170,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-ensalada-de-camaron",
+        "nombre": "Ensalada de camarón",
+        "precio": 160,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-ensalada-de-camaron-shangai",
+        "nombre": "Ensalada de camarón Shangai",
+        "precio": 160,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-aguachiles-rojos-12-pzas",
+        "nombre": "Aguachiles rojos (12 pzas.)",
+        "precio": 190,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-mariscos-consome-de-camaron",
+        "nombre": "Consomé de camarón",
+        "precio": 160,
+        "seccion": "Mariscos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-snacks-hamburguesa-clasica-c-papas",
+        "nombre": "Hamburguesa clásica c/papas",
+        "precio": 90,
+        "seccion": "Snacks",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-snacks-hamburguesa-hawaiana-c-papas",
+        "nombre": "Hamburguesa hawaiana c/papas",
+        "precio": 110,
+        "seccion": "Snacks",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-snacks-club-sandwich-c-papas",
+        "nombre": "Club sandwich c/papas",
+        "precio": 90,
+        "seccion": "Snacks",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-snacks-sincronizada-especial-c-papas",
+        "nombre": "Sincronizada especial c/papas",
+        "precio": 90,
+        "seccion": "Snacks",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-snacks-dedos-de-queso-c-papas",
+        "nombre": "Dedos de queso c/papas",
+        "precio": 80,
+        "seccion": "Snacks",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-snacks-nachos-shangai",
+        "nombre": "Nachos Shangai",
+        "precio": 140,
+        "seccion": "Snacks",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-snacks-platanos-fritos",
+        "nombre": "Plátanos fritos",
+        "precio": 60,
+        "seccion": "Snacks",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-snacks-salchipapas",
+        "nombre": "Salchipapas",
+        "precio": 65,
+        "seccion": "Snacks",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-snacks-papas-a-la-francesa",
+        "nombre": "Papas a la francesa",
+        "precio": 65,
+        "seccion": "Snacks",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-snacks-alitas",
+        "nombre": "Alitas",
+        "precio": 130,
+        "seccion": "Snacks",
+        "ingredientes": "BBQ, BBQ PICANTES, MIEL MOSTAZA, MANGO HABANERO, BÚFALO, VALENTINA C/papas",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-bebidas-aguas-frescas-de-temporada",
+        "nombre": "Aguas frescas de temporada",
+        "precio": 35,
+        "seccion": "Bebidas",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-bebidas-licuados-chocomilk-tascalate-fresa-avena-granola",
+        "nombre": "Licuados: Chocomilk, tascalate, fresa, avena, granola",
+        "precio": 60,
+        "seccion": "Bebidas",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-bebidas-licuados-combinados",
+        "nombre": "Licuados combinados",
+        "precio": 70,
+        "seccion": "Bebidas",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-complementos-salsa-shangai-lt",
+        "nombre": "Salsa Shangai ½ Lt.",
+        "precio": 75,
+        "seccion": "Complementos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-complementos-salsa-shangai-1-lt",
+        "nombre": "Salsa Shangai 1 Lt.",
+        "precio": 140,
+        "seccion": "Complementos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-complementos-ensalada-de-pepino-shangai",
+        "nombre": "Ensalada de pepino Shangai",
+        "precio": 50,
+        "seccion": "Complementos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-complementos-totopos-bolsa-grande",
+        "nombre": "Totopos bolsa grande",
+        "precio": 30,
+        "seccion": "Complementos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      },
+      {
+        "id": "shangai-complementos-sopa-fria",
+        "nombre": "Sopa fría",
+        "precio": 90,
+        "seccion": "Complementos",
+        "soloInformativo": true,
+        "extras": [],
+        "gruposOpciones": []
+      }
+    ]
+  }
 ]
