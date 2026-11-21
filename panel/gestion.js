@@ -10,6 +10,7 @@ function campoLista(z,obj,k,label){const d={valor:(obj[k]||[]).join('\n')};const
 function fotosGestion(z,obj,k,label,multiple=false,resolver=null){const input=entrada(z,'fotos-'+k+'-'+archivosGestion.length,label,'file');input.accept='image/jpeg,image/png,image/webp';input.multiple=multiple;const vistas=nodo('div',undefined,'gestion-fotos');z.append(vistas);function ver(){vistas.replaceChildren();const fotos=multiple?obj[k]||[]:obj[k]?[obj[k]]:[];for(const src of fotos){const img=nodo('img');img.src=resolver?resolver(src):src.startsWith('imagenes/')?location.origin+'/'+src:src;img.alt=label;vistas.append(img);}if(input.files.length)vistas.append(nodo('p',input.files.length+' foto(s) nueva(s) seleccionada(s). Se publican al guardar.'));}ver();input.onchange=ver;archivosGestion.push({input,obj,k,multiple});const b=nodo('button','Quitar '+label.toLowerCase(),'secundario');b.type='button';b.onclick=()=>{if(!confirm('¿Quitar las fotos de este campo? Podrás volver a subirlas.'))return;obj[k]=multiple?[]:'';input.value='';ver();};z.append(b);}
 function listaDetalles(z,obj,k,titulo,claves){const bloque=nodo('section');bloque.append(nodo('h4',titulo));const cont=nodo('div'),agregar=nodo('button','＋ Agregar','secundario');agregar.type='button';const filas=[];function fila(item={}){const d={...item},b=nodo('div',undefined,'gestion-grupo');for(const[key,label]of claves)campoGestion(b,d,key,label,['descripcion','respuesta'].includes(key)?'textarea':'text');const quitar=nodo('button','Quitar','secundario');quitar.type='button';const f={d,activo:true};filas.push(f);quitar.onclick=()=>{f.activo=false;b.hidden=true;};b.append(quitar);cont.append(b);}for(const d of obj[k]||[])fila(d);agregar.onclick=()=>fila();bloque.append(cont,agregar);z.append(bloque);lectoresGestion.push(()=>obj[k]=filas.filter(f=>f.activo).map(f=>f.d));}
 function horariosGestion(z,obj){const h=structuredClone(obj.horarios||{});for(const dia of dias){const d=h[dia]||{modo:'cerrado',turnos:[]},g=nodo('section',undefined,'gestion-grupo');g.append(nodo('h4',dia[0].toUpperCase()+dia.slice(1)));campoGestion(g,d,'modo','Horario', 'text',[['sin_confirmar','Sin confirmar'],['abierto','Abierto'],['cerrado','Cerrado'],['24h','24 horas']]);const turnos=[...(d.turnos||[])];for(let j=0;j<2;j++){const turno=turnos[j]||{inicio:'',fin:''};const r=nodo('div',undefined,'gestion-horario');campoGestion(r,turno,'inicio','Turno '+(j+1)+' · abre','time');campoGestion(r,turno,'fin','Cierra','time');g.append(r);turnos[j]=turno;}lectoresGestion.push(()=>{d.turnos=turnos.filter(t=>t.inicio&&t.fin);if(d.modo==='abierto'&&!d.turnos.length)throw Error('Completa un turno para '+dia+'.');h[dia]=d;});z.append(g);}lectoresGestion.push(()=>obj.horarios=h);}
+let perfilGestionSolicitado = new URLSearchParams(location.search).get('editar');
 async function cargarGestion() {
   [menusGestion, registrosGestion, empenosGestion] = await Promise.all([
     api('/rest/v1/piloto_menus_completos?select=slug,original,revision,plan&order=slug'),
@@ -18,6 +19,11 @@ async function cargarGestion() {
   ]);
   pintarGestion();
   aviso('Contenido actualizado.');
+  if (perfilGestionSolicitado) {
+    const fila = filasGestion.find(f => f.id === perfilGestionSolicitado && f.empeno);
+    perfilGestionSolicitado = null;
+    if (fila) abrirGestion(fila);
+  }
 }
 
 function filasNegociosGestion(esPropiedad) {
@@ -78,11 +84,16 @@ function datosPerfilPermitidos(d){const permitidos=['nombre','slug','categoria',
 function editorPerfilEmpenoGestion(d) {
   const datos = seccionGestion('🏪 Datos del negocio');
   campoGestion(datos,d,'nombre','Nombre').required = true;
-  const slug = entrada(datos,'empeno-slug-gestion','Identificador del enlace');
+  const slug = entrada(datos,'empeno-slug-gestion','Identificador del enlace · ejemplo: mi-negocio');
   slug.value = d.slug;
   slug.readOnly = true;
-  campoGestion(datos,d,'rubro','Rubro').required = true;
+  const opciones = registrosGestion.filter(r => r.tipo === 'categorias').map(r => [r.id,r.contenido.nombre]);
+  if (!opciones.some(([id]) => id === d.categoria)) opciones.push([d.categoria,d.categoria]);
+  campoGestion(datos,d,'categoria','Categoría','text',opciones).required = true;
+  campoGestion(datos,d,'rubro','Frase corta').required = true;
   campoGestion(datos,d,'descripcion','Descripción','textarea');
+  campoGestion(datos,d,'activo','Visible en la página','checkbox');
+  campoGestion(datos,d,'verificado','Insignia de negocio verificado','checkbox');
 
   const contacto = seccionGestion('📞 Contacto y ubicación');
   for (const [key, label] of [['telefono','Teléfono'],['whatsapp','WhatsApp']]) {
@@ -112,7 +123,7 @@ function editorPerfilEmpenoGestion(d) {
 }
 async function guardarFilaGestion(fila,d){
  if(fila.empeno) {
-   const campos = ['nombre','rubro','descripcion','telefono','whatsapp','direccion','horarios','facebook','tiktok','instagram',
+   const campos = ['nombre','categoria','rubro','descripcion','activo','verificado','telefono','whatsapp','direccion','horarios','facebook','tiktok','instagram',
      'cotizar_texto','cotizar_mensaje','catalogo_texto','logo','banner'];
    const cambios = Object.fromEntries(campos.filter(k => JSON.stringify(d[k]) !== JSON.stringify(fila.contenido[k])).map(k => [k,d[k]]));
    if (Object.keys(cambios).length) {

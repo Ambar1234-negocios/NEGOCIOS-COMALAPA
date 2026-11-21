@@ -8,13 +8,14 @@
   panel.prepend(editor);
   const {dias: diasPublicos, foto} = window.EmpenoExhibicion;
   const camposPerfil = {
-    nombre: 'Nombre', rubro: 'Rubro', descripcion: 'Descripción', telefono: 'Teléfono',
+    nombre: 'Nombre', rubro: 'Frase corta', descripcion: 'Descripción', telefono: 'Teléfono',
     whatsapp: 'WhatsApp', direccion: 'Dirección', facebook: 'Nombre en Facebook',
     tiktok: 'Nombre en TikTok', instagram: 'Nombre en Instagram',
     cotizar_texto: 'Texto del botón de cotización', cotizar_mensaje: 'Mensaje de cotización en WhatsApp',
     catalogo_texto: 'Texto del botón para ver el catálogo'
   };
   let perfil, categorias, articulos;
+  let categoriasDirectorio = [];
 
   function campo(form, nombre, etiqueta, valor, opciones = {}) {
     const label = nodo('label', etiqueta);
@@ -87,6 +88,7 @@
     seccion.append(nodo('h3', 'Datos públicos del negocio'));
     const {form, finalizar} = formulario(seccion, 'Publicar datos del negocio', async datos => {
       const cambios = Object.fromEntries(Object.keys(camposPerfil).map(key => [key, datos.get(key).trim()]));
+      cambios.categoria = datos.get('categoria');
       cambios.horarios = diasPublicos.map((_, i) => datos.get('horario' + i).trim());
       Object.assign(cambios, await guardarFotosPerfil());
       const guardado = await cambiar('empeno_perfiles', 'PATCH', cambios);
@@ -102,6 +104,11 @@
     for (const [key, texto] of Object.entries(camposPerfil)) {
       const control = campo(form, key, texto, perfil[key], key === 'descripcion' ? 'textarea' : {});
       control.required = ['nombre', 'rubro', 'telefono', 'whatsapp', 'cotizar_texto', 'cotizar_mensaje', 'catalogo_texto'].includes(key);
+      if (key === 'nombre') {
+        const opciones = categoriasDirectorio.filter(c => c.activo !== false && !c.eliminada).map(c => [c.id,c.nombre]);
+        if (!opciones.some(([id]) => id === perfil.categoria)) opciones.push([perfil.categoria,perfil.categoria]);
+        selector(form,'categoria','Categoría',perfil.categoria,opciones);
+      }
       control.maxLength = ({nombre:120, rubro:100, descripcion:2000, telefono:10, whatsapp:10,
         cotizar_texto:100, cotizar_mensaje:500, catalogo_texto:100})[key] || 200;
       if (key === 'telefono' || key === 'whatsapp') {
@@ -300,10 +307,14 @@
 
   async function cargarDatos() {
     const filtro = '?negocio=eq.' + encodeURIComponent(perfil.slug);
-    [categorias, articulos] = await Promise.all([
+    const soloCatalogo = desdeAdministracion && location.hash === '#catalogo-negocio';
+    let publicacion;
+    [categorias, articulos, publicacion] = await Promise.all([
       api('/rest/v1/empeno_categorias' + filtro + '&order=orden,nombre,id'),
-      api('/rest/v1/empeno_articulos' + filtro + '&order=nombre,id')
+      api('/rest/v1/empeno_articulos' + filtro + '&order=nombre,id'),
+      soloCatalogo ? null : api('/rest/v1/rpc/sitio_publicacion',{method:'POST',datos:{}})
     ]);
+    categoriasDirectorio = publicacion?.documentos?.categorias || [];
     const cabecera = nodo('header', undefined, 'tarjeta');
     const acciones = nodo('div', undefined, 'empeno-controles');
     const enlace = nodo('a', 'Ver perfil público', 'enlace-boton');
@@ -314,13 +325,19 @@
       const volver = nodo('a', 'Volver a Administrar página', 'enlace-boton');
       volver.href = 'gestion.html#negocios';
       acciones.append(volver);
+      if (soloCatalogo) {
+        const editar = nodo('a', 'Editar datos y fotos', 'enlace-boton');
+        editar.href = 'gestion.html?editar=' + encodeURIComponent(perfil.slug) + '#negocios';
+        acciones.append(editar);
+      }
     }
     if (perfil.activo === false) cabecera.append(nodo('p', 'Negocio pausado por administración. El perfil está oculto.', 'aviso'));
     else acciones.append(enlace);
     acciones.append(boton('Actualizar', () => tarea(cargarMenuCompleto)),
       boton('Salir', () => el('salir').onclick()));
     cabecera.append(nodo('h2', perfil.nombre), nodo('p', (desdeAdministracion ? 'Administración: ' : 'Cuenta: ') + cuenta.user.email), acciones);
-    editor.replaceChildren(cabecera, editarPerfil(), gestionarCategorias(), gestionarArticulos());
+    const secciones = soloCatalogo ? [] : [editarPerfil()];
+    editor.replaceChildren(cabecera, ...secciones, gestionarCategorias(), gestionarArticulos());
   }
 
   const cargarMenuOriginal = cargarMenuCompleto;
@@ -350,8 +367,8 @@
     const seccion = location.hash.slice(1);
     if (desdeAdministracion && ['datos-negocio', 'catalogo-negocio'].includes(seccion)) {
       const destino = el(seccion);
-      destino.focus({preventScroll: true});
-      destino.scrollIntoView({block: 'start'});
+      destino?.focus({preventScroll: true});
+      destino?.scrollIntoView({block: 'start'});
     }
   };
 

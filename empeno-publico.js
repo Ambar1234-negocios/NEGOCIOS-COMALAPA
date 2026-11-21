@@ -94,7 +94,11 @@
       logo.alt = 'Foto de perfil de ' + negocio.nombre;
       cabecera.append(logo);
     }
-    cabecera.append(nodo('p', negocio.rubro), nodo('h3', negocio.nombre), nodo('p', negocio.descripcion));
+    const encabezado = nodo('h3', negocio.nombre);
+    if (negocio.verificado) {
+      encabezado.append(' ', nodo('small', '✓ Negocio verificado'));
+    }
+    cabecera.append(nodo('p', negocio.rubro), encabezado, nodo('p', negocio.descripcion));
     const acciones = nodo('div', null, 'empeno-acciones');
     const seccion = nodo('section', null, 'catalogo-visual empeno-catalogo');
     const titulo = nodo('h4', 'Catálogo de artículos');
@@ -149,7 +153,7 @@
       return filas.map(p => ({
         slug: p.slug, nombre: p.nombre, descripcion: p.descripcion, slogan: p.rubro,
         logo: p.logo ? foto(p.slug,p.logo) : '', banner: p.banner ? foto(p.slug,p.banner) : '',
-        categoria: 'comercios', tipoCatalogo: 'empeno', empeno: p
+        categoria: p.categoria, verificado: p.verificado, tipoCatalogo: 'empeno', empeno: p
       }));
     }
   };
