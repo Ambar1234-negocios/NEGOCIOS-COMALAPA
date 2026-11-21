@@ -1,20 +1,149 @@
-.empeno-perfil { padding: clamp(1rem, 4vw, 2.5rem); }
-.empeno-perfil > * + * { margin-block-start: 1.25rem; }
-.empeno-cabecera h3 { font-size: clamp(1.6rem, 5vw, 2.7rem); }
-.empeno-acciones, .empeno-controles { display: flex; gap: .65rem; flex-wrap: wrap; }
-.empeno-catalogo { padding-block: 1rem; }
-.empeno-catalogo > h4 { font-size: 1.4rem; scroll-margin-block-start: 5rem; }
-.empeno-articulos { display: flex; overflow-x: auto; gap: .8rem; padding: .4rem; }
-.empeno-articulo { flex: 0 0 min(18rem, 88%); border: 1px solid #83938b; border-radius: .8rem; padding: .8rem; }
-.empeno-articulo h5 { font-size: 1rem; }
-.empeno-apartado { display: inline-block; background: #ffe6a7; color: #402d00; border-radius: .3rem; padding: .2rem .45rem; }
-.empeno-fotos { display: flex; overflow: auto; gap: .5rem; scroll-snap-type: x mandatory; }
-.empeno-fotos img { width: 100%; aspect-ratio: 4/3; object-fit: contain; scroll-snap-align: start; flex: 0 0 100%; }
-.empeno-editor .empeno-fotos img { width: 5rem; flex: none; }
+
+.perfil-negocio.empeno-perfil {
+  background: #fbf8f4;
+  color: #291d22;
+  padding: clamp(.8rem, 3vw, 2rem);
+  border: 1px solid #e9e0da;
+  border-radius: 1.5rem;
+  overflow-wrap: anywhere;
+}
+.empeno-perfil > * + * { margin-block-start: clamp(1.25rem, 3vw, 2.25rem); }
+.empeno-perfil h3, .empeno-perfil h4, .empeno-perfil h5, .empeno-perfil h6,
+.empeno-perfil p, .empeno-visor h4 { margin: 0; }
+.empeno-perfil button, .empeno-visor button { cursor: pointer; font: inherit; }
+.empeno-perfil :is(button, a):focus-visible, .empeno-visor :is(button, a, .empeno-fotos):focus-visible {
+  outline: 3px solid #b66a19;
+  outline-offset: 3px;
+}
+.empeno-regreso {
+  border: 0;
+  background: transparent;
+  color: #642d3c;
+  padding: .5rem .2rem;
+  font-weight: 700 !important;
+}
+.empeno-hero {
+  display: grid;
+  gap: clamp(1.15rem, 3vw, 1.85rem);
+  padding: clamp(1.15rem, 4vw, 3rem);
+  color: #fff;
+  background: radial-gradient(ellipse at top right, #703046, transparent 67%), #341725;
+  border-radius: 1.2rem;
+}
+.empeno-portada { display: block; width: 100%; max-height: 19rem; aspect-ratio: 3 / 1; object-fit: cover; border-radius: .85rem; }
+.empeno-cabecera { display: flex; align-items: center; flex-wrap: wrap; gap: clamp(1rem, 4vw, 2.5rem); }
+.empeno-intro { flex: 1 1 16rem; min-width: 0; display: grid; gap: .6rem; }
+.empeno-logo {
+  display: block;
+  width: clamp(7rem, 17vw, 10.75rem);
+  aspect-ratio: 1;
+  object-fit: contain;
+  border: 1px solid #f3ddd2;
+  border-radius: 1.25rem;
+  padding: .55rem;
+  background: #fff;
+  box-shadow: 0 .65rem 1.6rem #230a17a0;
+}
+.empeno-hero .empeno-intro h3 {
+  font-size: clamp(1.65rem, 4.5vw, 3.15rem);
+  line-height: 1.08;
+  letter-spacing: -.035em;
+  color: #fff;
+}
+.empeno-rubro, .empeno-verificado { color: #f9cea1; font-size: .93rem; font-weight: 750; }
+.empeno-descripcion { max-width: 55ch; color: #f6e7e8; line-height: 1.6; }
+.empeno-acciones, .empeno-controles { display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
+.empeno-cta {
+  min-height: 3.25rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: .7rem 1.15rem;
+  border: 1px solid transparent;
+  border-radius: .7rem;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 750 !important;
+}
+.empeno-cta-principal { background: #156b49; color: #fff; }
+.empeno-cta-principal:hover { background: #10533a; }
+.empeno-cta-secundario { background: #ffedce; color: #442132; }
+.empeno-cta-secundario:hover { background: #ffdaa2; }
+.empeno-llamar { color: #ffe6dd; padding: .6rem .35rem; text-underline-offset: .2rem; }
+.empeno-catalogo > h4, .empeno-datos > h4 { margin-bottom: .9rem; font-size: clamp(1.3rem, 3vw, 1.9rem); scroll-margin-block-start: 5rem; }
+.empeno-categorias { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,12rem),1fr)); gap: .65rem; }
+.empeno-categoria {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 3.3rem;
+  gap: .45rem;
+  padding: .7rem .85rem;
+  border: 1px solid #e1d0ce;
+  border-radius: .7rem;
+  background: #fff;
+  color: #533043;
+  text-align: left;
+  font-weight: 700 !important;
+}
+.empeno-categoria:hover { border-color: #863e58; }
+.empeno-categoria[aria-pressed="true"] { background: #642d44; border-color: #642d44; color: #fff; }
+.empeno-categoria-flecha { flex: none; font-size: 1.25rem; line-height: 1; }
+.empeno-resultado { margin-top: 1rem; min-width: 0; }
+.empeno-resultado h5 { margin-bottom: .65rem; font-size: 1.15rem; }
+.empeno-vacio { background: #f1e9e4; border-radius: .8rem; color: #59434b; padding: .95rem 1rem; }
+.empeno-articulos { display: grid; grid-template-columns: repeat(auto-fill,minmax(min(100%,15rem),1fr)); gap: .9rem; }
+.empeno-articulo { min-width: 0; background: #fff; border: 1px solid #ecdeda; border-radius: .9rem; overflow: hidden; }
+.empeno-articulo-datos { padding: .9rem; display: grid; justify-items: start; gap: .6rem; }
+.empeno-articulo h6 { font-size: 1.05rem; line-height: 1.3; }
+.empeno-articulo p { font-size: .94rem; color: #5d4c51; white-space: pre-line; }
+.empeno-estado { background: #dcefe4; color: #185336; border-radius: .35rem; font-size: .8rem; font-weight: 750; padding: .25rem .5rem; }
+.empeno-apartado { background: #ffe7b5; color: #674112; }
+.empeno-precio { color: #642d44; font-size: 1.03rem; }
+.empeno-consultar { display: inline-block; color: #156145; font-weight: 700; text-underline-offset: .2rem; }
+.empeno-fotos {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  background: #f4eeeb;
+}
+.empeno-fotos::-webkit-scrollbar { display: none; }
+.empeno-fotos > * { flex: 0 0 100%; width: 100%; min-width: 0; scroll-snap-align: start; }
+.empeno-fotos img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; }
+.empeno-fotos .empeno-abrir-foto { display: block; padding: 0; border: 0; border-radius: 0; background: transparent; }
+.empeno-galeria-controles { display: flex; align-items: center; justify-content: center; gap: .55rem; padding: .3rem; color: #4d3542; font-size: .85rem; }
+.empeno-galeria-controles .empeno-foto-flecha,
+.empeno-visor .empeno-cerrar { background: #f5eeeb; color: #4d273b; border: 1px solid #e6d6d4; padding: .35rem .7rem; border-radius: .45rem; min-height: 2.4rem; }
+.empeno-galeria-controles .empeno-foto-flecha { min-width: 2.5rem; font-size: 1.2rem; }
+.empeno-foto-flecha:disabled { opacity: .45; cursor: default; }
+.empeno-visor {
+  width: min(calc(100% - 1.5rem),48rem);
+  max-height: 92dvh;
+  background: #fffaf6;
+  color: #291d22;
+  border: 0;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+.empeno-visor::backdrop { background: #21121bd9; }
+.empeno-visor-cabecera { display: flex; justify-content: space-between; align-items: center; gap: .6rem; margin-bottom: .6rem; }
+.empeno-visor .empeno-fotos img { max-height: 62dvh; }
+.empeno-visor .empeno-consultar { margin-top: .65rem; }
+.empeno-datos-grupos { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,14rem),1fr)); gap: .75rem; }
+.empeno-dato { background: #fff; border: 1px solid #ecdeda; border-radius: .8rem; padding: .9rem; }
+.empeno-dato h5 { font-size: 1rem; margin-bottom: .55rem; }
+.empeno-dato p { margin-bottom: .4rem; color: #59434b; line-height: 1.5; }
+.empeno-horario { display: grid; grid-template-columns: 1fr 1fr; gap: .25rem .6rem; margin: 0; font-size: .9rem; }
+.empeno-horario dd { margin: 0; }
+@media (max-width: 36rem) {
+  .empeno-categorias { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .empeno-acciones .empeno-cta { flex: 1 1 100%; }
+}
 .empeno-editor form, .empeno-editor section { margin-block: 1rem; }
 .empeno-editor .empeno-foto-fila { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; margin-block: .35rem; }
 .empeno-editor .empeno-foto-fila img { width: 5rem; aspect-ratio: 4/3; object-fit: contain; }
 .panel-empeno > :not(#vista-empeno) { display: none !important; }
 .empeno-editor label input:not([type=checkbox]), .empeno-editor label textarea, .empeno-editor label select { display: block; width: 100%; }
-.empeno-logo { width: 5rem; height: 5rem; object-fit: cover; border-radius: 1rem; }
-.empeno-portada { display: block; width: 100%; aspect-ratio: 3 / 1; object-fit: cover; border-radius: 1rem; }
