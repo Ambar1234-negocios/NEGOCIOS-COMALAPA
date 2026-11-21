@@ -139,7 +139,13 @@ async function cargarNegociosPublicados() {
 // El localStorage se mantiene para que el administrador pueda previsualizar
 // cambios antes de publicarlos. Los visitantes normales recibirán negocios.json.
 if(!window.SitioPublicado)cargarNegociosLocales();
-const cargaNegociosPublicados = cargarNegociosPublicados();
+const cargaNegociosPublicados = Promise.all([
+  cargarNegociosPublicados(),
+  window.EmpenoExhibicion.perfiles().catch(error => {
+    console.warn('No se pudieron cargar las casas de empeño.', error);
+    return [];
+  })
+]).then(([, perfiles]) => agregarNegociosDinamicos(perfiles));
 
 let destacadosPublicados = [];
 
@@ -823,6 +829,11 @@ function verPerfil(categoria, index, opciones = {}) {
   }
 
   titulo.style.display = "none";
+
+  if (negocio.empeno) {
+    window.EmpenoExhibicion.renderizar(lista, negocio.empeno, () => volverCategoriaDesdePerfil(categoria));
+    return;
+  }
 
   const banner = negocio.banner || negocio.imagen || "";
   const logo = negocio.logo || "";
