@@ -1110,7 +1110,11 @@ function verPerfil(categoria, index, opciones = {}) {
     </article>
   `;
 
-  if (empeno) window.EmpenoExhibicion.conectar(lista.querySelector('.empeno-perfil'), empeno);
+  if (empeno) {
+    const ficha = lista.querySelector('.empeno-perfil');
+    window.EmpenoExhibicion.conectar(ficha, empeno);
+    window.MejorasExhibicion?.agregarCompartir?.(ficha, negocio);
+  }
   else window.ComidaExhibicion.conectar(negocio);
   setTimeout(() => {
     const tarjeta=opciones.productoId?Array.from(document.querySelectorAll('.perfil-oficial [data-producto-id]')).find(el=>el.dataset.productoId===opciones.productoId):null;

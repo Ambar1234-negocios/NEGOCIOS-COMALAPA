@@ -25,6 +25,9 @@
       }
     }
     for(const img of perfil.querySelectorAll('.perfil-hero-oficial img,.perfil-logo-oficial img')){if(img.closest('button'))continue;const b=document.createElement('button');b.type='button';b.className='mejora-ampliar';b.setAttribute('aria-label','Ampliar '+img.alt);img.replaceWith(b);b.append(img);b.onclick=()=>{const d=dialogo(img.alt,b),copia=document.createElement('img');copia.src=img.src;copia.alt=img.alt;copia.className='mejora-foto';copia.onerror=()=>{copia.replaceWith(document.createTextNode('No se pudo cargar la imagen.'));};d.querySelector('.mejora-contenido').append(copia);};}
+    agregarCompartir(perfil,n);
+  }
+  function agregarCompartir(perfil,n){
     if(!perfil.querySelector('.mejora-compartir')){const b=document.createElement('button');b.type='button';b.className='accion accion-compartir mejora-compartir';b.innerHTML='<span aria-hidden="true">↗</span><div><strong>'+ (n.propiedad?'Compartir propiedad':'Compartir negocio') +'</strong><small>Enviar enlace</small></div>';b.onclick=()=>compartir(n,b);const acciones=perfil.querySelectorAll('.perfil-acciones-oficial');acciones[acciones.length-1]?.append(b);}
   }
   function recopilar(lista,soloVigentes=true){const items=[];
@@ -45,7 +48,7 @@
   }
   document.addEventListener('click',e=>{const card=e.target.closest('[data-auto-slug]');if(card)window.dispatchEvent(new CustomEvent('comida-abrir',{detail:{slug:card.dataset.autoSlug,productoId:card.dataset.autoProducto}}));});
   document.addEventListener('keydown',e=>{const card=e.target.closest('[data-auto-slug]');if(card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();card.click();}});
-  window.MejorasExhibicion={perfil,ofertas,tarjetasOfertas,panelOfertas};
+  window.MejorasExhibicion={perfil,agregarCompartir,ofertas,tarjetasOfertas,panelOfertas};
   const dibujo='<svg viewBox="0 0 180 100" aria-hidden="true"><rect class="taxi-luz" x="65" y="7" width="50" height="21" rx="5" fill="#ffe66a"/><text x="90" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#202020">TAXI</text><path d="M38 62L52 30H123L143 62Z" fill="#f3c328"/><path d="M58 36H86V58H49ZM93 36H119L132 58H93Z" fill="#d0effa"/><rect x="17" y="56" width="146" height="27" rx="10" fill="#ffce34"/><path d="M24 70H155" stroke="#202020" stroke-width="6" stroke-dasharray="7 7"/><circle cx="47" cy="82" r="13" fill="#25332d"/><circle cx="133" cy="82" r="13" fill="#25332d"/><circle cx="47" cy="82" r="6" fill="#ddd"/><circle cx="133" cy="82" r="6" fill="#ddd"/></svg>';
   async function iniciar(){await window.ContactosExhibicion?.lista;const config=window.ContactosExhibicion?.actual.taxi||{numero:'',activo:false};
     const normal=v=>{const n=String(v||'').replace(/\D/g,'');return n.length===10?'52'+n:n;};
