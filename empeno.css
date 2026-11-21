@@ -102,8 +102,9 @@
 .empeno-visor .empeno-fotos img { max-height: 62dvh; }
 .empeno-visor .empeno-consultar { margin-top: .65rem; }
 @media (max-width: 48rem) {
+  .perfil-negocio.empeno-perfil .perfil-hero-oficial { height: auto; aspect-ratio: 16 / 5; }
   .empeno-perfil .perfil-cabecera-oficial { align-items: center; }
-  .empeno-perfil .perfil-logo-oficial { margin-top: -48px; }
+  .empeno-perfil .perfil-logo-oficial { margin-top: -38px; }
 }
 @media (max-width: 36rem) {
   .empeno-perfil .empeno-acciones { grid-template-columns: 1fr; }
