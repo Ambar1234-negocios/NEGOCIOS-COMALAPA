@@ -88,6 +88,12 @@
     const regreso = nodo('button', '← Volver a la categoría', 'btn-regresar-perfil');
     regreso.onclick = volver;
     const cabecera = nodo('header', null, 'empeno-cabecera');
+    if (negocio.logo) {
+      const logo = nodo('img', null, 'empeno-logo');
+      logo.src = foto(negocio.slug, negocio.logo);
+      logo.alt = 'Foto de perfil de ' + negocio.nombre;
+      cabecera.append(logo);
+    }
     cabecera.append(nodo('p', negocio.rubro), nodo('h3', negocio.nombre), nodo('p', negocio.descripcion));
     const acciones = nodo('div', null, 'empeno-acciones');
     const seccion = nodo('section', null, 'catalogo-visual empeno-catalogo');
@@ -123,7 +129,14 @@
     const zona = nodo('div', 'Cargando artículos…');
     zona.setAttribute('aria-live', 'polite');
     seccion.append(titulo, zona);
-    perfil.append(regreso, cabecera, datos, seccion);
+    perfil.append(regreso);
+    if (negocio.banner) {
+      const portada = nodo('img', null, 'empeno-portada');
+      portada.src = foto(negocio.slug, negocio.banner);
+      portada.alt = 'Portada de ' + negocio.nombre;
+      perfil.append(portada);
+    }
+    perfil.append(cabecera, datos, seccion);
     destino.replaceChildren(perfil);
     perfil.scrollIntoView({block: 'start'});
     catalogo(zona, negocio);
@@ -135,6 +148,7 @@
       const filas = await leer('empeno_perfiles?activo=eq.true&order=nombre');
       return filas.map(p => ({
         slug: p.slug, nombre: p.nombre, descripcion: p.descripcion, slogan: p.rubro,
+        logo: p.logo ? foto(p.slug,p.logo) : '', banner: p.banner ? foto(p.slug,p.banner) : '',
         categoria: 'comercios', tipoCatalogo: 'empeno', empeno: p
       }));
     }

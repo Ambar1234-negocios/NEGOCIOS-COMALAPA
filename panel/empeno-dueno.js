@@ -88,8 +88,15 @@
     const {form, finalizar} = formulario(seccion, 'Publicar datos del negocio', async datos => {
       const cambios = Object.fromEntries(Object.keys(camposPerfil).map(key => [key, datos.get(key).trim()]));
       cambios.horarios = diasPublicos.map((_, i) => datos.get('horario' + i).trim());
+      Object.assign(cambios, await guardarFotosPerfil());
       const guardado = await cambiar('empeno_perfiles', 'PATCH', cambios);
       perfil = guardado;
+      for (const [key,estado] of Object.entries(fotosPerfil)) {
+        estado.nombre = perfil[key];
+        estado.quitar = false;
+        estado.control.value = '';
+        estado.pintar();
+      }
       editor.querySelector('h2').textContent = perfil.nombre;
     }, false);
     for (const [key, texto] of Object.entries(camposPerfil)) {
@@ -102,6 +109,48 @@
         control.pattern = '[0-9]{10}';
         control.inputMode = 'numeric';
       }
+    }
+    const fotosPerfil = {};
+    for (const [key,label] of [['logo','Foto de perfil / logo'],['banner','Foto de portada']]) {
+      const control = campo(form,key,label,'',{type:'file',accept:'image/jpeg,image/png,image/webp'});
+      const vista = nodo('div',undefined,'empeno-foto-fila');
+      form.append(vista);
+      const estado = fotosPerfil[key] = {control, nombre:perfil[key], quitar:false};
+      const pintar = () => {
+        vista.replaceChildren();
+        if (control.files[0]) vista.append(nodo('span',control.files[0].name));
+        else if (estado.nombre && !estado.quitar) {
+          const img = nodo('img');
+          img.src = foto(perfil.slug,estado.nombre);
+          img.alt = label;
+          vista.append(img);
+        }
+        if (control.files[0] || (estado.nombre && !estado.quitar)) {
+          vista.append(boton('Quitar '+label.toLowerCase(),() => {
+            control.value = '';
+            estado.quitar = true;
+            pintar();
+          }));
+        }
+      };
+      estado.pintar = pintar;
+      control.onchange = pintar;
+      pintar();
+    }
+
+    async function guardarFotosPerfil() {
+      const cambios = {};
+      for (const [key,estado] of Object.entries(fotosPerfil)) {
+        const archivo = estado.control.files[0];
+        if (archivo) {
+          const imagen = await comprimir(archivo);
+          const nombre = crypto.randomUUID()+'.webp';
+          await api('/storage/v1/object/empeno-fotos/'+encodeURIComponent(perfil.slug)+'/'+nombre,
+            {method:'POST',datos:imagen});
+          cambios[key] = nombre;
+        } else if (estado.quitar) cambios[key] = '';
+      }
+      return cambios;
     }
     form.append(nodo('h4', 'Horario de atención'));
     diasPublicos.forEach((dia, i) => campo(form, 'horario' + i, dia, perfil.horarios[i], {required: true, maxLength: 80}));

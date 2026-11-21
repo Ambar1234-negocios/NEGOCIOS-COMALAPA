@@ -16,3 +16,5 @@
 .empeno-editor .empeno-foto-fila img { width: 5rem; aspect-ratio: 4/3; object-fit: contain; }
 .panel-empeno > :not(#vista-empeno) { display: none !important; }
 .empeno-editor label input:not([type=checkbox]), .empeno-editor label textarea, .empeno-editor label select { display: block; width: 100%; }
+.empeno-logo { width: 5rem; height: 5rem; object-fit: cover; border-radius: 1rem; }
+.empeno-portada { display: block; width: 100%; aspect-ratio: 3 / 1; object-fit: cover; border-radius: 1rem; }
