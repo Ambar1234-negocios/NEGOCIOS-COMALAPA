@@ -392,7 +392,7 @@ function obtenerFechaLocalExhibicion() {
 }
 
 function formatearHorarioDia(horarioDia) {
-  if (horarioDia?.modo === "sin_confirmar") return "Horario sin confirmar";
+  if (horarioDia?.modo === "sin_confirmar") return horarioDia.nota || "Horario sin confirmar";
   if (!horarioDia || horarioDia.modo === "cerrado") return "Cerrado";
   if (horarioDia.modo === "24h") return "Abierto 24 horas";
 
@@ -418,9 +418,13 @@ function renderizarHorarioPublico(negocio, estado = obtenerEstadoHorario(negocio
     const hoy = indice === indiceDia;
     return '<div class="horario-dia' + (hoy ? ' horario-dia-hoy' : '') + '"><dt>' + nombres[indice] + (hoy ? ' · Hoy' : '') + '</dt><dd>' + escapar(formatearHorarioDia(horarios[DIAS_HORARIO_PUBLICO[indice]])) + '</dd></div>';
   }).join('');
-  return '<div class="horario-publico"><p><strong>' + escapar(estado.texto) + '</strong></p>' +
-    '<p class="horario-manana">Mañana · ' + escapar(manana) + '</p>' +
-    '<button type="button" class="horario-toggle" aria-expanded="false" onclick="const semana=this.nextElementSibling;semana.hidden=!semana.hidden;this.setAttribute(\'aria-expanded\',String(!semana.hidden));this.textContent=semana.hidden?\'Ver horarios\':\'Ocultar horarios\'">Ver horarios</button>' +
+  const empeno = Boolean(negocio.empeno);
+  const titulo = empeno && estado.automatico ? (estado.estado === 'abierto' ? 'Abierto ahora' : 'Cerrado') : estado.texto;
+  const resumen = empeno ? 'Hoy · ' + formatearHorarioDia(horarios[DIAS_HORARIO_PUBLICO[indiceDia]]) : 'Mañana · ' + manana;
+  const ver = empeno ? 'Ver más' : 'Ver horarios';
+  return '<div class="horario-publico"><p><strong>' + escapar(titulo) + '</strong></p>' +
+    '<p class="horario-manana">' + escapar(resumen) + '</p>' +
+    '<button type="button" class="horario-toggle" aria-expanded="false" onclick="const semana=this.nextElementSibling;semana.hidden=!semana.hidden;this.setAttribute(\'aria-expanded\',String(!semana.hidden));this.textContent=semana.hidden?\'' + ver + '\':\'Ocultar horarios\'">' + ver + '</button>' +
     '<dl class="horario-semana" hidden>' + filas + '</dl></div>';
 }
 
@@ -830,11 +834,8 @@ function verPerfil(categoria, index, opciones = {}) {
 
   titulo.style.display = "none";
 
-  if (negocio.empeno) {
-    window.EmpenoExhibicion.renderizar(lista, negocio.empeno, () => volverCategoriaDesdePerfil(categoria));
-    return;
-  }
-
+  const escapar = escaparTarjetaCategoria;
+  const empeno = negocio.empeno;
   const banner = negocio.banner || negocio.imagen || "";
   const logo = negocio.logo || "";
   const estadoHorario = obtenerEstadoHorario(negocio);
@@ -856,7 +857,7 @@ function verPerfil(categoria, index, opciones = {}) {
       ${negocio.direccion ? `
         <div class="detalle-card">
           <h4>📍 Dirección</h4>
-          <p>${negocio.direccion}</p>
+          <p>${escapar(negocio.direccion)}</p>
         </div>
       ` : ""}
 
@@ -875,11 +876,11 @@ function verPerfil(categoria, index, opciones = {}) {
     <section class="perfil-acciones-oficial">
 
       ${negocio.telefono ? `
-        <a class="accion accion-telefono" href="tel:${negocio.telefono}">
+        <a class="accion accion-telefono" href="tel:${escapar(negocio.telefono)}">
           <span>📞</span>
           <div>
             <strong>Llamar</strong>
-            <small>${negocio.telefono}</small>
+            <small>${escapar(negocio.telefono)}</small>
           </div>
         </a>
       ` : ""}
@@ -905,7 +906,7 @@ function verPerfil(categoria, index, opciones = {}) {
       ` : ""}
 
       ${negocio.maps ? `
-        <a class="accion accion-maps" href="${negocio.maps}" target="_blank" rel="noopener noreferrer">
+        <a class="accion accion-maps" href="${escapar(negocio.maps)}" target="_blank" rel="noopener noreferrer">
           <span>📍</span>
           <div>
             <strong>Cómo llegar</strong>
@@ -925,7 +926,7 @@ function verPerfil(categoria, index, opciones = {}) {
       ` : ""}
 
       ${negocio.facebook ? `
-        <a class="accion accion-facebook" href="${negocio.facebook}" target="_blank" rel="noopener noreferrer">
+        <a class="accion accion-facebook" href="${escapar(negocio.facebook)}" target="_blank" rel="noopener noreferrer">
           <span><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="currentColor"><path d="M14 22v-9h3l.5-4H14V7c0-1.2.4-2 2-2h2V1.4A24 24 0 0 0 15 1c-3 0-5 1.8-5 5v3H7v4h3v9z"/></svg></span>
           <div>
             <strong>Facebook</strong>
@@ -935,7 +936,7 @@ function verPerfil(categoria, index, opciones = {}) {
       ` : ""}
 
       ${negocio.instagram ? `
-        <a class="accion accion-instagram" href="${negocio.instagram}" target="_blank" rel="noopener noreferrer">
+        <a class="accion accion-instagram" href="${escapar(negocio.instagram)}" target="_blank" rel="noopener noreferrer">
           <span><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.2"/></svg></span>
           <div>
             <strong>Instagram</strong>
@@ -945,7 +946,7 @@ function verPerfil(categoria, index, opciones = {}) {
       ` : ""}
 
       ${negocio.tiktok ? `
-        <a class="accion accion-tiktok" href="${negocio.tiktok}" target="_blank" rel="noopener noreferrer">
+        <a class="accion accion-tiktok" href="${escapar(negocio.tiktok)}" target="_blank" rel="noopener noreferrer">
           <span><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="currentColor"><path d="M14 2h4c0 3 2 5 5 5v4c-2 0-4-1-5-2v8a7 7 0 1 1-7-7v4a3 3 0 1 0 3 3z"/></svg></span>
           <div>
             <strong>TikTok</strong>
@@ -1035,13 +1036,13 @@ function verPerfil(categoria, index, opciones = {}) {
     <h4>${negocio.tipoCatalogo === "artista" ? "Portafolio de presentaciones" : "📷 Galería"}</h4>
     <div class="galeria-grid">
       ${negocio.galeria.map((foto, i) => `
-        <img src="${foto}" alt="${negocio.nombre}" onclick="abrirLightbox('${categoria}', ${index}, ${i})">
+        <img src="${foto}" alt="${escapar(negocio.nombre)}" onclick="abrirLightbox('${categoria}', ${index}, ${i})">
       `).join("")}
     </div>
   </section>
 ` : negocio.tipoCatalogo === "artista" && negocio.mostrarGaleria !== false ? '<section class="perfil-seccion"><h4>Portafolio de presentaciones</h4><p>Próximamente, fotos y videos de sus presentaciones.</p></section>' : "";
   lista.innerHTML = `
-    <article class="perfil-negocio perfil-oficial${negocio.tipoCatalogo === "artista" ? " perfil-artista" : ""}${negocio.propiedad ? " perfil-propiedad" : ""}">
+    <article class="perfil-negocio perfil-oficial${negocio.tipoCatalogo === "artista" ? " perfil-artista" : ""}${negocio.propiedad ? " perfil-propiedad" : ""}${empeno ? " empeno-perfil" : ""}">
 
       <button class="btn-regresar-perfil" onclick="volverCategoriaDesdePerfil('${categoria}')">
         ← Volver a la categoría
@@ -1049,7 +1050,7 @@ function verPerfil(categoria, index, opciones = {}) {
 
       ${banner ? `
   <div class="perfil-hero-oficial">
-    <img src="${banner}" alt="${negocio.nombre}">
+    <img src="${escapar(banner)}" alt="${negocio.nombre}">
 
     ${negocio.verificado === true
       ? '<span class="badge-verificado">✓ Negocio verificado</span>'
@@ -1062,17 +1063,17 @@ function verPerfil(categoria, index, opciones = {}) {
 
         ${logo ? `
           <div class="perfil-logo-oficial">
-            <img src="${logo}" alt="${negocio.propiedad ? "Foto principal de" : "Logo de"} ${negocio.nombre}">
+            <img src="${escapar(logo)}" alt="${negocio.propiedad ? "Foto principal de" : "Logo de"} ${escapar(negocio.nombre)}">
           </div>
         ` : ""}
 
         <div class="perfil-titulo-oficial" data-promo-contexto="${escaparTarjetaCategoria(negocio.slug||'')}">
           <div class="perfil-titulo-linea">
-            <h3>${negocio.nombre}</h3>
+            <h3>${escapar(negocio.nombre)}</h3>
             
           </div>
           <p class="perfil-subtitulo">
-            ${negocio.slogan || "Servicio local en Frontera Comalapa"}
+            ${escapar(negocio.slogan || "Servicio local en Frontera Comalapa")}
           </p>
         </div>
       </div>
@@ -1081,14 +1082,17 @@ function verPerfil(categoria, index, opciones = {}) {
 
         ${negocio.descripcion ? `
           <section class="perfil-descripcion-oficial">
-            <p>${negocio.descripcion}</p>
+            <p>${escapar(negocio.descripcion)}</p>
           </section>
         ` : ""}
 
+        ${empeno ? '<section class="perfil-acciones-oficial empeno-acciones" aria-label="Acciones del negocio"></section>' : ""}
         ${window.PropiedadesExhibicion.renderizar(negocio)}
         ${negocio.tipoCatalogo === "artista" ? "" : window.ConsultoriosExhibicion.renderizar(negocio)}
         ${promocionesHTML}
-        ${negocio.tipoCatalogo === "artista" || negocio.propiedad || window.ConsultoriosExhibicion.esEspecial(negocio) ? "" : window.ComidaExhibicion.menu(negocio)}
+        ${empeno
+          ? '<section class="perfil-seccion empeno-catalogo"><h4 tabindex="-1">Catálogo de artículos</h4><div aria-live="polite">Cargando artículos…</div></section>'
+          : negocio.tipoCatalogo === "artista" || negocio.propiedad || window.ConsultoriosExhibicion.esEspecial(negocio) ? "" : window.ComidaExhibicion.menu(negocio)}
         
         ${negocio.tipoCatalogo === "artista" ? window.ConsultoriosExhibicion.renderizar(negocio) : ""}
         ${galeriaHTML}
@@ -1106,7 +1110,8 @@ function verPerfil(categoria, index, opciones = {}) {
     </article>
   `;
 
-  window.ComidaExhibicion.conectar(negocio);
+  if (empeno) window.EmpenoExhibicion.conectar(lista.querySelector('.empeno-perfil'), empeno);
+  else window.ComidaExhibicion.conectar(negocio);
   setTimeout(() => {
     const tarjeta=opciones.productoId?Array.from(document.querySelectorAll('.perfil-oficial [data-producto-id]')).find(el=>el.dataset.productoId===opciones.productoId):null;
     if(tarjeta){for(let padre=tarjeta.parentElement;padre;padre=padre.parentElement)if(padre.tagName==='DETAILS')padre.open=true;}

@@ -117,7 +117,7 @@
   }
 
   function consultaArticulo(negocio, item) {
-    return whatsapp(negocio, 'Consultar por WhatsApp', 'Hola, quisiera información sobre ' + item.nombre + '.',
+    return whatsapp(negocio, 'Pedir información', 'Hola, quisiera información sobre ' + item.nombre + '.',
       'empeno-consultar');
   }
 
@@ -139,11 +139,6 @@
   }
 
   function explorarCategorias(zona, negocio, categorias, articulos) {
-    if (!categorias.length) {
-      zona.replaceChildren(nodo('p', 'Sin artículos disponibles por el momento', 'empeno-vacio'));
-      return;
-    }
-
     const navegacion = nodo('div', null, 'empeno-categorias');
     navegacion.setAttribute('role', 'group');
     navegacion.setAttribute('aria-label', 'Categorías de artículos');
@@ -153,34 +148,48 @@
     const contenido = nodo('div');
     resultado.append(titulo, contenido);
     const botones = [];
+    const opciones = [{id: null, nombre: 'Ver todos los artículos'}, ...categorias];
 
     function mostrar(indice) {
-      const categoria = categorias[indice];
+      const categoria = opciones[indice];
       botones.forEach((b, i) => b.setAttribute('aria-pressed', String(i === indice)));
-      titulo.textContent = categoria.nombre;
-      const items = articulos.filter(a => a.categoria === categoria.id);
+      titulo.textContent = categoria.id === null ? 'Todos los artículos' : categoria.nombre;
+      const items = categoria.id === null ? articulos : articulos.filter(a => a.categoria === categoria.id);
       if (!items.length) {
         contenido.replaceChildren(nodo('p', 'Sin artículos disponibles por el momento', 'empeno-vacio'));
         return;
       }
       const fila = nodo('div', null, 'empeno-articulos');
+      fila.setAttribute('aria-label', titulo.textContent);
+      fila.tabIndex = 0;
       fila.append(...items.map(item => articulo(negocio, item)));
       contenido.replaceChildren(fila);
+      if (items.length > 1) {
+        const controles = nodo('div', null, 'empeno-articulos-controles');
+        for (const [texto, etiqueta, sentido] of [['‹', 'Artículos anteriores', -1], ['›', 'Más artículos', 1]]) {
+          const control = boton(texto, 'empeno-foto-flecha');
+          control.setAttribute('aria-label', etiqueta);
+          control.onclick = () => fila.scrollBy({left: sentido * fila.clientWidth,
+            behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+          controles.append(control);
+        }
+        contenido.prepend(controles);
+      }
     }
 
-    categorias.forEach((categoria, indice) => {
+    opciones.forEach((categoria, indice) => {
       const b = boton(null, 'empeno-categoria');
       const flecha = nodo('span', '›', 'empeno-categoria-flecha');
       flecha.setAttribute('aria-hidden', 'true');
       b.append(nodo('span', categoria.nombre), flecha);
+      if (indice === 0) b.classList.add('empeno-todos');
       b.setAttribute('aria-controls', resultado.id);
       b.onclick = () => mostrar(indice);
       botones.push(b);
       navegacion.append(b);
     });
 
-    const inicial = categorias.findIndex(c => articulos.some(a => a.categoria === c.id));
-    mostrar(Math.max(0, inicial));
+    mostrar(0);
     zona.replaceChildren(navegacion, resultado);
   }
 
@@ -197,90 +206,55 @@
     }
   }
 
-  function datosPerfil(negocio) {
-    const datos = nodo('section', null, 'empeno-datos');
-    datos.append(nodo('h4', 'Visítanos'));
-    const grupos = nodo('div', null, 'empeno-datos-grupos');
-    if (negocio.direccion) {
-      const ubicacion = nodo('section', null, 'empeno-dato');
-      ubicacion.append(nodo('h5', 'Dirección'), nodo('p', negocio.direccion));
-      grupos.append(ubicacion);
-    }
-    const horario = nodo('section', null, 'empeno-dato');
-    const lista = nodo('dl', null, 'empeno-horario');
-    negocio.horarios.forEach((h, i) => lista.append(nodo('dt', dias[i]), nodo('dd', h)));
-    horario.append(nodo('h5', 'Horario de atención'), lista);
-    grupos.append(horario);
-    const redes = nodo('section', null, 'empeno-dato');
-    redes.append(nodo('h5', 'Redes sociales'));
-    for (const [campo, nombre] of [['facebook', 'Facebook'], ['tiktok', 'TikTok'], ['instagram', 'Instagram']]) {
-      if (negocio[campo]) {
-        const red = nodo('p');
-        red.append(nodo('strong', nombre), ' · ' + negocio[campo]);
-        redes.append(red);
-      }
-    }
-    if (redes.childElementCount > 1) grupos.append(redes);
-    datos.append(grupos);
-    return datos;
-  }
-
-  function renderizar(destino, negocio, volver) {
-    const perfil = nodo('article', null, 'perfil-negocio perfil-oficial empeno-perfil');
-    const regreso = boton('← Volver a la categoría', 'empeno-regreso');
-    regreso.onclick = volver;
-    const hero = nodo('header', null, 'empeno-hero');
-    if (negocio.banner) {
-      const portada = nodo('img', null, 'empeno-portada');
-      portada.src = foto(negocio.slug, negocio.banner);
-      portada.alt = 'Portada de ' + negocio.nombre;
-      hero.append(portada);
-    }
-    const cabecera = nodo('div', null, 'empeno-cabecera');
-    if (negocio.logo) {
-      const logo = nodo('img', null, 'empeno-logo');
-      logo.src = foto(negocio.slug, negocio.logo);
-      logo.alt = 'Foto de perfil de ' + negocio.nombre;
-      cabecera.append(logo);
-    }
-    const intro = nodo('div', null, 'empeno-intro');
-    intro.append(nodo('p', negocio.rubro, 'empeno-rubro'), nodo('h3', negocio.nombre));
-    if (negocio.verificado) intro.append(nodo('p', '✓ Negocio verificado', 'empeno-verificado'));
-    if (negocio.descripcion) intro.append(nodo('p', negocio.descripcion, 'empeno-descripcion'));
-    cabecera.append(intro);
-    hero.append(cabecera);
-
-    const acciones = nodo('div', null, 'empeno-acciones');
-    const seccion = nodo('section', null, 'empeno-catalogo');
-    const titulo = nodo('h4', 'Catálogo de artículos');
-    titulo.tabIndex = -1;
-    const ver = boton(negocio.catalogo_texto, 'empeno-cta empeno-cta-secundario');
+  function conectar(perfil, negocio) {
+    const acciones = perfil.querySelector('.empeno-acciones');
+    const seccion = perfil.querySelector('.empeno-catalogo');
+    const titulo = seccion.querySelector('h4');
+    const ver = boton(negocio.catalogo_texto, 'accion empeno-cta-catalogo');
     ver.onclick = () => {
       titulo.focus({preventScroll: true});
       titulo.scrollIntoView({block: 'start'});
     };
-    acciones.append(whatsapp(negocio, negocio.cotizar_texto, negocio.cotizar_mensaje, 'empeno-cta empeno-cta-principal'), ver);
-    const llamar = nodo('a', 'Llamar al ' + negocio.telefono, 'empeno-llamar');
-    llamar.href = 'tel:+52' + negocio.telefono;
-    acciones.append(llamar);
-    hero.append(acciones);
+    acciones.append(whatsapp(negocio, negocio.cotizar_texto, negocio.cotizar_mensaje,
+      'accion accion-whatsapp empeno-cta-cotizar'), ver);
+    catalogo(seccion.querySelector('[aria-live]'), negocio);
+  }
 
-    const zona = nodo('div', 'Cargando artículos…');
-    zona.setAttribute('aria-live', 'polite');
-    seccion.append(titulo, zona);
-    perfil.append(regreso, hero, seccion, datosPerfil(negocio));
-    destino.replaceChildren(perfil);
-    perfil.scrollIntoView({block: 'start'});
-    catalogo(zona, negocio);
+  function horario(texto) {
+    const nota = String(texto || '').trim();
+    if (/^cerrado$/i.test(nota)) return {modo: 'cerrado', turnos: []};
+    if (/^(?:abierto )?24\s*(?:h|horas)$/i.test(nota)) return {modo: '24h', turnos: []};
+    const turnos = nota.split(/\s*[,;·]\s*/).map(par => {
+      const partes = par.match(/^([01]\d|2[0-3]):([0-5]\d)\s*[-–—]\s*([01]\d|2[0-3]):([0-5]\d)$/);
+      return partes && {inicio: partes[1] + ':' + partes[2], fin: partes[3] + ':' + partes[4]};
+    });
+    return turnos.every(Boolean) ? {modo: 'abierto', turnos} : {modo: 'sin_confirmar', turnos: [], nota};
+  }
+
+  function enlacePublico(valor) {
+    if (typeof valor !== 'string' || !/^https?:\/\//i.test(valor.trim())) return '';
+    try {
+      const url = new URL(valor.trim());
+      return !url.username && !url.password ? url.href : '';
+    } catch {
+      return '';
+    }
   }
 
   window.EmpenoExhibicion = {
-    dias, foto, renderizar,
+    dias, foto, conectar,
     async perfiles() {
       const filas = await leer('empeno_perfiles?activo=eq.true&order=nombre');
       return filas.map(p => ({
         slug: p.slug, nombre: p.nombre, descripcion: p.descripcion, slogan: p.rubro,
         logo: p.logo ? foto(p.slug,p.logo) : '', banner: p.banner ? foto(p.slug,p.banner) : '',
+        telefono: p.telefono, whatsapp: p.whatsapp, direccion: p.direccion,
+        maps: enlacePublico(p.maps_url),
+        facebook: enlacePublico(p.facebook_url || p.facebook),
+        instagram: enlacePublico(p.instagram_url || p.instagram),
+        tiktok: enlacePublico(p.tiktok_url || p.tiktok),
+        horarios: Object.fromEntries(['lunes','martes','miercoles','jueves','viernes','sabado','domingo']
+          .map((dia, i) => [dia, horario(p.horarios[i])])),
         categoria: p.categoria, verificado: p.verificado, tipoCatalogo: 'empeno', empeno: p
       }));
     }

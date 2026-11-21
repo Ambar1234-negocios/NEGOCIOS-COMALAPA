@@ -106,6 +106,13 @@ function editorPerfilEmpenoGestion(d) {
     campoGestion(contacto,d,key,label);
   }
 
+  for (const [key, label] of [['maps_url','Enlace de Google Maps'],['facebook_url','Enlace de Facebook'],
+    ['instagram_url','Enlace de Instagram'],['tiktok_url','Enlace de TikTok']]) {
+    const input = campoGestion(contacto,d,key,label,'url');
+    input.pattern = 'https?://.+';
+    input.maxLength = 1000;
+  }
+
   const fotos = seccionGestion('📷 Fotos oficiales');
   const resolver = nombre => window.EmpenoExhibicion.foto(d.slug,nombre);
   fotosGestion(fotos,d,'logo','Foto de perfil / logo',false,resolver);
@@ -124,7 +131,7 @@ function editorPerfilEmpenoGestion(d) {
 async function guardarFilaGestion(fila,d){
  if(fila.empeno) {
    const campos = ['nombre','categoria','rubro','descripcion','activo','verificado','telefono','whatsapp','direccion','horarios','facebook','tiktok','instagram',
-     'cotizar_texto','cotizar_mensaje','catalogo_texto','logo','banner'];
+     'cotizar_texto','cotizar_mensaje','catalogo_texto','logo','banner','maps_url','facebook_url','instagram_url','tiktok_url'];
    const cambios = Object.fromEntries(campos.filter(k => JSON.stringify(d[k]) !== JSON.stringify(fila.contenido[k])).map(k => [k,d[k]]));
    if (Object.keys(cambios).length) {
      const filas = await api('/rest/v1/empeno_perfiles?slug=eq.'+encodeURIComponent(fila.id),{method:'PATCH',datos:cambios});

@@ -9,8 +9,9 @@
   const {dias: diasPublicos, foto} = window.EmpenoExhibicion;
   const camposPerfil = {
     nombre: 'Nombre', rubro: 'Frase corta', descripcion: 'Descripción', telefono: 'Teléfono',
-    whatsapp: 'WhatsApp', direccion: 'Dirección', facebook: 'Nombre en Facebook',
-    tiktok: 'Nombre en TikTok', instagram: 'Nombre en Instagram',
+    whatsapp: 'WhatsApp', direccion: 'Dirección', maps_url: 'Enlace de Google Maps', facebook: 'Nombre en Facebook',
+    facebook_url: 'Enlace de Facebook', tiktok: 'Nombre en TikTok', tiktok_url: 'Enlace de TikTok',
+    instagram: 'Nombre en Instagram', instagram_url: 'Enlace de Instagram',
     cotizar_texto: 'Texto del botón de cotización', cotizar_mensaje: 'Mensaje de cotización en WhatsApp',
     catalogo_texto: 'Texto del botón para ver el catálogo'
   };
@@ -111,6 +112,11 @@
       }
       control.maxLength = ({nombre:120, rubro:100, descripcion:2000, telefono:10, whatsapp:10,
         cotizar_texto:100, cotizar_mensaje:500, catalogo_texto:100})[key] || 200;
+      if (key.endsWith('_url')) {
+        control.type = 'url';
+        control.pattern = 'https?://.+';
+        control.maxLength = 1000;
+      }
       if (key === 'telefono' || key === 'whatsapp') {
         control.type = 'tel';
         control.pattern = '[0-9]{10}';
@@ -160,6 +166,7 @@
       return cambios;
     }
     form.append(nodo('h4', 'Horario de atención'));
+    form.append(nodo('p', 'Usa un horario como 09:00–18:00, o escribe Cerrado.', 'nota'));
     diasPublicos.forEach((dia, i) => campo(form, 'horario' + i, dia, perfil.horarios[i], {required: true, maxLength: 80}));
     finalizar();
     return seccion;
