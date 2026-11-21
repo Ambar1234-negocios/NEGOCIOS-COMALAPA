@@ -82,6 +82,8 @@
 
   function editarPerfil() {
     const seccion = nodo('section', undefined, 'tarjeta');
+    seccion.id = 'datos-negocio';
+    seccion.tabIndex = -1;
     seccion.append(nodo('h3', 'Datos públicos del negocio'));
     const {form, finalizar} = formulario(seccion, 'Publicar datos del negocio', async datos => {
       const cambios = Object.fromEntries(Object.keys(camposPerfil).map(key => [key, datos.get(key).trim()]));
@@ -134,6 +136,8 @@
 
   function gestionarCategorias() {
     const seccion = nodo('section', undefined, 'tarjeta');
+    seccion.id = 'catalogo-negocio';
+    seccion.tabIndex = -1;
     seccion.append(nodo('h3', 'Categorías del catálogo'));
     for (const categoria of categorias) {
       const detalle = nodo('details');
@@ -262,7 +266,9 @@
       volver.href = 'gestion.html#negocios';
       acciones.append(volver);
     }
-    acciones.append(enlace, boton('Actualizar', () => tarea(cargarMenuCompleto)),
+    if (perfil.activo === false) cabecera.append(nodo('p', 'Negocio pausado por administración. El perfil está oculto.', 'aviso'));
+    else acciones.append(enlace);
+    acciones.append(boton('Actualizar', () => tarea(cargarMenuCompleto)),
       boton('Salir', () => el('salir').onclick()));
     cabecera.append(nodo('h2', perfil.nombre), nodo('p', (desdeAdministracion ? 'Administración: ' : 'Cuenta: ') + cuenta.user.email), acciones);
     editor.replaceChildren(cabecera, editarPerfil(), gestionarCategorias(), gestionarArticulos());
@@ -292,6 +298,12 @@
     panel.classList.add('panel-empeno');
     document.querySelector('body > header h1').textContent = 'Mi casa de empeño y tienda';
     document.querySelector('body > header p').textContent = 'Administra la información pública y tu catálogo de artículos.';
+    const seccion = location.hash.slice(1);
+    if (desdeAdministracion && ['datos-negocio', 'catalogo-negocio'].includes(seccion)) {
+      const destino = el(seccion);
+      destino.focus({preventScroll: true});
+      destino.scrollIntoView({block: 'start'});
+    }
   };
 
   const salirOriginal = el('salir').onclick;

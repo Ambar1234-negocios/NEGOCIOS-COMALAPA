@@ -9,7 +9,7 @@
 
   async function leer(ruta) {
     const respuesta = await fetch(base + '/rest/v1/' + ruta, {
-      headers: {apikey: key}, signal: AbortSignal.timeout(7000)
+      headers: {apikey: key}, cache: 'no-store', signal: AbortSignal.timeout(7000)
     });
     if (!respuesta.ok) throw Error('No se pudo cargar el catálogo.');
     return respuesta.json();
@@ -132,7 +132,7 @@
   window.EmpenoExhibicion = {
     dias, foto, renderizar,
     async perfiles() {
-      const filas = await leer('empeno_perfiles?order=nombre');
+      const filas = await leer('empeno_perfiles?activo=eq.true&order=nombre');
       return filas.map(p => ({
         slug: p.slug, nombre: p.nombre, descripcion: p.descripcion, slogan: p.rubro,
         categoria: 'comercios', tipoCatalogo: 'empeno', empeno: p

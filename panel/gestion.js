@@ -14,7 +14,7 @@ async function cargarGestion() {
   [menusGestion, registrosGestion, empenosGestion] = await Promise.all([
     api('/rest/v1/piloto_menus_completos?select=slug,original,revision,plan&order=slug'),
     api('/rest/v1/sitio_registros?select=*&order=orden,id'),
-    api('/rest/v1/empeno_perfiles?select=slug,nombre,rubro&order=nombre')
+    api('/rest/v1/empeno_perfiles?select=slug,nombre,activo&order=nombre')
   ]);
   pintarGestion();
   aviso('Contenido actualizado.');
@@ -25,26 +25,53 @@ function filasNegociosGestion(esPropiedad) {
   if (!esPropiedad) {
     filas.push(...empenosGestion.map(perfil => ({id: perfil.slug, contenido: perfil, empeno: true})));
   }
-  return filas;
+  return filas.sort((a, b) => a.id.localeCompare(b.id, 'es'));
 }
 
-function tarjetaEmpenoGestion(fila) {
-  const tarjeta = nodo('article');
-  const texto = nodo('div');
-  texto.append(nodo('strong', fila.contenido.nombre), nodo('p', fila.contenido.rubro));
-  const editar = nodo('a', 'Editar perfil y catálogo', 'enlace-boton');
+function enlaceEmpenoGestion(fila, texto, seccion) {
+  const enlace = nodo('a', texto, 'enlace-boton');
   const parametros = new URLSearchParams({negocio: fila.id, administracion: '1'});
-  editar.href = 'dueno.html?' + parametros;
-  tarjeta.append(texto, editar);
-  return tarjeta;
+  enlace.href = 'dueno.html?' + parametros + '#' + seccion;
+  return enlace;
 }
+
+function botonPausarGestion(fila) {
+  const d = fila.contenido;
+  const oculto = d.activo === false || d.eliminada === true;
+  const boton = nodo('button', oculto ? '▶️ Reactivar' : '⏸️ Pausar', 'secundario');
+  boton.type = 'button';
+  boton.onclick = () => tarea(async () => {
+    const accion = oculto ? '¿Reactivar ' : '¿Pausar ';
+    if (!confirm(accion + (d.nombre || d.titulo || fila.id) + '? Se conservan sus datos.')) return;
+
+    if (fila.empeno) {
+      const filtro = 'slug=eq.' + encodeURIComponent(fila.id) + '&activo=eq.' + !oculto;
+      const filas = await api('/rest/v1/empeno_perfiles?' + filtro, {method: 'PATCH', datos: {activo: oculto}});
+      if (!filas?.length) {
+        await cargarGestion();
+        throw Error('El estado del negocio cambió. Revisa el listado antes de continuar.');
+      }
+    } else {
+      const datos = {...d, activo: oculto};
+      if (modulo === 'categorias') datos.eliminada = !datos.activo;
+      await guardarFilaGestion(fila, datos);
+    }
+    await cargarGestion();
+    aviso(oculto ? 'Registro reactivado.' : 'Registro pausado. Sus datos se conservan.');
+  });
+  return boton;
+}
+
 function cambiarModuloGestion(m){if(editandoGestion&&!confirm('¿Cerrar esta edición sin guardar?'))return;modulo=m;el('buscar').value='';editandoGestion=null;el('zona-editor').hidden=true;location.hash=m;pintarGestion();}
 function pintarGestion(){const nav=el('modulos');nav.replaceChildren();for(const[k,[nombre]]of Object.entries(modulosGestion)){const b=nodo('button',nombre,'secundario');b.type='button';if(k===modulo)b.setAttribute('aria-current','page');b.onclick=()=>cambiarModuloGestion(k);nav.append(b);}el('titulo-modulo').textContent=modulosGestion[modulo][0];el('ayuda-modulo').textContent=modulosGestion[modulo][1];el('guia-carrusel').hidden=modulo!=='negocios';el('nuevo').hidden=modulo==='contactos';el('buscar').hidden=modulo==='contactos';const q=el('buscar').value.toLocaleLowerCase('es');filasGestion=['negocios','propiedades'].includes(modulo)?filasNegociosGestion(modulo==='propiedades'):registrosGestion.filter(r=>r.tipo===modulo);const lista=el('lista-gestion');lista.replaceChildren();if(modulo==='contactos'){const fila=filasGestion.find(r=>r.id==='config');if(!fila){lista.append(nodo('p','No se pudo cargar la configuración de contactos. Pulsa Actualizar para reintentar.'));return;}mostrarModoPruebaContactos(lista,fila);for(const[k,label]of Object.entries(contactosPlataformas)){const c=fila.contenido[k]||{},a=nodo('article'),info=nodo('div');info.append(nodo('strong',label),nodo('p',c.numero||'Sin número configurado'),nodo('p',['mandaditos','paqueteria'].includes(k)?'Número que recibe las solicitudes':c.activo===false?'⏸️ Botón oculto':'🟢 Botón visible'));const b=nodo('button','✏️ Cambiar número','secundario');b.type='button';b.onclick=()=>abrirGestion(fila,k);a.append(info,b);lista.append(a);}lista.append(nodo('p','Al cambiar un número puedes revisar los demás contactos y desmarcar Habilitado para ocultar los botones de las tiendas o del taxi. Puedes reactivarlos después.'));return;}for(const fila of filasGestion.filter(r=>JSON.stringify([r.contenido.nombre,r.contenido.titulo,r.id]).toLocaleLowerCase('es').includes(q)||modulo==='contactos')){
+  const d=fila.contenido,a=nodo('article'),imgsrc=d.logo||d.imagen;if(imgsrc){const img=nodo('img');img.src=imgsrc.startsWith('imagenes/')?location.origin+'/'+imgsrc:imgsrc;img.alt=d.nombre||d.titulo||'';a.append(img);}const texto=nodo('div');texto.append(nodo('strong',d.nombre||d.titulo||(modulo==='contactos'?'Números de los servicios':fila.id)),nodo('p',modulo==='contactos'?'WhatsApp de cada servicio':estadoRegistroGestion(d)));a.append(texto);
   if (fila.empeno) {
-    lista.append(tarjetaEmpenoGestion(fila));
+    a.append(enlaceEmpenoGestion(fila, '✏️ Editar', 'datos-negocio'),
+      enlaceEmpenoGestion(fila, 'Editar catálogo', 'catalogo-negocio'), botonPausarGestion(fila));
+    lista.append(a);
     continue;
   }
-  const d=fila.contenido,a=nodo('article'),imgsrc=d.logo||d.imagen;if(imgsrc){const img=nodo('img');img.src=imgsrc.startsWith('imagenes/')?location.origin+'/'+imgsrc:imgsrc;img.alt=d.nombre||d.titulo||'';a.append(img);}const texto=nodo('div');texto.append(nodo('strong',d.nombre||d.titulo||(modulo==='contactos'?'Números de los servicios':fila.id)),nodo('p',modulo==='contactos'?'WhatsApp de cada servicio':estadoRegistroGestion(d)));a.append(texto);const editar=nodo('button','✏️ Editar','secundario');editar.onclick=()=>abrirGestion(fila);a.append(editar);if(fila.menu&&fila.id==='cueto-sax'){const perfil=nodo('a','Administrar perfil especial','enlace-boton');perfil.href='dueno.html?negocio=cueto-sax';a.append(perfil);}if(fila.menu&&!d.propiedad&&!['dental','servicios','artista'].includes(d.tipoCatalogo)){const enlace=nodo('a',d.tipoCatalogo==='visual'?'Editar catálogo':'🍽️ Editar menú','enlace-boton');enlace.href='menu-completo.html?negocio='+encodeURIComponent(fila.id);a.append(enlace);}if(modulo!=='contactos'){const oculto=d.activo===false||d.eliminada===true;const pausar=nodo('button',oculto?'▶️ Reactivar':'⏸️ Pausar','secundario');pausar.onclick=()=>tarea(async()=>{if(!confirm((oculto?'¿Reactivar ':'¿Pausar ')+(d.nombre||d.titulo||fila.id)+'? Se conservan sus datos.'))return;const datos={...d,activo:oculto};if(modulo==='categorias')datos.eliminada=!datos.activo;await guardarFilaGestion(fila,datos);await cargarGestion();aviso(datos.activo?'Registro reactivado.':'Registro pausado. Sus datos se conservan.');});a.append(pausar);}lista.append(a);}if(!lista.children.length)lista.append(nodo('p','Todavía no hay registros con esa búsqueda.'));}
+  const editar=nodo('button','✏️ Editar','secundario');editar.onclick=()=>abrirGestion(fila);a.append(editar);if(fila.menu&&fila.id==='cueto-sax'){const perfil=nodo('a','Administrar perfil especial','enlace-boton');perfil.href='dueno.html?negocio=cueto-sax';a.append(perfil);}if(fila.menu&&!d.propiedad&&!['dental','servicios','artista'].includes(d.tipoCatalogo)){const enlace=nodo('a',d.tipoCatalogo==='visual'?'Editar catálogo':'🍽️ Editar menú','enlace-boton');enlace.href='menu-completo.html?negocio='+encodeURIComponent(fila.id);a.append(enlace);}if(modulo!=='contactos')a.append(botonPausarGestion(fila));lista.append(a);}if(!lista.children.length)lista.append(nodo('p','Todavía no hay registros con esa búsqueda.'));}
 function datosPerfilPermitidos(d){const permitidos=['nombre','slug','categoria','slogan','descripcion','telefono','whatsapp','direccion','maps','facebook','instagram','tiktok','sitioWeb','video','banner','logo','galeria','catalogoGaleria','mostrarGaleria','servicios','palabrasClave','activo','verificado','delivery','tipoDelivery','horarios','horario','propiedad','tipoCatalogo','id','fechaRegistro'];return Object.fromEntries(Object.entries(d).filter(([k])=>permitidos.includes(k)));}
 async function guardarFilaGestion(fila,d){if(modulo==='categorias')d.eliminada=d.activo===false;if(fila.menu)return api('/rest/v1/rpc/sitio_perfil_guardar',{method:'POST',datos:{negocio:d.slug,version:fila.revision,datos:datosPerfilPermitidos(d)}});return api('/rest/v1/rpc/sitio_registro_guardar',{method:'POST',datos:{seccion:modulo,registro:fila.id,version:fila.revision,datos:d}});}
 function abrirGestion(fila,contacto=null){let irAContacto=null;if(editandoGestion&&!confirm('¿Cerrar esta edición sin guardar?'))return;lectoresGestion=[];archivosGestion=[];const d=structuredClone(fila.contenido);if(fila.menu){d.activo??=true;d.mostrarGaleria??=true;}if(modulo==='categorias')d.activo=d.activo!==false&&d.eliminada!==true;editandoGestion={fila,d};el('campos-gestion').replaceChildren();el('preview-gestion').replaceChildren();el('zona-editor').hidden=false;el('titulo-editor').textContent=(fila.revision?'✏️ Editar: ':'＋ Crear: ')+(d.nombre||d.titulo||modulosGestion[modulo][0]);
