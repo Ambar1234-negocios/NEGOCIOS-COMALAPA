@@ -257,15 +257,23 @@
     enlace.href = '/?negocio=' + encodeURIComponent(perfil.slug);
     enlace.target = '_blank';
     enlace.rel = 'noopener';
+    if (desdeAdministracion) {
+      const volver = nodo('a', 'Volver a Administrar página', 'enlace-boton');
+      volver.href = 'gestion.html#negocios';
+      acciones.append(volver);
+    }
     acciones.append(enlace, boton('Actualizar', () => tarea(cargarMenuCompleto)),
       boton('Salir', () => el('salir').onclick()));
-    cabecera.append(nodo('h2', perfil.nombre), nodo('p', 'Cuenta: ' + cuenta.user.email), acciones);
+    cabecera.append(nodo('h2', perfil.nombre), nodo('p', (desdeAdministracion ? 'Administración: ' : 'Cuenta: ') + cuenta.user.email), acciones);
     editor.replaceChildren(cabecera, editarPerfil(), gestionarCategorias(), gestionarArticulos());
   }
 
   const cargarMenuOriginal = cargarMenuCompleto;
   cargarMenuCompleto = async () => {
     if (!cuenta) return;
+    if (desdeAdministracion && await api('/rest/v1/rpc/piloto_es_admin', {method: 'POST', datos: {}}) !== true) {
+      throw Error('Esta cuenta no tiene acceso a la administración.');
+    }
     const solicitado = new URLSearchParams(location.search).get('negocio');
     const perfiles = await api('/rest/v1/rpc/empeno_mis_perfiles', {method: 'POST', datos: {}})
       .catch(error => { if (error.estadoHTTP === 404) return []; throw error; });
