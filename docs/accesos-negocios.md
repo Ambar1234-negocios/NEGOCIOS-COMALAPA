@@ -16,7 +16,7 @@ Cada acción sensible tiene confirmación. Cancelar no ejecuta cambios. Si otro 
 ## Dueño
 
 1. Abre `/panel/dueno.html`.
-2. Escribe tu correo autorizado y abre **Primera entrada o contraseña olvidada → Recuperar contraseña**.
+2. Escribe tu correo autorizado y pulsa **¿Olvidaste tu contraseña?** (visible debajo de Entrar).
 3. Abre el enlace que recibas por correo. Llegarás a `/panel/restablecer-contrasena.html`.
 4. La pantalla verifica el token con Supabase Auth y comprueba que corresponde a una sesión de recuperación vigente. Una sesión normal, enlace inválido o vencido no habilita el formulario.
 5. Escribe dos veces la nueva contraseña y guarda. La actualización usa la sesión de recuperación del propio usuario.
@@ -68,3 +68,25 @@ Nuevos: `panel/accesos-negocios.css`, `panel/restablecer-contrasena.html`, `pane
 La prueba real con la cuenta de recepción llegó a la pantalla propia, pero la validación inicial rechazó su sesión porque exigía `amr.method=recovery`. El flujo implícito de GoTrue emite estos tokens con `amr.method=otp`. Se corrigió para admitir `otp` o `recovery`, exigiendo además el callback explícito `type=recovery`, validación del token por Auth, identidad coincidente y expiración vigente. Las sesiones por contraseña continúan rechazadas. No se cambió ninguna contraseña para esta corrección.
 
 La captura aportada por el usuario confirma recepción del enlace y llegada a la pantalla propia. Falta repetir con un enlace nuevo para comprobar el formulario corregido y completar voluntariamente el cambio de contraseña. La regresión se ejecuta con `node --test tests/recuperacion-sesion.mjs`; prueba el método OTP real, contraseña normal, expiración, identidad, token inválido y token_hash.
+
+
+## Revisión de producción — 20 de noviembre de 2026
+
+- Se comprobaron por HTTP 200 las pantallas y archivos reales del dueño, recuperación y administración.
+- Se movió el botón de recuperación fuera del desplegable y se rotuló **¿Olvidaste tu contraseña?**. El usuario escribe su correo en el mismo formulario y pulsa ese botón; no necesita introducir la contraseña anterior.
+- `gestionar-accesos` sigue ACTIVE, versión 1, y su código coincide con el del repositorio. Las peticiones reales sin token o con token inválido devuelven HTTP 401.
+- Una única solicitud real de recuperación para la cuenta existente de recepción devolvió HTTP 200 y actualizó `auth.users.recovery_sent_at`. Esto acredita la aceptación por Auth, no la recepción en el buzón ni el cambio final de contraseña.
+- Se ejecutaron 12 grupos de pruebas de servidor/recuperación, nueve escenarios del navegador para administración y recuperación, y seis combinaciones de tamaño de pantalla/respuesta HTTP para el botón visible y los mensajes de envío/límite. Se usó API simulada para las acciones que cambian contraseñas o permisos.
+- Se repitieron comprobaciones de aislamiento con un dueño existente dentro de una transacción revertida: acceso a su negocio, rechazo de administración y de consultas/cambios a accesos ajenos. No se alteraron datos reales.
+- Advisors de seguridad: 32 avisos informativos de RLS sin políticas, 15 avisos de funciones definidoras ejecutables por anon, 99 por authenticated y protección de contraseñas filtradas desactivada. Esta revisión no añadió tablas, políticas ni funciones. Los avisos del proyecto requieren evaluación independiente.
+
+### Prueba final antes de entregar cuentas
+
+1. Abre `/panel/dueno.html`, escribe el correo de prueba y pulsa **¿Olvidaste tu contraseña?** una sola vez. Si ya se solicitó durante la revisión, usa ese correo más reciente sin solicitar otro.
+2. Confirma que aparece la aceptación del envío; si aparece un límite o error, no supongas que se envió un correo nuevo.
+3. Abre el correo más reciente una sola vez. Debe mostrarse **Restablecer contraseña** con los dos campos habilitados. No compartas el enlace ni recargues la pantalla durante la operación.
+4. El titular de la cuenta elige una contraseña personal de 12 a 128 caracteres, la repite y guarda. Debe ver **Contraseña actualizada**.
+5. Inicia sesión con esa contraseña en el panel correspondiente: para la cuenta de recepción se usa `/panel/recepcion.html`; para una cuenta de dueño vinculada se usa `/panel/dueno.html`. La cuenta de recepción no obtiene permisos de dueño por recuperar su contraseña.
+6. En `/panel/administracion.html#accesos`, abre **Administrar accesos de negocios** con tu cuenta administradora. Revisa correo, nombre/slug, estado y fecha. Abre cada acción y cancela para revisar su confirmación sin cambios. Usa únicamente un dueño de prueba autorizado para comprobar de verdad contraseña temporal y desactivar/reactivar; no pruebes esos cambios sobre clientes activos.
+
+Pendiente de comprobación por el titular: recepción del correo de hoy, apertura del formulario y guardado de contraseña/inicio de sesión. No se cuenta con acceso al buzón, una sesión de administrador para realizar acciones reales ni al Management API de configuración SMTP/plantillas. Por eso no se declara validación completa de producción ni entrega fiable a correos externos nuevos. Si un enlace recién recibido se consume antes de abrirlo, configurar la plantilla con una página de confirmación antes de verificar el token, siguiendo la documentación oficial.
