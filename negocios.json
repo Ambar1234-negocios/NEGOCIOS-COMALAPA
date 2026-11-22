@@ -7102,9 +7102,59 @@
         "nombre": "Alitas",
         "precio": 130,
         "seccion": "Snacks",
-        "ingredientes": "BBQ, BBQ PICANTES, MIEL MOSTAZA, MANGO HABANERO, BÚFALO, VALENTINA C/papas",
         "extras": [],
-        "gruposOpciones": []
+        "gruposOpciones": [
+          {
+            "id": "shangai-alitas-sabor",
+            "nombre": "Sabor",
+            "obligatorio": true,
+            "seleccion": "unica",
+            "opciones": [
+              {
+                "id": "shangai-alitas-bbq",
+                "nombre": "BBQ",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-alitas-bbq-picante",
+                "nombre": "BBQ picante",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-alitas-miel-mostaza",
+                "nombre": "Miel mostaza",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-alitas-mango-habanero",
+                "nombre": "Mango habanero",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-alitas-bufalo",
+                "nombre": "Búfalo",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              },
+              {
+                "id": "shangai-alitas-valentina-con-papas",
+                "nombre": "Valentina con papas",
+                "precio": 0,
+                "tipoPrecio": "adicional",
+                "disponible": true
+              }
+            ]
+          }
+        ]
       },
       {
         "id": "shangai-bebidas-aguas-frescas-de-temporada",
