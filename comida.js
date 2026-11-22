@@ -479,7 +479,19 @@
 
     if(!consulta&&!pedido.lineas.length)return;
     if(!consulta && (pedido.negocio?.id!==n?.id || pedido.lineas.some(l=>!dueno(l)?.productos?.some(p=>p.id===l.producto.id)|| (gruposPedido().length>1&&!esComida(dueno(l)))))){alert('El pedido no corresponde a este negocio. Revisa tu carrito antes de enviarlo.');return;}
-    if(!consulta&&menuDirecto&&!pedidoSoloMandaditos()&&gruposPedido().length===1){window.MenuDirectoExhibicion.enviar({negocio:n,origen,total:total(),modalidad:modoEntrega});return;}
+    const pedidoDirecto=menuDirecto&&!pedidoSoloMandaditos()&&gruposPedido().length===1;
+    if(!consulta&&(pedidoDirecto||digital(n)||entregaPropia())){
+      if(origen?.disabled)return;
+      const lineas=pedido.lineas.slice();
+      if(origen)origen.disabled=true;
+      try{
+        const disponible=await window.MenuPublicado.verificarDisponibilidad(lineas.map(l=>({negocio:dueno(l).slug,producto:l.producto.id})));
+        if(lineas.length!==pedido.lineas.length||lineas.some((l,i)=>l!==pedido.lineas[i]))return;
+        if(!disponible){alert('Un producto ya no está disponible. Quita el producto pausado de tu carrito o actualiza el menú.');return;}
+      }catch{alert('No pudimos comprobar la disponibilidad. Vuelve a intentar.');return;}
+      finally{if(origen)origen.disabled=false;}
+    }
+    if(!consulta&&pedidoDirecto){window.MenuDirectoExhibicion.enviar({negocio:n,origen,total:total(),modalidad:modoEntrega});return;}
     if(!consulta&&(modoEntrega==='mesa'||menuLocal&&modoEntrega==='recoger')&&gruposPedido().length===1&&n.slug==='forno-mexa'){window.MesasExhibicion.enviar({negocio:n,modalidad:modoEntrega,origen,total:total(),lineas:pedido.lineas.map(l=>({negocio:dueno(l).slug,producto:l.producto.id,cantidad:l.cantidad,opciones:(l.opciones||[]).map(o=>({grupo:o.grupoId,opcion:o.id})),extras:l.extras.map(x=>Number.isInteger(x.cantidad)?{id:x.id,cantidad:x.cantidad}:x.id),nota:l.nota||''})),limpiar:()=>{pedido.lineas=[];pintarPedido();}});return;}
     if (!consulta && pedidoSoloMandaditos()) modoEntrega = 'domicilio';
     const contenedor=origen?.closest?.('.pedido-resumen-modal')||document.getElementById('comida-pedido');
