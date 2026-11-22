@@ -65,4 +65,25 @@ function pintarSeccionesCatalogo(){
  for(const b of pista.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.seccion===filtro.value));
 }
 
-function agregarControlPausaCatalogo(acciones,p){if(esCatalogoVisual()||categoriasDinamicas()){const pausa=nodo('button',p.disponible===false?'Reactivar':'Pausar / Ocultar temporalmente','secundario');pausa.type='button';pausa.setAttribute('aria-label',(p.disponible===false?'Reactivar ':'Pausar ')+p.nombre);pausa.onclick=()=>tarea(async()=>{await api('/rest/v1/rpc/catalogo_producto_visibilidad',{method:'POST',datos:{negocio:menuCompleto.slug,version:menuCompleto.revision,producto:p.id,visible:p.disponible===false}});await cargarMenuCompleto();aviso(p.disponible===false?'Prenda reactivada.':'Prenda pausada. Conserva sus datos y fotos.');});acciones.append(pausa);}}
+function productoDisponible(p){return p.disponible!==false;}
+function estadoProductoMenu(p){
+ if(p.soloInformativo===true&&!esCatalogoVisual())return nodo('p','ℹ️ Carta informativa','chip-menu');
+ const disponible=productoDisponible(p);
+ return nodo('p',disponible?'🟢 Disponible':'🔴 Pausado / Agotado','chip-menu'+(disponible?'':' agotado'));
+}
+function agregarControlPausaCatalogo(acciones,p){
+ if(p.soloInformativo===true&&!esCatalogoVisual()&&!categoriasDinamicas())return;
+ const visible=!productoDisponible(p);
+ const etiqueta=visible?'Reactivar':'Pausar';
+ const boton=nodo('button',etiqueta,'secundario');
+ boton.type='button';
+ boton.setAttribute('aria-label',etiqueta+' '+p.nombre);
+ boton.onclick=()=>tarea(async()=>{
+  await api('/rest/v1/rpc/catalogo_producto_visibilidad',{method:'POST',datos:{
+   negocio:menuCompleto.slug,version:menuCompleto.revision,producto:p.id,visible
+  }});
+  await cargarMenuCompleto();
+  aviso(visible?'Producto reactivado.':'Producto pausado.');
+ });
+ acciones.append(boton);
+}

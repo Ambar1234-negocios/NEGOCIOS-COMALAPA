@@ -11,11 +11,26 @@ function combinar(n,mapa){
  if(!formatosMenu.has(n.slug)&&lista.length)formatosMenu.set(n.slug,lista.every(p=>!!String(p.seccion||'').trim()));
  n.menuConSecciones=formatosMenu.get(n.slug)??false;return lista;
 }
-window.MenuPublicado={actualizarExistentes(categorias){for(const lista of Object.values(categorias))for(const n of lista)n.productos=combinar(n,mapaAprobado);},async aplicar(lista){
+async function leerCatalogo(){
  const control=new AbortController(),timer=setTimeout(()=>control.abort(),8000);
  try{const r=await fetch(BASE+'/rest/v1/rpc/menu_catalogo_publicado',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:'{}',signal:control.signal,cache:'no-store'});if(!r.ok)throw Error('Catálogo no disponible');const cambios=await r.json();if(!Array.isArray(cambios))throw Error('Catálogo inválido');
- const mapa=new Map(cambios.filter(c=>c&&typeof c.negocio==='string'&&typeof c.producto==='string'&&c.contenido?.id===c.producto).map(c=>[c.negocio+'|'+c.producto,c.contenido]));
- mapaAprobado=mapa;return lista.map(n=>{const productos=combinar(n,mapa);return {...n,productos};});
- }catch(e){console.warn('No se pudieron actualizar los productos publicados.',e);return lista;}finally{clearTimeout(timer);}
-}};
+ return new Map(cambios.filter(c=>c&&typeof c.negocio==='string'&&typeof c.producto==='string'&&c.contenido?.id===c.producto).map(c=>[c.negocio+'|'+c.producto,c.contenido]));
+ }finally{clearTimeout(timer);}
+}
+window.MenuPublicado={
+ actualizarExistentes(categorias){for(const lista of Object.values(categorias))for(const n of lista)n.productos=combinar(n,mapaAprobado);},
+ async aplicar(lista){
+  try{
+   mapaAprobado=await leerCatalogo();
+   return lista.map(n=>({...n,productos:combinar(n,mapaAprobado)}));
+  }catch(e){console.warn('No se pudieron actualizar los productos publicados.',e);return lista;}
+ },
+ async verificarDisponibilidad(lineas){
+  const mapa=await leerCatalogo();
+  return lineas.every(({negocio,producto})=>{
+   const p=mapa.get(negocio+'|'+producto);
+   return !p||(p.disponible!==false&&p.eliminado!==true);
+  });
+ }
+};
 })();
