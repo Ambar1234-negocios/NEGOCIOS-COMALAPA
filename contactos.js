@@ -77,6 +77,8 @@
         llamada.append(texto,llamar);acciones.append(llamada);
       }
       informacion.append(encabezado,descripcion);servicio.append(informacion,acciones);zona.append(servicio);zona.hidden=false;
+      const compraLocal = document.getElementById('demo-compras-local');
+      if (compraLocal) servicio.after(compraLocal);
       const paqueteria=document.createElement('div');paqueteria.className='mandaditos-acceso paqueteria-acceso';
       const infoPaquete=document.createElement('div');const tituloPaquete=document.createElement('h2');tituloPaquete.textContent='Paquetería y envíos';const detallePaquete=document.createElement('p');detallePaquete.textContent='Recogida en Comalapa para envío desde Comitán y traslado de paquetes recibidos en Comitán hacia Comalapa. Consulta cobertura con el encargado.';infoPaquete.append(tituloPaquete,detallePaquete);
       const botonPaquete=document.createElement('button');botonPaquete.type='button';botonPaquete.className='mandaditos-boton';botonPaquete.textContent='Solicitar paquetería';botonPaquete.onclick=()=>window.ServiciosPedidos.abrir('paqueteria',api.actual.paqueteria.numero,'Paquetería',botonPaquete);paqueteria.append(infoPaquete,botonPaquete);zona.append(paqueteria);
