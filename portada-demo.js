@@ -19,6 +19,21 @@
     { name: 'Reloj de correa', store: 'Relojería Brisa', category: 'Relojes', icon: '⌚', demo: true },
     { name: 'Bolso pequeño', store: 'Abazarlo Boutique', category: 'Accesorios', icon: '👜', demo: true }
   ];
+  for (let index = products.length - 1; index > 0; index--) {
+    const other = Math.floor(Math.random() * (index + 1));
+    [products[index], products[other]] = [products[other], products[index]];
+  }
+  try {
+    const previous = sessionStorage.getItem('tendencias-primer-producto');
+    if (products[0].name === previous) {
+      const other = 1 + Math.floor(Math.random() * (products.length - 1));
+      [products[0], products[other]] = [products[other], products[0]];
+    }
+    sessionStorage.setItem('tendencias-primer-producto', products[0].name);
+  } catch {
+    // La selección sigue siendo aleatoria cuando el navegador bloquea el almacenamiento.
+  }
+
   const money = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
   const priceText = product => product.price == null ? 'Consultar precio' : money.format(product.price) + ' MXN';
   const modal = root.querySelector('dialog');
