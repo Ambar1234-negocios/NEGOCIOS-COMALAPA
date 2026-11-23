@@ -53,6 +53,34 @@
     return chat;
   }
 
+  function botonEliminar(cliente) {
+    const boton = document.createElement('button');
+    boton.type = 'button';
+    boton.className = 'secundario registro-eliminar';
+    boton.textContent = 'Eliminar registro';
+    boton.addEventListener('click', async () => {
+      const seguro = window.confirm(
+        '¿Eliminar definitivamente el registro de ' + cliente.nombre + ' (' + cliente.telefono + ')?\n\n' +
+        'También se eliminarán sus duplicados y solicitudes vinculadas a este registro.'
+      );
+      if (!seguro) return;
+      boton.disabled = true;
+      try {
+        const borrados = await api('/rest/v1/registro_publico_clientes?id=eq.' + cliente.id, { method: 'DELETE' });
+        if (borrados?.length !== 1) throw new Error();
+        clientes = clientes.filter(entrada => entrada.id !== cliente.id);
+        pintarClientes();
+        await actualizar();
+        if (!panel.hidden) mensaje.textContent = 'Registro eliminado.';
+      } catch {
+        if (!panel.hidden) mensaje.textContent = 'No se pudo eliminar el registro. Actualiza la lista e inténtalo de nuevo.';
+      } finally {
+        boton.disabled = false;
+      }
+    });
+    return boton;
+  }
+
   function pintarClientes() {
     const consulta = filtro.value.trim().toLowerCase();
     const telefono = /^[+\d ().-]+$/.test(consulta) ? consulta.replace(/\D/g, '') : '';
@@ -79,7 +107,7 @@
         }
       };
       const accion = () => cliente.activo && cliente.consentimiento ? chatWhatsApp(cliente) : '—';
-      return [cliente.nombre, cliente.telefono, accion(), cliente.dia + '/' + cliente.mes,
+      return [cliente.nombre, cliente.telefono, accion(), botonEliminar(cliente), cliente.dia + '/' + cliente.mes,
         fecha.format(new Date(cliente.fecha)), cliente.consentimiento ? 'Sí' : 'No', estado];
     }));
     encontrar('[data-vacio]').hidden = visibles.length > 0;

@@ -127,3 +127,8 @@
   text-decoration: none;
 }
 .registro-respaldo { margin-top: 1rem; }
+
+#registro-publico-admin .registro-eliminar {
+  color: #8a2a32;
+  white-space: nowrap;
+}
