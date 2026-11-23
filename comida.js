@@ -455,9 +455,24 @@
     const actualizar=()=>{
       const elegidas=opciones();
       for(const campo of form.querySelectorAll('[data-limite-opciones]')){
-        const grupo=gs[Number(campo.closest('[data-grupo]').dataset.grupo)];
+        const seccion=campo.closest('[data-grupo]');
+        const grupo=gs[Number(seccion.dataset.grupo)];
         const {maximo,nota}=limiteDelGrupo(grupo,elegidas);
-        campo.textContent=Number.isInteger(maximo)?'Máximo '+maximo+(nota?' · '+nota:''):'Elige primero la presentación para conocer el límite.';
+        const tieneMaximo=Number.isInteger(maximo);
+        let mensaje=tieneMaximo?'Máximo '+maximo+(nota?' · '+nota:''):'Elige primero la presentación para conocer el límite.';
+        if(n.slug==='la-casa-de-los-snacks'&&grupo.id==='salsas'&&grupo.seleccion==='multiple'){
+          const marcadas=elegidas.filter(opcion=>opcion.grupoId===grupo.id).length;
+          const limiteAlcanzado=tieneMaximo&&marcadas>=maximo;
+          for(const casilla of seccion.querySelectorAll('input[type="checkbox"]')){
+            casilla.disabled=!casilla.checked&&(!tieneMaximo||limiteAlcanzado);
+          }
+          if(limiteAlcanzado){
+            mensaje+=marcadas>maximo
+              ? ' · Desmarca las salsas que sobran para continuar.'
+              : ' · Límite alcanzado. Desmarca una salsa para elegir otra.';
+          }
+        }
+        if(campo.textContent!==mensaje)campo.textContent=mensaje;
       }
       form.querySelector('.pedido-config-error').textContent='';
       const q=Number(form.elements.cantidad.value);const calculo=calculoLinea({producto:p,opciones:elegidas,extras:seleccion(),cantidad:q});form.querySelector('.pedido-config-total').textContent=Number.isInteger(q)&&q>=1&&q<=99&&extrasValidos()?'Subtotal: '+dinero(calculo.total)+(calculo.etiqueta?' · '+calculo.etiqueta:''):'Revisa las unidades y la cantidad de extras (0 a 99).';};form.addEventListener('input',actualizar);actualizar();
