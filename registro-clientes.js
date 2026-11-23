@@ -4,7 +4,7 @@ const porId = id => document.getElementById(id);
 const fechaLocal = new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' });
 const consentimiento = 'Acepto registrarme voluntariamente para recibir promociones, novedades y beneficios de Exhibición Frontera Comalapa por WhatsApp. Puedo dejar de participar cuando quiera.';
 const mensajeWhatsApp = 'Hola 👋 Ya me registré en Exhibición Frontera Comalapa para recibir promociones, novedades y beneficios por WhatsApp.';
-const whatsappAdministracion = 'https://wa.me/529633106862?text=' + encodeURIComponent(mensajeWhatsApp);
+const whatsappAdministracion = 'https://api.whatsapp.com/send?phone=529633106862&text=' + encodeURIComponent(mensajeWhatsApp);
 
 function opciones(lista, inicial) {
   return '<option value="">' + inicial + '</option>' +

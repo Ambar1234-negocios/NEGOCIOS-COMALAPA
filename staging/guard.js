@@ -24,8 +24,9 @@
     if (location.pathname !== '/registro-clientes.html' || !confirmacion || confirmacion.hidden ||
         !enlace?.hasAttribute('href') || enlace.href !== value) return false;
     const url = new URL(enlace.href);
-    return url.origin === 'https://wa.me' && url.pathname === '/529633106862' &&
-      url.searchParams.size === 1 && url.searchParams.has('text') && !url.hash;
+    return url.origin === 'https://api.whatsapp.com' && url.pathname === '/send' &&
+      url.searchParams.size === 2 && url.searchParams.get('phone') === '529633106862' &&
+      url.searchParams.has('text') && !url.hash;
   }
 
   const open = window.open.bind(window);
