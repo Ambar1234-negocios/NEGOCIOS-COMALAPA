@@ -50,32 +50,27 @@ function alGuardar(formulario, guardar) {
 }
 
 function iniciarRegistro(formulario) {
-  let clienteId;
-  prepararAlta(formulario);
-  porId('registro-formulario').hidden = false;
-  alGuardar(formulario, async valores => {
-    const cliente = await datosClientes.registrarCliente(valores, 'Registro web');
-    clienteId = cliente.id;
-    formulario.reset();
+  function mostrarConfirmacion() {
     porId('registro-formulario').hidden = true;
     const confirmacion = porId('registro-confirmacion');
     confirmacion.hidden = false;
     confirmacion.querySelector('h2').focus();
     porId('registro-whatsapp').href = whatsappAdministracion;
-    window.open(whatsappAdministracion, '_blank', 'noopener,noreferrer');
-  });
-  const buscar = porId('registro-buscar');
-  const solicitud = porId('registro-solicitud');
-  buscar.addEventListener('click', () => {
-    solicitud.hidden = !solicitud.hidden;
-    buscar.setAttribute('aria-expanded', String(!solicitud.hidden));
-    if (!solicitud.hidden) solicitud.querySelector('input').focus();
-  });
-  const formSolicitud = porId('form-solicitud');
-  alGuardar(formSolicitud, async (valores, aviso) => {
-    await datosClientes.registrarSolicitud(clienteId, valores);
-    formSolicitud.reset();
-    aviso.textContent = 'Tu solicitud de prueba quedó guardada.';
+  }
+
+  if (history.state?.registroGuardado) {
+    mostrarConfirmacion();
+    return;
+  }
+
+  prepararAlta(formulario);
+  porId('registro-formulario').hidden = false;
+  alGuardar(formulario, async valores => {
+    await datosClientes.registrarCliente(valores, 'Registro web');
+    formulario.reset();
+    mostrarConfirmacion();
+    history.replaceState({ ...history.state, registroGuardado: true }, '');
+    location.assign(whatsappAdministracion);
   });
 }
 

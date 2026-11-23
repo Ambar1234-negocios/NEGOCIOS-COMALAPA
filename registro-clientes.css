@@ -83,9 +83,7 @@
   font-weight: 700;
   cursor: pointer;
 }
-#registro-buscar { background: #fff; color: #164d37; }
 .registro-tarjeta :focus-visible { outline: 3px solid #946416; outline-offset: 2px; }
-.registro-acciones { display: flex; flex-wrap: wrap; gap: .65rem; }
 .registro-nota { margin: 0 0 .8rem; font-size: .92rem; }
 .registro-tarjeta [role=status]:empty, #registro-clientes-admin [role=status]:empty { display: none; }
 .registro-tarjeta [role=status] { margin: 0; }

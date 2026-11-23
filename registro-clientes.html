@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Únete a Exhibición Frontera Comalapa</title>
-  <link rel="stylesheet" href="/registro-clientes.css?v=confirmacion">
-  <script type="module" src="/registro-clientes.js?v=confirmacion"></script>
+  <link rel="stylesheet" href="/registro-clientes.css?v=registro-directo">
+  <script type="module" src="/registro-clientes.js?v=registro-directo"></script>
 </head>
 <body class="registro-clientes">
   <main>
     <header class="registro-intro">
       <div class="registro-marca"><span aria-hidden="true">EFC</span> Exhibición Frontera Comalapa</div>
       <h1>Únete a Exhibición Frontera Comalapa</h1>
-      <p>Regístrate para recibir promociones, menús, novedades y beneficios por WhatsApp. También puedes escribirnos si estás buscando algún producto o servicio en Frontera Comalapa y te ayudamos a encontrar una opción.</p>
+      <p>Regístrate para recibir promociones, menús, novedades y beneficios por WhatsApp.</p>
     </header>
     <noscript>Activa JavaScript para usar el registro de pruebas.</noscript>
     <section class="registro-tarjeta" id="registro-formulario" hidden>
@@ -22,22 +22,8 @@
     </section>
     <section class="registro-tarjeta" id="registro-confirmacion" hidden>
       <h2 tabindex="-1">¡Listo! Tu registro fue guardado.</h2>
-      <div class="registro-acciones">
-        <button type="button" id="registro-buscar" aria-expanded="false" aria-controls="registro-solicitud">Estoy buscando algo</button>
-      </div>
       <p class="registro-nota registro-respaldo">Si WhatsApp no se abrió, puedes intentarlo aquí.</p>
-      <a id="registro-whatsapp" target="_blank" rel="noopener noreferrer">Abrir WhatsApp</a>
-    </section>
-    <section class="registro-tarjeta" id="registro-solicitud" hidden>
-      <h2>Estoy buscando algo</h2>
-      <p class="registro-nota">Por ejemplo, un taxi, un control remoto, pilas, una carnicería, comida u otro servicio.</p>
-      <form id="form-solicitud">
-        <label>¿Qué buscas?<input name="busqueda" required maxlength="160"></label>
-        <label>Categoría (opcional)<input name="categoria" maxlength="80"></label>
-        <label>Comentario o referencia (opcional)<textarea name="comentario" rows="3" maxlength="500"></textarea></label>
-        <button>Guardar solicitud</button>
-        <p role="status"></p>
-      </form>
+      <a id="registro-whatsapp" rel="noreferrer">Abrir WhatsApp</a>
     </section>
   </main>
 </body>

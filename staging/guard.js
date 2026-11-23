@@ -30,7 +30,7 @@
 
   const open = window.open.bind(window);
   window.open = (url, ...args) => {
-    if (url && (isLocal(url) || esConfirmacionRegistro(url))) return open(url, ...args);
+    if (url && isLocal(url)) return open(url, ...args);
     if (url) alert(message);
     return null;
   };
