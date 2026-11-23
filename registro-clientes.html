@@ -8,8 +8,8 @@
   <meta property="og:description" content="Regístrate para recibir promociones, menús, novedades y beneficios por WhatsApp.">
   <meta property="og:image" content="https://exhibicionfronteracomalapa.com/imagenes/comalapa.webp">
   <meta property="og:url" content="https://exhibicionfronteracomalapa.com/registro-clientes.html">
-  <link rel="stylesheet" href="/registro-publico.css">
-  <script type="module" src="/registro-publico.js"></script>
+  <link rel="stylesheet" href="/registro-publico.css?v=2">
+  <script type="module" src="/registro-publico.js?v=2"></script>
 </head>
 <body class="registro-clientes">
   <main>
@@ -28,6 +28,7 @@
     </section>
     <section class="registro-tarjeta" id="registro-confirmacion" hidden>
       <h2 tabindex="-1">¡Listo! Ya estás registrado para recibir promociones, novedades y beneficios de Exhibición Frontera Comalapa.</h2>
+      <p id="registro-duplicado" hidden>Este número de WhatsApp ya estaba registrado. Conservamos tus datos anteriores.</p>
       <div class="registro-acciones">
         <button type="button" id="registro-buscar" aria-expanded="false" aria-controls="registro-solicitud">Estoy buscando algo</button>
       </div>
@@ -42,6 +43,13 @@
         <button>Guardar solicitud</button>
         <p role="status"></p>
       </form>
+    </section>
+    <section class="registro-tarjeta">
+      <h2>Agrega a Exhibición Frontera Comalapa a tus contactos</h2>
+      <div class="registro-acciones">
+        <a href="/exhibicion-frontera-comalapa.vcf" download>Guardar contacto</a>
+        <a href="https://wa.me/529633106862" target="_blank" rel="noopener noreferrer">Abrir chat de WhatsApp</a>
+      </div>
     </section>
   </main>
 </body>

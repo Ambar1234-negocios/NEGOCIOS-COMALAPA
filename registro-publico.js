@@ -16,9 +16,12 @@ async function insertar(tabla, registro) {
   });
   if (respuesta.status === 409) {
     const error = await respuesta.json();
-    if (error.code === '23505') return;
+    if (error.code === '23505') {
+      return { duplicado: error.message.includes('"registro_publico_un_whatsapp"') };
+    }
   }
   if (!respuesta.ok) throw new Error('No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.');
+  return { duplicado: false };
 }
 
 function alEnviar(formulario, guardar) {
@@ -67,12 +70,14 @@ if (window.ENTORNO?.ambiente !== 'staging' && location.hostname === 'exhibicionf
       throw new Error('Escribe tu nombre y un número de WhatsApp válido.');
     }
     if (!(dia >= 1 && dia <= limite)) throw new Error('Selecciona un día y un mes válidos.');
-    await insertar('registro_publico_clientes', {
+    const resultado = await insertar('registro_publico_clientes', {
       id: clienteId, nombre, telefono, dia, mes, consentimiento: valores.has('consentimiento')
     });
     formulario.reset();
     porId('registro-formulario').hidden = true;
     const confirmacion = porId('registro-confirmacion');
+    porId('registro-duplicado').hidden = !resultado.duplicado;
+    porId('registro-buscar').hidden = resultado.duplicado;
     confirmacion.hidden = false;
     confirmacion.querySelector('h2').focus();
   });

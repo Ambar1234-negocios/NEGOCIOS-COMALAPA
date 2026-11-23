@@ -98,13 +98,14 @@
     mensaje.textContent = 'Cargando registros…';
     try {
       const [altas, solicitudes] = await Promise.all([
-        listar('registro_publico_clientes', 'id,nombre,telefono,dia,mes,fecha,consentimiento,activo', 'id'),
+        listar('registro_publico_clientes', 'id,nombre,telefono,dia,mes,fecha,consentimiento,activo,duplicado_de', 'id'),
         listar('registro_publico_solicitudes', 'cliente_id,busqueda,categoria,comentario,fecha,estado', 'cliente_id')
       ]);
       if (actual !== version || panel.hidden) return;
-      clientes = altas;
+      clientes = altas.filter(cliente => !cliente.duplicado_de);
       pintarClientes();
-      const nombres = new Map(altas.map(cliente => [cliente.id, cliente.nombre]));
+      const originales = new Map(clientes.map(cliente => [cliente.id, cliente.nombre]));
+      const nombres = new Map(altas.map(cliente => [cliente.id, originales.get(cliente.duplicado_de || cliente.id)]));
       pintar(encontrar('#registro-publico-solicitudes tbody'), solicitudes.map(solicitud => {
         const estado = document.createElement('select');
         estado.setAttribute('aria-label', 'Estado de solicitud de ' + (nombres.get(solicitud.cliente_id) ?? 'cliente'));
