@@ -259,7 +259,7 @@
   function limiteDelGrupo(grupo, seleccion) {
     const regla=grupo.limitePorOpcion;
     const id=seleccion.find(opcion=>opcion.grupoId===regla?.grupo)?.id;
-    return {maximo:regla?.maximos?.[id],nota:regla?.notas?.[id]};
+    return {maximo:regla?.maximo??regla?.maximos?.[id],nota:regla?.nota??regla?.notas?.[id]};
   }
   function validarOpciones(p,seleccion) {
     const gs=grupos(p);
