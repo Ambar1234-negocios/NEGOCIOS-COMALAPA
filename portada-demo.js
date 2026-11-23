@@ -153,6 +153,19 @@
       card.querySelector('.demo-price').textContent = priceText(product);
       let button = card.querySelector('button');
       if (product.url) {
+        card.firstElementChild.classList.add('demo-product-photo');
+        card.querySelector('.demo-category').remove();
+        card.querySelector('.demo-price').remove();
+        const heading = card.querySelector('h3');
+        const caption = document.createElement('p');
+        caption.className = 'demo-caption';
+        const productName = document.createElement('strong');
+        productName.textContent = product.name.replace(/\s+calidad original$/i, '');
+        const storeName = document.createElement('span');
+        storeName.textContent = product.store;
+        caption.append(productName, storeName);
+        heading.replaceWith(caption);
+        card.querySelector('.demo-store').remove();
         const link = document.createElement('a');
         link.className = 'demo-action demo-business-link';
         link.href = product.url;
@@ -165,7 +178,7 @@
         button.tabIndex = -1;
       }
       button.textContent = product.url ? 'Ver negocio' : (product.demo && product.price == null ? 'Consultar' : 'Ver producto');
-      button.setAttribute('aria-label', button.textContent + ': ' + product.name);
+      button.setAttribute('aria-label', product.url ? 'Ver negocio: ' + product.store + ' · ' + product.name : button.textContent + ': ' + product.name);
       if (!product.url) button.addEventListener('click', () => {
         detail.textContent = product.store + ' · ' + product.category + ' · ' + priceText(product) +
           (product.demo ? '. Ejemplo visual. La disponibilidad y el precio no están confirmados.' : '.');
