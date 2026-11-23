@@ -45,8 +45,8 @@
 
 <link rel="stylesheet" href="consultorios.css?v=cueto-fotos-proporcion-20261116"><link rel="stylesheet" href="mesas.css?v=50"><link rel="stylesheet" href="apariencia-negocio.css?v=53"><link rel="stylesheet" href="cupones-pedido.css?v=69">  <script src="/privacidad-consentimiento.js?v=1" defer></script>
 <link rel="stylesheet" href="ficha-avanzada.css?v=1"><link rel="stylesheet" href="cinta-promociones.css?v=promo-perfil-20261114">
-<link rel="stylesheet" href="portada-demo.css?v=2">
-<script src="portada-demo.js?v=2" defer></script>
+<link rel="stylesheet" href="portada-demo.css?v=3">
+<script src="portada-demo.js?v=3" defer></script>
 </head>
 
 
@@ -121,16 +121,22 @@
   <section id="compras-encargo" class="compras-encargo" aria-label="Compras por encargo" hidden></section>
 
   <div id="portada-demo" hidden>
-    <section class="demo-section" aria-labelledby="demo-compras-titulo">
+    <section id="demo-compras-local" class="demo-section" aria-labelledby="demo-compras-titulo" hidden>
       <header class="demo-heading">
         <div>
-          <h2 id="demo-compras-titulo">¿Qué necesitas que compremos por ti?</h2>
-          <p>Dinos qué necesitas y te ayudamos a conseguirlo</p>
+          <h2 id="demo-compras-titulo">¿Qué compramos por ti?</h2>
+          <p>Haz tu lista y dinos dónde quieres que compremos</p>
         </div>
         <span class="demo-badge">DEMO</span>
       </header>
-      <div class="demo-shops"></div>
+      <div class="demo-shops"><div class="demo-shop-track"></div></div>
       <p class="demo-note">Lugares y categorías de compra de ejemplo, sin afiliación comercial.</p>
+    </section>
+
+    <section id="demo-encargo" class="compras-plataformas" aria-labelledby="demo-encargo-titulo" hidden>
+      <h2 id="demo-encargo-titulo">Compras por encargo</h2>
+      <p>Comparte el nombre o enlace de un producto para simular un encargo en línea.</p>
+      <button type="button" class="demo-action">Solicitar compra en línea · DEMO</button>
     </section>
 
     <section class="demo-section" aria-labelledby="demo-tendencias-titulo">
@@ -347,7 +353,7 @@
 
 <script src="sitio-publicado.js?v=37"></script>
 
-<script src="contactos.js?v=llamar-mandaditos-20261111"></script>
+<script src="contactos.js?v=portada-pruebas-3"></script>
 
   <script src="categorias.js?v=34b"></script>
 

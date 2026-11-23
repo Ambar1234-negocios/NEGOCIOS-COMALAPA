@@ -34,6 +34,15 @@
     modal.showModal();
   }
 
+  function openPurchase(label) {
+    form.reset();
+    store.value = label;
+    openDialog('Compra por encargo · DEMO', form);
+    form.elements.necesidad.focus();
+  }
+
+  const shops = document.querySelector('#demo-compras-local .demo-shops');
+  const track = shops.querySelector('.demo-shop-track');
   for (const [label, icon] of choices) {
     store.add(new Option(label, label));
     const button = document.createElement('button');
@@ -43,14 +52,24 @@
     symbol.setAttribute('aria-hidden', 'true');
     symbol.textContent = icon;
     button.append(symbol, label);
-    button.addEventListener('click', () => {
-      form.reset();
-      store.value = label;
-      openDialog('Compra por encargo · DEMO', form);
-      form.elements.necesidad.focus();
-    });
-    root.querySelector('.demo-shops').append(button);
+    button.dataset.shop = label;
+    track.append(button);
   }
+
+  for (const item of [...track.children]) {
+    const copy = item.cloneNode(true);
+    copy.tabIndex = -1;
+    copy.setAttribute('aria-hidden', 'true');
+    track.append(copy);
+  }
+  track.addEventListener('click', event => {
+    const button = event.target.closest('[data-shop]');
+    if (button) openPurchase(button.dataset.shop);
+  });
+
+  const online = document.querySelector('#demo-encargo button');
+  store.add(new Option('Compra en línea', 'Compra en línea'));
+  online.addEventListener('click', () => openPurchase('Compra en línea'));
 
   const grid = root.querySelector('.demo-products');
   for (const product of products) {
@@ -79,6 +98,26 @@
   });
 
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let previousTime;
+  let shopPosition = 0;
+  let shopPauseUntil = 0;
+  for (const event of ['pointerdown', 'wheel', 'keydown']) {
+    shops.addEventListener(event, () => { shopPauseUntil = Date.now() + 5000; }, { passive: true });
+  }
+  function moveShops(time) {
+    const elapsed = Math.min(time - (previousTime ?? time), 50);
+    previousTime = time;
+    const loopWidth = track.children[choices.length].offsetLeft - track.firstElementChild.offsetLeft;
+    if (loopWidth && !document.hidden && !reducedMotion.matches && !modal.open &&
+        !shops.matches(':hover, :focus-within') && Date.now() >= shopPauseUntil) {
+      if (Math.abs(shops.scrollLeft - shopPosition) > 1) shopPosition = shops.scrollLeft;
+      shopPosition = (shopPosition + elapsed * 0.027) % loopWidth;
+      shops.scrollLeft = shopPosition;
+    }
+    requestAnimationFrame(moveShops);
+  }
+  requestAnimationFrame(moveShops);
+
   let pauseUntil = 0;
   for (const event of ['pointerdown', 'wheel', 'keydown']) {
     grid.addEventListener(event, () => { pauseUntil = Date.now() + 8000; }, { passive: true });
@@ -109,5 +148,6 @@
     form.reset();
     result.textContent = '';
   });
+  document.querySelector('#demo-compras-local').hidden = false;
   root.hidden = false;
 })();
