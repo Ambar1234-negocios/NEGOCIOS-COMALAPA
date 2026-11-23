@@ -3,6 +3,11 @@ export const estados = ['Nueva', 'Buscando', 'Cotizando', 'Opción encontrada', 
 export const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 export const soloDigitos = valor => valor.replace(/\D/g, '');
 
+function telefonoComparable(valor) {
+  const digitos = soloDigitos(valor);
+  return /^52(?:1)?\d{10}$/.test(digitos) ? digitos.slice(-10) : digitos;
+}
+
 function clave(tipo, id) {
   return prefijo + tipo + ':' + id;
 }
@@ -37,9 +42,18 @@ export const datosClientes = {
       throw new Error('Selecciona un día y un mes de cumpleaños válidos.');
     }
     if (!consentimiento) throw new Error('Confirma el consentimiento para guardar el registro.');
+    const web = origen === 'Registro web';
+    const telefonoNormalizado = telefonoComparable(telefono);
+    if (web) {
+      const existente = listar('cliente').find(cliente =>
+        cliente.origen === origen && telefonoComparable(cliente.telefono) === telefonoNormalizado
+      );
+      if (existente) return existente;
+    }
     const fecha = new Date().toISOString();
     return guardar('cliente', {
-      id: crypto.randomUUID(), nombre, telefono, dia: dia || null, mes: mes || null,
+      id: web ? 'web-' + telefonoNormalizado : crypto.randomUUID(),
+      nombre, telefono, dia: dia || null, mes: mes || null,
       fecha, origen, consentimiento, activo: true
     });
   },

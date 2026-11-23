@@ -18,9 +18,19 @@
     }
   }
 
+  function esConfirmacionRegistro(value) {
+    const confirmacion = document.getElementById('registro-confirmacion');
+    const enlace = document.getElementById('registro-whatsapp');
+    if (location.pathname !== '/registro-clientes.html' || !confirmacion || confirmacion.hidden ||
+        !enlace?.hasAttribute('href') || enlace.href !== value) return false;
+    const url = new URL(enlace.href);
+    return url.origin === 'https://wa.me' && url.pathname === '/529633106862' &&
+      url.searchParams.size === 1 && url.searchParams.has('text') && !url.hash;
+  }
+
   const open = window.open.bind(window);
   window.open = (url, ...args) => {
-    if (url && isLocal(url)) return open(url, ...args);
+    if (url && (isLocal(url) || esConfirmacionRegistro(url))) return open(url, ...args);
     if (url) alert(message);
     return null;
   };
@@ -29,7 +39,8 @@
   }
 
   function disableLink(link) {
-    if (!link.hasAttribute('href') || isLocal(link.href)) return;
+    if (!link.hasAttribute('href') || isLocal(link.href) ||
+        (link.id === 'registro-whatsapp' && esConfirmacionRegistro(link.href))) return;
     link.removeAttribute('href');
     link.removeAttribute('ping');
     link.setAttribute('data-accion-bloqueada', '');

@@ -1,8 +1,10 @@
-import { datosClientes, estados, meses, soloDigitos } from './clientes-pruebas-datos.js';
+import { datosClientes, estados, meses, soloDigitos } from './clientes-pruebas-datos.js?v=confirmacion';
 
 const porId = id => document.getElementById(id);
 const fechaLocal = new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' });
 const consentimiento = 'Acepto registrarme voluntariamente para recibir promociones, novedades y beneficios de Exhibición Frontera Comalapa por WhatsApp. Puedo dejar de participar cuando quiera.';
+const mensajeWhatsApp = 'Hola 👋 Ya me registré en Exhibición Frontera Comalapa para recibir promociones, novedades y beneficios por WhatsApp.';
+const whatsappAdministracion = 'https://wa.me/529633106862?text=' + encodeURIComponent(mensajeWhatsApp);
 
 function opciones(lista, inicial) {
   return '<option value="">' + inicial + '</option>' +
@@ -22,7 +24,8 @@ function prepararAlta(formulario, manual = false) {
     <label class="registro-consentimiento"><input type="checkbox" name="consentimiento" required>
       <span>${manual ? 'El cliente dio este consentimiento voluntario por WhatsApp. ' : ''}${consentimiento}</span>
     </label>
-    <button>${manual ? 'Guardar alta manual' : 'Registrarme'}</button>
+    <button>${manual ? 'Guardar alta manual' : 'Registrarme y confirmar por WhatsApp'}</button>
+    ${manual ? '' : '<p class="registro-nota">Al registrarte, se abrirá WhatsApp con un mensaje de confirmación listo para enviar.</p>'}
     <p role="status"></p>`;
 }
 
@@ -58,9 +61,8 @@ function iniciarRegistro(formulario) {
     const confirmacion = porId('registro-confirmacion');
     confirmacion.hidden = false;
     confirmacion.querySelector('h2').focus();
-  });
-  porId('registro-whatsapp').addEventListener('click', () => {
-    porId('registro-contacto').textContent = 'WhatsApp simulado. No se abrió la aplicación ni se envió un mensaje.';
+    porId('registro-whatsapp').href = whatsappAdministracion;
+    window.open(whatsappAdministracion, '_blank', 'noopener,noreferrer');
   });
   const buscar = porId('registro-buscar');
   const solicitud = porId('registro-solicitud');

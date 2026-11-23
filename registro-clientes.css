@@ -89,7 +89,16 @@
 .registro-nota { margin: 0 0 .8rem; font-size: .92rem; }
 .registro-tarjeta [role=status]:empty, #registro-clientes-admin [role=status]:empty { display: none; }
 .registro-tarjeta [role=status] { margin: 0; }
-#registro-contacto:not(:empty) { margin-top: .75rem; }
+#registro-whatsapp {
+  display: inline-block;
+  padding: .55rem .85rem;
+  border: 1px solid #164d37;
+  border-radius: .55rem;
+  color: #164d37;
+  font-weight: 700;
+  text-decoration: none;
+}
+.registro-respaldo { margin-top: 1rem; }
 .registro-admin-tabla { overflow: auto; }
 .registro-admin-tabla table { width: 100%; border-collapse: collapse; }
 .registro-admin-tabla th, .registro-admin-tabla td {

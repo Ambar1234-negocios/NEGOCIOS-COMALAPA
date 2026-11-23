@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Únete a Exhibición Frontera Comalapa</title>
-  <link rel="stylesheet" href="/registro-clientes.css">
-  <script type="module" src="/registro-clientes.js"></script>
+  <link rel="stylesheet" href="/registro-clientes.css?v=confirmacion">
+  <script type="module" src="/registro-clientes.js?v=confirmacion"></script>
 </head>
 <body class="registro-clientes">
   <main>
@@ -21,12 +21,12 @@
       <form id="alta-publica"></form>
     </section>
     <section class="registro-tarjeta" id="registro-confirmacion" hidden>
-      <h2 tabindex="-1">¡Listo! Ya estás registrado para recibir promociones, novedades y beneficios de Exhibición Frontera Comalapa.</h2>
+      <h2 tabindex="-1">¡Listo! Tu registro fue guardado.</h2>
       <div class="registro-acciones">
-        <button type="button" id="registro-whatsapp">Guardar / escribir a nuestro WhatsApp</button>
         <button type="button" id="registro-buscar" aria-expanded="false" aria-controls="registro-solicitud">Estoy buscando algo</button>
       </div>
-      <p role="status" id="registro-contacto"></p>
+      <p class="registro-nota registro-respaldo">Si WhatsApp no se abrió, puedes intentarlo aquí.</p>
+      <a id="registro-whatsapp" target="_blank" rel="noopener noreferrer">Abrir WhatsApp</a>
     </section>
     <section class="registro-tarjeta" id="registro-solicitud" hidden>
       <h2>Estoy buscando algo</h2>
