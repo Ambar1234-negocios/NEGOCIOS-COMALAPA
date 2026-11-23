@@ -1,6 +1,12 @@
 /* Desvío reversible: los contactos originales nunca se sobrescriben. */
 (()=>{'use strict';
  const api=window.ContactosPrueba={listo:false,activo:false,numero:''};
+ if (window.ENTORNO?.ambiente === 'staging' && !window.ENTORNO.supabaseConfigurado) {
+   api.listo = true;
+   api.publicacion = Promise.resolve(null);
+   api.aplicar = api.url = api.destino = valor => valor;
+   return;
+ }
  const base='https://gyvoyzxsgckpfkagzjtf.supabase.co',key='sb_publishable_i9NtjLajxExcefezErM2wQ_JDHUPvlD';
  api.publicacion=(async()=>{const r=await fetch(base+'/rest/v1/rpc/sitio_publicacion',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(7000),cache:'no-store'});if(!r.ok)throw Error('No se pudo verificar el contacto. Actualiza antes de enviar.');const d=await r.json(),c=d.documentos?.contactos||{};api.activo=c.modoPruebaContactos===true;api.numero=String(c.numeroPruebaContactos||'');if(api.activo&&!/^52\d{10}$/.test(api.numero))throw Error('Contacto de prueba inválido.');api.listo=true;return d;})();
  api.publicacion.catch(()=>{});

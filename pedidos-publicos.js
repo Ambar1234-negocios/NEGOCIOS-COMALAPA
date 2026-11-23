@@ -7,6 +7,15 @@ async function abrir({solicitud,numero,mensaje,contenedor}){
  if(enCurso)return;const zona=contenedor?.querySelector('[data-confirmacion-pedido]');if(!zona){alert('Actualiza la página para usar el carrito nuevo.');return;}
  if(!solicitud.cliente?.trim()||solicitud.tipo!=='mandadito'&&solicitud.entrega!=='recoger'&&!solicitud.direccion?.trim()){zona.textContent='Completa tu nombre y la dirección antes de continuar.';return;}
  let tel=String(solicitud.telefono||'').replace(/\D/g,'');if(tel.length===10)tel='52'+tel;if(tel&&!/^\d{11,15}$/.test(tel)){zona.textContent='Revisa tu WhatsApp: escribe 10 dígitos o incluye la clave del país.';return;}solicitud={...solicitud,telefono:tel};
+ if (window.ENTORNO?.ambiente === 'staging') {
+   const aviso = nodo('p', solicitud.tipo === 'mandadito'
+     ? '🧪 Mandadito simulado. No se avisó a recepción ni se asignó un repartidor.'
+     : '🧪 Pedido simulado. No se guardó ningún pedido ni se abrió WhatsApp.');
+   aviso.setAttribute('role', 'status');
+   zona.replaceChildren(aviso);
+   zona.classList.add('pedido-confirmacion-visible');
+   return;
+ }
  const llave='exhibicionPedidoPendiente:'+JSON.stringify(solicitud);let pendiente=null;try{pendiente=JSON.parse(sessionStorage.getItem(llave));}catch{}
  zona.replaceChildren();zona.classList.add('pedido-confirmacion-visible');const estado=nodo('p'),acciones=nodo('div');estado.setAttribute('role','status');acciones.className='pedido-confirmacion-acciones';zona.append(estado,acciones);
  const continuar=nodo('a','📲 Abrir WhatsApp con mi folio');continuar.target='_blank';continuar.rel='noopener noreferrer';continuar.className='pedido-continuar';

@@ -1,0 +1,20 @@
+#aviso-entorno-pruebas {
+  position: fixed !important;
+  inset: auto 0 0 !important;
+  z-index: 2147483647 !important;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.65rem 0.85rem calc(0.65rem + env(safe-area-inset-bottom));
+  background: #fcd34d;
+  color: #1b1404;
+  font: 700 0.9rem/1.35 system-ui, sans-serif;
+  text-align: center;
+}
+
+html:has(#aviso-entorno-pruebas) {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+}
+
+[data-accion-bloqueada] {
+  cursor: not-allowed;
+}
