@@ -86,6 +86,7 @@
     form.elements.necesidad.placeholder = butcher ? 'Ej. bistec de res y chorizo' : (category?.example ?? '');
     form.querySelector('.demo-quantity-label').textContent = butcher ? '¿Cuánto vas a comprar?' : 'Cantidad (opcional)';
     form.elements.cantidad.placeholder = butcher ? 'Ej. 1 kg de bistec y 500 g de chorizo' : 'Ej. 2 bolsas';
+    form.elements.referencia.closest('label').hidden = butcher;
     form.elements.cantidad.required = butcher;
     form.elements.cantidad.pattern = butcher ? '.*\\S.*' : '';
     if (!butcher) form.elements.cantidad.removeAttribute('pattern');
