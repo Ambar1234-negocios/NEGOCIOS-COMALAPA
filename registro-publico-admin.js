@@ -3,6 +3,8 @@
   if (window.ENTORNO?.ambiente === 'staging') return;
   const panel = document.getElementById('panel');
   const seccion = document.getElementById('registro-publico-admin');
+  const vistaRecepcion = seccion.closest('[data-grupo="operacion"]');
+  const visible = () => !panel.hidden && !vistaRecepcion?.hidden;
   const encontrar = selector => seccion.querySelector(selector);
   const enlace = encontrar('input[readonly]');
   const filtro = encontrar('input[type=search]');
@@ -12,7 +14,7 @@
   let clientes = [];
   let version = 0;
 
-  encontrar('[data-copiar]').addEventListener('click', async () => {
+  encontrar('[data-copiar]')?.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(enlace.value);
       mensaje.textContent = 'Enlace copiado.';
@@ -35,12 +37,29 @@
     }
   }
 
+  function chatWhatsApp(cliente) {
+    const telefono = cliente.telefono;
+    const numero = /^\d{10}$/.test(telefono) ? '52' + telefono :
+      /^521\d{10}$/.test(telefono) ? '52' + telefono.slice(3) : telefono;
+    if (!/^\d{11,15}$/.test(numero)) return '—';
+    const chat = document.createElement('a');
+    chat.href = 'https://wa.me/' + numero;
+    chat.target = '_blank';
+    chat.rel = 'noopener noreferrer';
+    chat.className = 'enlace-boton';
+    chat.textContent = 'Agregar a WhatsApp';
+    chat.setAttribute('aria-label', 'Agregar a WhatsApp a ' + cliente.nombre);
+    chat.setAttribute('data-contacto-cliente', '');
+    return chat;
+  }
+
   function pintarClientes() {
     const consulta = filtro.value.trim().toLowerCase();
     const telefono = /^[+\d ().-]+$/.test(consulta) ? consulta.replace(/\D/g, '') : '';
     const visibles = clientes.filter(cliente => cliente.nombre.toLowerCase().includes(consulta) ||
       (telefono && cliente.telefono.includes(telefono)));
     pintar(encontrar('#registro-publico-clientes tbody'), visibles.map(cliente => {
+      if (vistaRecepcion) return [cliente.nombre, cliente.telefono, chatWhatsApp(cliente)];
       const estado = document.createElement('select');
       estado.setAttribute('aria-label', 'Estado de ' + cliente.nombre);
       estado.add(new Option('Activo', 'true'));
@@ -52,13 +71,15 @@
         try {
           await cambiar('registro_publico_clientes?id=eq.' + cliente.id, { activo });
           cliente.activo = activo;
+          estado.closest('tr').cells[2].replaceChildren(accion());
         } catch {
           estado.value = String(cliente.activo);
         } finally {
           estado.disabled = false;
         }
       };
-      return [cliente.nombre, cliente.telefono, cliente.dia + '/' + cliente.mes,
+      const accion = () => cliente.activo && cliente.consentimiento ? chatWhatsApp(cliente) : '—';
+      return [cliente.nombre, cliente.telefono, accion(), cliente.dia + '/' + cliente.mes,
         fecha.format(new Date(cliente.fecha)), cliente.consentimiento ? 'Sí' : 'No', estado];
     }));
     encontrar('[data-vacio]').hidden = visibles.length > 0;
@@ -75,28 +96,42 @@
     }
   }
 
-  async function listar(tabla, columnas, llave) {
+  async function paginar(cargar) {
     const filas = [];
     const pagina = 100;
     for (let offset = 0; ; offset += pagina) {
-      const lote = await api('/rest/v1/' + tabla + '?select=' + columnas +
-        '&order=fecha.desc,' + llave + '.asc&limit=' + pagina + '&offset=' + offset);
+      const lote = await cargar(offset, pagina);
       filas.push(...lote);
-      if (lote.length < pagina || panel.hidden) return filas;
+      if (lote.length < pagina || !visible()) return filas;
     }
+  }
+
+  function listar(tabla, columnas, llave) {
+    return paginar((offset, pagina) => api('/rest/v1/' + tabla + '?select=' + columnas +
+      '&order=fecha.desc,' + llave + '.asc&limit=' + pagina + '&offset=' + offset));
   }
 
   async function actualizar() {
     const actual = ++version;
-    if (panel.hidden) {
+    if (!visible()) {
       clientes = [];
       pintarClientes();
-      pintar(encontrar('#registro-publico-solicitudes tbody'), []);
+      if (!vistaRecepcion) pintar(encontrar('#registro-publico-solicitudes tbody'), []);
       mensaje.textContent = '';
       return;
     }
     mensaje.textContent = 'Cargando registros…';
     try {
+      if (vistaRecepcion) {
+        const contactos = await paginar(offset => api('/rest/v1/rpc/registro_publico_contactos_recepcion', {
+          method: 'POST', datos: { p_offset: offset }
+        }));
+        if (actual !== version || !visible()) return;
+        clientes = contactos;
+        pintarClientes();
+        mensaje.textContent = '';
+        return;
+      }
       const [altas, solicitudes] = await Promise.all([
         listar('registro_publico_clientes', 'id,nombre,telefono,dia,mes,fecha,consentimiento,activo,duplicado_de', 'id'),
         listar('registro_publico_solicitudes', 'cliente_id,busqueda,categoria,comentario,fecha,estado', 'cliente_id')
@@ -133,6 +168,9 @@
 
   filtro.addEventListener('input', pintarClientes);
   encontrar('[data-actualizar]').addEventListener('click', actualizar);
-  new MutationObserver(actualizar).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
-  if (!panel.hidden) actualizar();
+  const observador = new MutationObserver(actualizar);
+  const opciones = { attributes: true, attributeFilter: ['hidden'] };
+  observador.observe(panel, opciones);
+  if (vistaRecepcion) observador.observe(vistaRecepcion, opciones);
+  if (visible()) actualizar();
 })();

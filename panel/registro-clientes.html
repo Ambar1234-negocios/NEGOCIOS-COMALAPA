@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/registro-publico.css?v=2">
   <script src="base-admin.js?v=20" defer></script>
   <script src="navegacion-maestra.js?v=71" defer></script>
-  <script src="/registro-publico-admin.js?v=2" defer></script>
+  <script src="/registro-publico-admin.js?v=3" defer></script>
   <script src="registro-publico-sesion.js" defer></script>
 </head>
 <body data-acceso="maestro" class="admin">
@@ -40,13 +40,14 @@
   <button type="button" data-copiar>Copiar enlace</button>
   <a class="enlace-boton" href="/registro-clientes.html" target="_blank" rel="noopener">Ver formulario</a>
   <h3>Clientes del registro público</h3>
+  <p>Abre el chat de un cliente activo y guarda su número desde WhatsApp.</p>
   <label for="registro-publico-busqueda">Buscar por nombre o WhatsApp</label>
   <input id="registro-publico-busqueda" type="search">
   <button class="secundario" type="button" data-actualizar>Actualizar registros</button>
   <p data-vacio hidden>No hay registros que coincidan.</p>
   <div class="registro-admin-tabla" tabindex="0" role="region" aria-label="Clientes del registro público">
     <table id="registro-publico-clientes">
-      <thead><tr><th scope="col">Nombre</th><th scope="col">WhatsApp</th><th scope="col">Día/mes</th><th scope="col">Fecha</th><th scope="col">Consentimiento</th><th scope="col">Estado</th></tr></thead>
+      <thead><tr><th scope="col">Nombre</th><th scope="col">WhatsApp</th><th scope="col">Contacto</th><th scope="col">Día/mes</th><th scope="col">Fecha</th><th scope="col">Consentimiento</th><th scope="col">Estado</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
