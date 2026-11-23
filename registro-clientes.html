@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
   <title>Únete a Exhibición Frontera Comalapa</title>
   <meta property="og:title" content="Únete a Exhibición Frontera Comalapa">
   <meta property="og:description" content="Regístrate para recibir promociones, menús, novedades y beneficios por WhatsApp.">
@@ -10,7 +11,7 @@
   <meta property="og:url" content="https://exhibicionfronteracomalapa.com/registro-clientes.html">
   <link rel="stylesheet" href="/registro-publico.css?v=2">
   <script src="/sitio-publicado.js" defer></script>
-  <script type="module" src="/registro-publico.js?v=3"></script>
+  <script type="module" src="/registro-publico.js?v=4"></script>
 </head>
 <body class="registro-clientes">
   <main>
@@ -52,10 +53,11 @@
       <div id="registro-mandaditos" hidden>
         <p><strong id="registro-mandaditos-numero"></strong></p>
         <div class="registro-acciones">
-          <a id="registro-mandaditos-telefono">Agregar a contactos</a>
+          <button type="button" id="registro-mandaditos-copiar" aria-describedby="registro-mandaditos-ayuda">Copiar número</button>
           <a id="registro-mandaditos-chat" target="_blank" rel="noopener noreferrer">Abrir chat de WhatsApp</a>
         </div>
-        <p>El primer botón abre el número en tu teléfono. Desde ahí puedes guardarlo en tus contactos.</p>
+        <p id="registro-mandaditos-ayuda">Para guardarlo, copia el número, abre Contactos y toca <strong>+</strong>. Pega el número y guarda el contacto.</p>
+        <p id="registro-mandaditos-copia-estado" role="status"></p>
       </div>
     </section>
   </main>

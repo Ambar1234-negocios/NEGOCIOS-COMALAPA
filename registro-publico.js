@@ -52,7 +52,22 @@ async function mostrarMandaditos() {
   }
   const mensaje = 'Hola, ya me registré en Exhibición Frontera Comalapa. ¿Me pueden agregar a sus contactos?';
   porId('registro-mandaditos-numero').textContent = '+52 ' + nacional.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1 $2 $3');
-  porId('registro-mandaditos-telefono').href = 'tel:+52' + nacional;
+  porId('registro-mandaditos-copiar').addEventListener('click', async () => {
+    const estado = porId('registro-mandaditos-copia-estado');
+    try {
+      await navigator.clipboard.writeText('+52' + nacional);
+      estado.textContent = 'Número copiado.';
+    } catch {
+      const seleccion = window.getSelection();
+      if (seleccion) {
+        const rango = document.createRange();
+        rango.selectNodeContents(porId('registro-mandaditos-numero'));
+        seleccion.removeAllRanges();
+        seleccion.addRange(rango);
+      }
+      estado.textContent = 'Mantén presionado el número y elige Copiar.';
+    }
+  });
   porId('registro-mandaditos-chat').href = 'https://wa.me/52' + nacional + '?text=' + encodeURIComponent(mensaje);
   aviso.hidden = true;
   porId('registro-mandaditos').hidden = false;
