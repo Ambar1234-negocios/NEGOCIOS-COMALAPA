@@ -137,3 +137,4 @@
 @media (prefers-reduced-motion: reduce) {
   #demo-compras-local .demo-shop[aria-hidden="true"] { display: none; }
 }
+#portada-demo .demo-form label[hidden] { display: none; }
