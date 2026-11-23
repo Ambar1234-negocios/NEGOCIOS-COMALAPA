@@ -46,7 +46,7 @@
 <link rel="stylesheet" href="consultorios.css?v=cueto-fotos-proporcion-20261116"><link rel="stylesheet" href="mesas.css?v=50"><link rel="stylesheet" href="apariencia-negocio.css?v=53"><link rel="stylesheet" href="cupones-pedido.css?v=69">  <script src="/privacidad-consentimiento.js?v=1" defer></script>
 <link rel="stylesheet" href="ficha-avanzada.css?v=1"><link rel="stylesheet" href="cinta-promociones.css?v=promo-perfil-20261114">
 <link rel="stylesheet" href="portada-demo.css?v=3">
-<script src="portada-demo.js?v=4" defer></script>
+<script src="portada-demo.js?v=5" defer></script>
 </head>
 
 
@@ -168,9 +168,16 @@
         <button type="button" class="demo-close" aria-label="Cerrar">×</button>
       </div>
       <form class="demo-form" method="dialog" hidden>
-        <label>¿Qué necesitas?<input name="necesidad" required pattern=".*\S.*" maxlength="160"></label>
-        <label>Cantidad (opcional)<input name="cantidad" maxlength="40" placeholder="Ej. 2 bolsas"></label>
-        <label>Tienda o categoría<select name="tienda" required></select></label>
+        <label><span class="demo-product-label">¿Qué necesitas?</span><input name="necesidad" required pattern=".*\S.*" maxlength="160"></label>
+        <label><span class="demo-quantity-label">Cantidad (opcional)</span><input name="cantidad" maxlength="40" placeholder="Ej. 2 bolsas"></label>
+        <label class="demo-store-field">Tienda o categoría<select name="tienda" required></select></label>
+        <label class="demo-store-choice" hidden><span></span>
+          <select name="preferencia">
+            <option value="cualquiera">Cualquiera que esté disponible</option>
+            <option value="especifica">Indicar una tienda específica</option>
+          </select>
+        </label>
+        <label class="demo-store-name" hidden><span></span><input name="tiendaNombre" maxlength="100" pattern=".*\S.*"></label>
         <label>Referencia o comentario (opcional)<textarea name="referencia" rows="2" maxlength="300"></textarea></label>
         <button class="demo-action" type="submit">Solicitar compra</button>
       </form>

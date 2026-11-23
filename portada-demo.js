@@ -49,10 +49,47 @@
     modal.showModal();
   }
 
+  const preference = form.elements.preferencia;
+  const storeName = form.elements.tiendaNombre;
+  const choiceField = form.querySelector('.demo-store-choice');
+  const nameField = form.querySelector('.demo-store-name');
+  const specificCategories = {
+    Ferretería: { name: 'ferretería', example: 'Ej. taladro o tornillos' },
+    Farmacia: { name: 'farmacia', example: 'Ej. gasas o vendas' }
+  };
+
+  function updateStoreName() {
+    const specific = !preference.disabled && preference.value === 'especifica';
+    nameField.hidden = !specific;
+    storeName.disabled = !specific;
+    storeName.required = specific;
+  }
+  preference.addEventListener('change', updateStoreName);
+
   function openPurchase(label) {
     form.reset();
     store.value = label;
-    openDialog('Compra por encargo · DEMO', form);
+    const category = specificCategories[label];
+    const butcher = label === 'Carnicería';
+    const storeField = form.querySelector('.demo-store-field');
+    storeField.hidden = butcher || Boolean(category);
+    store.disabled = storeField.hidden;
+    choiceField.hidden = !category;
+    preference.disabled = !category;
+    if (category) {
+      choiceField.querySelector('span').textContent = '¿En qué ' + category.name + '?';
+      nameField.querySelector('span').textContent = 'Nombre de la ' + category.name;
+      preference.options[1].textContent = 'Indicar una ' + category.name + ' específica';
+    }
+    updateStoreName();
+    form.querySelector('.demo-product-label').textContent = butcher ? '¿Qué productos quieres comprar?' : '¿Qué necesitas?';
+    form.elements.necesidad.placeholder = butcher ? 'Ej. bistec de res y chorizo' : (category?.example ?? '');
+    form.querySelector('.demo-quantity-label').textContent = butcher ? '¿Cuánto vas a comprar?' : 'Cantidad (opcional)';
+    form.elements.cantidad.placeholder = butcher ? 'Ej. 1 kg de bistec y 500 g de chorizo' : 'Ej. 2 bolsas';
+    form.elements.cantidad.required = butcher;
+    form.elements.cantidad.pattern = butcher ? '.*\\S.*' : '';
+    if (!butcher) form.elements.cantidad.removeAttribute('pattern');
+    openDialog(butcher ? 'Comprar en carnicería · DEMO' : 'Compra por encargo · DEMO', form);
     form.elements.necesidad.focus();
   }
 
@@ -150,7 +187,13 @@
   form.addEventListener('submit', event => {
     event.preventDefault();
     const data = new FormData(form);
-    result.textContent = 'Solicitud simulada para ' + data.get('tienda') + ': ' + data.get('necesidad').trim() +
+    const preferenceValue = data.get('preferencia');
+    const destination = preferenceValue === 'especifica'
+      ? store.value + ' (' + data.get('tiendaNombre').trim() + ')'
+      : store.value + (preferenceValue === 'cualquiera' ? ' (cualquiera disponible)' : '');
+    const quantity = data.get('cantidad')?.trim();
+    result.textContent = 'Solicitud simulada para ' + destination + ': ' + data.get('necesidad').trim() +
+      (quantity ? ' · Cantidad: ' + quantity : '') +
       '. La prueba terminó aquí. No se envió ningún mensaje.';
     form.reset();
     form.hidden = true;
