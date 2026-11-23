@@ -29,7 +29,7 @@ function prepararTendenciasProducto(producto) {
   if (!bloque) {
     bloque = document.createElement('div');
     bloque.id = 'opcion-tendencias';
-    bloque.innerHTML = '<label for="editar-tendencias">Mostrar en Tendencias</label><input id="editar-tendencias" type="checkbox"><p class="nota">Al guardar, este producto podrá aparecer en Tendencias. La portada elige uno por negocio.</p>';
+    bloque.innerHTML = '<label for="editar-tendencias">Mostrar en Tendencias</label><input id="editar-tendencias" type="checkbox"><p class="nota">Al guardar, este producto podrá aparecer en Tendencias. Puedes marcar hasta tres productos por negocio.</p>';
     ayuda.after(bloque);
   }
   bloque.hidden = !permiteTendencias;
