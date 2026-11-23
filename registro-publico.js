@@ -3,7 +3,7 @@ const clavePublica = 'sb_publishable_i9NtjLajxExcefezErM2wQ_JDHUPvlD';
 const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const porId = id => document.getElementById(id);
 const mensajeWhatsApp = 'Hola 👋 Ya me registré en Exhibición Frontera Comalapa para recibir promociones, novedades y beneficios por WhatsApp.';
-const whatsappAdministracion = 'https://api.whatsapp.com/send?phone=529633106862&text=' + encodeURIComponent(mensajeWhatsApp);
+const whatsappMandaditos = 'https://api.whatsapp.com/send?phone=529632708883&text=' + encodeURIComponent(mensajeWhatsApp);
 
 function opciones(lista, etiqueta) {
   return '<option value="">' + etiqueta + '</option>' +
@@ -48,7 +48,7 @@ if (window.ENTORNO?.ambiente !== 'staging' && location.hostname === 'exhibicionf
     porId('registro-formulario').hidden = true;
     const confirmacion = porId('registro-confirmacion');
     porId('registro-duplicado').hidden = !duplicado;
-    porId('registro-whatsapp').href = whatsappAdministracion;
+    porId('registro-whatsapp').href = whatsappMandaditos;
     confirmacion.hidden = false;
     confirmacion.querySelector('h2').focus();
   }
@@ -95,7 +95,7 @@ if (window.ENTORNO?.ambiente !== 'staging' && location.hostname === 'exhibicionf
       formulario.reset();
       mostrarConfirmacion(resultado.duplicado);
       history.replaceState({ ...history.state, registroGuardado: true, duplicado: resultado.duplicado }, '');
-      location.assign(whatsappAdministracion);
+      location.assign(whatsappMandaditos);
     });
   }
 }
