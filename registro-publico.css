@@ -1,0 +1,117 @@
+.registro-clientes {
+  margin: 0;
+  background: #eef4ef;
+  color: #172c24;
+  font: 1rem/1.55 system-ui, sans-serif;
+}
+.registro-clientes main {
+  max-width: 43rem;
+  padding: clamp(1rem, 5vw, 3rem);
+  margin: auto;
+}
+.registro-intro h1 {
+  max-width: 16ch;
+  margin: 1rem 0;
+  font-size: clamp(2.2rem, 7vw, 3.75rem);
+  line-height: 1.04;
+  letter-spacing: -.045em;
+}
+.registro-intro p { max-width: 58ch; }
+.registro-portada {
+  position: relative;
+  display: flex;
+  align-items: end;
+  min-height: clamp(10rem, 45vw, 17rem);
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 1.25rem;
+  background: #233e38;
+  color: #fff;
+}
+.registro-portada img, .registro-portada::before {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.registro-portada img { z-index: -2; object-fit: cover; }
+.registro-portada::before {
+  z-index: -1;
+  content: "";
+  background: linear-gradient(transparent, rgb(0 0 0 / 78%));
+}
+.registro-portada p {
+  margin: 0;
+  padding: 1rem;
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.03;
+}
+.registro-portada strong { color: #ffbc24; }
+.registro-tarjeta {
+  margin-top: 1rem;
+  padding: clamp(1rem, 4vw, 2rem);
+  border: 1px solid #ccdbd0;
+  border-radius: 1.25rem;
+  background: white;
+}
+.registro-tarjeta h2 { margin-top: 0; line-height: 1.25; }
+.registro-clientes [hidden], #registro-publico-admin[hidden] { display: none; }
+.registro-tarjeta form { display: grid; gap: .9rem; }
+.registro-tarjeta label { display: grid; gap: .3rem; }
+.registro-tarjeta input, .registro-tarjeta select, .registro-tarjeta textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 2.75rem;
+  border: 1px solid #80968a;
+  border-radius: .55rem;
+  padding: .65rem;
+  color: inherit;
+  background: #fff;
+  font: inherit;
+}
+.registro-cumple {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: .65rem;
+}
+.registro-tarjeta .registro-consentimiento {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+}
+.registro-tarjeta input[type=checkbox] {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  min-height: 0;
+  margin: .18rem 0 0;
+  accent-color: #164d37;
+}
+.registro-tarjeta button {
+  min-height: 2.75rem;
+  padding: .65rem .9rem;
+  border: 1px solid #164d37;
+  border-radius: .55rem;
+  background: #164d37;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.registro-tarjeta :focus-visible { outline: 3px solid #946416; outline-offset: 2px; }
+.registro-acciones { display: flex; flex-wrap: wrap; gap: .65rem; }
+.registro-nota { margin: 0 0 .8rem; font-size: .92rem; }
+.registro-tarjeta [role=status]:empty, #registro-publico-admin [role=status]:empty { display: none; }
+.registro-tarjeta [role=status] { margin: 0; }
+
+.registro-admin-tabla { overflow: auto; }
+.registro-admin-tabla table { width: 100%; border-collapse: collapse; }
+.registro-admin-tabla th, .registro-admin-tabla td {
+  text-align: left;
+  padding: .6rem;
+  border-bottom: 1px solid #cbd5d1;
+  overflow-wrap: anywhere;
+}
+.registro-admin-tabla th { white-space: nowrap; }
+#registro-publico-admin [role=status] { margin-block: .35rem; }
