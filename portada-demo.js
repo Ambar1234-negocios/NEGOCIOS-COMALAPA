@@ -132,9 +132,9 @@
 
   const grid = root.querySelector('.demo-products');
   function renderTrends(products) {
-    orderProducts(products);
+    if (staging) orderProducts(products);
     grid.closest('section').hidden = !products.length;
-    for (const product of products) {
+    products.concat(products).forEach((product, index) => {
       const card = root.querySelector('#demo-product-template').content.cloneNode(true);
       const illustration = card.querySelector('.demo-illustration');
       if (product.photo) {
@@ -152,6 +152,11 @@
       card.querySelector('.demo-store').textContent = product.store;
       card.querySelector('.demo-price').textContent = priceText(product);
       const button = card.querySelector('button');
+      if (index >= products.length) {
+        card.firstElementChild.classList.add('demo-repeat');
+        card.firstElementChild.setAttribute('aria-hidden', 'true');
+        button.tabIndex = -1;
+      }
       button.textContent = product.demo && product.price == null ? 'Consultar' : 'Ver producto';
       button.setAttribute('aria-label', button.textContent + ': ' + product.name);
       button.addEventListener('click', () => {
@@ -166,12 +171,13 @@
         openDialog(product.name + (product.demo ? ' · DEMO' : ''), detail);
       });
       grid.append(card);
-    }
+    });
   }
 
 
   root.querySelector('.demo-all').addEventListener('click', event => {
     const expanded = grid.classList.toggle('demo-expanded');
+    grid.scrollLeft = 0;
     event.currentTarget.setAttribute('aria-expanded', String(expanded));
     event.currentTarget.textContent = expanded ? 'Ver carrusel' : 'Ver todo';
   });
@@ -198,18 +204,27 @@
   requestAnimationFrame(moveShops);
 
   let pauseUntil = 0;
+  let trendFrame;
+  let trendPosition = 0;
   for (const event of ['pointerdown', 'wheel', 'keydown']) {
     grid.addEventListener(event, () => { pauseUntil = Date.now() + 8000; }, { passive: true });
   }
-  setInterval(() => {
-    if (document.hidden || reducedMotion.matches || modal.open ||
-        grid.matches('.demo-expanded, :hover, :focus-within') || Date.now() < pauseUntil) return;
-    const end = grid.scrollWidth - grid.clientWidth;
-    if (end <= 0) return;
-    const step = grid.firstElementChild.getBoundingClientRect().width + 12;
-    const next = grid.scrollLeft >= end - 2 ? 0 : Math.min(grid.scrollLeft + step, end);
-    grid.scrollTo({ left: next, behavior: 'smooth' });
-  }, 3500);
+  function moveTrends(time) {
+    const elapsed = Math.min(time - (trendFrame ?? time), 50);
+    trendFrame = time;
+    const copy = grid.querySelector('.demo-repeat');
+    if (copy && !document.hidden && !reducedMotion.matches && !modal.open &&
+        !grid.matches('.demo-expanded, :hover, :focus-within') && Date.now() >= pauseUntil) {
+      const width = copy.offsetLeft - grid.firstElementChild.offsetLeft;
+      if (width > grid.clientWidth) {
+        if (Math.abs(grid.scrollLeft - trendPosition) > 1) trendPosition = grid.scrollLeft;
+        trendPosition = (trendPosition + elapsed * 0.035) % width;
+        grid.scrollLeft = trendPosition;
+      }
+    }
+    requestAnimationFrame(moveTrends);
+  }
+  requestAnimationFrame(moveTrends);
 
   form.addEventListener('submit', event => {
     event.preventDefault();
@@ -258,7 +273,7 @@
   } else {
     grid.closest('section').hidden = true;
     cargaNegociosPublicados.then(() => {
-      const selected = [];
+      const byBusiness = [];
       const seen = new Set();
       for (const business of Object.values(negocios).flat()) {
         if (!business.slug || seen.has(business.slug) || business.activo === false ||
@@ -269,25 +284,33 @@
           product.nombre && !(business.seccionesOcultas || []).includes(product.seccion));
         if (!products.length) continue;
 
-        const product = products[Math.floor(Math.random() * products.length)];
-        let photo = '';
-        if (product.foto) {
-          try {
-            const url = new URL(product.foto, location.origin);
-            if (url.protocol === 'https:') photo = url.href;
-          } catch {}
-        }
-
         seen.add(business.slug);
-        selected.push({
-          name: product.nombre,
-          store: business.nombre,
-          category: product.seccion || 'Catálogo',
-          price: Number.isFinite(product.precio) ? product.precio : null,
-          photo,
-          icon: '🛍️',
-          url: '?' + new URLSearchParams({ negocio: business.slug })
-        });
+        orderProducts(products);
+        byBusiness.push(products.slice(0, 3).map(product => {
+          let photo = '';
+          if (product.foto) {
+            try {
+              const url = new URL(product.foto, location.origin);
+              if (url.protocol === 'https:') photo = url.href;
+            } catch {}
+          }
+
+          return {
+            name: product.nombre,
+            store: business.nombre,
+            category: product.seccion || 'Catálogo',
+            price: Number.isFinite(product.precio) ? product.precio : null,
+            photo,
+            icon: '🛍️',
+            url: '?' + new URLSearchParams({ negocio: business.slug })
+          };
+        }));
+      }
+      const selected = [];
+      for (let index = 0; index < 3; index++) {
+        for (const products of byBusiness) {
+          if (products[index]) selected.push(products[index]);
+        }
       }
       renderTrends(selected);
     }).catch(error => console.warn('No se pudo cargar Tendencias.', error));

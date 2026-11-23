@@ -144,3 +144,8 @@
 
 #portada-demo .demo-illustration img { width:100%; height:110px; object-fit:cover; border-radius:9px; }
 #portada-demo .demo-detail a { display:inline-flex; margin-top:10px; }
+
+#portada-demo .demo-expanded .demo-repeat { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  #portada-demo .demo-repeat { display: none; }
+}
