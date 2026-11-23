@@ -41,7 +41,25 @@ function alEnviar(formulario, guardar) {
   });
 }
 
+async function mostrarMandaditos() {
+  const contactos = await window.SitioPublicado?.leer('contactos', {});
+  const numero = String(contactos?.mandaditos?.numero ?? '').replace(/\D/g, '');
+  const nacional = /^\d{10}$/.test(numero) ? numero : /^52(?:1)?\d{10}$/.test(numero) ? numero.slice(-10) : '';
+  const aviso = porId('registro-mandaditos-aviso');
+  if (!nacional) {
+    aviso.textContent = 'Por el momento no pudimos cargar el número de Mandaditos.';
+    return;
+  }
+  const mensaje = 'Hola, ya me registré en Exhibición Frontera Comalapa. ¿Me pueden agregar a sus contactos?';
+  porId('registro-mandaditos-numero').textContent = '+52 ' + nacional.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1 $2 $3');
+  porId('registro-mandaditos-telefono').href = 'tel:+52' + nacional;
+  porId('registro-mandaditos-chat').href = 'https://wa.me/52' + nacional + '?text=' + encodeURIComponent(mensaje);
+  aviso.hidden = true;
+  porId('registro-mandaditos').hidden = false;
+}
+
 if (window.ENTORNO?.ambiente !== 'staging' && location.hostname === 'exhibicionfronteracomalapa.com') {
+  mostrarMandaditos();
   const formulario = porId('alta-publica');
   const clienteId = crypto.randomUUID();
   formulario.innerHTML = `

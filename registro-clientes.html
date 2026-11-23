@@ -9,7 +9,8 @@
   <meta property="og:image" content="https://exhibicionfronteracomalapa.com/imagenes/comalapa.webp">
   <meta property="og:url" content="https://exhibicionfronteracomalapa.com/registro-clientes.html">
   <link rel="stylesheet" href="/registro-publico.css?v=2">
-  <script type="module" src="/registro-publico.js?v=2"></script>
+  <script src="/sitio-publicado.js" defer></script>
+  <script type="module" src="/registro-publico.js?v=3"></script>
 </head>
 <body class="registro-clientes">
   <main>
@@ -44,11 +45,17 @@
         <p role="status"></p>
       </form>
     </section>
-    <section class="registro-tarjeta">
-      <h2>Agrega a Exhibición Frontera Comalapa a tus contactos</h2>
-      <div class="registro-acciones">
-        <a href="/exhibicion-frontera-comalapa.vcf" download>Guardar contacto</a>
-        <a href="https://wa.me/529633106862" target="_blank" rel="noopener noreferrer">Abrir chat de WhatsApp</a>
+    <section class="registro-tarjeta" aria-labelledby="registro-contacto-titulo">
+      <h2 id="registro-contacto-titulo">Contacto de Exhibición y Mandaditos</h2>
+      <p>Tu alta en este formulario queda registrada en Exhibición. Escríbenos por WhatsApp para que también podamos guardar tu contacto ahí.</p>
+      <p id="registro-mandaditos-aviso" role="status">Consultando el número de Mandaditos…</p>
+      <div id="registro-mandaditos" hidden>
+        <p><strong id="registro-mandaditos-numero"></strong></p>
+        <div class="registro-acciones">
+          <a id="registro-mandaditos-telefono">Agregar a contactos</a>
+          <a id="registro-mandaditos-chat" target="_blank" rel="noopener noreferrer">Abrir chat de WhatsApp</a>
+        </div>
+        <p>El primer botón abre el número en tu teléfono. Desde ahí puedes guardarlo en tus contactos.</p>
       </div>
     </section>
   </main>

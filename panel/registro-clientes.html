@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Registro público de clientes · Administración</title>
+  <link rel="stylesheet" href="panel.css">
+  <link rel="stylesheet" href="navegacion-maestra.css?v=17">
+  <link rel="stylesheet" href="/registro-publico.css?v=2">
+  <script src="base-admin.js?v=20" defer></script>
+  <script src="navegacion-maestra.js?v=71" defer></script>
+  <script src="/registro-publico-admin.js?v=2" defer></script>
+  <script src="registro-publico-sesion.js" defer></script>
+</head>
+<body data-acceso="maestro" class="admin">
+  <header>
+    <span class="etiqueta">Exhibición Frontera Comalapa</span>
+    <h1>Registro público de clientes</h1>
+    <p>Consulta las altas y solicitudes recibidas desde tu formulario público.</p>
+  </header>
+  <main>
+    <section id="acceso" class="tarjeta login">
+      <h2>Entrar como administrador</h2>
+      <form id="login">
+        <label for="correo">Correo maestro</label>
+        <input id="correo" type="email" autocomplete="username" required>
+        <label for="clave">Contraseña</label>
+        <input id="clave" type="password" autocomplete="current-password" required>
+        <button>Entrar</button>
+      </form>
+    </section>
+    <div id="panel" hidden>
+      <div class="barra"><p id="usuario"></p><button id="salir" class="secundario" type="button">Cerrar sesión</button></div>
+      <section class="tarjeta" id="registro-publico-admin">
+  <h2>Enlace para compartir</h2>
+  <p>Copia este enlace para ponerlo en Facebook.</p>
+  <label for="registro-publico-enlace">Enlace del formulario</label>
+  <input id="registro-publico-enlace" type="url" readonly value="https://exhibicionfronteracomalapa.com/registro-clientes.html">
+  <button type="button" data-copiar>Copiar enlace</button>
+  <a class="enlace-boton" href="/registro-clientes.html" target="_blank" rel="noopener">Ver formulario</a>
+  <h3>Clientes del registro público</h3>
+  <label for="registro-publico-busqueda">Buscar por nombre o WhatsApp</label>
+  <input id="registro-publico-busqueda" type="search">
+  <button class="secundario" type="button" data-actualizar>Actualizar registros</button>
+  <p data-vacio hidden>No hay registros que coincidan.</p>
+  <div class="registro-admin-tabla" tabindex="0" role="region" aria-label="Clientes del registro público">
+    <table id="registro-publico-clientes">
+      <thead><tr><th scope="col">Nombre</th><th scope="col">WhatsApp</th><th scope="col">Día/mes</th><th scope="col">Fecha</th><th scope="col">Consentimiento</th><th scope="col">Estado</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <h3>Solicitudes del formulario</h3>
+  <div class="registro-admin-tabla" tabindex="0" role="region" aria-label="Solicitudes del formulario">
+    <table id="registro-publico-solicitudes">
+      <thead><tr><th scope="col">Cliente</th><th scope="col">Solicitud</th><th scope="col">Categoría</th><th scope="col">Comentario</th><th scope="col">Fecha</th><th scope="col">Estado</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p role="status"></p>
+</section>
+    </div>
+    <p id="estado" role="status">Entra con tu cuenta maestra.</p>
+  </main>
+</body>
+</html>
