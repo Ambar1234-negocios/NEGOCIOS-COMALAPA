@@ -99,7 +99,7 @@
   font-weight: 700;
   cursor: pointer;
 }
-.registro-acciones a { box-sizing: border-box; text-decoration: none; }
+
 .registro-tarjeta :focus-visible { outline: 3px solid #946416; outline-offset: 2px; }
 .registro-acciones { display: flex; flex-wrap: wrap; gap: .65rem; }
 .registro-nota { margin: 0 0 .8rem; font-size: .92rem; }
@@ -116,3 +116,14 @@
 }
 .registro-admin-tabla th { white-space: nowrap; }
 #registro-publico-admin [role=status] { margin-block: .35rem; }
+
+#registro-whatsapp {
+  display: inline-block;
+  padding: .55rem .85rem;
+  border: 1px solid #164d37;
+  border-radius: .55rem;
+  color: #164d37;
+  font-weight: 700;
+  text-decoration: none;
+}
+.registro-respaldo { margin-top: 1rem; }
