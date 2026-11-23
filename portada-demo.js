@@ -12,12 +12,12 @@
   // El renderizador recibe productos listos para mostrar. La fuente futura
   // deberá seleccionar productos publicados de catálogos elegibles.
   const products = [
-    { name: 'Perfume ámbar', store: 'Boutique Mirador', category: 'Perfumes', icon: '🧴', price: 350, demo: true },
-    { name: 'Camisa de lino', store: 'Ropa Sendero', category: 'Ropa', icon: '👕', price: 280, demo: true },
-    { name: 'Aretes de aro', store: 'Joyería Aurora', category: 'Joyería', icon: '💎', demo: true },
+    { name: 'Perfume ámbar', store: 'Perfumería Dicams', category: 'Perfumes', icon: '🧴', demo: true },
+    { name: 'Camisa de lino', store: 'Shopping Morales', category: 'Ropa', icon: '👕', demo: true },
+    { name: 'Aretes de aro', store: 'Fundación Dondé', category: 'Joyería', icon: '💎', demo: true },
     { name: 'Juego de puntas', store: 'Ferretería Horizonte', category: 'Herramientas', icon: '🛠️', price: 190, demo: true },
     { name: 'Reloj de correa', store: 'Relojería Brisa', category: 'Relojes', icon: '⌚', demo: true },
-    { name: 'Bolso pequeño', store: 'Accesorios Ceiba', category: 'Accesorios', icon: '👜', price: 240, demo: true }
+    { name: 'Bolso pequeño', store: 'Abazarlo Boutique', category: 'Accesorios', icon: '👜', demo: true }
   ];
   const money = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
   const priceText = product => product.price == null ? 'Consultar precio' : money.format(product.price) + ' MXN';
@@ -66,7 +66,7 @@
     button.setAttribute('aria-label', button.textContent + ': ' + product.name);
     button.addEventListener('click', () => {
       detail.textContent = product.store + ' · ' + product.category + ' · ' + priceText(product) +
-        '. Producto y negocio ficticios para esta prueba.';
+        '. Ejemplo visual. La disponibilidad y el precio no están confirmados.';
       openDialog(product.name + ' · DEMO', detail);
     });
     grid.append(card);
@@ -77,6 +77,21 @@
     event.currentTarget.setAttribute('aria-expanded', String(expanded));
     event.currentTarget.textContent = expanded ? 'Ver carrusel' : 'Ver todo';
   });
+
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let pauseUntil = 0;
+  for (const event of ['pointerdown', 'wheel', 'keydown']) {
+    grid.addEventListener(event, () => { pauseUntil = Date.now() + 8000; }, { passive: true });
+  }
+  setInterval(() => {
+    if (document.hidden || reducedMotion.matches || modal.open ||
+        grid.matches('.demo-expanded, :hover, :focus-within') || Date.now() < pauseUntil) return;
+    const end = grid.scrollWidth - grid.clientWidth;
+    if (end <= 0) return;
+    const step = grid.firstElementChild.getBoundingClientRect().width + 12;
+    const next = grid.scrollLeft >= end - 2 ? 0 : Math.min(grid.scrollLeft + step, end);
+    grid.scrollTo({ left: next, behavior: 'smooth' });
+  }, 3500);
 
   form.addEventListener('submit', event => {
     event.preventDefault();

@@ -31,7 +31,11 @@
 }
 #portada-demo .demo-shops {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 92px), 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(102px, 1fr);
+  overflow-x: auto;
+  padding: 4px 2px 8px;
+  scroll-snap-type: x proximity;
   gap: 8px;
 }
 #portada-demo .demo-shop {
@@ -40,6 +44,7 @@
   align-content: center;
   gap: 5px;
   min-height: 76px;
+  scroll-snap-align: start;
   padding: 8px 4px;
   border: 1px solid var(--demo-border);
   border-radius: 12px;
@@ -56,7 +61,7 @@
   grid-auto-columns: clamp(155px, 45vw, 220px);
   gap: 12px;
   overflow-x: auto;
-  scroll-snap-type: x proximity;
+  scrollbar-width: none;
   padding: 4px 4px 10px;
 }
 #portada-demo .demo-products.demo-expanded {
@@ -127,3 +132,5 @@
   color: #213c31;
   font: inherit;
 }
+
+#portada-demo .demo-products::-webkit-scrollbar { display: none; }
