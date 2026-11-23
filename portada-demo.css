@@ -149,3 +149,7 @@
 @media (prefers-reduced-motion: reduce) {
   #portada-demo .demo-repeat { display: none; }
 }
+
+#portada-demo .demo-product { position: relative; }
+#portada-demo .demo-business-link { box-sizing: border-box; display: inline-flex; align-items: center; text-decoration: none; }
+#portada-demo .demo-business-link::after { content: ""; position: absolute; inset: 0; }

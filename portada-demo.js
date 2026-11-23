@@ -151,23 +151,24 @@
       card.querySelector('h3').textContent = product.name;
       card.querySelector('.demo-store').textContent = product.store;
       card.querySelector('.demo-price').textContent = priceText(product);
-      const button = card.querySelector('button');
+      let button = card.querySelector('button');
+      if (product.url) {
+        const link = document.createElement('a');
+        link.className = 'demo-action demo-business-link';
+        link.href = product.url;
+        button.replaceWith(link);
+        button = link;
+      }
       if (index >= products.length) {
         card.firstElementChild.classList.add('demo-repeat');
         card.firstElementChild.setAttribute('aria-hidden', 'true');
         button.tabIndex = -1;
       }
-      button.textContent = product.demo && product.price == null ? 'Consultar' : 'Ver producto';
+      button.textContent = product.url ? 'Ver negocio' : (product.demo && product.price == null ? 'Consultar' : 'Ver producto');
       button.setAttribute('aria-label', button.textContent + ': ' + product.name);
-      button.addEventListener('click', () => {
+      if (!product.url) button.addEventListener('click', () => {
         detail.textContent = product.store + ' · ' + product.category + ' · ' + priceText(product) +
           (product.demo ? '. Ejemplo visual. La disponibilidad y el precio no están confirmados.' : '.');
-        if (product.url) {
-          const link = document.createElement('a');
-          link.href = product.url;
-          link.textContent = 'Ver catálogo de ' + product.store;
-          detail.append(document.createElement('br'), link);
-        }
         openDialog(product.name + (product.demo ? ' · DEMO' : ''), detail);
       });
       grid.append(card);
@@ -185,16 +186,12 @@
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let previousTime;
   let shopPosition = 0;
-  let shopPauseUntil = 0;
-  for (const event of ['pointerdown', 'wheel', 'keydown']) {
-    shops.addEventListener(event, () => { shopPauseUntil = Date.now() + 5000; }, { passive: true });
-  }
   function moveShops(time) {
     const elapsed = Math.min(time - (previousTime ?? time), 50);
     previousTime = time;
     const loopWidth = track.children[choices.length].offsetLeft - track.firstElementChild.offsetLeft;
     if (loopWidth && !document.hidden && !reducedMotion.matches && !modal.open &&
-        !shops.matches(':hover, :focus-within') && Date.now() >= shopPauseUntil) {
+        !shops.matches(':active')) {
       if (Math.abs(shops.scrollLeft - shopPosition) > 1) shopPosition = shops.scrollLeft;
       shopPosition = (shopPosition + elapsed * 0.027) % loopWidth;
       shops.scrollLeft = shopPosition;
@@ -203,18 +200,14 @@
   }
   requestAnimationFrame(moveShops);
 
-  let pauseUntil = 0;
   let trendFrame;
   let trendPosition = 0;
-  for (const event of ['pointerdown', 'wheel', 'keydown']) {
-    grid.addEventListener(event, () => { pauseUntil = Date.now() + 8000; }, { passive: true });
-  }
   function moveTrends(time) {
     const elapsed = Math.min(time - (trendFrame ?? time), 50);
     trendFrame = time;
     const copy = grid.querySelector('.demo-repeat');
     if (copy && !document.hidden && !reducedMotion.matches && !modal.open &&
-        !grid.matches('.demo-expanded, :hover, :focus-within') && Date.now() >= pauseUntil) {
+        !grid.matches('.demo-expanded, :active')) {
       const width = copy.offsetLeft - grid.firstElementChild.offsetLeft;
       if (width > grid.clientWidth) {
         if (Math.abs(grid.scrollLeft - trendPosition) > 1) trendPosition = grid.scrollLeft;
