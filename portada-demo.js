@@ -12,7 +12,7 @@
 
   // El renderizador recibe productos listos para mostrar. La fuente futura
   // deberá seleccionar productos publicados de catálogos elegibles.
-  const products = [
+  const demoProducts = [
     { name: 'Perfume ámbar', store: 'Perfumería Dicams', category: 'Perfumes', icon: '🧴', demo: true },
     { name: 'Camisa de lino', store: 'Shopping Morales', category: 'Ropa', icon: '👕', demo: true },
     { name: 'Aretes de aro', store: 'Fundación Dondé', category: 'Joyería', icon: '💎', demo: true },
@@ -20,19 +20,22 @@
     { name: 'Reloj de correa', store: 'Relojería Brisa', category: 'Relojes', icon: '⌚', demo: true },
     { name: 'Bolso pequeño', store: 'Abazarlo Boutique', category: 'Accesorios', icon: '👜', demo: true }
   ];
-  for (let index = products.length - 1; index > 0; index--) {
-    const other = Math.floor(Math.random() * (index + 1));
-    [products[index], products[other]] = [products[other], products[index]];
-  }
-  try {
-    const previous = sessionStorage.getItem('tendencias-primer-producto');
-    if (products[0].name === previous) {
-      const other = 1 + Math.floor(Math.random() * (products.length - 1));
-      [products[0], products[other]] = [products[other], products[0]];
+  function orderProducts(products) {
+    for (let index = products.length - 1; index > 0; index--) {
+      const other = Math.floor(Math.random() * (index + 1));
+      [products[index], products[other]] = [products[other], products[index]];
     }
-    sessionStorage.setItem('tendencias-primer-producto', products[0].name);
-  } catch {
-    // La selección sigue siendo aleatoria cuando el navegador bloquea el almacenamiento.
+    try {
+      const previous = sessionStorage.getItem('tendencias-primer-producto');
+      if (products.length > 1 && products[0].name === previous) {
+        const other = 1 + Math.floor(Math.random() * (products.length - 1));
+        [products[0], products[other]] = [products[other], products[0]];
+      }
+      if (products.length) sessionStorage.setItem('tendencias-primer-producto', products[0].name);
+    } catch {
+      // La selección sigue siendo aleatoria cuando el navegador bloquea el almacenamiento.
+    }
+
   }
 
   const money = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
@@ -128,25 +131,44 @@
   online?.addEventListener('click', () => openPurchase('Compra en línea'));
 
   const grid = root.querySelector('.demo-products');
-  grid.closest('section').hidden = !staging;
-  for (const product of staging ? products : []) {
-    const card = root.querySelector('#demo-product-template').content.cloneNode(true);
-    card.querySelector('.demo-illustration span').textContent = product.icon;
-    card.querySelector('.demo-badge').hidden = !product.demo;
-    card.querySelector('.demo-category').textContent = product.category;
-    card.querySelector('h3').textContent = product.name;
-    card.querySelector('.demo-store').textContent = product.store;
-    card.querySelector('.demo-price').textContent = priceText(product);
-    const button = card.querySelector('button');
-    button.textContent = product.price == null ? 'Consultar' : 'Ver producto';
-    button.setAttribute('aria-label', button.textContent + ': ' + product.name);
-    button.addEventListener('click', () => {
-      detail.textContent = product.store + ' · ' + product.category + ' · ' + priceText(product) +
-        '. Ejemplo visual. La disponibilidad y el precio no están confirmados.';
-      openDialog(product.name + ' · DEMO', detail);
-    });
-    grid.append(card);
+  function renderTrends(products) {
+    orderProducts(products);
+    grid.closest('section').hidden = !products.length;
+    for (const product of products) {
+      const card = root.querySelector('#demo-product-template').content.cloneNode(true);
+      const illustration = card.querySelector('.demo-illustration');
+      if (product.photo) {
+        const image = document.createElement('img');
+        image.src = product.photo;
+        image.alt = '';
+        image.loading = 'lazy';
+        illustration.replaceChildren(image);
+      } else {
+        illustration.querySelector('span').textContent = product.icon;
+      }
+      card.querySelector('.demo-badge').hidden = !product.demo;
+      card.querySelector('.demo-category').textContent = product.category;
+      card.querySelector('h3').textContent = product.name;
+      card.querySelector('.demo-store').textContent = product.store;
+      card.querySelector('.demo-price').textContent = priceText(product);
+      const button = card.querySelector('button');
+      button.textContent = product.demo && product.price == null ? 'Consultar' : 'Ver producto';
+      button.setAttribute('aria-label', button.textContent + ': ' + product.name);
+      button.addEventListener('click', () => {
+        detail.textContent = product.store + ' · ' + product.category + ' · ' + priceText(product) +
+          (product.demo ? '. Ejemplo visual. La disponibilidad y el precio no están confirmados.' : '.');
+        if (product.url) {
+          const link = document.createElement('a');
+          link.href = product.url;
+          link.textContent = 'Ver catálogo de ' + product.store;
+          detail.append(document.createElement('br'), link);
+        }
+        openDialog(product.name + (product.demo ? ' · DEMO' : ''), detail);
+      });
+      grid.append(card);
+    }
   }
+
 
   root.querySelector('.demo-all').addEventListener('click', event => {
     const expanded = grid.classList.toggle('demo-expanded');
@@ -231,4 +253,43 @@
   });
   document.querySelector('#demo-compras-local').hidden = false;
   root.hidden = false;
+  if (staging) {
+    renderTrends(demoProducts);
+  } else {
+    grid.closest('section').hidden = true;
+    cargaNegociosPublicados.then(() => {
+      const selected = [];
+      const seen = new Set();
+      for (const business of Object.values(negocios).flat()) {
+        if (!business.slug || seen.has(business.slug) || business.activo === false ||
+            !['visual', 'tecnico', 'digital'].includes(business.tipoCatalogo) ||
+            business.catalogoServicios || ['comida', 'cat-comida-y-restaurantes'].includes(business.categoria)) continue;
+        const products = (business.productos || []).filter(product =>
+          product.enTendencias === true && product.disponible !== false && !product.eliminado &&
+          product.nombre && !(business.seccionesOcultas || []).includes(product.seccion));
+        if (!products.length) continue;
+
+        const product = products[Math.floor(Math.random() * products.length)];
+        let photo = '';
+        if (product.foto) {
+          try {
+            const url = new URL(product.foto, location.origin);
+            if (url.protocol === 'https:') photo = url.href;
+          } catch {}
+        }
+
+        seen.add(business.slug);
+        selected.push({
+          name: product.nombre,
+          store: business.nombre,
+          category: product.seccion || 'Catálogo',
+          price: Number.isFinite(product.precio) ? product.precio : null,
+          photo,
+          icon: '🛍️',
+          url: '?' + new URLSearchParams({ negocio: business.slug })
+        });
+      }
+      renderTrends(selected);
+    }).catch(error => console.warn('No se pudo cargar Tendencias.', error));
+  }
 })();
