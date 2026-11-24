@@ -625,10 +625,21 @@
       return (n.productos ?? []).filter(p => ids.has(p.id) && !p.eliminado && p.disponible !== false)
         .map(p => ({n,p}));
     }));
-    const items=[];for(let i=0;grupos.some(g=>g[i]);i++)grupos.forEach(g=>{if(g[i])items.push(g[i]);});
+    const tendencias = grupos.flat().filter(({n}) => n.categoria !== 'comida').map(({n,p,fotoArticulo}) => ({
+      id: p.id, slug: n.slug, name: p.nombre, store: n.nombre,
+      category: p.seccion || n.rubro || 'Catálogo', price: p.precio,
+      photo: fotoArticulo || imagen(p.foto) || imagen(n.logo)
+    }));
+    window.productosTendenciasSeleccionados = tendencias;
+    window.dispatchEvent(new CustomEvent('tendencias-seleccionadas', {detail: tendencias}));
+    const gruposComida = grupos.map(grupo => grupo.filter(({n}) => n.categoria === 'comida'));
+    const items = [];
+    for (let i = 0; gruposComida.some(grupo => grupo[i]); i++) {
+      for (const grupo of gruposComida) if (grupo[i]) items.push(grupo[i]);
+    }
     seccion.hidden=!items.length;if(!items.length)return;
-    const tarjetas=items.map(({n,p,fotoArticulo})=>`<a href="?negocio=${encodeURIComponent(n.slug)}&producto=${encodeURIComponent(p.id)}" class="comida-producto comida-carrusel-producto" data-slug="${escapar(n.slug)}" data-producto="${escapar(p.id)}">${fotoArticulo ? `<img src="${escapar(fotoArticulo)}" alt="${escapar(p.nombre)}" loading="lazy">` : foto(p,n)}<strong>${escapar(p.nombre)}</strong><span>${escapar(n.nombre)} · ${Number.isFinite(p.precio) ? dinero(Math.round(p.precio*100)) : "Consultar precio"}</span></a>`).join('');
-    seccion.innerHTML=`<div class="comida-cabecera"><div><h2>¿Qué se te antoja hoy?</h2><p>Descubre productos de los negocios de aquí.</p></div></div><div class="comida-carrusel" aria-label="Productos destacados de negocios locales"><div class="comida-carrusel-track">${tarjetas}${tarjetas}</div></div>`;
+    const tarjetas=items.map(({n,p})=>`<a href="?negocio=${encodeURIComponent(n.slug)}&producto=${encodeURIComponent(p.id)}" class="comida-producto comida-carrusel-producto" data-slug="${escapar(n.slug)}" data-producto="${escapar(p.id)}">${foto(p,n)}<strong>${escapar(p.nombre)}</strong><span>${escapar(n.nombre)} · ${Number.isFinite(p.precio) ? dinero(Math.round(p.precio*100)) : "Consultar precio"}</span></a>`).join('');
+    seccion.innerHTML=`<div class="comida-cabecera"><div><h2>¿Qué se te antoja hoy?</h2><p>Descubre el menú de los negocios de aquí.</p></div></div><div class="comida-carrusel" aria-label="Productos destacados de negocios de comida"><div class="comida-carrusel-track">${tarjetas}${tarjetas}</div></div>`;
 
     const fila=seccion.querySelector('.comida-carrusel');
     const track=seccion.querySelector('.comida-carrusel-track');

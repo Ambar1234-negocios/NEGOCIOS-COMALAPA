@@ -128,24 +128,50 @@
   online?.addEventListener('click', () => openPurchase('Compra en línea'));
 
   const grid = root.querySelector('.demo-products');
-  grid.closest('section').hidden = !staging;
-  for (const product of staging ? products : []) {
-    const card = root.querySelector('#demo-product-template').content.cloneNode(true);
-    card.querySelector('.demo-illustration span').textContent = product.icon;
-    card.querySelector('.demo-badge').hidden = !product.demo;
-    card.querySelector('.demo-category').textContent = product.category;
-    card.querySelector('h3').textContent = product.name;
-    card.querySelector('.demo-store').textContent = product.store;
-    card.querySelector('.demo-price').textContent = priceText(product);
-    const button = card.querySelector('button');
-    button.textContent = product.price == null ? 'Consultar' : 'Ver producto';
-    button.setAttribute('aria-label', button.textContent + ': ' + product.name);
-    button.addEventListener('click', () => {
-      detail.textContent = product.store + ' · ' + product.category + ' · ' + priceText(product) +
-        '. Ejemplo visual. La disponibilidad y el precio no están confirmados.';
-      openDialog(product.name + ' · DEMO', detail);
-    });
-    grid.append(card);
+  const tendencias = grid.closest('section');
+  function pintarTendencias(seleccion) {
+    grid.replaceChildren();
+    tendencias.hidden = !staging || !seleccion.length;
+    for (const product of staging ? seleccion : []) {
+      const card = root.querySelector('#demo-product-template').content.cloneNode(true);
+      const illustration = card.querySelector('.demo-illustration span');
+      illustration.textContent = product.icon || '🛍️';
+      if (product.photo) {
+        const photo = document.createElement('img');
+        photo.src = product.photo;
+        photo.alt = '';
+        photo.loading = 'lazy';
+        photo.className = 'demo-product-photo';
+        illustration.replaceChildren(photo);
+      }
+      card.querySelector('.demo-badge').hidden = !product.demo;
+      card.querySelector('.demo-category').textContent = product.category;
+      card.querySelector('h3').textContent = product.name;
+      card.querySelector('.demo-store').textContent = product.store;
+      card.querySelector('.demo-price').textContent = priceText(product);
+      const button = card.querySelector('button');
+      button.textContent = product.demo && product.price == null ? 'Consultar' : 'Ver producto';
+      button.setAttribute('aria-label', button.textContent + ': ' + product.name);
+      button.addEventListener('click', () => {
+        if (!product.demo) {
+          window.dispatchEvent(new CustomEvent('comida-abrir', {
+            detail: {slug: product.slug, productoId: product.id}
+          }));
+          return;
+        }
+        detail.textContent = product.store + ' · ' + product.category + ' · ' + priceText(product) +
+          '. Ejemplo visual. La disponibilidad y el precio no están confirmados.';
+        openDialog(product.name + ' · DEMO', detail);
+      });
+      grid.append(card);
+    }
+  }
+
+  if (window.ENTORNO?.supabaseConfigurado) {
+    pintarTendencias(window.productosTendenciasSeleccionados || []);
+    window.addEventListener('tendencias-seleccionadas', event => pintarTendencias(event.detail));
+  } else {
+    pintarTendencias(products);
   }
 
   root.querySelector('.demo-all').addEventListener('click', event => {
@@ -183,7 +209,7 @@
     if (document.hidden || reducedMotion.matches || modal.open ||
         grid.matches('.demo-expanded, :hover, :focus-within') || Date.now() < pauseUntil) return;
     const end = grid.scrollWidth - grid.clientWidth;
-    if (end <= 0) return;
+    if (end <= 0 || !grid.firstElementChild) return;
     const step = grid.firstElementChild.getBoundingClientRect().width + 12;
     const next = grid.scrollLeft >= end - 2 ? 0 : Math.min(grid.scrollLeft + step, end);
     grid.scrollTo({ left: next, behavior: 'smooth' });

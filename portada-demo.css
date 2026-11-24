@@ -138,3 +138,5 @@
   #demo-compras-local .demo-shop[aria-hidden="true"] { display: none; }
 }
 #portada-demo .demo-form label[hidden] { display: none; }
+
+#portada-demo .demo-product-photo { display: block; max-width: 100%; height: 88px; object-fit: contain; }

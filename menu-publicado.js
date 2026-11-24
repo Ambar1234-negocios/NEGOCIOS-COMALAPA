@@ -17,7 +17,7 @@ window.MenuPublicado={
   const pagina = 500;
   const signal = AbortSignal.timeout(7000);
   for (let offset = 0; ; offset += pagina) {
-   const respuesta = await fetch(BASE + '/rest/v1/antojo_hoy_selecciones?select=negocio,producto' +
+   const respuesta = await fetch(BASE + '/rest/v1/rpc/antojo_hoy_publicados?select=negocio,producto' +
     '&order=negocio,producto&limit=' + pagina + '&offset=' + offset, {
     headers: {apikey: KEY}, cache: 'no-store', signal
    });

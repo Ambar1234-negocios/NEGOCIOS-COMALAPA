@@ -14,7 +14,8 @@ async function montarAntojoHoy(contenedor, slug, productos) {
   const estado = nodo('p');
   estado.setAttribute('role', 'status');
   const lista = nodo('div');
-  seccion.append(nodo('h3', '¿Qué se te antoja hoy?'), contador, avisoLimite, estado, lista);
+  const titulo = nodo('h3');
+  seccion.append(titulo, contador, avisoLimite, estado, lista);
   contenedor.prepend(seccion);
   seccion.hidden = true;
 
@@ -28,8 +29,10 @@ async function montarAntojoHoy(contenedor, slug, productos) {
     const activos = new Set(datos.activos);
     const seleccionados = new Set(datos.seleccionados);
     const lleno = seleccionados.size >= datos.limite;
-    const mensaje = 'Tu plan incluye hasta ' + datos.limite +
-      ' productos en ¿Qué se te antoja hoy?. Si quieres destacar otro producto, primero desmarca uno de los que ya tienes seleccionados.';
+    const nombreSeccion = datos.seccion === 'antojo' ? '¿Qué se te antoja hoy?' : 'Tendencias';
+    titulo.textContent = nombreSeccion;
+    const mensaje = 'Tu plan incluye hasta ' + datos.limite + ' productos en ' + nombreSeccion +
+      '. Si quieres destacar otro producto, primero desmarca uno de los que ya tienes seleccionados.';
     contador.textContent = 'Productos destacados: ' + seleccionados.size + ' de ' + datos.limite;
     avisoLimite.textContent = lleno ? mensaje : '';
     avisoLimite.hidden = !lleno;
