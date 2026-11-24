@@ -1043,7 +1043,7 @@ function verPerfil(categoria, index, opciones = {}) {
     <h4>${negocio.tipoCatalogo === "artista" ? "Portafolio de presentaciones" : "📷 Galería"}</h4>
     <div class="galeria-grid">
       ${negocio.galeria.map((foto, i) => `
-        <img src="${foto}" alt="${escapar(negocio.nombre)}" onclick="abrirLightbox('${categoria}', ${index}, ${i})">
+        <img${window.MarcaAgua?.atributo(negocio.slug) || ''} src="${escapar(foto)}" alt="${escapar(negocio.nombre)}" onclick="abrirLightbox('${categoria}', ${index}, ${i})">
       `).join("")}
     </div>
   </section>
@@ -1672,8 +1672,8 @@ function abrirLightbox(categoria, index, fotoIndex) {
 
             <button class="lightbox-anterior" onclick="cambiarFoto(-1)">❮</button>
 
-            <img id="lightbox-img"
-                 src="${foto}"
+            <img id="lightbox-img"${window.MarcaAgua?.atributo(negocio.slug) || ''}
+                 src="${escapar(foto)}"
                  draggable="false"
                  data-categoria="${categoria}"
                  data-index="${index}"
@@ -1718,7 +1718,8 @@ function cambiarFoto(direccion) {
     fotoIndex = 0;
   }
 
-  img.src = negocio.galeria[fotoIndex];
+  if (window.MarcaAgua) window.MarcaAgua.asignar(img, negocio.galeria[fotoIndex], negocio.slug);
+  else img.src = negocio.galeria[fotoIndex];
   img.dataset.foto = fotoIndex;
   const contador = document.querySelector(".lightbox-contador");
 if (contador) {

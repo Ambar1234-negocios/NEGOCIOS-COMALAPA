@@ -19,7 +19,7 @@
   }
   function foto(p,n) {
     const ruta=imagen(p.foto);
-    return ruta ? `<img src="${escapar(ruta)}" alt="${escapar(p.nombre)}" loading="lazy" onerror="this.hidden=true">` : logoProducto(n)||`<div class="comida-sin-foto" aria-hidden="true">${digital(n)?'📺':'🍽️'}</div>`;
+    return ruta ? `<img${window.MarcaAgua?.atributo(n.slug) || ''} src="${escapar(ruta)}" alt="${escapar(p.nombre)}" loading="lazy" onerror="this.hidden=true">` : logoProducto(n)||`<div class="comida-sin-foto" aria-hidden="true">${digital(n)?'📺':'🍽️'}</div>`;
   }
   function etiquetas(p){
     const propias=grupos(p).flatMap(g=>g.opciones.filter(o=>o.tipoPrecio==='propio'));
@@ -83,15 +83,16 @@
   }
   function galeriaCatalogo(p,ampliada=false,inicio=0,n) {
     const fotos=fotosCatalogo(p);
+    const marca = window.MarcaAgua?.atributo(n?.slug ?? p.negocioMarca) || '';
     if(!fotos.length)return logoProducto(n)||'<p class="catalogo-sin-foto">Fotos pendientes</p>';
-    return '<div class="catalogo-fotos"><div class="catalogo-pista" tabindex="0" aria-label="Fotos de '+escapar(p.nombre)+'" data-inicio="'+inicio+'">'+fotos.map((src,i)=>ampliada?'<div class="catalogo-foto"><img src="'+escapar(src)+'" alt="'+escapar(p.nombre)+' · foto '+(i+1)+'"></div>':'<button type="button" class="catalogo-foto" data-catalogo-abrir="'+i+'" aria-label="Ampliar '+escapar(p.nombre)+' · foto '+(i+1)+'"><img src="'+escapar(src)+'" alt="'+escapar(p.nombre)+' · foto '+(i+1)+'" loading="lazy"></button>').join('')+'</div>'+(fotos.length>1?'<div class="catalogo-controles"><button type="button" data-catalogo-foto="-1" aria-label="Foto anterior">‹</button><output aria-live="polite">'+(inicio+1)+' / '+fotos.length+'</output><button type="button" data-catalogo-foto="1" aria-label="Foto siguiente">›</button></div>':'')+'</div>';
+    return '<div class="catalogo-fotos"><div class="catalogo-pista" tabindex="0" aria-label="Fotos de '+escapar(p.nombre)+'" data-inicio="'+inicio+'">'+fotos.map((src,i)=>ampliada?'<div class="catalogo-foto"><img'+marca+' src="'+escapar(src)+'" alt="'+escapar(p.nombre)+' · foto '+(i+1)+'"></div>':'<button type="button" class="catalogo-foto" data-catalogo-abrir="'+i+'" aria-label="Ampliar '+escapar(p.nombre)+' · foto '+(i+1)+'"><img'+marca+' src="'+escapar(src)+'" alt="'+escapar(p.nombre)+' · foto '+(i+1)+'" loading="lazy"></button>').join('')+'</div>'+(fotos.length>1?'<div class="catalogo-controles"><button type="button" data-catalogo-foto="-1" aria-label="Foto anterior">‹</button><output aria-live="polite">'+(inicio+1)+' / '+fotos.length+'</output><button type="button" data-catalogo-foto="1" aria-label="Foto siguiente">›</button></div>':'')+'</div>';
   }
   function catalogoVisual(n) {
     const ps=(Array.isArray(n.productos)?n.productos:[]).filter(p=>p&&p.id&&typeof p.nombre==='string'&&p.nombre.trim()&&p.disponible!==false&&!p.eliminado);
     const secciones=[...new Set([...(Array.isArray(n.seccionesCatalogo)?[]:seccionesVisuales),...(Array.isArray(n.seccionesCatalogo)?n.seccionesCatalogo:[]),...ps.map(p=>p.seccion||'Otros productos')])].filter(s=>!(n.seccionesOcultas||[]).includes(s));
     const tarjetas=lista=>lista.map(p=>{
       const enlace=consultaCatalogo(n,p);
-      return '<article class="catalogo-prenda" data-producto-id="'+escapar(p.id)+'">'+galeriaCatalogo(p,false,0,n)+'<h5><button type="button" data-catalogo-abrir="0">'+escapar(p.nombre)+'</button></h5><button type="button" class="catalogo-detalle" data-catalogo-abrir="0">Ver prenda</button><template class="catalogo-datos">'+escapar(JSON.stringify({nombre:p.nombre,ingredientes:p.ingredientes,fichaAvanzada:{fotos:fotosCatalogo(p)},enlace}))+'</template>'+(enlace?'<a class="catalogo-consultar" href="'+escapar(enlace)+'" target="_blank" rel="noopener">Consultar precio y talla</a>':'')+'</article>';
+      return '<article class="catalogo-prenda" data-producto-id="'+escapar(p.id)+'">'+galeriaCatalogo(p,false,0,n)+'<h5><button type="button" data-catalogo-abrir="0">'+escapar(p.nombre)+'</button></h5><button type="button" class="catalogo-detalle" data-catalogo-abrir="0">Ver prenda</button><template class="catalogo-datos">'+escapar(JSON.stringify({nombre:p.nombre,ingredientes:p.ingredientes,fichaAvanzada:{fotos:fotosCatalogo(p)},negocioMarca:n.slug,enlace}))+'</template>'+(enlace?'<a class="catalogo-consultar" href="'+escapar(enlace)+'" target="_blank" rel="noopener">Consultar precio y talla</a>':'')+'</article>';
     }).join('');
     return '<section class="catalogo-visual" aria-label="Catálogo visual"><h4>Catálogo</h4><p><small>Disponibilidad sujeta a existencia</small></p>'+(!ps.length?'<p>Próximamente podrás ver las prendas y modelos disponibles. Consulta precio y talla por WhatsApp.</p>':'<p class="catalogo-ayuda">Desliza las prendas de cada sección. Toca una foto para ampliarla y consultar.</p>')+secciones.map(s=>{
       const lista=ps.filter(p=>(p.seccion||'Otros productos')===s);
@@ -116,7 +117,7 @@
     return '<section class="catalogo-visual catalogo-sayer" aria-label="'+titulo+'"><h4>'+titulo+'</h4><p>'+(servicio?'Atención únicamente con cita previa. Selecciona un servicio para ver sus fotos o solicitar cita.':'Desliza para ver productos. Toca una tarjeta para consultar sus fotos e información.')+'</p>'+categorias.map(c=>'<section class="catalogo-seccion"><header><h5>'+escapar(c)+'</h5></header><div class="catalogo-fila" tabindex="0" aria-label="Productos de '+escapar(c)+'">'+ps.filter(p=>(p.seccion?.trim()||'Otros productos')===c).map(p=>{
       const numero=String(n.whatsapp||n.telefono||'').replace(/\D/g,''),tel=numero.length===10?'52'+numero:numero;
       const enlace=/^\d{11,15}$/.test(tel)?'https://wa.me/'+tel+'?text='+encodeURIComponent(servicio?'Hola, quiero solicitar una cita para '+p.nombre+' en '+n.nombre+'. ¿Me confirman disponibilidad y cotización?':'Hola, quiero información sobre '+p.nombre+' de '+n.nombre+'. ¿Me confirman precio y disponibilidad?'):'';
-      return '<article class="catalogo-prenda" data-producto-id="'+escapar(p.id)+'">'+galeriaCatalogo(p,false,0,n)+'<h5><button type="button" data-catalogo-abrir="0">'+escapar(p.nombre)+'</button></h5>'+(Number.isFinite(p.precio)&&p.precio>0?'<p>'+dinero(Math.round(p.precio*100))+'</p>':'')+'<button type="button" class="catalogo-detalle" data-catalogo-abrir="0">'+(servicio?'Ver servicio':'Ver producto')+'</button>'+(servicio&&enlace?'<a class="catalogo-consultar" href="'+escapar(enlace)+'" target="_blank" rel="noopener noreferrer">Solicitar cita</a>':'')+'<template class="catalogo-datos">'+escapar(JSON.stringify({...p,sayer:true,servicio,enlace}))+'</template></article>';
+      return '<article class="catalogo-prenda" data-producto-id="'+escapar(p.id)+'">'+galeriaCatalogo(p,false,0,n)+'<h5><button type="button" data-catalogo-abrir="0">'+escapar(p.nombre)+'</button></h5>'+(Number.isFinite(p.precio)&&p.precio>0?'<p>'+dinero(Math.round(p.precio*100))+'</p>':'')+'<button type="button" class="catalogo-detalle" data-catalogo-abrir="0">'+(servicio?'Ver servicio':'Ver producto')+'</button>'+(servicio&&enlace?'<a class="catalogo-consultar" href="'+escapar(enlace)+'" target="_blank" rel="noopener noreferrer">Solicitar cita</a>':'')+'<template class="catalogo-datos">'+escapar(JSON.stringify({...p,sayer:true,servicio,enlace,negocioMarca:n.slug}))+'</template></article>';
     }).join('')+'</div>'+(!ps.some(p=>(p.seccion?.trim()||'Otros productos')===c)?'<p class="catalogo-vacio">Próximamente</p>':'')+'</section>').join('')+(!ps.length?'<p>'+ (servicio?'Consulta disponibilidad por WhatsApp.':'Aún no hay productos publicados.')+'</p>':'')+'</section>';
   }
   // Shared by every catalog: native swipe at 1x, image-only pinch and pan above 1x.
@@ -194,7 +195,7 @@
 
 
   function tarjetasProductos(n, lista) {
-    return lista.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${p.fichaAvanzada?.activa && fotosCatalogo(p).length ? '' : imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p,n)}<span>Ver foto e información</span></button>` : foto(p,n)}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}${n.tipoCatalogo === 'carta' && p.ingredientes ? `<p>${escapar(p.ingredientes)}</p>` : ''}<p>${dinero(Math.round(p.precio*100))}</p>${p.fichaAvanzada?.activa ? window.FichaAvanzada.html(p,imagen) : ''}${digital(n)?`<p class="digital-condiciones">${escapar(condiciones(p))}</p>`:""}${p.soloInformativo===true?'<p class="pedido-checkout-nota">Carta informativa · Sin pedido desde la plataforma</p>':`<button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button>`}</article>`).join('');
+    return lista.map(p=>`<article class="comida-producto" data-producto-id="${escapar(p.id)}">${p.fichaAvanzada?.activa && fotosCatalogo(p).length ? '' : imagen(p.foto) ? `<button type="button" class="comida-ampliar" data-ver-producto="${escapar(p.id)}" aria-label="Ampliar foto de ${escapar(p.nombre)}">${foto(p,n)}<span>Ver foto e información</span></button>` : foto(p,n)}<h5>${escapar(p.nombre)}</h5>${etiquetas(p)}${n.tipoCatalogo === 'carta' && p.ingredientes ? `<p>${escapar(p.ingredientes)}</p>` : ''}<p>${dinero(Math.round(p.precio*100))}</p>${p.fichaAvanzada?.activa ? window.FichaAvanzada.html(p,imagen,n.slug) : ''}${digital(n)?`<p class="digital-condiciones">${escapar(condiciones(p))}</p>`:""}${p.soloInformativo===true?'<p class="pedido-checkout-nota">Carta informativa · Sin pedido desde la plataforma</p>':`<button type="button" data-agregar-producto="${escapar(p.id)}">Agregar al pedido</button>`}</article>`).join('');
   }
 
   function seccionMenu(n, nombre, contenido, cantidad) {
@@ -555,13 +556,13 @@
     normalizarPedido();pintarPedido();
   });
 
-  function abrirFoto(p,origen,esDigital=false) {
+  function abrirFoto(p,origen,esDigital=false,slug) {
     document.getElementById('comida-visor')?.remove();
     const dialog=document.createElement('dialog');dialog.id='comida-visor';dialog.className='comida-visor';
     dialog.setAttribute('aria-labelledby','comida-visor-titulo');
     dialog.innerHTML='<button type="button" class="comida-visor-cerrar" aria-label="Cerrar foto">Cerrar ×</button><h2 id="comida-visor-titulo"></h2><img class="comida-foto-grande"><p class="comida-visor-precio"></p>';
     dialog.querySelector('h2').textContent=p.nombre;
-    const img=dialog.querySelector('img');img.src=imagen(p.foto);img.alt=p.nombre;
+    const img=dialog.querySelector('img');if (window.MarcaAgua) window.MarcaAgua.asignar(img,imagen(p.foto),slug); else img.src=imagen(p.foto);img.alt=p.nombre;
     img.addEventListener('error',()=>{img.hidden=true;const aviso=document.createElement('p');aviso.textContent='No se pudo cargar la foto.';img.after(aviso);});
     dialog.querySelector('.comida-visor-precio').textContent=dinero(Math.round(p.precio*100));
     if(esDigital) dialog.insertAdjacentHTML('beforeend', informacionDigital(p));
@@ -587,7 +588,7 @@
     el.addEventListener('click',e=>{
       const b=e.target.closest('button');if(!b)return;
       if(b.hasAttribute('data-pedido-especial')){abrirPedidoEspecial(n,b);return;}
-      if(b.dataset.verProducto){const p=productos(n).find(p=>p.id===b.dataset.verProducto);if(p)abrirFoto(p,b,digital(n));return;}
+      if(b.dataset.verProducto){const p=productos(n).find(p=>p.id===b.dataset.verProducto);if(p)abrirFoto(p,b,digital(n),n.slug);return;}
       if(b.dataset.agregarProducto){const p=productos(n).find(p=>p.id===b.dataset.agregarProducto);if(p)configurar(n,p,b);}
     });
   }
@@ -628,7 +629,8 @@
     const tendencias = grupos.flat().filter(({n}) => n.categoria !== 'comida').map(({n,p,fotoArticulo}) => ({
       id: p.id, slug: n.slug, name: p.nombre, store: n.nombre,
       category: p.seccion || n.rubro || 'Catálogo', price: p.precio,
-      photo: fotoArticulo || imagen(p.foto) || imagen(n.logo)
+      photo: fotoArticulo || imagen(p.foto) || imagen(n.logo),
+      fotoProducto: Boolean(fotoArticulo || imagen(p.foto))
     }));
     window.productosTendenciasSeleccionados = tendencias;
     window.dispatchEvent(new CustomEvent('tendencias-seleccionadas', {detail: tendencias}));

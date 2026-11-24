@@ -46,7 +46,9 @@
     fila.setAttribute('aria-label', 'Fotos de ' + item.nombre);
     item.fotos.forEach((nombre, indice) => {
       const img = nodo('img');
-      img.src = foto(negocio.slug, nombre);
+      const src = foto(negocio.slug, nombre);
+      if (window.MarcaAgua) window.MarcaAgua.asignar(img, src, negocio.slug);
+      else img.src = src;
       img.alt = item.nombre + ' · foto ' + (indice + 1);
       img.loading = ampliar ? 'lazy' : 'eager';
       if (ampliar) {

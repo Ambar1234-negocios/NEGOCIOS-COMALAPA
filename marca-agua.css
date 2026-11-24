@@ -1,0 +1,19 @@
+img[data-marca-pendiente] {
+  visibility: hidden;
+}
+
+img[data-marca-agua] {
+  object-fit: contain !important;
+}
+
+.marca-agua-preview {
+  display: block;
+  width: min(100%, 420px);
+  max-height: 320px;
+  object-fit: contain;
+  object-position: left;
+}
+
+#marca-agua-admin input[type="checkbox"] {
+  width: auto;
+}

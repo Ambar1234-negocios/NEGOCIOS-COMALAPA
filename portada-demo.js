@@ -138,7 +138,8 @@
       illustration.textContent = product.icon || '🛍️';
       if (product.photo) {
         const photo = document.createElement('img');
-        photo.src = product.photo;
+        if (product.fotoProducto && window.MarcaAgua) window.MarcaAgua.asignar(photo, product.photo, product.slug);
+        else photo.src = product.photo;
         photo.alt = '';
         photo.loading = 'lazy';
         photo.className = 'demo-product-photo';
