@@ -4,6 +4,7 @@
 function categoriasDinamicas(){return menuCompleto?.borrador?.categoriasDinamicas===true;}
 function categoriasDelEditor(){
  const n=menuCompleto?.borrador||{};
+ if(menuCompleto?.slug==='esenciales-decants'||n.nombre==='Esenciales Decants')return n.seccionesCatalogo||['Decants de dama','Decants de caballero'];
  return categoriasDinamicas()?(n.seccionesCatalogo||[]):esCatalogoVisual()?[...seccionesCatalogoVisual,...(n.seccionesCatalogo||[])]:[];
 }
 
