@@ -72,7 +72,7 @@ function configurarCatalogoVisual(){
  const buscar=el('buscar-menu');if(buscar){buscar.placeholder=visual?'Buscar por nombre o referencia':'Buscar producto';}
  const tab=document.querySelector('[data-vista="menu"]');if(tab)tab.textContent=visual?'Catálogo':'Menú';
  const cabecera=document.querySelector('body>header h1');if(cabecera){cabecera.dataset.original??=cabecera.textContent;cabecera.textContent=visual?'Mi catálogo':cabecera.dataset.original;const p=cabecera.nextElementSibling;if(p){p.dataset.original??=p.textContent;p.textContent=visual?'Prendas, secciones y fotos de tu negocio.':p.dataset.original;}}
- const filtro=el('categoria-menu')?.parentElement;if(filtro&&document.body.dataset.acceso==='dueno')filtro.hidden=!visual&&!(typeof categoriasDinamicas==='function'&&categoriasDinamicas());
+ const filtro=el('categoria-menu')?.parentElement;if(filtro&&document.body.dataset.acceso==='dueno')filtro.hidden=!visual&&!(typeof categoriasDinamicas==='function'&&categoriasDinamicas())&&menuCompleto?.slug!=='esenciales-decants'&&menuCompleto?.borrador?.nombre!=='Esenciales Decants';
  const ayuda=document.querySelector('#vista-menu>.aviso');if(ayuda&&visual)ayuda.textContent='Crea una prenda, agrega su nombre y fotos y elige Guardar y publicar. Desmarca Mostrar modelo en catálogo para ocultarla.';
  if(nombre)nombre.textContent=visual?'Nombre o referencia estable de la prenda':'Nombre del producto';
  if(el('ver-menu-publico'))el('ver-menu-publico').textContent=visual?'Ver catálogo publicado':'Ver menú publicado';
