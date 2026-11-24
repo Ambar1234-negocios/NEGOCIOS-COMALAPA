@@ -344,7 +344,9 @@
       boton('Salir', () => el('salir').onclick()));
     cabecera.append(nodo('h2', perfil.nombre), nodo('p', (desdeAdministracion ? 'Administración: ' : 'Cuenta: ') + cuenta.user.email), acciones);
     const secciones = soloCatalogo ? [] : [editarPerfil()];
-    editor.replaceChildren(cabecera, ...secciones, gestionarCategorias(), gestionarArticulos());
+    const destacados = nodo('div');
+    editor.replaceChildren(cabecera, destacados, ...secciones, gestionarCategorias(), gestionarArticulos());
+    montarAntojoHoy(destacados, perfil.slug, articulos);
   }
 
   const cargarMenuOriginal = cargarMenuCompleto;

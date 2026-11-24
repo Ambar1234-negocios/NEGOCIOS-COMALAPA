@@ -11,7 +11,23 @@ function combinar(n,mapa){
  if(!formatosMenu.has(n.slug)&&lista.length)formatosMenu.set(n.slug,lista.every(p=>!!String(p.seccion||'').trim()));
  n.menuConSecciones=formatosMenu.get(n.slug)??false;return lista;
 }
-window.MenuPublicado={actualizarExistentes(categorias){for(const lista of Object.values(categorias))for(const n of lista)n.productos=combinar(n,mapaAprobado);},async aplicar(lista){
+window.MenuPublicado={
+ async leerAntojos() {
+  const filas = [];
+  const pagina = 500;
+  const signal = AbortSignal.timeout(7000);
+  for (let offset = 0; ; offset += pagina) {
+   const respuesta = await fetch(BASE + '/rest/v1/antojo_hoy_selecciones?select=negocio,producto' +
+    '&order=negocio,producto&limit=' + pagina + '&offset=' + offset, {
+    headers: {apikey: KEY}, cache: 'no-store', signal
+   });
+   if (!respuesta.ok) throw Error('No se pudieron cargar los destacados.');
+   const lote = await respuesta.json();
+   filas.push(...lote);
+   if (lote.length < pagina) return filas;
+  }
+ },
+ actualizarExistentes(categorias){for(const lista of Object.values(categorias))for(const n of lista)n.productos=combinar(n,mapaAprobado);},async aplicar(lista){
  const control=new AbortController(),timer=setTimeout(()=>control.abort(),8000);
  try{const r=await fetch(BASE+'/rest/v1/rpc/menu_catalogo_publicado',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:'{}',signal:control.signal,cache:'no-store'});if(!r.ok)throw Error('Catálogo no disponible');const cambios=await r.json();if(!Array.isArray(cambios))throw Error('Catálogo inválido');
  const mapa=new Map(cambios.filter(c=>c&&typeof c.negocio==='string'&&typeof c.producto==='string'&&c.contenido?.id===c.producto).map(c=>[c.negocio+'|'+c.producto,c.contenido]));

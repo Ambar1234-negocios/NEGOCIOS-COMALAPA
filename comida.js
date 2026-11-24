@@ -591,17 +591,44 @@
       if(b.dataset.agregarProducto){const p=productos(n).find(p=>p.id===b.dataset.agregarProducto);if(p)configurar(n,p,b);}
     });
   }
-  function carrusel(lista) {
+  async function carrusel(lista) {
     window.MejorasExhibicion?.ofertas(lista);
     window.__listaOfertasProductos=lista;
     const seccion=document.getElementById('comida-inicio');if(!seccion)return;
-    const grupos=lista
-      .filter(n=>n.categoria==='comida' && n.activo!==false)
-      .map(n=>productos(n).filter(p=>n.slug==='restaurante-shangai'?p.enCarrusel===true:p.enCarrusel!==false).map(p=>({n,p})));
+    let selecciones = [];
+    if (window.ENTORNO?.supabaseConfigurado) {
+      try { selecciones = await window.MenuPublicado.leerAntojos(); }
+      catch (error) { console.warn(error.message); }
+    }
+    const idsPorNegocio = new Map();
+    for (const {negocio, producto} of selecciones) {
+      if (!idsPorNegocio.has(negocio)) idsPorNegocio.set(negocio, new Set());
+      idsPorNegocio.get(negocio).add(producto);
+    }
+    const grupos = await Promise.all(lista.filter(n => n.activo !== false).map(async n => {
+      const ids = idsPorNegocio.get(n.slug);
+      if (!window.ENTORNO?.supabaseConfigurado) {
+        if (n.categoria !== 'comida') return [];
+        return productos(n).filter(p => !p.eliminado && p.disponible !== false &&
+          (n.slug === 'restaurante-shangai' ? p.enCarrusel === true : p.enCarrusel !== false))
+          .slice(0, 3).map(p => ({n,p}));
+      }
+      if (!ids?.size) return [];
+      if (n.tipoCatalogo === 'empeno') {
+        try {
+          const articulos = await window.EmpenoExhibicion.articulosDestacados(n.slug, [...ids]);
+          return articulos.map(a => ({n, p: {
+            id: a.id, nombre: a.nombre, precio: a.consultar ? null : a.precio_centavos == null ? null : a.precio_centavos / 100
+          }, fotoArticulo: a.fotos?.[0] && window.EmpenoExhibicion.foto(n.slug, a.fotos[0])}));
+        } catch { return []; }
+      }
+      return (n.productos ?? []).filter(p => ids.has(p.id) && !p.eliminado && p.disponible !== false)
+        .map(p => ({n,p}));
+    }));
     const items=[];for(let i=0;grupos.some(g=>g[i]);i++)grupos.forEach(g=>{if(g[i])items.push(g[i]);});
     seccion.hidden=!items.length;if(!items.length)return;
-    const tarjetas=items.map(({n,p})=>`<a href="?negocio=${encodeURIComponent(n.slug)}&producto=${encodeURIComponent(p.id)}" class="comida-producto comida-carrusel-producto" data-slug="${escapar(n.slug)}" data-producto="${escapar(p.id)}">${foto(p,n)}<strong>${escapar(p.nombre)}</strong><span>${escapar(n.nombre)} · ${dinero(Math.round(p.precio*100))}</span></a>`).join('');
-    seccion.innerHTML=`<div class="comida-cabecera"><div><h2>¿Qué se te antoja hoy?</h2><p>Descubre el menú de los negocios de aquí.</p></div></div><div class="comida-carrusel" aria-label="Productos de negocios de comida"><div class="comida-carrusel-track">${tarjetas}${tarjetas}</div></div>`;
+    const tarjetas=items.map(({n,p,fotoArticulo})=>`<a href="?negocio=${encodeURIComponent(n.slug)}&producto=${encodeURIComponent(p.id)}" class="comida-producto comida-carrusel-producto" data-slug="${escapar(n.slug)}" data-producto="${escapar(p.id)}">${fotoArticulo ? `<img src="${escapar(fotoArticulo)}" alt="${escapar(p.nombre)}" loading="lazy">` : foto(p,n)}<strong>${escapar(p.nombre)}</strong><span>${escapar(n.nombre)} · ${Number.isFinite(p.precio) ? dinero(Math.round(p.precio*100)) : "Consultar precio"}</span></a>`).join('');
+    seccion.innerHTML=`<div class="comida-cabecera"><div><h2>¿Qué se te antoja hoy?</h2><p>Descubre productos de los negocios de aquí.</p></div></div><div class="comida-carrusel" aria-label="Productos destacados de negocios locales"><div class="comida-carrusel-track">${tarjetas}${tarjetas}</div></div>`;
 
     const fila=seccion.querySelector('.comida-carrusel');
     const track=seccion.querySelector('.comida-carrusel-track');

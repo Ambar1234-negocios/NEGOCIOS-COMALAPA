@@ -243,6 +243,11 @@
 
   window.EmpenoExhibicion = {
     dias, foto, conectar,
+    articulosDestacados(slug, ids) {
+      const filtro = ids.map(id => encodeURIComponent(id)).join(',');
+      return leer('empeno_articulos?negocio=eq.' + encodeURIComponent(slug) +
+        '&id=in.(' + filtro + ')&pausado=eq.false&estado=eq.Disponible');
+    },
     async perfiles() {
       const filas = await leer('empeno_perfiles?activo=eq.true&order=nombre');
       return filas.map(p => ({
