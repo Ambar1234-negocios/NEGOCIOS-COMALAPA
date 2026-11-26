@@ -133,3 +133,11 @@
 
 /* Keep browser zoom enabled outside the image gesture. */
 .catalogo-ampliado .catalogo-foto{overflow:hidden}.catalogo-ampliado .catalogo-pista img{transform-origin:center;user-select:none;-webkit-user-drag:none}
+
+/* Evita que la carga diferida de fotos estire las tarjetas del catálogo de prendas. */
+.catalogo-visual:not(.catalogo-sayer) .catalogo-fila{align-items:flex-start;overflow-y:hidden}
+.catalogo-visual:not(.catalogo-sayer) .catalogo-prenda{align-self:flex-start;height:auto;min-height:0}
+.catalogo-visual:not(.catalogo-sayer) .catalogo-pista{height:280px;min-height:280px;max-height:280px;align-items:flex-start;overflow-y:hidden}
+.catalogo-visual:not(.catalogo-sayer) .catalogo-pista>.catalogo-foto{height:100%;min-height:0;max-height:100%;overflow:hidden}
+.catalogo-visual:not(.catalogo-sayer) .catalogo-pista img{height:100%;max-height:100%;object-fit:contain}
+@media(max-width:480px){.catalogo-visual:not(.catalogo-sayer) .catalogo-pista{height:250px;min-height:250px;max-height:250px}}
