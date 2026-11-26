@@ -141,3 +141,8 @@
 .catalogo-visual:not(.catalogo-sayer) .catalogo-pista>.catalogo-foto{height:100%;min-height:0;max-height:100%;overflow:hidden}
 .catalogo-visual:not(.catalogo-sayer) .catalogo-pista img{height:100%;max-height:100%;object-fit:contain}
 @media(max-width:480px){.catalogo-visual:not(.catalogo-sayer) .catalogo-pista{height:250px;min-height:250px;max-height:250px}}
+
+/* El logo provisional debe ocupar el mismo marco que una foto, no su tamaño natural. */
+.catalogo-visual .catalogo-prenda>.catalogo-sin-foto{height:280px;min-height:280px;max-height:280px;min-width:0;width:100%;overflow:hidden;display:grid;place-items:center}
+.catalogo-visual .catalogo-prenda>.catalogo-sin-foto>img{display:block;width:100%;height:100%;min-height:0;max-height:100%;max-width:100%;object-fit:contain}
+@media(max-width:480px){.catalogo-visual .catalogo-prenda>.catalogo-sin-foto{height:250px;min-height:250px;max-height:250px}}
