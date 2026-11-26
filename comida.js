@@ -83,7 +83,7 @@
   }
   function galeriaCatalogo(p,ampliada=false,inicio=0,n) {
     const fotos=fotosCatalogo(p);
-    if(!fotos.length)return logoProducto(n)||'<p class="catalogo-sin-foto">Fotos pendientes</p>';
+    if(!fotos.length)return '<div class="catalogo-sin-foto" aria-label="Fotos pendientes">'+(logoProducto(n)||'Fotos pendientes')+'</div>';
     return '<div class="catalogo-fotos"><div class="catalogo-pista" tabindex="0" aria-label="Fotos de '+escapar(p.nombre)+'" data-inicio="'+inicio+'">'+fotos.map((src,i)=>ampliada?'<div class="catalogo-foto"><img src="'+escapar(src)+'" alt="'+escapar(p.nombre)+' · foto '+(i+1)+'"></div>':'<button type="button" class="catalogo-foto" data-catalogo-abrir="'+i+'" aria-label="Ampliar '+escapar(p.nombre)+' · foto '+(i+1)+'"><img src="'+escapar(src)+'" alt="'+escapar(p.nombre)+' · foto '+(i+1)+'" loading="lazy"></button>').join('')+'</div>'+(fotos.length>1?'<div class="catalogo-controles"><button type="button" data-catalogo-foto="-1" aria-label="Foto anterior">‹</button><output aria-live="polite">'+(inicio+1)+' / '+fotos.length+'</output><button type="button" data-catalogo-foto="1" aria-label="Foto siguiente">›</button></div>':'')+'</div>';
   }
   function catalogoVisual(n) {
