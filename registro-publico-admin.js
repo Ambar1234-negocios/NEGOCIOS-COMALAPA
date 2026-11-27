@@ -81,11 +81,35 @@
     return boton;
   }
 
+  function botonRegistrado(cliente) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    function pintarEstado() {
+      b.textContent = cliente.registrado_contacto ? '✓ Registrado' : 'Marcar registrado';
+      b.style.backgroundColor = cliente.registrado_contacto ? '#16734a' : '';
+      b.style.color = cliente.registrado_contacto ? '#fff' : '';
+      b.className = cliente.registrado_contacto ? 'registro-contacto-listo' : 'secundario';
+      b.setAttribute('aria-pressed', String(!!cliente.registrado_contacto));
+    }
+    pintarEstado();
+    b.onclick = async () => {
+      const valor = !cliente.registrado_contacto;
+      if (!valor && !confirm('¿Volver a marcar este contacto como pendiente?')) return;
+      b.disabled = true;
+      try { await cambiar('registro_publico_clientes?id=eq.' + cliente.id, { registrado_contacto: valor }); cliente.registrado_contacto = valor; pintarClientes(); }
+      catch {} finally { b.disabled = false; }
+    };
+    return b;
+  }
+
   function pintarClientes() {
     const consulta = filtro.value.trim().toLowerCase();
     const telefono = /^[+\d ().-]+$/.test(consulta) ? consulta.replace(/\D/g, '') : '';
-    const visibles = clientes.filter(cliente => cliente.nombre.toLowerCase().includes(consulta) ||
-      (telefono && cliente.telefono.includes(telefono)));
+    const filtroEstado = encontrar('#registro-contacto-filtro')?.value || '';
+    const resumen = encontrar('#registro-contacto-resumen');
+    if (resumen) { const listos = clientes.filter(c => c.registrado_contacto).length; resumen.textContent = clientes.length + ' clientes · ' + listos + ' registrados · ' + (clientes.length-listos) + ' pendientes'; }
+    const visibles = clientes.filter(cliente => (cliente.nombre.toLowerCase().includes(consulta) ||
+      (telefono && cliente.telefono.includes(telefono))) && (!filtroEstado || (filtroEstado === 'listo') === !!cliente.registrado_contacto));
     pintar(encontrar('#registro-publico-clientes tbody'), visibles.map(cliente => {
       if (vistaRecepcion) return [cliente.nombre, cliente.telefono, chatWhatsApp(cliente)];
       const estado = document.createElement('select');
@@ -108,7 +132,7 @@
       };
       const accion = () => cliente.activo && cliente.consentimiento ? chatWhatsApp(cliente) : '—';
       return [cliente.nombre, cliente.telefono, accion(), botonEliminar(cliente), cliente.dia + '/' + cliente.mes,
-        fecha.format(new Date(cliente.fecha)), cliente.consentimiento ? 'Sí' : 'No', estado];
+        fecha.format(new Date(cliente.fecha)), cliente.consentimiento ? 'Sí' : 'No', estado, botonRegistrado(cliente)];
     }));
     encontrar('[data-vacio]').hidden = visibles.length > 0;
   }
@@ -161,7 +185,7 @@
         return;
       }
       const [altas, solicitudes] = await Promise.all([
-        listar('registro_publico_clientes', 'id,nombre,telefono,dia,mes,fecha,consentimiento,activo,duplicado_de', 'id'),
+        listar('registro_publico_clientes', 'id,nombre,telefono,dia,mes,fecha,consentimiento,activo,duplicado_de,registrado_contacto', 'id'),
         listar('registro_publico_solicitudes', 'cliente_id,busqueda,categoria,comentario,fecha,estado', 'cliente_id')
       ]);
       if (actual !== version || panel.hidden) return;
@@ -195,6 +219,7 @@
   }
 
   filtro.addEventListener('input', pintarClientes);
+  encontrar('#registro-contacto-filtro')?.addEventListener('change', pintarClientes);
   encontrar('[data-actualizar]').addEventListener('click', actualizar);
   const observador = new MutationObserver(actualizar);
   const opciones = { attributes: true, attributeFilter: ['hidden'] };
